@@ -1,0 +1,86 @@
+name: Import pinned cgminer history
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [.github/workflows/import-upstream.yml]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dizzass-upstream-import
+  cancel-in-progress: false
+
+jobs:
+  import:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      BASE_COMMIT: b8491c66e7e22f23a9edf095dd1337ee581e88bd
+      BASE_TREE: 2228aee63ac41271bbbe26773ad81f31fdec0373
+    steps:
+      - name: Import public source without rewriting existing history
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = darmenz2/dizzass
+          test "$GITHUB_REF_NAME" = main
+          root="$RUNNER_TEMP/dizzass-import-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$root"
+          cd "$root"
+          git init -q
+          git config user.name 'dizzass import'
+          git config user.email '93091111+darmenz2@users.noreply.github.com'
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          origin_git() { git -c "http.extraheader=AUTHORIZATION: basic $auth" "$@"; }
+          origin_git fetch --no-tags origin main
+          git checkout -q -B main FETCH_HEAD
+          original_head=$(git rev-parse HEAD)
+          git remote add upstream https://github.com/ckolivas/cgminer.git
+          git fetch --no-tags upstream master
+          git cat-file -e "$BASE_COMMIT^{commit}"
+          test "$(git rev-parse "$BASE_COMMIT^{tree}")" = "$BASE_TREE"
+          git merge-base --is-ancestor "$BASE_COMMIT" refs/remotes/upstream/master
+          if ! git merge-base --is-ancestor "$BASE_COMMIT" HEAD; then
+            git merge --no-ff --no-edit --allow-unrelated-histories "$BASE_COMMIT" \
+              -m 'Import pinned public cgminer with its original history'
+          fi
+          python3 - <<'PY'
+          import json, os, pathlib, subprocess
+          base=os.environ['BASE_COMMIT']
+          def git(*args): return subprocess.check_output(['git',*args],text=True).strip()
+          report={
+            'repository':os.environ['GITHUB_REPOSITORY'],
+            'upstream':'ckolivas/cgminer',
+            'base_commit':base,
+            'base_tree':git('rev-parse',base+'^{tree}'),
+            'original_ancestor_commits':int(git('rev-list','--count',base)),
+            'upstream_history_preserved':True,
+            'exact_vnish_ancestor_proven':False,
+            'stage14_imported_by_this_workflow':False,
+            'runtime_tested':False,
+            'hardware_tested':False
+          }
+          pathlib.Path('UPSTREAM_IMPORT.json').write_text(json.dumps(report,indent=2)+'\n')
+          PY
+          git add UPSTREAM_IMPORT.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Record verified upstream base and preserved history'
+          fi
+          origin_git push origin HEAD:refs/heads/main
+          existing=$(origin_git ls-remote --heads origin refs/heads/upstream/ckolivas)
+          if test -z "$existing"; then
+            origin_git push origin "$BASE_COMMIT:refs/heads/upstream/ckolivas"
+          else
+            test "${existing%%$'\t'*}" = "$BASE_COMMIT"
+          fi
+          printf 'Original destination head: %s\n' "$original_head"
+          printf 'Imported destination head: %s\n' "$(git rev-parse HEAD)"
+          printf 'Pinned source commit: %s\n' "$BASE_COMMIT"
+          git ls-tree -r --name-only "$BASE_COMMIT" | wc -l
+          cat UPSTREAM_IMPORT.json
