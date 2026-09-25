@@ -1,0 +1,204 @@
+{
+  "schema": 1,
+  "base_commit": "ea8fbf6a1f5c27311162e4f7261856d183e6d1b8",
+  "reference_elf": "reference/cgminer.vendor.elf",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "ranges": [
+    {
+      "name": "knots_voltage",
+      "start": "0xffff8",
+      "end_exclusive": "0x1000f0",
+      "sha256": "68f6d3495577fdef1a220ba7ba2a5457cc0d9274ca98b22422889422cf4cf8c3"
+    },
+    {
+      "name": "calibration_b",
+      "start": "0x1000f0",
+      "end_exclusive": "0x100438",
+      "sha256": "fd2e4cb92261e6fc52a27804b71ab160f3a45633a9863076b2041e26b1be3a4b"
+    },
+    {
+      "name": "knots_raw",
+      "start": "0x100438",
+      "end_exclusive": "0x1004f8",
+      "sha256": "5760915578fcb1e2f6366c994afabc40d27fc58b291e5056cae7ce3dd58e9564"
+    },
+    {
+      "name": "calibration_a",
+      "start": "0x1004f8",
+      "end_exclusive": "0x100878",
+      "sha256": "bb76ef17ba3c942c0c73ecf864c8ad35b431d66ab7c1f35e71012effaf3783be"
+    },
+    {
+      "name": "model_family",
+      "start": "0x100f3c",
+      "end_exclusive": "0x100fc4",
+      "sha256": "7fe2ea006784399b2b9d4a9d82e08fba2481d123149864d56e9a4840e3e158b2"
+    },
+    {
+      "name": "initializer",
+      "start": "0x100fc4",
+      "end_exclusive": "0x1024b8",
+      "sha256": "2b719131e7c6cb58bd8fd36edbc868c1f708159dbcaa787f0312f55718facf71"
+    },
+    {
+      "name": "extended_query",
+      "start": "0x1024b8",
+      "end_exclusive": "0x102988",
+      "sha256": "11c0f1011a42fd26ef62dd33b2daa3e6d9c0778b8f8ba836ffe74f9449836034"
+    },
+    {
+      "name": "set_raw",
+      "start": "0x103058",
+      "end_exclusive": "0x103ae8",
+      "sha256": "8d602eae2ab3343dbde08b322ca6e70cbe971729c3b41944f8b59a9b22564095"
+    },
+    {
+      "name": "set_float",
+      "start": "0x103ae8",
+      "end_exclusive": "0x104134",
+      "sha256": "b65512fa47e1930b5a71395c523abf57bd56c18557e36a14b8b7ec6d4636bcf8"
+    },
+    {
+      "name": "set_dispatch",
+      "start": "0x104134",
+      "end_exclusive": "0x104218",
+      "sha256": "ef4a01e02b11ffbc57ff0faf66ed9b740c269e30a4a89bb840a5465618f467ee"
+    },
+    {
+      "name": "serial",
+      "start": "0x105d30",
+      "end_exclusive": "0x105f58",
+      "sha256": "10a7e573f41f9bd3482bdba5d8d10d9f55e1e0ba68b2cb6972e0b0c0e0d9e157"
+    },
+    {
+      "name": "record_crc",
+      "start": "0xf7e90",
+      "end_exclusive": "0xf7f10",
+      "sha256": "b1cba4be508f2fe39c27f017c726f5336282ad38eb1008bf2dae90f1b0bf8529"
+    },
+    {
+      "name": "round_helper",
+      "start": "0x596778",
+      "end_exclusive": "0x596818",
+      "sha256": "126ff72061f7a4335619e92069ccf927eddda15841d66bee5ba9c43776fb0898"
+    }
+  ],
+  "data": [
+    {
+      "name": "calibration_crc_table",
+      "address": "0x5b0bd8",
+      "size": 512,
+      "sha256": "961656eaf43bdf70937151a003627324be86c28ca32285f58edd5f5c73c51b79"
+    },
+    {
+      "name": "serial_alphabet",
+      "address": "0x5ed405",
+      "size": 36,
+      "sha256": "55096575e898b352eb40de70e586ecfff8837d05f1cedc80dc3d7b48583d4ce6"
+    },
+    {
+      "name": "identification_dispatch",
+      "address": "0x101324",
+      "size": 656,
+      "sha256": "0a24e499d7c7f35be6e86e395a6d2f7446c9e5f5bfcc28ef4964a5da0f33ed6e"
+    }
+  ],
+  "supported_ids": [
+    34,
+    65,
+    66,
+    67,
+    97,
+    98,
+    100,
+    101,
+    102,
+    103,
+    105,
+    106,
+    113,
+    114,
+    115,
+    116,
+    117,
+    118,
+    119,
+    120,
+    193,
+    194,
+    196,
+    197
+  ],
+  "revision_and_calibration_a_ids": [
+    193,
+    194,
+    196,
+    197
+  ],
+  "family_ids": [
+    100,
+    101,
+    103,
+    105,
+    106,
+    193,
+    194,
+    196,
+    197
+  ],
+  "setup_state_offsets": {
+    "model": "0x04",
+    "revision": "0x08",
+    "checksum_mode": "0x0c",
+    "calibration_enabled": "0x10",
+    "lower": "0x14",
+    "upper": "0x18",
+    "serial": "0x1d",
+    "count": "0x30",
+    "x": "0x38",
+    "y": "0xb0",
+    "date_word": "0x128"
+  },
+  "instructions_added": [
+    "VLDR/VSTR single immediate without writeback",
+    "VCMPE single/double zero finite",
+    "VNEG double",
+    "VCVT float32 from double finite nearest/even",
+    "VMOV double +0.5/-0.5/1.0 only",
+    "REV16",
+    "REVSH",
+    "SXTH rotated",
+    "UXTAB/UXTAH rotated"
+  ],
+  "external_boundaries": {
+    "bus": "0xfe420",
+    "mutex_init": "0x5a60dc",
+    "i2c_block": [
+      "0xfe538",
+      "0xfe528"
+    ],
+    "i2c_bytes": [
+      "0x126fcc",
+      "0x128188"
+    ],
+    "lock_unlock": [
+      "0x5a6108",
+      "0x5a66c4"
+    ],
+    "delay": "0x10ed2c",
+    "diagnostic": [
+      "0xfa0c4",
+      "0x10f170"
+    ],
+    "compiler_unsigned_64_divide": "0x591480 (explicit divmod hook with divisor 36; original helper body not executed)"
+  },
+  "scope": "Original control/data paths through scripted external callbacks; initialized scratch memory; finite FP/default rounding; not vendor ABI, full PSU driver, physical T21 validation or safe slot reuse",
+  "policy_changes": [],
+  "remaining": [
+    "Physical I2C/device identification",
+    "remaining PSU commands and telemetry",
+    "full board startup and protections",
+    "proven RX clean boundary",
+    "production driver integration"
+  ]
+}
