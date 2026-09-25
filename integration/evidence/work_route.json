@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "reference_elf": "reference/cgminer.vendor.elf",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "base_commit": "b98f075bdf4e4bb534ad657520c608e464b02fda",
+  "ranges": [
+    {"name":"algorithm_name_slice","start":"0xa898c","end_exclusive":"0xa89d4","sha256":"55ed3a7b49adbf8103c2097866bdf8c93e2a4621adf3a5c2645a905e3897b2ad"},
+    {"name":"aml_platform_caller","start":"0x732ac","end_exclusive":"0x732c8","sha256":"ccb3ba53933ab6b67d6d20c30198c133acd824cf6432d065e4331f472585f43a"},
+    {"name":"config_store_boundary","start":"0xfbb98","end_exclusive":"0xfbbbc","sha256":"6574554f01b6a21ab0ef29230961446e029dd92fd5eb73aa426b93cc557cda80"},
+    {"name":"backend_callback_selection","start":"0x738a4","end_exclusive":"0x73af8","sha256":"60e58414f747f8217f364ba196399e17d9c54b0bb5cfbdaf8e2bac3adb6af8e3"},
+    {"name":"platform_getter","start":"0xfdfac","end_exclusive":"0xfdfbc","sha256":"e557d1ae2b27333fecc70667189b0efc2648666ed6fd8ccd112c72a38411fe70"},
+    {"name":"sha256_initializer","start":"0xc3b54","end_exclusive":"0xc3e18","sha256":"00e3f9d5496f92d21e574cd4c6165fa2e25732b48a671e34ae67f0f7f9fbb343"},
+    {"name":"scrypt_initializer","start":"0xc1c0c","end_exclusive":"0xc1e40","sha256":"c7c01bf90e46dec7d2d19f504fa8dea9dc7510e198bffd756beae1c5032cb675"},
+    {"name":"sha256_header_prefix","start":"0xc29b4","end_exclusive":"0xc2a6c","sha256":"1509b63e330aea0f95baf5ad97d225863ab5f1e9f4593a9a3a1ee78cf1dcc92a"},
+    {"name":"tx88_frame_before_uart","start":"0xc4dfc","end_exclusive":"0xc4ea8","sha256":"cda859b02bc9283e1fd56992e266b9b6887a806c7b50cd6973a84b8e8e66968a"}
+  ],
+  "algorithm_map": {"sha256d":0,"scrypt":1,"unknown":2},
+  "caller_platform_selector": 2,
+  "sha256_nonzero_platform": {"initializer":"0xc3b54","thread_entries":["0xc4054","0xc2498","0xc4b18"],"tx_packet_bytes":88},
+  "scrypt": {"initializer":"0xc1c0c","thread_entries":["0xc0018"],"tx_packet_bytes":86},
+  "shared_slot_table": {"address":"0x653458","tx_pc":"0xc4da8","tx_literal":"0xc5068","rx_pc":"0xc4508","rx_literal":"0xc4ad4","slot_pc":"0xc4da0","slot_literal":"0xc5064","address_resolution_only":true},
+  "bounds": {"platform_selectors":[0,4],"algorithm_selectors":[0,1],"tx_slots":[0,31]},
+  "external_hooks": {"algorithm_parser":["strcmp"],"initializer_trace":["pthread initialization","pthread_create address capture; no threads started"],"tx88":["memcpy"],"platform_caller":"stop before peripheral initialization"},
+  "new_behavior": ["reject unknown algorithm and platform outside bounded domain","encode and reserve unchanged native work via existing registry","do not publish output on failure"],
+  "not_established": ["full physical hwscan to T21 runtime configuration","RX variant selected for a particular live board","ASIC acceptance or turnaround","safe in-epoch slot reuse","complete driver, PSU, protections or autotune"],
+  "vendor_originals_executed_as_process": false,
+  "hardware_commands_sent": false,
+  "production_registration": false
+}
