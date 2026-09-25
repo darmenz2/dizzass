@@ -215,6 +215,3 @@ endif
 if HAS_BLOCKERUPTER
 cgminer_SOURCES += driver-blockerupter.c driver-blockerupter.h
 endif
-
-# VNish 1.3.5 recovery: additive, no active T21 hardware driver.
-include $(top_srcdir)/reconstruction/cgminer-overlay.am

@@ -1,0 +1,72 @@
+name: Build native cgminer core
+
+on:
+  push:
+    branches: [work/reconstruction]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: native-core-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  native-core:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Fetch the exact revision without persistent credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/dizzass-native-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$root"
+          cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c "http.extraheader=AUTHORIZATION: basic $auth" fetch --depth=1 --no-tags origin "$GITHUB_SHA"
+          git checkout -q --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Install host build dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y build-essential autoconf automake libtool pkg-config libcurl4-openssl-dev libusb-1.0-0-dev libudev-dev zlib1g-dev python3
+      - name: Check boundary tests and unchanged pinned Makefile
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          test "$(git hash-object Makefile.am)" = 17d2fbde26b5e8cb614b61908b84d5937af48325
+          python3 integration/test_native_core.py
+      - name: Configure and build real upstream core
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          autoreconf -fi
+          ./configure --enable-icarus --disable-curses CFLAGS='-O2 -fcommon'
+          make -j2
+      - name: Check actual production sources and symbols
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -s -f Makefile -f integration/native-check.mk dizzass-core-sources > "$RUNNER_TEMP/dizzass-sources.txt"
+          nm --defined-only cgminer > "$RUNNER_TEMP/dizzass-symbols.txt"
+          python3 integration/check_native_core.py --sources "$RUNNER_TEMP/dizzass-sources.txt" --symbols "$RUNNER_TEMP/dizzass-symbols.txt"
+          ./cgminer --version
+          printf '%s\n' 'Host core build only. No ASIC, USB device, pool, flashing or T21 runtime test.'
+      - name: Keep historical recovery library separately buildable
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f Makefile.recovery all
+          printf '%s\n' 'Recovery library compiled separately; historical differential suites not rerun by this workflow.'

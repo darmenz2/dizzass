@@ -1,25 +1,37 @@
 # dizzass working rules
 
-## Source and migration state
+## Architecture: cgminer first
 
-This repository is a private working copy of the public `ckolivas/cgminer` history, pinned at `b8491c66e7e22f23a9edf095dd1337ee581e88bd`. The pinned base is also kept on `upstream/ckolivas`. Do not rewrite that branch. Public Bitmain/S9 lineage is useful evidence, not proof of VNish 1.3.5's exact starting commit.
+The active goal is to extend the real public cgminer, NOT recreate the entire VNish binary as a parallel miner. The user's latest direction takes priority over the earlier address-by-address reconstruction plan.
 
-Stage 14 is considered imported only when `migration/STAGE14_IMPORT.json` exists and the files it describes are present. Until then this repository contains the public base and migration tooling, not the complete recovered modules. Never claim a transfer or test run solely because a script for it exists.
+Reuse native cgminer work/pool types, allocation and cleanup, Stratum, job lifecycle, share submission, SHA256, target arithmetic, API and logging wherever applicable. Inspect the actual upstream implementation before adding code. A native function with a similar name is a candidate for reuse, not proof of identical VNish behavior. Record meaningful differences and make small, separately tested patches when needed.
 
-The authorized archive is `VNish135_modular_cgminer_stage14.zip`, SHA-256 `0c61e8acea79e1e6bad4b1058d50cbb60cf985fcf98ad3f9eb026d4b25178f50`, 790 files after removing the outer directory. The importer validates the full archive, internal inventory and original reference ELF. Do not silently accept another build or drop evidence files.
+Do not add another miner main, a second production work/pool representation, duplicate SHA/target/network stacks or successful hardware stubs. Do not pass the normalized 632-byte recovery image or 68/72-byte recovery records as native upstream structs. Use named fields and a typed adapter at the driver boundary.
 
-## Implementation
+Reconstruct only missing VNish behavior and hardware-specific parts: confirmed model dispatch, controller transport, hashboard protocol, work/nonce framing, PLL, PSU/sensors/fans/protections and autotune. Do not assume chip1398 is the T21 driver until dispatch is verified. Preserve observed source paths when adding real modules; do not rename the upstream tree to imitate unavailable vendor sources.
 
-Preserve `src/`, `libbitmain/`, `include/xminer/recovery/`, `reconstruction/`, `tests/`, `tools/` and evidence paths. Keep the public core, its licenses, author attribution and history. Do not replace the core with a simulator or combine all reconstructed code into one C file.
+## Repository and evidence
 
-Separate original behavior verified against ARM instructions from new adapters and hypotheses. Unknown code must stay explicitly unsupported, never succeed via an empty stub. Keep original reference bytes unchanged. Treat original firmware binaries as data; do not launch them as host processes.
+The public base is ckolivas/cgminer at b8491c66e7e22f23a9edf095dd1337ee581e88bd, also kept on upstream/ckolivas. Keep its history, attribution and licenses. Do not rewrite that branch. This is a chosen base, not a proven exact VNish ancestor.
 
-After Stage 14 import the remaining work includes full consumer and ownership/freshness integration, unexplained queue-record bytes, register response checks, confirmed T21 model/driver dispatch, chain initialization, PSU/sensors/cooling/protections and autotuning. Inspect current files before assuming these are still missing.
+Stage 14 has an import receipt in migration/STAGE14_IMPORT.json. Its original archive, evidence, reference ELF and historical tests are retained. Existing reconstruction/*, recovered src/* and libbitmain/* modules remain available to Makefile.recovery as comparison and porting material, not a second core linked wholesale into cgminer.
 
-## Verification and safety
+Makefile.am is restored to the pinned upstream blob. Do not re-add the blanket reconstruction/cgminer-overlay.am include. That file and tools/assemble_on_cgminer.py preserve the historical standalone overlay workflow; they are not the current native-runtime integration path. Add production driver sources explicitly only after implementing and testing the real native adapter.
 
-Build recovered modules with `make -f Makefile.recovery all arm`. Stage-specific tests and differential tests require their real fixtures/reference files. Report which tests were actually run, their exit codes and limitations. Host, PTY and interpreter tests are not physical T21 acceptance.
+The original reconstruction/overlay-files.json describes the standalone import. Do not rewrite its checksums to hide changes or treat upstream/integration files as archive corruption. Keep the import proof and scope checks explicitly.
 
-The original `reconstruction/overlay-files.json` inventories the standalone overlay only. In this combined tree, the old whole-directory inventory checker also sees upstream and migration files; do not mistake that scope mismatch for damaged imported sources or rewrite checksums just to make a test green. Adapt inventory scope explicitly when adding combined-tree CI, preserving the original import proof.
+## Build and tests
 
-No command in this task authorizes flashing NAND, deploying a replacement cgminer, changing production servers/pools/devfee, altering operating voltages/frequencies/cooling protections or contacting ASICs. No secrets, private signing keys or account credentials should be committed. Do not change repository visibility or force-push existing work.
+The native baseline uses the normal upstream Autotools build. The cgminer-native workflow builds the real core with the existing Icarus driver only to satisfy the upstream build configuration; it does not claim T21 support and does not access USB hardware or pools. Only the new host binary's --version is executed.
+
+After configuring, list evaluated production sources with:
+    make -s -f Makefile -f integration/native-check.mk dizzass-core-sources
+Use integration/check_native_core.py to reject accidental legacy-core linkage. Its baseline policy must be revised explicitly when a reviewed native driver is added.
+
+Keep historical checks separate: make -f Makefile.recovery all arm and stage-specific tests. Do not report these as full runtime or hardware acceptance. Read integration/CGMINER_FIRST_RU.md for the reuse map and next steps.
+
+## Safety and reporting
+
+Treat reference firmware executables as data; never launch them as host processes. No flashing NAND, changing production services/pools/devfee, sending hardware commands or altering voltages/frequencies/protections is authorized by a repository edit. Commit no secrets, private signing keys or credentials. Do not change visibility or force-push.
+
+Unknown behavior stays unsupported. Distinguish native reuse, verified reconstructed logic, new adapter behavior and hypotheses. Report only tests actually run and their limits. A compiled baseline with a legacy driver is not a functioning T21 miner.
