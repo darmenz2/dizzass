@@ -1,0 +1,12 @@
+{
+  "repository": "darmenz2/dizzass",
+  "upstream": "ckolivas/cgminer",
+  "base_commit": "b8491c66e7e22f23a9edf095dd1337ee581e88bd",
+  "base_tree": "2228aee63ac41271bbbe26773ad81f31fdec0373",
+  "original_ancestor_commits": 8051,
+  "upstream_history_preserved": true,
+  "exact_vnish_ancestor_proven": false,
+  "stage14_imported_by_this_workflow": false,
+  "runtime_tested": false,
+  "hardware_tested": false
+}
