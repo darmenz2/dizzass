@@ -10,15 +10,15 @@ DIZZASS_NONCE_OBJS = $(DIZZASS_NONCE_DIR)/test.o $(DIZZASS_NONCE_DIR)/adapter.o 
 
 $(DIZZASS_NONCE_DIR):
 	mkdir -p $@
-$(DIZZASS_NONCE_DIR)/adapter.o: integration/native_nonce.c integration/native_nonce.h | $(DIZZASS_NONCE_DIR)
+$(DIZZASS_NONCE_DIR)/adapter.o: integration/native_nonce.c integration/native_nonce.h integration/native-nonce.mk | $(DIZZASS_NONCE_DIR)
 	$(CC) $(DIZZASS_NATIVE_CPP) $(DIZZASS_NONCE_FLAGS) -c $< -o $@
-$(DIZZASS_NONCE_DIR)/test.o: integration/tests/test_native_nonce.c integration/native_nonce.h cgminer.c miner.h tests/fixtures/genesis_work.h | $(DIZZASS_NONCE_DIR)
+$(DIZZASS_NONCE_DIR)/test.o: integration/tests/test_native_nonce.c integration/native_nonce.h cgminer.c miner.h tests/fixtures/genesis_work.h integration/native-nonce.mk | $(DIZZASS_NONCE_DIR)
 	$(CC) $(DIZZASS_NATIVE_CPP) $(DIZZASS_NONCE_FLAGS) -c $< -o $@
-$(DIZZASS_NONCE_DIR)/rx.o: src/backend/work-gen/work-gen.c | $(DIZZASS_NONCE_DIR)
+$(DIZZASS_NONCE_DIR)/rx.o: src/backend/work-gen/work-gen.c integration/native-nonce.mk | $(DIZZASS_NONCE_DIR)
 	$(CC) -I$(top_srcdir)/include $(DIZZASS_NONCE_FLAGS) -std=c11 -c $< -o $@
-$(DIZZASS_NONCE_DIR)/stream.o: reconstruction/support/work_rx_stream.c | $(DIZZASS_NONCE_DIR)
+$(DIZZASS_NONCE_DIR)/stream.o: reconstruction/support/work_rx_stream.c integration/native-nonce.mk | $(DIZZASS_NONCE_DIR)
 	$(CC) -I$(top_srcdir)/include $(DIZZASS_NONCE_FLAGS) -std=c11 -c $< -o $@
-$(DIZZASS_NONCE_DIR)/test: $(DIZZASS_NONCE_OBJS) $(DIZZASS_CORE_OTHER)
+$(DIZZASS_NONCE_DIR)/test: $(DIZZASS_NONCE_OBJS) $(DIZZASS_CORE_OTHER) integration/native-nonce.mk
 	$(CC) $(DIZZASS_NONCE_FLAGS) $(cgminer_LDFLAGS) $(LDFLAGS) -Wl,--gc-sections -Wl,--wrap=socket,--wrap=connect,--wrap=libusb_init -Wl,--undefined=__wrap_socket,--undefined=__wrap_connect,--undefined=__wrap_libusb_init -o $@ $(DIZZASS_NONCE_OBJS) $(DIZZASS_CORE_OTHER) $(cgminer_LDADD) $(LIBS)
 
 .PHONY: dizzass-native-nonce-test
