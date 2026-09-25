@@ -183,3 +183,85 @@ finish:
     vn135_i2c_soft_stop(s);
     return value;
 }
+
+/* Original registration 0x125a28, GPIO init 0x126084 and close 0x126d14. */
+#include "integration/i2c_init_135.h"
+#include <inttypes.h>
+#include <stdio.h>
+
+static int init_error(const struct vn135_i2c_init_ops *o, void *p, uint32_t line)
+{
+    if (o->log) o->log(p,VN135_INIT_GENERIC,line);
+    return -1;
+}
+int vn135_i2c_register_135(struct vn135_i2c_registration *s,
+    const struct vn135_i2c_init_ops *o, void *p, uint32_t kind, uint32_t index,
+    const char *name)
+{
+    s->kind=kind;
+    s->index=index;
+    s->name=o->duplicate(p,name);
+    if (!s->name) return init_error(o,p,25);
+    (void)o->mutex_step(p,VN135_ATTR_INIT,s,0);
+    (void)o->mutex_step(p,VN135_ATTR_SETTYPE,s,1);
+    (void)o->mutex_step(p,VN135_MUTEX_INIT,s,0);
+    (void)o->mutex_step(p,VN135_ATTR_DESTROY,s,0);
+    return 0;
+}
+int vn135_i2c_gpio_initialize_135(struct vn135_i2c_gpio_init *s,
+    const struct vn135_i2c_init_ops *o, void *p, int32_t sda, int32_t scl)
+{
+    char number[256]={0};
+    int32_t fd;
+    uint32_t n;
+    (void)snprintf(s->sda_direction,256,"/sys/class/gpio/gpio%" PRId32 "/direction",sda);
+    (void)snprintf(s->sda_value,256,"/sys/class/gpio/gpio%" PRId32 "/value",sda);
+    (void)snprintf(s->scl_direction,256,"/sys/class/gpio/gpio%" PRId32 "/direction",scl);
+    (void)snprintf(s->scl_value,256,"/sys/class/gpio/gpio%" PRId32 "/value",scl);
+    s->sda_pin=sda; s->scl_pin=scl;
+    s->sda_mode=1; s->scl_mode=1;
+    if (o->is_exported(p,sda)) (void)o->unexport(p,sda);
+    if (o->is_exported(p,scl)) (void)o->unexport(p,scl);
+    fd=o->io.open(p,"/sys/class/gpio/export",1);
+    if (fd==-1) return init_error(o,p,40);
+    (void)snprintf(number,256,"%" PRId32,sda);
+    n=(uint32_t)strlen(number);
+    if ((uint32_t)o->io.write(p,fd,(const uint8_t *)number,n)!=n)
+        return init_error(o,p,48);
+    (void)o->io.close(p,fd);
+    fd=o->io.open(p,s->sda_direction,1);
+    if (fd==-1) return init_error(o,p,58);
+    if (o->io.write(p,fd,(const uint8_t *)"out",3)!=3)
+        return init_error(o,p,63);
+    (void)o->io.close(p,fd);
+    fd=o->io.open(p,"/sys/class/gpio/export",1);
+    if (fd==-1) return init_error(o,p,73);
+    (void)snprintf(number,256,"%" PRId32,scl);
+    n=(uint32_t)strlen(number);
+    if ((uint32_t)o->io.write(p,fd,(const uint8_t *)number,n)!=n)
+        return init_error(o,p,81);
+    (void)o->io.close(p,fd);
+    fd=o->io.open(p,s->scl_direction,1);
+    if (fd==-1) return init_error(o,p,91);
+    if (o->io.write(p,fd,(const uint8_t *)"out",3)!=3)
+        return init_error(o,p,96);
+    (void)o->io.close(p,fd);
+    s->soft.sda_output=1;
+    if (s->soft.scl_value_fd>=1) (void)o->io.close(p,s->soft.scl_value_fd);
+    s->soft.scl_value_fd=o->io.open(p,s->scl_value,1);
+    if (s->soft.scl_value_fd<0) return init_error(o,p,111);
+    if (s->soft.sda_value_fd>=1) (void)o->io.close(p,s->soft.sda_value_fd);
+    s->soft.sda_value_fd=o->io.open(p,s->sda_value,1);
+    if (s->soft.sda_value_fd<0) return init_error(o,p,120);
+    if (s->soft.sda_direction_fd>=1) (void)o->io.close(p,s->soft.sda_direction_fd);
+    s->soft.sda_direction_fd=o->io.open(p,s->sda_direction,1);
+    if (s->soft.sda_direction_fd<0) return init_error(o,p,129);
+    return 0;
+}
+void vn135_i2c_gpio_close_135(struct vn135_i2c_gpio_init *s,
+    const struct vn135_i2c_init_ops *o, void *p)
+{
+    if (s->soft.scl_value_fd>=1) (void)o->io.close(p,s->soft.scl_value_fd);
+    if (s->soft.sda_value_fd>=1) (void)o->io.close(p,s->soft.sda_value_fd);
+    if (s->soft.sda_direction_fd>=1) (void)o->io.close(p,s->soft.sda_direction_fd);
+}

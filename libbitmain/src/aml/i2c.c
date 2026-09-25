@@ -85,3 +85,25 @@ int vn135_aml_i2c_write_block(struct vn135_i2c_transport *t,struct vn135_i2c_ifa
     if(allocated)t->ops->free(t->opaque,allocated);
     return rc;
 }
+
+/* Original AML hardware-bus initialization/getter, 0x119a1c and 0x119c84. */
+#include "integration/i2c_init_135.h"
+int vn135_aml_hw_bus_initialize_135(struct vn135_aml_hw_bus *s,
+    const struct vn135_i2c_init_ops *o, void *p, struct vn135_i2c_transport *t)
+{
+    if (vn135_i2c_register_135(&s->registration,o,p,0,0,"/dev/i2c-1")) {
+        if (o->log) o->log(p,VN135_INIT_AML_HW,28);
+        return -1;
+    }
+    if (vn135_i2c_hw_open(t,&s->hardware,"/dev/i2c-1")) {
+        if (o->log) o->log(p,VN135_INIT_AML_HW,33);
+        return -1;
+    }
+    return 0;
+}
+struct vn135_i2c_registration *vn135_aml_hw_bus_get_135(
+    struct vn135_aml_hw_bus *s, uint32_t index)
+{
+    (void)index;
+    return &s->registration;
+}

@@ -1,0 +1,124 @@
+{
+  "schema": 1,
+  "base_commit": "9f654ed391d84511370197ef498a73a3a26453bd",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "ranges": [
+    {
+      "name": "registration",
+      "start": "0x125a28",
+      "end_exclusive": "0x125bf4",
+      "sha256": "f9bea251782f9de2c200cb4cd1eeec3153690709a715937a848f01c2d7aebdad"
+    },
+    {
+      "name": "gpio_init",
+      "start": "0x126084",
+      "end_exclusive": "0x126d14",
+      "sha256": "4bb17839c9387a6f1470cd7fec84a86ff962af3fada7a8eb2125b5f94911b561"
+    },
+    {
+      "name": "gpio_close",
+      "start": "0x126d14",
+      "end_exclusive": "0x126e0c",
+      "sha256": "fa89f7c14469a66a3a692d6dbc0aa9ebd4989e3249845d119f449ad11bcfa298"
+    },
+    {
+      "name": "aml_psu_init_getter",
+      "start": "0x11c5c0",
+      "end_exclusive": "0x11c978",
+      "sha256": "623896d8e6c05f502dfac9ccb9cacae97520fe175bb4bb80593251fdba2221ac"
+    },
+    {
+      "name": "aml_hw_init_getter",
+      "start": "0x119a1c",
+      "end_exclusive": "0x119ccc",
+      "sha256": "6df318ffc7a123905564da7f6dcd8fb584229572d690780a8771d1dd5b645fa1"
+    },
+    {
+      "name": "platform_dispatch_prefix",
+      "start": "0xfb994",
+      "end_exclusive": "0xfd784",
+      "sha256": "d6b3015ee9f0b81c068be966e245ea04df05018cf54924e18bf4a913f8144fea"
+    },
+    {
+      "name": "psu_caller_prefix_with_literals",
+      "start": "0x100fc4",
+      "end_exclusive": "0x102144",
+      "sha256": "de2fc4c0281cfb822037f183af536954d61c0b1bdb12d3c645679e63c679580c"
+    },
+    {
+      "name": "getters_dispatch",
+      "start": "0xfe420",
+      "end_exclusive": "0xfe4c0",
+      "sha256": "5ff86ae8230944378dae4198efb888339b717f761ec92afb9b5912fc76f7e1ff"
+    },
+    {
+      "name": "generic_strings_ctor",
+      "start": "0x125e74",
+      "end_exclusive": "0x126084",
+      "sha256": "dbabef8cdc82e2dc501bf5a0c0fd7335b1b69ff83aa9036c0e0e49fb22f1b911"
+    },
+    {
+      "name": "soft_strings_ctor",
+      "start": "0x1289c4",
+      "end_exclusive": "0x129334",
+      "sha256": "97a05252d8f278d7942c660567b9e1c9462498d37b966e7d469cd8a325931221"
+    },
+    {
+      "name": "aml_psu_strings_ctor",
+      "start": "0x11cc8c",
+      "end_exclusive": "0x11d0cc",
+      "sha256": "0959760538b58f581af005435d925e48268df7b552bbe41f2b995e0a55ca2060"
+    },
+    {
+      "name": "aml_hw_strings_ctor",
+      "start": "0x11af60",
+      "end_exclusive": "0x11b6c8",
+      "sha256": "b626e8124e5b4920c07da44498d10677a7f2e1bd41bf441023b00fabd9f8a9b3"
+    }
+  ],
+  "source_paths": [
+    {
+      "address": "0x5ef374",
+      "xor": 23,
+      "text": "/tmp/build/libbitmain/src/i2c.c"
+    },
+    {
+      "address": "0x5ee434",
+      "xor": 86,
+      "text": "/tmp/build/libbitmain/src/aml/i2c.c"
+    },
+    {
+      "address": "0x5ee838",
+      "xor": 96,
+      "text": "/tmp/build/libbitmain/src/aml/psu.c"
+    }
+  ],
+  "executed_string_constructors": [
+    "0x125e74",
+    "0x1289c4",
+    "0x11cc8c",
+    "0x11af60"
+  ],
+  "aml_psu": {
+    "bus": "0x655fb4",
+    "ready": "0x6563f8",
+    "kind": 1,
+    "name": "i2c:psu-bus",
+    "sda": 477,
+    "scl": 476,
+    "power_control": 437
+  },
+  "aml_hardware": {
+    "bus": "0x68c180",
+    "kind": 0,
+    "name": "/dev/i2c-1"
+  },
+  "proof_boundary": "original code and scripted external calls; not physical T21 pin mapping measurement or electrical validation",
+  "new_policy": false,
+  "unrecovered": [
+    "GPIO helper internals",
+    "physical power startup",
+    "full struct ABI",
+    "safe work slot turnover"
+  ]
+}
