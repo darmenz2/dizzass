@@ -102,6 +102,30 @@ jobs:
           set -euo pipefail
           cd "$SOURCE_ROOT"
           make -f Makefile -f integration/native-submit.mk CC=clang DIZZASS_SUBMIT_DIR=build/native-submit-clang DIZZASS_JOBS_DIR=build/native-jobs-clang DIZZASS_NONCE_DIR=build/native-nonce-clang dizzass-native-submit-test
+      - name: Original ARM work-packet slice and CRC16 conformance
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f Makefile -f integration/native-work-tx.mk dizzass-tx86-differential
+      - name: Encode real native work without a second mining core
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f Makefile -f integration/native-work-tx.mk dizzass-native-work-tx-test
+      - name: Native work encoder with ASan and UBSan
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f Makefile -f integration/native-work-tx.mk SANITIZE=1 dizzass-native-work-tx-test
+      - name: Native work encoder and original comparisons with Clang
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f Makefile -f integration/native-work-tx.mk CC=clang DIZZASS_WORK_TX_DIR=build/native-work-tx-clang DIZZASS_NONCE_DIR=build/native-nonce-clang dizzass-native-work-tx-test dizzass-tx86-differential
       - name: Production boundary remains unchanged
         shell: bash
         run: |
