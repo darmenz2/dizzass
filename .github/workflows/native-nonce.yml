@@ -1,4 +1,4 @@
-name: Check native nonce adapter
+name: Check native work adapters
 
 on:
   push:
@@ -40,7 +40,7 @@ jobs:
       - name: Install build dependencies
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y build-essential autoconf automake libtool pkg-config libcurl4-openssl-dev libusb-1.0-0-dev libudev-dev zlib1g-dev python3
+          sudo apt-get install -y build-essential autoconf automake libtool pkg-config libcurl4-openssl-dev libusb-1.0-0-dev libudev-dev zlib1g-dev python3 clang
       - name: Build real cgminer without the recovery core
         shell: bash
         run: |
@@ -65,6 +65,25 @@ jobs:
           cd "$SOURCE_ROOT"
           make -f Makefile -f integration/native-nonce.mk SANITIZE=1 dizzass-native-nonce-test
           printf '%s\n' 'ASan/UBSan cover the adapter, test TU including native cgminer.c, and RX objects. Other prebuilt upstream objects are not instrumented by this step.'
+      - name: Sent-job registry and native work ownership
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f Makefile -f integration/native-jobs.mk dizzass-native-jobs-test
+      - name: Registry lifetime and concurrency with ASan and UBSan
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f Makefile -f integration/native-jobs.mk SANITIZE=1 dizzass-native-jobs-test
+      - name: Native registry and harness compiled with Clang
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f Makefile -f integration/native-jobs.mk CC=clang DIZZASS_JOBS_DIR=build/native-jobs-clang DIZZASS_NONCE_DIR=build/native-nonce-clang dizzass-native-jobs-test
+          printf '%s\n' 'Clang covers the registry, adapter, native core test TU and RX units. Other objects use the previous GCC native build.'
       - name: Production boundary remains unchanged
         shell: bash
         run: |

@@ -221,12 +221,19 @@ static void dn_hash_vectors(void)
     }
 }
 
+#ifdef DIZZASS_TEST_NATIVE_JOBS
+#include "integration/tests/native_jobs_cases.h"
+#endif
+
 int main(void)
 {
     /* Core startup is not called. Initialize the native locks used by helpers. */
     mutex_init(&stats_lock); mutex_init(&console_lock); cglock_init(&control_lock);
     opt_debug = false; opt_quiet = true; opt_realquiet = true;
     dn_decoder_cases(); dn_stream_cases(); dn_match_guards(); dn_hash_vectors();
+#ifdef DIZZASS_TEST_NATIVE_JOBS
+    dj_all();
+#endif
     printf("NATIVE_NONCE_PASS decodes=%u streams=%u vectors=%u assertions=%u\n",
         dn_decodes, dn_streams, dn_vectors, dn_assertions);
     return 0;
