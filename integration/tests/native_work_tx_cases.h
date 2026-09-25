@@ -1,6 +1,10 @@
 /* Included only by the offline harness with the REAL root cgminer.c. */
 #include "integration/native_work_tx.h"
 static unsigned dt_packets, dt_vectors, dt_roundtrips, dt_assertions;
+/* Address-taking and an observable pointer load keep the actual public native
+ * helper callable in this test, even when the surrounding core is included. */
+static struct work *(* volatile dt_copy_native_work)(struct work *, int) =
+    copy_work_noffset;
 #define DT_CHECK(x) do { ++dt_assertions; if (!(x)) { \
     fprintf(stderr, "native-work-tx FAIL %d: %s\n", __LINE__, #x); exit(1); \
 } } while (0)
@@ -68,7 +72,7 @@ static void dt_historical_roundtrip(void)
     unsigned index, i;
     for (index = 0; index < 2; ++index) {
         enum dizzass_tx86_layout layout = index ? DIZZASS_TX86_NONCE_PREFIX : DIZZASS_TX86_HEADER_REVERSED;
-        struct work *w = dn_work(), *back = copy_work_noffset(w,0);
+        struct work *w = dn_work(), *back = dt_copy_native_work(w,0);
         unsigned char packet[86], body[80];
         DT_CHECK(dizzass_native_work_tx86(w,layout,17,packet,sizeof(packet)) == 0);
         /* Test-only inverse of the proven permutation, NOT an ASIC reply or
