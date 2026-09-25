@@ -1,0 +1,73 @@
+name: Check original 1.3.5 software I2C
+on:
+  push:
+    branches: [work/reconstruction]
+    paths:
+      - libbitmain/src/i2c.c
+      - libbitmain/src/psu.c
+      - integration/i2c*135*
+      - integration/psu*135.h
+      - integration/tests/*i2c_soft*135*
+      - integration/evidence/i2c_soft_135.json
+      - .github/workflows/i2c-soft-135.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: i2c-soft-135-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  soft-i2c:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [gcc, clang]
+    steps:
+      - name: Fetch exact source without persistent credentials
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/dizzass-soft135-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-${{ matrix.compiler }}"
+          mkdir "$root"
+          cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c "http.extraheader=AUTHORIZATION: basic $auth" fetch --depth=1 --no-tags origin "$GITHUB_SHA"
+          git checkout -q --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Compare original GPIO software I2C and composed PSU byte exchange
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/i2c-soft-135.mk CC=${{ matrix.compiler }} dizzass-soft135-original dizzass-soft135-composed dizzass-soft135-test
+      - name: Native bounds and failures with ASan and UBSan
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/i2c-soft-135.mk CC=${{ matrix.compiler }} SANITIZE=1 dizzass-soft135-test
+      - name: Previous hardware I2C and PSU regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/i2c-transport-135.mk CC=${{ matrix.compiler }} dizzass-i2c135-original dizzass-i2c135-test
+          make -f integration/psu-protocol-135.mk CC=${{ matrix.compiler }} dizzass-psu135-original dizzass-psu135-test
+      - name: Preserve production core and evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          clang --analyze -I. -std=c11 -Xanalyzer -analyzer-output=text libbitmain/src/i2c.c
+          test "$(git hash-object Makefile.am)" = 17d2fbde26b5e8cb614b61908b84d5937af48325
+          test "$(git hash-object cgminer.c)" = 54739e4139294c526af0c73aa9a02ba9762ca4f2
+          printf '%s\n' 'b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9  reference/cgminer.vendor.elf' | sha256sum -c -
+          printf '%s\n' 'Original bounded instruction traces; GPIO and delays are RAM callbacks. No physical PSU, startup, thermal protection, slot reuse, or electrical timing acceptance.'

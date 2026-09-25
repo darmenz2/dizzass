@@ -1,0 +1,107 @@
+{
+  "schema": 1,
+  "base_commit": "57fd09a0a86cce8d928a124b6b5e5a938785cd87",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "ranges": [
+    {
+      "name": "input",
+      "start": "0x126e0c",
+      "end_exclusive": "0x126fcc",
+      "sha256": "063c00ce43072dfc5b9a21d648f815086391bf92e3fa709ca8e7bb94de18f3a6"
+    },
+    {
+      "name": "write_byte",
+      "start": "0x126fcc",
+      "end_exclusive": "0x127030",
+      "sha256": "1f55c9a8a3ec8edd19f2fd66f9eb49ea78818b47830b9cb9f2bcbc4662bc9c6c"
+    },
+    {
+      "name": "start",
+      "start": "0x127030",
+      "end_exclusive": "0x12728c",
+      "sha256": "194122d32d79b1c5a20a74e4ebc3f0190faff9651f2862aa4c175be1409f0538"
+    },
+    {
+      "name": "send_bits",
+      "start": "0x12728c",
+      "end_exclusive": "0x127e28",
+      "sha256": "0b3e0cc5d282006d750e1d38962bc4c30b5c6f74e84e051736513c08b8c3d11a"
+    },
+    {
+      "name": "stop",
+      "start": "0x127e28",
+      "end_exclusive": "0x128188",
+      "sha256": "465ac57309fda3d6091c98153b813802fc76ff046ab38ed4106505ab85df0a4c"
+    },
+    {
+      "name": "read_byte",
+      "start": "0x128188",
+      "end_exclusive": "0x1287c4",
+      "sha256": "c08b5c7b5fec99ed9725b30eb26ee113a557ccf12653bf392a760f04cac01bb7"
+    },
+    {
+      "name": "output",
+      "start": "0x1287c4",
+      "end_exclusive": "0x1289c4",
+      "sha256": "43aec04a50ef9fbff9437187c54b8f908c2d5a622c2d3c38730bcc34e75f2794"
+    },
+    {
+      "name": "out_constructor_slice",
+      "start": "0x129088",
+      "end_exclusive": "0x1290b4",
+      "sha256": "08ba3462a6efcbdf9b41faf82117e0b8bdf7d6f0649632647608b446bf5359dc"
+    }
+  ],
+  "literal_words": [
+    {
+      "address": "0x129314",
+      "hex": "cf644c00"
+    },
+    {
+      "address": "0x128984",
+      "hex": "8f6d4c00"
+    }
+  ],
+  "source_path": {
+    "address": "0x5ef374",
+    "xor": 23,
+    "text": "/tmp/build/libbitmain/src/i2c.c"
+  },
+  "out_literal": {
+    "address": "0x5ef56f",
+    "encrypted_hex": "061c1d",
+    "xor": 105,
+    "decoded_hex": "6f7574",
+    "constructor_executed": [
+      "0x129088",
+      "0x1290b4"
+    ]
+  },
+  "scope": "seven original entries; external read/write/open/close/delay/log callbacks only; no physical interface",
+  "not_recovered": [
+    "GPIO initialization/export and pin assignment",
+    "full platform selection",
+    "hardware protection",
+    "safe slot reuse"
+  ],
+  "policy_changes": [],
+  "composition": {
+    "original_exchange": "0x105938",
+    "original_validator": "0x102bd0",
+    "range_evidence": "integration/evidence/psu_protocol_135.json",
+    "byte_helpers_replaced_by_hooks": false,
+    "external_callbacks": [
+      "GPIO read/write/open/close",
+      "mutex",
+      "delay",
+      "diagnostic formatting/logging"
+    ]
+  },
+  "local_psu_prefix": {
+    "original_repository_commit": "57fd09a0a86cce8d928a124b6b5e5a938785cd87",
+    "original_repository_blob": "f2a268c99f6fc75e08382c88d13541b5fcadada2",
+    "lines": 139,
+    "sha256": "7c9e17412d6924c9e84b4c7897e65597050195c4ecd8b38bf32ba78b9f5c3670",
+    "note": "Local composition only; CI uses the complete existing PSU source without modification."
+  }
+}
