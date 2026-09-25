@@ -1,0 +1,387 @@
+{
+  "schema": 1,
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "base_commit": "10197ee0346cb852128cd2ee3f698e377d565b6d",
+  "layouts": [
+    {
+      "name": "model_root",
+      "start": "0xa8314",
+      "stop_before_call": "0xa83fc",
+      "range_sha256": "2d44d85019745e052991cbb506598fad8a7f87de20456edb3d7033017b1294fd",
+      "format": "0x5e8090",
+      "keys": [
+        "0x5e80ad",
+        "0x5e80b2",
+        "0x5e80b8",
+        "0x5e80c2",
+        "0x5e80c9",
+        "0x5e80d8",
+        "0x5e80e2",
+        "0x5e80ed",
+        "0x5e80fa"
+      ]
+    },
+    {
+      "name": "board_model",
+      "start": "0xa8604",
+      "stop_before_call": "0xa86c0",
+      "range_sha256": "bc9e072fb287be220c9772e8f6922e4f95f2bc59122beb93188ebf2a5605565a",
+      "format": "0x5e8172",
+      "keys": [
+        "0x5e818a",
+        "0x5e819d",
+        "0x5e81a7",
+        "0x5e81b1",
+        "0x5e81c6",
+        "0x5e81d2",
+        "0x5e81dc"
+      ]
+    },
+    {
+      "name": "chip_model",
+      "start": "0xaa274",
+      "stop_before_call": "0xaa3b8",
+      "range_sha256": "811e4576150432675bb04c9585b0765e8b7b88e1be3c6561fb322aa30905b150",
+      "format": "0x5e8721",
+      "keys": [
+        "0x5e8744",
+        "0x5e874f",
+        "0x5e8760",
+        "0x5e80b2",
+        "0x5e8772",
+        "0x5e877c",
+        "0x5e8787",
+        "0x5e8793",
+        "0x5e87a1",
+        "0x5e87ad",
+        "0x5e87b8"
+      ]
+    },
+    {
+      "name": "hardware_root",
+      "start": "0xb2f40",
+      "stop_before_call": "0xb2fa8",
+      "range_sha256": "abc649b0ae222c73cf36f4932a47e7210004c1928ab5a3fe75597675e10f1a7c",
+      "format": "0x5e8eff",
+      "keys": [
+        "0x5e8e58",
+        "0x5e8f0a",
+        "0x5e8f10"
+      ]
+    },
+    {
+      "name": "hardware_board",
+      "start": "0xb3218",
+      "stop_before_call": "0xb32b0",
+      "range_sha256": "9458c4b912cfddd1309ac9e1db3adf388c24c52136f32eb541c60e10a6502117",
+      "format": "0x5e8f49",
+      "keys": [
+        "0x5e8f63",
+        "0x5e8f0a",
+        "0x5e8e58",
+        "0x5e8e75",
+        "0x5e8f66",
+        "0x5e8f6f",
+        "0x5e8f74",
+        "0x5e8f79"
+      ]
+    }
+  ],
+  "literals": [
+    {
+      "address": "0x5e7ef2",
+      "xor": 67,
+      "value": "/var/run/hwscan/miner-model.json",
+      "sha256": "2cfb6ed85a757d3e96494bc330bda1f8806b1a9f67a9a86dbe014674c96f4660"
+    },
+    {
+      "address": "0x5e8090",
+      "xor": 37,
+      "value": "{ss,ss,ss,ss,ss,ss,si,ss,sb}",
+      "sha256": "f1a2e9559f8a8896d817e4103b23448dbad8141cf87c6955933a4514c514fd98"
+    },
+    {
+      "address": "0x5e80ad",
+      "xor": 6,
+      "value": "name",
+      "sha256": "37e5fb0017eaa07c98bff3b6be02ab9491e06e9e85c55cb460fb541931ec1788"
+    },
+    {
+      "address": "0x5e80b2",
+      "xor": 59,
+      "value": "model",
+      "sha256": "20478c0d0f97eb260506f66286e22918a4710caaa3603de8e032151187601e28"
+    },
+    {
+      "address": "0x5e80b8",
+      "xor": 150,
+      "value": "btm_model",
+      "sha256": "969d64505611158234026e070a4d207b7a4e202ff7583cb0e835432b84d173b3"
+    },
+    {
+      "address": "0x5e80c2",
+      "xor": 19,
+      "value": "series",
+      "sha256": "f1a38e90ad1cfa68c7d55eeb6b168c6f9a53a8b42cea97e345f759402df45a20"
+    },
+    {
+      "address": "0x5e80c9",
+      "xor": 98,
+      "value": "api_hr_measure",
+      "sha256": "748b7122fe44d3fa8862407385c984cbbaecef57bfb118cfe7b0b5ccaa2bebe1"
+    },
+    {
+      "address": "0x5e80d8",
+      "xor": 159,
+      "value": "algorithm",
+      "sha256": "f9cc6a8eda4df446fae57983b8a36213aa6dddcd31177d65ff4eb64495409487"
+    },
+    {
+      "address": "0x5e80e2",
+      "xor": 13,
+      "value": "num_boards",
+      "sha256": "49ca714984094638a331eabbc45d77ac4cc7b1d9651d4c04e3f198589d3b7d31"
+    },
+    {
+      "address": "0x5e80ed",
+      "xor": 170,
+      "value": "cooling_type",
+      "sha256": "e1ee88907a8762e407a084f60a216d4d7b28f362b7250c097960b70ca5b82c02"
+    },
+    {
+      "address": "0x5e80fa",
+      "xor": 168,
+      "value": "bypass_mode",
+      "sha256": "66f663ab9e89e4987e0d96a209832ec1570a20944d150c5d8b741497aed791fa"
+    },
+    {
+      "address": "0x5e816c",
+      "xor": 189,
+      "value": "board",
+      "sha256": "57d01b85cfc036d980d31fb521743765b3b7ec254817aaae217f5177492f36fe"
+    },
+    {
+      "address": "0x5e8172",
+      "xor": 215,
+      "value": "{si,sf,si,si,si,sb,s?i}",
+      "sha256": "539db64f86b3af2610db49aefdc53309f98a08eac1c3aa3f434cf28988b55841"
+    },
+    {
+      "address": "0x5e818a",
+      "xor": 150,
+      "value": "chip_addr_interval",
+      "sha256": "ae53401ed5fdc0310ff84b75aa84a32219c6ac0b42349724a7ab713fa957e38e"
+    },
+    {
+      "address": "0x5e819d",
+      "xor": 163,
+      "value": "freq_step",
+      "sha256": "18fd4ad876d9da46cffb3760e29e897632117decb6c6f610ad63d48d447395ee"
+    },
+    {
+      "address": "0x5e81a7",
+      "xor": 3,
+      "value": "num_chips",
+      "sha256": "04e6f33bc23646d88256602331c0535603d6a6c8c8503408b78817d7a1855eaf"
+    },
+    {
+      "address": "0x5e81b1",
+      "xor": 90,
+      "value": "num_chips_per_domain",
+      "sha256": "86bd1760a9aeb3eb44afd235fd8d00febe3c2c3ed35102b602c91ad4a7ebd93f"
+    },
+    {
+      "address": "0x5e81c6",
+      "xor": 27,
+      "value": "num_domains",
+      "sha256": "9a7715cbc95919cc6fdd6f27be29215748303d2e1364b5ad06e71c73356c44fa"
+    },
+    {
+      "address": "0x5e81d2",
+      "xor": 62,
+      "value": "volt_ctrl",
+      "sha256": "6a3aa316c3f80c027e1077d314255be70a344a97b2e663ae9849df02adee6ac4"
+    },
+    {
+      "address": "0x5e81dc",
+      "xor": 6,
+      "value": "base_bus_switch_addr",
+      "sha256": "3c38eb90cb315cd4d24f886536a1484aefb9e1df1254c46ce117d3c61a735054"
+    },
+    {
+      "address": "0x5e871c",
+      "xor": 70,
+      "value": "chip",
+      "sha256": "d9075ea22a2c4211c83b7269179eb84906254dc84b7e45f51882fe3a5e128a90"
+    },
+    {
+      "address": "0x5e8721",
+      "xor": 29,
+      "value": "{si,si,si,ss,si,si,si,si,si,si,si}",
+      "sha256": "667a672e464dc0fd10a298d18ec9cdebe6786478156cc5dc92d14c22263de225"
+    },
+    {
+      "address": "0x5e8744",
+      "xor": 38,
+      "value": "analog_mux",
+      "sha256": "455e5782112ad2c461ff13539bb22bd9318ee382999f8e2c4e380544e4f032ca"
+    },
+    {
+      "address": "0x5e874f",
+      "xor": 177,
+      "value": "core_clock_delay",
+      "sha256": "32f2f639bffce0617715cc7bef03a0ab09213b5e7fba7194eed88e6fdd881a6f"
+    },
+    {
+      "address": "0x5e8760",
+      "xor": 121,
+      "value": "io_drive_strength",
+      "sha256": "dfa5c49a993826be0d5f5e872b627ac96f6812901ce601d1d89c3fe6d80f253b"
+    },
+    {
+      "address": "0x5e8772",
+      "xor": 253,
+      "value": "num_cores",
+      "sha256": "e6efe00257dc1c0bac97516b7d34be2cdb7bfff6de39e568c1c5dcd133461d8a"
+    },
+    {
+      "address": "0x5e877c",
+      "xor": 155,
+      "value": "pulse_mode",
+      "sha256": "66ab6d7c6f992a2eeae33a2465964c70b530bc6d8579de57024a1d878f3f648a"
+    },
+    {
+      "address": "0x5e8787",
+      "xor": 172,
+      "value": "pulse_width",
+      "sha256": "e01af70dfe166fcceec31198af6ac1a454c952a42050d0663970f1acb427d141"
+    },
+    {
+      "address": "0x5e8793",
+      "xor": 54,
+      "value": "ver_roll_mask",
+      "sha256": "9abc384bdb67c90119535800878ed613c2779ce83d796a8f8dafe4468c76bb6a"
+    },
+    {
+      "address": "0x5e87a1",
+      "xor": 49,
+      "value": "ticket_mask",
+      "sha256": "81c1c9356fb71215258f004a4df325b178e1c858248fffe4f7a74a6cea39b1c8"
+    },
+    {
+      "address": "0x5e87ad",
+      "xor": 23,
+      "value": "uart_speed",
+      "sha256": "8ad71d875024d1c1c3353a041769897086b65ab9a3b1d39fb24e21adbe15f25a"
+    },
+    {
+      "address": "0x5e87b8",
+      "xor": 56,
+      "value": "diff",
+      "sha256": "cfcb604eeab0115fedd6cc4c0e02378b8d8ca31832075bc9253d530a5ae22b6e"
+    },
+    {
+      "address": "0x5e8d96",
+      "xor": 251,
+      "value": "/var/run/hwscan/hw-info.json",
+      "sha256": "a775f1d0ace53c4bae2fa226eb956f175a9eea0507494e233115fb9051cddacc"
+    },
+    {
+      "address": "0x5e8e58",
+      "xor": 62,
+      "value": "status",
+      "sha256": "7cbc59b8509b358bd2ee3d2ad0579f009c36b99e6cfd8506a8f79f115160c1d0"
+    },
+    {
+      "address": "0x5e8e75",
+      "xor": 188,
+      "value": "serial",
+      "sha256": "cbbc532efd9018c12b136fcbd2179a1c2cb8712b1a0773adf69787b8e615cfe2"
+    },
+    {
+      "address": "0x5e8eff",
+      "xor": 144,
+      "value": "{ss,ss,sf}",
+      "sha256": "01c6b90d55b5e6893ed07a36048b6b7629732f66ebe539e4809f3f7030e92f1c"
+    },
+    {
+      "address": "0x5e8f0a",
+      "xor": 142,
+      "value": "model",
+      "sha256": "b0e915a33335835bd44695805f93bc3b510ec745205e9ca00cc6a4c7b116e4eb"
+    },
+    {
+      "address": "0x5e8f10",
+      "xor": 175,
+      "value": "hr_stock",
+      "sha256": "62754b303ff0497eba5166db53b13adc2469a348d0e3b3e32f01944b5566a774"
+    },
+    {
+      "address": "0x5e8f19",
+      "xor": 124,
+      "value": "boards",
+      "sha256": "45646278b444473b34dfdacbbd2feb010f1dad167fd7432a09fdbd01ab3217ba"
+    },
+    {
+      "address": "0x5e8f49",
+      "xor": 255,
+      "value": "{si,ss,ss,ss,sf,si,si,si}",
+      "sha256": "ca4b5c9748cb61eb3d9273129ef099af816b09d23a626348022e1a742281606e"
+    },
+    {
+      "address": "0x5e8f63",
+      "xor": 205,
+      "value": "id",
+      "sha256": "9f557ff72a9be9acc755880e43fde2326550615b191bc3a9e4a0aea0088a530d"
+    },
+    {
+      "address": "0x5e8f66",
+      "xor": 231,
+      "value": "hashrate",
+      "sha256": "e12af50471bfebcd8fa4e80eafb047aff052ed3247ce957c9de1832cb9ae5777"
+    },
+    {
+      "address": "0x5e8f6f",
+      "xor": 204,
+      "value": "freq",
+      "sha256": "dd3ffcb4d26acf0fc9313c26c92e40e0864fb107d4e2f0f3aee0887c5ff97206"
+    },
+    {
+      "address": "0x5e8f74",
+      "xor": 104,
+      "value": "volt",
+      "sha256": "a4e1b7fdef829690c20b2481330f364b1fa4150769ac9ed6a91ff597d6ff55eb"
+    },
+    {
+      "address": "0x5e8f79",
+      "xor": 142,
+      "value": "bin",
+      "sha256": "79edf40b02872a03cdbf50fa093cd7f7c75d698055b2e6462eb608efd7313941"
+    }
+  ],
+  "slot_advance": {
+    "start": "0xc4dbc",
+    "stop": "0xc4dd4",
+    "range_sha256": "522b2b60b4cbacc9f68d969086a3472f355e08da6ff59f2120549d5932c4ddf1",
+    "global": "0x653458",
+    "before_uart_call": "0xc4ea8",
+    "behavior": "increment modulo 32 before UART call; does not establish remote drain"
+  },
+  "firmware_inputs": {
+    "etc/init.d/S12hwscan": "1f64fa20ab1c8cc003c5cb9ff361f1eff148974228be5d9b77cedde38468e756",
+    "etc/fw-info.json": "98f31e84aa102d6a24dc868a175db96d428edd7a76bcebb94b552a8b0d092be7",
+    "usr/bin/hwscan": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077"
+  },
+  "scope": "Execute original setup of JSON key arguments, not the JSON parser or physical scanner. Literal XOR decoded separately, constructors not executed. Five bounded argument-setup slices and 32 slot transitions.",
+  "hooks": [
+    "json_object_get: capture board/chip name and return inert synthetic pointer; no JSON values substituted into calculations"
+  ],
+  "not_established": [
+    "physical T21 scan",
+    "power/thermal configuration",
+    "atomic publication of hwscan files",
+    "ASIC consumption or ACK",
+    "safe original hardware slot reuse",
+    "reply CRC validation"
+  ]
+}
