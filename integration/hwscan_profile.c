@@ -39,13 +39,15 @@ int dizzass_hwscan_profile_validate(const struct dizzass_hwscan_profile *p,uint3
         p->board_count>p->nominal_boards || !p->chips_per_chain ||
         p->chips_per_chain>256 || !p->uart_speed || p->uart_speed>10000000)
         return DIZZASS_PROFILE_INVALID;
-    if (p->platform!=2 || p->algorithm!=0 || p->chip!=4)
+    /* Original platform-2 chain_count is 3; reset rejects chain >= 3. */
+    if (p->platform!=2 || p->algorithm!=0 || p->chip!=4 || p->nominal_boards>3 || id>=3)
         return DIZZASS_PROFILE_UNSUPPORTED;
     for(i=0;i<p->board_count;++i) {
         if(p->boards[i].id>=DIZZASS_PROFILE_MAX_BOARDS ||
             !bounded_text(p->boards[i].model) ||
             (p->boards[i].ready!=0 && p->boards[i].ready!=1))
             return DIZZASS_PROFILE_INVALID;
+        if(p->boards[i].id>=3) return DIZZASS_PROFILE_UNSUPPORTED;
         for(j=0;j<i;++j) if(p->boards[j].id==p->boards[i].id)
             return DIZZASS_PROFILE_INVALID;
         if(p->boards[i].id==id) found=p->boards[i].ready ? 1 : -1;
@@ -88,6 +90,7 @@ int dizzass_hwscan_profile_parse(const char *fw,size_t nf,const char *model,size
        number(chip,"uart_speed",1,10000000,&p.uart_speed)||
        number(chip,"ver_roll_mask",0,UINT32_MAX,&p.ver_roll_mask)||
        number(chip,"ticket_mask",0,UINT32_MAX,&p.ticket_mask)) goto done;
+    if(p.nominal_boards>3) {rc=DIZZASS_PROFILE_UNSUPPORTED;goto done;}
     a=json_object_get(h,"boards");
     if(!json_is_array(a)||!json_array_size(a)||json_array_size(a)>p.nominal_boards) goto done;
     p.board_count=(uint32_t)json_array_size(a);
@@ -96,6 +99,7 @@ int dizzass_hwscan_profile_parse(const char *fw,size_t nf,const char *model,size
         if(!json_is_object(v)||number(v,"id",0,DIZZASS_PROFILE_MAX_BOARDS-1,&p.boards[i].id)||
            text(v,"model",p.boards[i].model,sizeof(p.boards[i].model))||
            text(v,"status",name,sizeof(name))) goto done;
+        if(p.boards[i].id>=3) {rc=DIZZASS_PROFILE_UNSUPPORTED;goto done;}
         p.boards[i].ready=!strcmp(name,"ok");
         for(j=0;j<i;++j) if(p.boards[i].id==p.boards[j].id) goto done;
     }

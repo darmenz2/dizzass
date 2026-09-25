@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "base_commit": "df3ddd1220c3a36bd5561412e3ba1801dcce910d",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "ranges": [
+    {"name":"platform_caller","start":"0x732ac","end_exclusive":"0x732c8","sha256":"ccb3ba53933ab6b67d6d20c30198c133acd824cf6432d065e4331f472585f43a"},
+    {"name":"platform_initializer_selection","start":"0xfbb98","end_exclusive":"0xfd794","sha256":"b01ac8a837da4a6cd33e174c1e51d47ae8e77a1654caf989d921b194c3906b1c"},
+    {"name":"psu_on_dispatch","start":"0xfe310","end_exclusive":"0xfe398","sha256":"812409093d5c287d74d4e53088a25cee2efe8380f97811b0a8234c6926e45724"},
+    {"name":"psu_off_dispatch","start":"0xfe398","end_exclusive":"0xfe420","sha256":"62acb01b67770576fa2cdf3c73f259de8be5959180c7b2321df2a5c4898d2b7d"},
+    {"name":"chain_reset_dispatch","start":"0xfde14","end_exclusive":"0xfdeb4","sha256":"8b37b80abb27e8277baedf59f33f01c00cf5f1c43d8bf90a48d38fa430a17a85"},
+    {"name":"aml_chain_reset","start":"0x11bc14","end_exclusive":"0x11bd64","sha256":"4d148f2f5d715505837da5f884a8c06777f5510aa8a536072ec1ab398bd024b4"},
+    {"name":"aml_chain_count","start":"0x11b6c8","end_exclusive":"0x11b708","sha256":"a821d130d717504314f2f6761276d0c153ac1b1ff53dc01b583af770395c9bdf"},
+    {"name":"aml_psu_on","start":"0x11c978","end_exclusive":"0x11ca74","sha256":"5956c23e3e1999b8a81a6aebdb63ae70397082e987e41d0ff6be2007851f8a02"},
+    {"name":"aml_psu_off","start":"0x11ca74","end_exclusive":"0x11cbe0","sha256":"db1734f06e1b33e2384c7b61cbe3f53e20687510cf8b85cf3fb4f51bcfc09129"},
+    {"name":"gpio_stdio_write","start":"0x124ba4","end_exclusive":"0x124d64","sha256":"81e0fd95b3a81467f337414077bafa50993e56551f4945c61a6b533ea9bf7a92"},
+    {"name":"shutdown_orchestrator","start":"0x6b778","end_exclusive":"0x6b8fc","sha256":"ce2d281c0f75b80f008b099f5afc9c3402cc0185b90798165292e7154cac5ffe"},
+    {"name":"thermal_cutoff","start":"0x58e68","end_exclusive":"0x5917c","sha256":"ed4bf9a47368d5585a9b5f2f420677e8b3b3f5c78ba4f298b86096a0fc995b91"},
+    {"name":"aml_reset_pin_table","start":"0x5b29d8","end_exclusive":"0x5b29e4","sha256":"26286c9cb9d706ff4db35004fdfbf77529d664e7985e32806d8d28c760b50780"}
+  ],
+  "platform":{"selector":2,"chip_selector":4,"gpio_power":437,"gpio_reset":[454,455,456],"power_on_value":0,"power_off_value":1,"reset_assert_value":0},
+  "observed_limitations":["uninitialized PSU off returns zero without GPIO write","GPIO helper ignores fprintf and fclose status after successful fopen","top-level shutdown ignores reset return codes","top-level shutdown skips resets after PSU-off error","no drain or rail-voltage confirmation in the observed shutdown path"],
+  "reconstructed_behavior":["power-gate and reset pin/level requests","signed PCB-before-chip >= cutoff predicate"],
+  "new_policy":["checked legacy GPIO attribute I/O","best-effort stop all channels then cutoff/reset with full error receipt","expired/missing/foreign-epoch telemetry trips native channels","no rearm or slot-reuse permission"],
+  "original_external_hooks":["GPIO syscalls replaced at 0x124ba4 in control tests","libc fopen/fprintf/fclose/format mocked in separate GPIO error tests","logging and mutex functions mocked","thermal chain-stop/secondary-action/event are captured, not physically performed","thermal extra per-core diagnostics getter forced to zero"],
+  "negative_control":"Deliberately re-create a software-only session without a clean-device boundary: identical wire job/header plus stale CRC-valid nonce cannot distinguish new job metadata.",
+  "public_abi_source":"https://cdn.kernel.org/doc/html/latest/userspace-api/gpio/sysfs.html",
+  "not_completed":["physical profile and rail measurements","PSU voltage/I2C protocol/heartbeat","full board initialization and sensor/fan drivers","hardware watchdog","proven hardware drain and safe slot reuse"],
+  "hardware_commands_sent":false,
+  "vendor_process_executed":false,
+  "production_registration":false
+}
