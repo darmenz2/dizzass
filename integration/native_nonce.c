@@ -42,13 +42,10 @@ int dizzass_nonce_decode_payload(uint32_t chip_selector, uint32_t variant,
     return DIZZASS_NONCE_OK;
 }
 
-int dizzass_nonce_check_matched(const struct dizzass_nonce_match *match,
-    const struct dizzass_nonce_reply *reply, struct dizzass_nonce_check *out)
+int dizzass_nonce_match_status(const struct dizzass_nonce_match *match,
+    const struct dizzass_nonce_reply *reply)
 {
-    struct dizzass_nonce_check result = {0};
-    const struct work *source;
-
-    if (!match || !reply || !out || !match->work || out->work ||
+    if (!match || !reply || !match->work ||
         match->slot > 31 || reply->slot > 31 ||
         match->variant > 2 || reply->variant > 2)
         return DIZZASS_NONCE_INVALID;
@@ -58,10 +55,24 @@ int dizzass_nonce_check_matched(const struct dizzass_nonce_match *match,
         return DIZZASS_NONCE_WRONG_SLOT;
     if (reply->variant != match->variant)
         return DIZZASS_NONCE_WRONG_FORMAT;
-    source = match->work;
     if ((match->version_base_word | reply->version_bits) !=
-        read_le_word(source->data))
+        read_le_word(match->work->data))
         return DIZZASS_NONCE_WRONG_VERSION;
+    return DIZZASS_NONCE_OK;
+}
+
+int dizzass_nonce_check_matched(const struct dizzass_nonce_match *match,
+    const struct dizzass_nonce_reply *reply, struct dizzass_nonce_check *out)
+{
+    struct dizzass_nonce_check result = {0};
+    const struct work *source;
+    int rc;
+    if (!out || out->work)
+        return DIZZASS_NONCE_INVALID;
+    rc = dizzass_nonce_match_status(match, reply);
+    if (rc)
+        return rc;
+    source = match->work;
 
     result.work = copy_work_noffset((struct work *)source, 0);
     if (!result.work)

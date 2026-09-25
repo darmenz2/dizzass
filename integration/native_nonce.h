@@ -58,6 +58,12 @@ int dizzass_nonce_decode_payload(uint32_t chip_selector, uint32_t variant,
     uint32_t chain_id, const uint8_t *payload, size_t size,
     struct dizzass_nonce_reply *out);
 
+/* Pure validation shared by inspection and native submission. No allocation,
+ * hashing or accounting. Caller keeps match->work stable for the call.
+ */
+int dizzass_nonce_match_status(const struct dizzass_nonce_match *match,
+    const struct dizzass_nonce_reply *reply);
+
 /* Check a reply against the caller's matched work; never alter its header,
  * version, strings or hash. This fixed-work boundary does NOT reconstruct a
  * different version. A version mismatch is rejected before allocating anything.

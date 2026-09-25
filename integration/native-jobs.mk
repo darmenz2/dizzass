@@ -12,7 +12,7 @@ $(DIZZASS_JOBS_DIR):
 	mkdir -p $@
 $(DIZZASS_JOBS_DIR)/test.o: integration/tests/test_native_nonce.c integration/tests/native_jobs_cases.h integration/native_jobs.h integration/native_nonce.h miner.h cgminer.c config.h tests/fixtures/genesis_work.h integration/native-jobs.mk integration/native-nonce.mk | $(DIZZASS_JOBS_DIR)
 	$(CC) $(DIZZASS_NATIVE_CPP) $(DIZZASS_JOBS_FLAGS) -DDIZZASS_TEST_NATIVE_JOBS -c $< -o $@
-$(DIZZASS_JOBS_DIR)/jobs.o: integration/native_jobs.c integration/native_jobs.h integration/native_nonce.h miner.h config.h integration/native-jobs.mk integration/native-nonce.mk | $(DIZZASS_JOBS_DIR)
+$(DIZZASS_JOBS_DIR)/jobs.o: integration/native_jobs.c integration/native_jobs.h integration/native_submit.h integration/native_nonce.h miner.h config.h integration/native-jobs.mk integration/native-nonce.mk | $(DIZZASS_JOBS_DIR)
 	$(CC) $(DIZZASS_NATIVE_CPP) $(DIZZASS_JOBS_FLAGS) $(DIZZASS_JOBS_WARNINGS) -c $< -o $@
 $(DIZZASS_JOBS_DIR)/test: $(DIZZASS_JOBS_OBJS) $(DIZZASS_CORE_OTHER) integration/native-jobs.mk integration/native-nonce.mk
 	$(CC) $(DIZZASS_JOBS_FLAGS) $(cgminer_LDFLAGS) $(LDFLAGS) -Wl,--gc-sections -Wl,--wrap=socket,--wrap=connect,--wrap=libusb_init,--wrap=strdup -Wl,--undefined=__wrap_socket,--undefined=__wrap_connect,--undefined=__wrap_libusb_init,--undefined=__wrap_strdup -o $@ $(DIZZASS_JOBS_OBJS) $(DIZZASS_CORE_OTHER) $(cgminer_LDADD) $(LIBS)

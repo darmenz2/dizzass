@@ -84,6 +84,24 @@ jobs:
           cd "$SOURCE_ROOT"
           make -f Makefile -f integration/native-jobs.mk CC=clang DIZZASS_JOBS_DIR=build/native-jobs-clang DIZZASS_NONCE_DIR=build/native-nonce-clang dizzass-native-jobs-test
           printf '%s\n' 'Clang covers the registry, adapter, native core test TU and RX units. Other objects use the previous GCC native build.'
+      - name: Native submit path into an isolated Stratum queue
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f Makefile -f integration/native-submit.mk dizzass-native-submit-test
+      - name: Native submit lifetime and stop barrier with ASan and UBSan
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f Makefile -f integration/native-submit.mk SANITIZE=1 dizzass-native-submit-test
+      - name: Native submit adapter and harness with Clang
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f Makefile -f integration/native-submit.mk CC=clang DIZZASS_SUBMIT_DIR=build/native-submit-clang DIZZASS_JOBS_DIR=build/native-jobs-clang DIZZASS_NONCE_DIR=build/native-nonce-clang dizzass-native-submit-test
       - name: Production boundary remains unchanged
         shell: bash
         run: |
@@ -92,4 +110,4 @@ jobs:
           make -s -f Makefile -f integration/native-check.mk dizzass-core-sources > "$RUNNER_TEMP/nonce-sources.txt"
           nm --defined-only cgminer > "$RUNNER_TEMP/nonce-core-symbols.txt"
           python3 integration/check_native_core.py --sources "$RUNNER_TEMP/nonce-sources.txt" --symbols "$RUNNER_TEMP/nonce-core-symbols.txt"
-          printf '%s\n' 'Offline native adapter only. No registered T21 driver, hardware commands or pool submission.'
+          printf '%s\n' 'Offline native adapter only. No registered T21 driver, hardware commands or live pool. Submission tests use an isolated native queue without a network consumer.'
