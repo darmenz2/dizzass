@@ -1,0 +1,122 @@
+{
+  "schema": 1,
+  "reference_elf": "reference/cgminer.vendor.elf",
+  "elf_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "observed_source_path": "/tmp/build/libbitmain/src/chip/chip1368.c",
+  "prior_stage14_inventory_contains_path": false,
+  "historical_inventory_modified": false,
+  "new_source_file": "libbitmain/src/chip/chip1368.c",
+  "source_path_xor_key": 216,
+  "source_path_address": "0x5eb3e7",
+  "source_path_length": 42,
+  "ranges": [
+    {
+      "role": "source_string_constructor",
+      "start": "0xe5408",
+      "end_exclusive": "0xe54cc",
+      "sha256": "634fcfef3198c2046289e5e55cfa290e5f4ef2bb8215f66dbf3efb3bc6aaa7cf"
+    },
+    {
+      "role": "chip_helper",
+      "start": "0xe4600",
+      "end_exclusive": "0xe4688",
+      "sha256": "4b11061331ce8cac817f25fd6acfef7b8c7b29cb808cfb01a5d4777972a47936"
+    },
+    {
+      "role": "core_helper",
+      "start": "0xe4688",
+      "end_exclusive": "0xe4690",
+      "sha256": "0b143e3b40544ceaa97e2f5742661bde00f586f279345fc66258e9934b5a207f"
+    },
+    {
+      "role": "chip_dispatch",
+      "start": "0xd2760",
+      "end_exclusive": "0xd280c",
+      "sha256": "f1fd3fd3e7495d6a7b5dcc3659d8b1bcea8f56648e49a1023aedc0bed9aa2680"
+    },
+    {
+      "role": "core_dispatch",
+      "start": "0xd280c",
+      "end_exclusive": "0xd2a84",
+      "sha256": "9ee67f191b440e89710ac9817938af68f4a53d18fbf04c5c534fc849d8337e40"
+    },
+    {
+      "role": "selector_getter",
+      "start": "0xfdfbc",
+      "end_exclusive": "0xfdfcc",
+      "sha256": "a81c7bbc03c830d6cc229b69a23f4e8cdc84621e8e15fe60c4ada1d671e1bce0"
+    },
+    {
+      "role": "chain_count_getter",
+      "start": "0xfe014",
+      "end_exclusive": "0xfe024",
+      "sha256": "905e367b83840eadf9c8edff3d319fe536dc11f86ac7b9de0e7f3e2c53461da9"
+    },
+    {
+      "role": "rx_attribution",
+      "start": "0xc4588",
+      "end_exclusive": "0xc45c4",
+      "sha256": "0a6f67a1fed598a7860812b95f0d5bd397537b3082f4b02cea8da81e221ca8ea"
+    },
+    {
+      "role": "numeric_chip_map",
+      "start": "0x5b0928",
+      "end_exclusive": "0x5b0948",
+      "sha256": "6b8bf30d15788f794ee72cbb0e38505af2d9c14918f10d9a23f41296ff195585"
+    },
+    {
+      "role": "encrypted_chip_names",
+      "start": "0x5e8838",
+      "end_exclusive": "0x5e8870",
+      "sha256": "29cc748b7436972aa6f596a1f1ef1f6a55eac00ba5fc46aa93d94be3af1de4c7"
+    },
+    {
+      "role": "encrypted_source_path",
+      "start": "0x5eb3e7",
+      "end_exclusive": "0x5eb411",
+      "sha256": "21e3cb1265c67df3e206ffcdcc8af58222b08f0252d352b2b1dd982f9300a406"
+    }
+  ],
+  "model_name_slice": {
+    "start": "0xaa714",
+    "stop_before": "0xab2f0",
+    "live_in": "r4=input C string; r1=first comparison string; r5=0",
+    "external_hook": "strcmp @0x5a3608",
+    "string_decoder": "eight explicit XOR-decoded literals; not the full constructor"
+  },
+  "selectors": {
+    "BM1360": 0,
+    "BM1362": 1,
+    "BM1398": 2,
+    "BM1366": 3,
+    "BM1368": 4,
+    "BM1370": 5,
+    "BM1489": 6,
+    "BM1491": 7
+  },
+  "globals": {
+    "selector": "0x654b0c",
+    "chips_per_chain": "0x654b14"
+  },
+  "attribution": {
+    "selector": 4,
+    "chip_helper": "0xe4600",
+    "core_helper": "0xe4688",
+    "chip_dispatch": "0xd2760",
+    "core_dispatch": "0xd280c",
+    "external_calls_hooked": [],
+    "input_domain": "uint32 nonce, selector 4, coherent count in 1..256",
+    "unknown_model_rejected": true,
+    "invalid_count_rejected": true,
+    "guards_are_new": true,
+    "fallback_recovered": false
+  },
+  "limits": [
+    "T21 to selector4 runtime binding not established",
+    "Full model loader and hwscan not reconstructed",
+    "Input count is supplied; no topology discovery",
+    "Output is a calculated location, not a verified share or CRC",
+    "No TX86/TX88 choice or hardware ID-to-slot binding established",
+    "Not a complete chip driver or production registration"
+  ]
+}
