@@ -2,9 +2,12 @@
 #include "integration/native_work_tx.h"
 static unsigned dt_packets, dt_vectors, dt_roundtrips, dt_assertions;
 /* Address-taking and an observable pointer load keep the actual public native
- * helper callable in this test, even when the surrounding core is included. */
+ * helpers callable in this test, even when the surrounding core is included.
+ * Do not weaken the symbol check or change production optimization flags. */
 static struct work *(* volatile dt_copy_native_work)(struct work *, int) =
     copy_work_noffset;
+static bool (* volatile dt_test_native_nonce)(struct work *, uint32_t) =
+    test_nonce;
 #define DT_CHECK(x) do { ++dt_assertions; if (!(x)) { \
     fprintf(stderr, "native-work-tx FAIL %d: %s\n", __LINE__, #x); exit(1); \
 } } while (0)
@@ -82,7 +85,7 @@ static void dt_historical_roundtrip(void)
         DT_CHECK(!memcmp(body+(index ? 0 : 76),"\0\0\0\0",4));
         memset(back->data,0,sizeof(back->data));
         memcpy(back->data,body+(index ? 4 : 0),76);
-        DT_CHECK(test_nonce(back,dn_le(fixture_words+76)));
+        DT_CHECK(dt_test_native_nonce(back,dn_le(fixture_words+76)));
         DT_CHECK(!memcmp(back->hash,fixture_hash,32));
         DT_CHECK(fulltest(back->hash,back->target));
         free_work(back); free_work(w); ++dt_roundtrips;
