@@ -1,0 +1,3 @@
+time-native 1/3: return=0 expected=0 (0.004s)
+time-native 2/3: return=0 expected=0 (0.821s)
+time-native 3/3: return=0 expected=0 (8.605s)

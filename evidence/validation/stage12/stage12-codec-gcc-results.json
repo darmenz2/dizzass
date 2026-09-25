@@ -1,0 +1,9 @@
+{
+  "stage": 12,
+  "status": "PASS",
+  "group": "codec",
+  "comparisons": 1188,
+  "values": 396,
+  "original_hex_bodies_executed": true,
+  "alphabet_initialized_by_original_instructions": true
+}

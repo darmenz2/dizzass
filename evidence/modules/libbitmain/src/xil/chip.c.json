@@ -1,0 +1,43 @@
+{
+  "path": "libbitmain/src/xil/chip.c",
+  "observed_as": "/tmp/build/libbitmain/src/xil/chip.c",
+  "status": "pending-not-implemented",
+  "evidence": [
+    {
+      "address": "0x5edc5e",
+      "xor": 47,
+      "decoded_length": 37,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x0010fa38",
+      "end_exclusive": "0x0010fbd0",
+      "path_references": [
+        {
+          "insn": "0x10fb78",
+          "string": "0x5edc5e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/chip.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0010fc74",
+      "end_exclusive": "0x0010fd38",
+      "path_references": [
+        {
+          "insn": "0x10fc84",
+          "string": "0x5edc5e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/chip.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": []
+}

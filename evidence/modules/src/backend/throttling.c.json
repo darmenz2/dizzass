@@ -1,0 +1,62 @@
+{
+  "path": "src/backend/throttling.c",
+  "observed_as": "/tmp/build/src/backend/throttling.c",
+  "status": "pending-not-implemented",
+  "evidence": [
+    {
+      "address": "0x5e9376",
+      "xor": 105,
+      "decoded_length": 36,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x000b86fc",
+      "end_exclusive": "0x000b90a8",
+      "path_references": [
+        {
+          "insn": "0xb87cc",
+          "string": "0x5e9376",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/throttling.c"
+        },
+        {
+          "insn": "0xb8968",
+          "string": "0x5e9376",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/throttling.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000b9420",
+      "end_exclusive": "0x000bab4c",
+      "path_references": [
+        {
+          "insn": "0xbaa3c",
+          "string": "0x5e9376",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/throttling.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000bab4c",
+      "end_exclusive": "0x000bace4",
+      "path_references": [
+        {
+          "insn": "0xbaba0",
+          "string": "0x5e9376",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/throttling.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": []
+}

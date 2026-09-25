@@ -1,0 +1,248 @@
+rm -rf build
+mkdir -p build/host/libbitmain/src/
+cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c libbitmain/src/uart.c -o build/host/libbitmain/src/uart.o
+mkdir -p build/host/libbitmain/src/chip/
+cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c libbitmain/src/chip/chip1398.c -o build/host/libbitmain/src/chip/chip1398.o
+mkdir -p build/host/libbitmain/src/
+cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c libbitmain/src/pll.c -o build/host/libbitmain/src/pll.o
+mkdir -p build/host/libbitmain/src/aml/
+cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c libbitmain/src/aml/chip.c -o build/host/libbitmain/src/aml/chip.o
+mkdir -p build/host/reconstruction/support/
+cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c reconstruction/support/crc5.c -o build/host/reconstruction/support/crc5.o
+mkdir -p build/host/libbitmain/src/
+cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c libbitmain/src/reg_cache.c -o build/host/libbitmain/src/reg_cache.o
+ar rcs build/libvn135_recovered.a build/host/libbitmain/src/uart.o build/host/libbitmain/src/chip/chip1398.o build/host/libbitmain/src/pll.o build/host/libbitmain/src/aml/chip.o build/host/reconstruction/support/crc5.o build/host/libbitmain/src/reg_cache.o
+mkdir -p build
+cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_chip1398.c -o build/test-chip1398
+mkdir -p build
+cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_pll_aml.c -o build/test-pll-aml
+mkdir -p build
+cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_reg_cache.c -o build/test-reg-cache
+mkdir -p build
+cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror libbitmain/src/uart.c tests/test_uart.c -o build/test-uart
+mkdir -p build
+cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -shared -fPIC libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c -o build/libvn135_recovered.so
+./build/test-chip1398
+host unit tests: PASS (no hardware)
+./build/test-pll-aml
+PLL/AML host guards and flow tests: PASS (no hardware)
+./build/test-reg-cache
+Stage 4 cache/transaction native assertions: PASS
+./build/test-uart
+UART native API guards, legacy retry and lifecycle: PASS
+python3 tests/test_arm_subset.py
+bounded A32 interpreter self-tests: PASS
+python3 tests/test_arm_differential.py
+{
+  "passed": true,
+  "total_cases": 2546,
+  "cases": {
+    "ticket-mask argument slice": 384,
+    "sweep-clock argument slice": 256,
+    "clock-delay argument slice, null context": 384,
+    "clock-delay argument slice, chip context": 384,
+    "analog-mux argument slice": 160,
+    "misc-control transform after injected successful cache read": 528,
+    "CRC5 complete function": 194,
+    "SET_CONFIG packet through original CRC, before transport": 256
+  },
+  "seconds": 2.254
+}
+python3 tests/test_stage3_interpreter.py
+{"passed": true, "synthetic_cases": 1318, "fixture_functions": 12, "scope": "CLZ, halfword post-index store/load, finite binary64 arithmetic/conversions/flags/transfers", "independent_cpu_emulator": false}
+python3 tests/test_stage3_differential.py
+{
+  "passed": true,
+  "total_cases": 3219,
+  "cases": {
+    "PLL legacy: return and all 32 result bytes": 619,
+    "PLL round4: return and all 32 result bytes": 619,
+    "PLL register 0x08 word at SET_CONFIG boundary": 517,
+    "AML chain mask with injected model lookup": 1040,
+    "AML send: return, allocation, lock, write bytes, unlock, release": 371,
+    "AML pure framing versus original write buffer": 53
+  },
+  "seconds": 7.822
+}
+python3 tests/test_stage4_cache_differential.py
+{
+  "passed": true,
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "total_cases": 10346,
+  "cases": {
+    "init: return, all tables and allocation ownership": 519,
+    "destroy: release order, globals and no retained allocations": 999,
+    "default table: all 512 bytes against original init": 8,
+    "get_chain: return, output and whole cache state": 3049,
+    "get_chip: return, output and whole cache state": 3648,
+    "set_chain: return, output and whole cache state": 1021,
+    "set_chip: return, output and whole cache state": 1042,
+    "reset: return, all tables and preserved counts/flag": 60
+  },
+  "seconds": 14.62,
+  "host_chain_size": 528,
+  "original_chain_size": 520,
+  "original_global_addresses": {
+    "pointer": "0x654d68",
+    "chain_count": "0x654d6c",
+    "enabled": "0x654d70"
+  },
+  "hardware_tested": false,
+  "full_miner_tested": false,
+  "method": "Native compiled C state and return compared to complete original A32 cache routines",
+  "limits": [
+    "Local bounded A32 interpreter; not an independent certified emulator.",
+    "calloc/free/memcpy are intercepted; diagnostics are suppressed.",
+    "Explicit C context/native pointers replace vendor singleton and ARM32 pointers.",
+    "Allocation sizes normalized for native pointer width; table contents and ownership compared.",
+    "New integration guards for negative/oversized counts, live reinit and corrupt context tested separately.",
+    "No hardware/cache coherency, multithreading, timing, actual model selection or miner acceptance."
+  ]
+}
+python3 tests/test_stage4_config_differential.py
+{
+  "passed": true,
+  "total_cases": 2048,
+  "cases": {
+    "dispatch success, cache success": 219,
+    "dispatch success, cache failure": 666,
+    "transport failure: one dispatch, no cache mutation": 1163
+  },
+  "seconds": 9.806,
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "examples": [
+    {
+      "mode": 0,
+      "register": "0x0",
+      "transport_result": 0,
+      "return": 0,
+      "packet": "41090300d663bec60b"
+    },
+    {
+      "mode": 0,
+      "register": "0x8",
+      "transport_result": 0,
+      "return": 0,
+      "packet": "4109030839bf4ea407"
+    },
+    {
+      "mode": 0,
+      "register": "0x18",
+      "transport_result": 0,
+      "return": 0,
+      "packet": "41090318bacfa6971b"
+    },
+    {
+      "mode": 0,
+      "register": "0x25",
+      "transport_result": 0,
+      "return": -1,
+      "packet": "41090325a4e190ef05"
+    },
+    {
+      "mode": 0,
+      "register": "0xfc",
+      "transport_result": 0,
+      "return": 0,
+      "packet": "410903fc39cfe11b12"
+    },
+    {
+      "mode": 0,
+      "register": "0xff",
+      "transport_result": 0,
+      "return": -1,
+      "packet": "410903ff31b59a9414"
+    }
+  ],
+  "method": "Complete original 0xee8e4, CRC5 and cache functions run together; only send boundary and diagnostics intercepted",
+  "hardware_tested": false,
+  "full_miner_tested": false,
+  "limits": [
+    "Local A32 interpreter; no independent CPU certification.",
+    "The 0xd26ac transport boundary is injected; no UART or chip acknowledgement.",
+    "Pointer/context layout adapted. Added invalid API guards are not vendor behavior.",
+    "All original cache memory changes and return codes are compared; timing/log text omitted."
+  ]
+}
+python3 tests/test_stage5_uart_differential.py
+{
+  "passed": true,
+  "total_cases": 3248,
+  "cases": {
+    "set_baud": 768,
+    "read": 495,
+    "write_legacy": 1539,
+    "open": 406,
+    "destroy": 20,
+    "flush": 20
+  },
+  "elapsed_seconds": 0.72
+}
+python3 tests/test_stage5_aml_uart_differential.py
+{
+  "passed": true,
+  "total_cases": 689,
+  "cases": {
+    "exact": 53,
+    "eagain_then_success": 53,
+    "exhausted": 53,
+    "positive_short_stale_errno": 53,
+    "short_nonretry": 53,
+    "hard_error": 53,
+    "zero_exhausted": 53,
+    "interrupted": 53,
+    "overreport": 53,
+    "late_success": 53,
+    "changed_error": 53,
+    "no_uart": 53,
+    "no_memory": 53
+  },
+  "elapsed_seconds": 0.326
+}
+python3 tools/check_stage5_evidence.py
+Stage 5 evidence: constructor length/path and AML -> UART call: PASS
+python3 tests/test_tree.py
+module tree and no fake stubs: PASS
+mkdir -p build/arm/libbitmain/src/
+clang --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -ffreestanding -Iinclude -O2 -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c libbitmain/src/uart.c -o build/arm/libbitmain/src/uart.o
+mkdir -p build/arm/libbitmain/src/chip/
+clang --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -ffreestanding -Iinclude -O2 -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c libbitmain/src/chip/chip1398.c -o build/arm/libbitmain/src/chip/chip1398.o
+mkdir -p build/arm/libbitmain/src/
+clang --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -ffreestanding -Iinclude -O2 -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c libbitmain/src/pll.c -o build/arm/libbitmain/src/pll.o
+mkdir -p build/arm/libbitmain/src/aml/
+clang --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -ffreestanding -Iinclude -O2 -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c libbitmain/src/aml/chip.c -o build/arm/libbitmain/src/aml/chip.o
+mkdir -p build/arm/reconstruction/support/
+clang --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -ffreestanding -Iinclude -O2 -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c reconstruction/support/crc5.c -o build/arm/reconstruction/support/crc5.o
+mkdir -p build/arm/libbitmain/src/
+clang --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -ffreestanding -Iinclude -O2 -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c libbitmain/src/reg_cache.c -o build/arm/libbitmain/src/reg_cache.o
+llvm-ar rcs build/libvn135_recovered-armv7.a build/arm/libbitmain/src/uart.o build/arm/libbitmain/src/chip/chip1398.o build/arm/libbitmain/src/pll.o build/arm/libbitmain/src/aml/chip.o build/arm/reconstruction/support/crc5.o build/arm/libbitmain/src/reg_cache.o
+python3 tools/check_evidence.py
+evidence: PASS; 26 code slices, 9 data records, 46 observed paths
+python3 tools/extract_reg_cache_defaults.py
+cache defaults: 8 selectors, 512 bytes each, PASS
+python3 tools/check_stage5_evidence.py
+Stage 5 evidence: constructor length/path and AML -> UART call: PASS
+mkdir -p build
+cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_chip1398.c -o build/test-sanitized
+ASAN_OPTIONS=detect_leaks=0 ./build/test-sanitized
+host unit tests: PASS (no hardware)
+cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_pll_aml.c -o build/test-pll-aml-sanitized
+ASAN_OPTIONS=detect_leaks=0 ./build/test-pll-aml-sanitized
+PLL/AML host guards and flow tests: PASS (no hardware)
+cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_reg_cache.c -o build/test-reg-cache-sanitized
+ASAN_OPTIONS=detect_leaks=1 ./build/test-reg-cache-sanitized
+Stage 4 cache/transaction native assertions: PASS
+cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer libbitmain/src/uart.c tests/test_uart.c -o build/test-uart-sanitized
+ASAN_OPTIONS=detect_leaks=1 ./build/test-uart-sanitized
+UART native API guards, legacy retry and lifecycle: PASS
+mkdir -p build
+cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror libbitmain/src/uart.c libbitmain/src/aml/chip.c tests/test_uart_linux_pty.c -pthread -o build/test-uart-pty
+./build/test-uart-pty
+Linux PTY: open/termios2/arbitrary baud/fragmented RX/TX frame/flush/destroy: PASS
+No physical UART, chip protocol, timings, init, mining or autotune tested.
+mkdir -p build
+cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer libbitmain/src/uart.c libbitmain/src/aml/chip.c tests/test_uart_linux_pty.c -pthread -o build/test-uart-pty-sanitized
+ASAN_OPTIONS=detect_leaks=1 ./build/test-uart-pty-sanitized
+Linux PTY: open/termios2/arbitrary baud/fragmented RX/TX frame/flush/destroy: PASS
+No physical UART, chip protocol, timings, init, mining or autotune tested.
+VALIDATION_EXIT=0

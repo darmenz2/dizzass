@@ -1,0 +1,49 @@
+{
+  "group": "difficulty-native",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "./build/test-work-difficulty"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "difficulty-native-00.log",
+      "seconds": 0.002,
+      "sha256": "a9e15f25998d736f4591ae78bf127dc8ebdbf39fb5e4669c96f5ba512f9972f0"
+    },
+    {
+      "command": [
+        "./build/vn135-rebuild-genesis-difficulty"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "difficulty-native-01.log",
+      "seconds": 0.002,
+      "sha256": "3059cccc1e8b83d44347e286d925911886fa59fee764c27b4ed904eaa7bfb9a7"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage10_interpreter.py"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "difficulty-native-02.log",
+      "seconds": 1.079,
+      "sha256": "f67680b178e3ef036d76ad6fe7656fa057d3aebe97b7009b7150738489a91d23"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage10_compile_policy.py"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "difficulty-native-03.log",
+      "seconds": 0.963,
+      "sha256": "0d95415ac56f51874d65b082a4c15208e289bc3f6de755af03a152e091164370"
+    }
+  ]
+}

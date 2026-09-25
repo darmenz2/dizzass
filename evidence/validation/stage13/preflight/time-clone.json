@@ -1,0 +1,19 @@
+{
+  "group": "time-clone",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage12_differential.py",
+        "clone"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "time-clone-00.log",
+      "seconds": 4.826,
+      "sha256": "def1d09133dbf1f30f300182ee67ec7fba1b1079a89d9e49a41f32fa3c9d062c"
+    }
+  ]
+}

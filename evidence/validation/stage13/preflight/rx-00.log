@@ -1,0 +1,2 @@
+COMMAND: ['./build/test-work-rx']
+Stage 6 C safety and stream chunk-invariance: PASS (3600 stream replays)

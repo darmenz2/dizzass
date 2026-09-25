@@ -1,0 +1,49 @@
+{
+  "path": "libbitmain/src/bb/chip.c",
+  "observed_as": "/tmp/build/libbitmain/src/bb/chip.c",
+  "status": "pending-not-implemented",
+  "evidence": [
+    {
+      "address": "0x5ee91c",
+      "xor": 212,
+      "decoded_length": 36,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x0011d0cc",
+      "end_exclusive": "0x0011d258",
+      "path_references": [
+        {
+          "insn": "0x11d1b0",
+          "string": "0x5ee91c",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/bb/chip.c"
+        },
+        {
+          "insn": "0x11d1e4",
+          "string": "0x5ee91c",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/bb/chip.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0011d3a8",
+      "end_exclusive": "0x0011d510",
+      "path_references": [
+        {
+          "insn": "0x11d3e8",
+          "string": "0x5ee91c",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/bb/chip.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": []
+}

@@ -1,0 +1,19 @@
+{
+  "group": "verify-hash",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "tests/test_stage8_differential.py",
+        "hash"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "verify-hash-00.log",
+      "seconds": 13.53,
+      "sha256": "64b483e07c1c7294949ff87a029e3c02fb16fd32ebd1cf515e06a8b5902aaffa"
+    }
+  ]
+}

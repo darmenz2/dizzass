@@ -1,0 +1,2 @@
+COMMAND: ['./build/vn135-work-lifecycle']
+{"independent_clone_after_source_clear":true,"hash_matches_fixture":true,"vendor_abi_compatible":false,"job_freshness_checked":false,"submitted":false,"hardware_tested":false}

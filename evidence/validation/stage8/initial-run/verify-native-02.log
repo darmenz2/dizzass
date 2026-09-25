@@ -1,0 +1,2 @@
+COMMAND: ['/opt/pyvenv/bin/python', 'tests/test_verify_header_cli.py']
+{"status": "PASS", "separate_cli_cases": 166, "no_network": true}

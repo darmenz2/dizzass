@@ -1,0 +1,29 @@
+{
+  "group": "cache",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage4_cache_differential.py"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "cache-00.log",
+      "seconds": 11.942,
+      "sha256": "1e3a85d4bf4e0bbc499b13adb4ee9d9fbab8c15c4ce4423502a41da7f04d234f"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage4_config_differential.py"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "cache-01.log",
+      "seconds": 8.58,
+      "sha256": "253917c44784b64e88f255303134c02b20aee36474c61a68eebf15d843a7ea63"
+    }
+  ]
+}

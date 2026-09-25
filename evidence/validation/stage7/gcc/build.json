@@ -1,0 +1,41 @@
+{
+  "group": "build",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "make",
+        "-f",
+        "Makefile.recovery",
+        "clean"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "build-00.log",
+      "seconds": 0.004,
+      "sha256": "0f1567cef728505a178b9147f8ff6c877e18b995ac09aefbdec04156c84a5e22"
+    },
+    {
+      "command": [
+        "make",
+        "-f",
+        "Makefile.recovery",
+        "all",
+        "build/libvn135_recovered.so",
+        "build/test-chip1398",
+        "build/test-pll-aml",
+        "build/test-reg-cache",
+        "build/test-uart",
+        "build/test-work-rx",
+        "build/test-work-nonce",
+        "arm"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "build-01.log",
+      "seconds": 4.136,
+      "sha256": "6db6ea91bb8abf2b5ea7e88b89970628c53dd84eba8351152f6178fd2a72cc6b"
+    }
+  ]
+}

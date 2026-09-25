@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "synthetic_instruction_cases": 2649,
+  "instructions": [
+    "ADC/ADCS",
+    "LDRD/STRD restricted aligned forms"
+  ],
+  "independent_hardware_validation": false
+}

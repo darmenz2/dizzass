@@ -1,0 +1,43 @@
+mkdir -p build
+clang -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -shared -fPIC libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c -o build/libvn135_recovered.so
+mkdir -p build
+clang -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror libbitmain/src/uart.c tests/test_uart.c -o build/test-uart
+mkdir -p build
+clang -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror libbitmain/src/uart.c libbitmain/src/aml/chip.c tests/test_uart_linux_pty.c -pthread -o build/test-uart-pty
+UART native API guards, legacy retry and lifecycle: PASS
+Linux PTY: open/termios2/arbitrary baud/fragmented RX/TX frame/flush/destroy: PASS
+No physical UART, chip protocol, timings, init, mining or autotune tested.
+{
+  "passed": true,
+  "total_cases": 3248,
+  "cases": {
+    "set_baud": 768,
+    "read": 495,
+    "write_legacy": 1539,
+    "open": 406,
+    "destroy": 20,
+    "flush": 20
+  },
+  "elapsed_seconds": 0.767
+}
+{
+  "passed": true,
+  "total_cases": 689,
+  "cases": {
+    "exact": 53,
+    "eagain_then_success": 53,
+    "exhausted": 53,
+    "positive_short_stale_errno": 53,
+    "short_nonretry": 53,
+    "hard_error": 53,
+    "zero_exhausted": 53,
+    "interrupted": 53,
+    "overreport": 53,
+    "late_success": 53,
+    "changed_error": 53,
+    "no_uart": 53,
+    "no_memory": 53
+  },
+  "elapsed_seconds": 0.323
+}
+CLANG_VALIDATION_EXIT=0

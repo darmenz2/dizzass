@@ -1,0 +1,906 @@
+--- a/Makefile.recovery
++++ b/Makefile.recovery
+@@ -7,8 +7,8 @@
+ CPPFLAGS += -Iinclude
+ CFLAGS ?= -O2 -g
+ STRICT = -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror
+-SOURCES = libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c
+-HEADERS = include/xminer/recovery/chip1398.h include/xminer/recovery/pll.h include/xminer/recovery/aml_chip.h
++SOURCES = libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c
++HEADERS = include/xminer/recovery/chip1398.h include/xminer/recovery/pll.h include/xminer/recovery/aml_chip.h include/xminer/recovery/reg_cache.h reconstruction/data/reg_cache_defaults.inc
+ OBJECTS = $(patsubst %.c,build/host/%.o,$(SOURCES))
+ ARM_OBJECTS = $(patsubst %.c,build/arm/%.o,$(SOURCES))
+ .PHONY: all test arm sanitize evidence-check clean full-runtime
+@@ -27,13 +27,19 @@
+ build/test-pll-aml: $(SOURCES) tests/test_pll_aml.c $(HEADERS)
+ 	mkdir -p build
+ 	$(CC) $(CPPFLAGS) $(CFLAGS) $(STRICT) $(SOURCES) tests/test_pll_aml.c -o $@
+-test: build/test-chip1398 build/test-pll-aml build/libvn135_recovered.so
++build/test-reg-cache: $(SOURCES) tests/test_reg_cache.c $(HEADERS)
++	mkdir -p build
++	$(CC) $(CPPFLAGS) $(CFLAGS) $(STRICT) $(SOURCES) tests/test_reg_cache.c -o $@
++test: build/test-chip1398 build/test-pll-aml build/test-reg-cache build/libvn135_recovered.so
+ 	./build/test-chip1398
+ 	./build/test-pll-aml
++	./build/test-reg-cache
+ 	$(PYTHON) tests/test_arm_subset.py
+ 	$(PYTHON) tests/test_arm_differential.py
+ 	$(PYTHON) tests/test_stage3_interpreter.py
+ 	$(PYTHON) tests/test_stage3_differential.py
++	$(PYTHON) tests/test_stage4_cache_differential.py
++	$(PYTHON) tests/test_stage4_config_differential.py
+ 	$(PYTHON) tests/test_tree.py
+ arm: $(ARM_OBJECTS)
+ 	$(LLVM_AR) rcs build/libvn135_recovered-armv7.a $(ARM_OBJECTS)
+@@ -46,8 +52,11 @@
+ 	ASAN_OPTIONS=detect_leaks=0 ./build/test-sanitized
+ 	$(CC) $(CPPFLAGS) -O1 -g $(STRICT) -fsanitize=address,undefined -fno-omit-frame-pointer $(SOURCES) tests/test_pll_aml.c -o build/test-pll-aml-sanitized
+ 	ASAN_OPTIONS=detect_leaks=0 ./build/test-pll-aml-sanitized
++	$(CC) $(CPPFLAGS) -O1 -g $(STRICT) -fsanitize=address,undefined -fno-omit-frame-pointer $(SOURCES) tests/test_reg_cache.c -o build/test-reg-cache-sanitized
++	ASAN_OPTIONS=detect_leaks=1 ./build/test-reg-cache-sanitized
+ evidence-check:
+ 	$(PYTHON) tools/check_evidence.py
++	$(PYTHON) tools/extract_reg_cache_defaults.py
+ full-runtime:
+ 	@echo "NOT IMPLEMENTED: T21 runtime/model dispatch/live transport/PLL programming/PSU/autotune are incomplete." >&2
+ 	@exit 2
+--- a/include/xminer/recovery/chip1398.h
++++ b/include/xminer/recovery/chip1398.h
+@@ -4,6 +4,7 @@
+ #include <stdint.h>
+ #include <stddef.h>
+ #include "xminer/recovery/pll.h"
++#include "xminer/recovery/reg_cache.h"
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
+@@ -26,6 +27,23 @@
+ extern const vn135_pll_limits vn135_bm1398_pll_limits;
+ uint32_t vn135_bm1398_pll_parameter_word(uint32_t reference_divider, uint32_t feedback_divider,
+     uint32_t post_divider1, uint32_t post_divider2);
++
++/* Recovered 0xee8e4 command/cache transaction. No default/live transport.
++ * The callback sees the 9-byte payload; 0 means successful dispatch, any
++ * nonzero value means failure. A successful write is NOT a chip acknowledgement.
++ * Wire header tests mode==1, but cache fanout tests mode!=0 (original behavior).
++ * The original routine sends BEFORE validating the cache index/register.
++ * Therefore -1 may follow a successful dispatch; it must NOT trigger an
++ * automatic retry. Preflight any live-hardware request outside this API.
++ */
++typedef struct { int32_t cache_index; uint32_t wire_address; } vn135_chip_reference;
++typedef struct {
++    void *context;
++    int (*send_payload)(void *context, const uint8_t *payload, size_t size);
++} vn135_config_sender;
++int vn135_bm1398_set_config(vn135_reg_cache *cache, int32_t chain_index,
++    uint32_t mode, const vn135_chip_reference *chip, uint32_t register_address,
++    uint32_t value, const vn135_config_sender *sender);
+ #ifdef __cplusplus
+ }
+ #endif
+--- /dev/null
++++ b/include/xminer/recovery/reg_cache.h
+@@ -0,0 +1,74 @@
++/* SPDX-License-Identifier: GPL-3.0-only
++ * Integration API for recovered libbitmain/src/reg_cache.c behavior.
++ * No hardware writes. Caller must serialize operations and own the allocator.
++ * This is not a binary-compatible replacement for vendor globals or structs.
++ */
++#ifndef VN135_RECOVERY_REG_CACHE_H
++#define VN135_RECOVERY_REG_CACHE_H
++#include <stddef.h>
++#include <stdint.h>
++#ifdef __cplusplus
++extern "C" {
++#endif
++#define VN135_REG_CACHE_SLOTS 64
++#define VN135_REG_CACHE_SELECTORS 8
++
++typedef struct { uint32_t address, value; } vn135_reg_entry;
++typedef struct { vn135_reg_entry entries[VN135_REG_CACHE_SLOTS]; } vn135_reg_table;
++typedef struct {
++    vn135_reg_table common;
++    vn135_reg_table *chips;
++    int32_t chip_count;
++} vn135_reg_chain;
++typedef struct {
++    void *context;
++    /* Return zero-initialized storage or NULL. Arguments follow the original
++     * (element_size, count) order. Host pointer width changes chain size;
++     * the original/ARM32 chain record is 520 bytes, a chip table is 512. */
++    void *(*allocate_zeroed)(void *context, size_t element_size, size_t count);
++    void (*release)(void *context, void *memory);
++} vn135_reg_allocator;
++typedef struct {
++    vn135_reg_chain *chains;
++    int32_t chain_count;
++    uint8_t initialized;
++    vn135_reg_allocator allocator;
++} vn135_reg_cache;
++
++/* selector is the vendor internal enum 0..7, not a chip number/model name.
++ * Exact table data; not recommended operating settings. */
++int vn135_reg_cache_defaults(uint32_t selector, vn135_reg_table *out);
++/* A zero-initialized cache is required. Reinitializing a live/partial cache
++ * returns -2. 0 success; -1 invalid selector/allocation failure. Negative
++ * counts, overflow or invalid integration arguments return -2.
++ * On allocation failure, original partial allocation is retained and the
++ * cache remains disabled. Call destroy before retrying. */
++int vn135_reg_cache_init(vn135_reg_cache *cache, uint32_t selector,
++    int32_t chain_count, int32_t chip_count, const vn135_reg_allocator *allocator);
++/* Restore prefixes of allocated chain/chip arrays, matching 0x106e58.
++ * Does not enable/disable cache or change stored counts. Added bounds checks
++ * refuse lengths exceeding owned storage (-2). Missing storage returns -1.
++ * A later missing chip array may leave earlier chains reset, as in original. */
++int vn135_reg_cache_reset(vn135_reg_cache *cache, uint32_t selector,
++    int32_t chain_count, int32_t chip_count);
++/* 0 success, -1 disabled/cache index/register/output error or not found.
++ * Added structural guards return -2 for corrupt integration context.
++ * Getters do not modify output on failure. No read-through to hardware.
++ * set_chain updates common plus the SAME slot in every chip table;
++ * set_chip changes only the selected chip, not the common entry. */
++int vn135_reg_cache_get_chain(const vn135_reg_cache *cache, int32_t chain,
++    uint32_t reg, uint32_t *value);
++int vn135_reg_cache_set_chain(vn135_reg_cache *cache, int32_t chain,
++    uint32_t reg, uint32_t value);
++int vn135_reg_cache_get_chip(const vn135_reg_cache *cache, int32_t chain,
++    int32_t chip, uint32_t reg, uint32_t *value);
++int vn135_reg_cache_set_chip(vn135_reg_cache *cache, int32_t chain,
++    int32_t chip, uint32_t reg, uint32_t value);
++/* Disable, release per-chip arrays then chain array, clear pointer/count.
++ * NULL and already empty contexts are accepted by this integration API.
++ * The allocator context/callbacks are retained, so destroy is idempotent. */
++void vn135_reg_cache_destroy(vn135_reg_cache *cache);
++#ifdef __cplusplus
++}
++#endif
++#endif
+--- a/libbitmain/src/chip/chip1398.c
++++ b/libbitmain/src/chip/chip1398.c
+@@ -3,7 +3,7 @@
+  * Source-path evidence: /tmp/build/libbitmain/src/chip/chip1398.c.
+  * These names and the public API are new. This is a PARTIAL source module.
+  * See evidence/verified-slices.json for exact original instruction ranges.
+- * Original PLL, initialization, I/O, cache and nonce paths are not replaced.
++ * Initialization, live I/O and nonce paths are not replaced.
+  */
+ #include "xminer/recovery/chip1398.h"
+ 
+@@ -82,3 +82,25 @@
+ const vn135_pll_limits vn135_bm1398_pll_limits = {
+     25.0, 3200.0, 2400.0, 2000.0, 2, 250, 7, 0, 2.5
+ };
++
++/* Complete 0xee8e4..0xeeac4 control flow through injected transport and the
++ * recovered register cache. The original diagnostic log is not reproduced.
++ */
++int vn135_bm1398_set_config(vn135_reg_cache *cache, int32_t chain_index,
++    uint32_t mode, const vn135_chip_reference *chip, uint32_t register_address,
++    uint32_t value, const vn135_config_sender *sender)
++{
++    if (!cache || !sender || !sender->send_payload) return -2;
++    uint8_t packet[VN135_PACKET_SIZE];
++    if (vn135_bm1398_set_config_packet(mode, chip ? chip->wire_address : 0,
++            register_address, value, packet, sizeof(packet))) return -2;
++    if (sender->send_payload(sender->context, packet, sizeof(packet)) != 0)
++        return -1;
++    int rc;
++    if (mode != 0)
++        rc = vn135_reg_cache_set_chain(cache, chain_index, register_address, value);
++    else
++        rc = vn135_reg_cache_set_chip(cache, chain_index,
++            chip ? chip->cache_index : 0, register_address, value);
++    return rc == 0 ? 0 : -1;
++}
+--- a/libbitmain/src/reg_cache.c
++++ b/libbitmain/src/reg_cache.c
+@@ -1,8 +1,172 @@
+-/* VN135_PENDING_MODULE
+- * Observed source path: /tmp/build/libbitmain/src/reg_cache.c
+- * Source-path bytes verified against the supplied ELF.
+- * This translation unit is NOT reconstructed and is NOT in the build.
+- * Evidence: evidence/modules/libbitmain/src/reg_cache.c.json
+- * No fake functions, signatures, constants or successful return values.
++/* SPDX-License-Identifier: GPL-3.0-only
++ * Recovered from /tmp/build/libbitmain/src/reg_cache.c in reference ELF.
++ * Sources/addresses and supported equivalence domain: evidence/stage4/.
++ * The vendor singleton is made an explicit caller-owned context. Diagnostic
++ * formatting and opaque parity predicates are not part of this API.
+  */
+-#error "VN135 pending module: libbitmain/src/reg_cache.c; not a recovered implementation"
++#include "xminer/recovery/reg_cache.h"
++#include <limits.h>
++
++_Static_assert(sizeof(vn135_reg_entry) == 8, "register pair layout");
++_Static_assert(sizeof(vn135_reg_table) == 512, "register table layout");
++#if UINTPTR_MAX == UINT32_MAX
++_Static_assert(sizeof(vn135_reg_chain) == 520, "ARM32 chain layout");
++_Static_assert(offsetof(vn135_reg_chain, chips) == 512, "ARM32 chip pointer");
++_Static_assert(offsetof(vn135_reg_chain, chip_count) == 516, "ARM32 chip count");
++#endif
++#include "../../reconstruction/data/reg_cache_defaults.inc"
++
++static void table_copy(vn135_reg_table *dst, const vn135_reg_table *src)
++{
++    for (size_t i = 0; i < VN135_REG_CACHE_SLOTS; ++i) dst->entries[i] = src->entries[i];
++}
++static int find_slot(const vn135_reg_table *table, uint32_t reg)
++{
++    for (int i = 0; i < VN135_REG_CACHE_SLOTS; ++i)
++        if (table->entries[i].address == reg) return i;
++    return -1;
++}
++int vn135_reg_cache_defaults(uint32_t selector, vn135_reg_table *out)
++{
++    if (selector >= VN135_REG_CACHE_SELECTORS) return -1;
++    if (!out) return -2;
++    table_copy(out, &cache_defaults[selector]);
++    return 0;
++}
++/* 0x106a58. Partial allocations intentionally remain available to destroy. */
++int vn135_reg_cache_init(vn135_reg_cache *cache, uint32_t selector,
++    int32_t chain_count, int32_t chip_count, const vn135_reg_allocator *allocator)
++{
++    if (selector >= VN135_REG_CACHE_SELECTORS) return -1;
++    if (!cache || !allocator || !allocator->allocate_zeroed || !allocator->release
++        || chain_count < 0 || chip_count < 0 || cache->initialized
++        || cache->chains || cache->chain_count
++        || (size_t)chain_count > SIZE_MAX / sizeof(vn135_reg_chain)
++        || (size_t)chip_count > SIZE_MAX / sizeof(vn135_reg_table)) return -2;
++    cache->allocator = *allocator;
++    cache->chains = allocator->allocate_zeroed(allocator->context,
++        sizeof(vn135_reg_chain), (size_t)chain_count);
++    if (!cache->chains) return -1;
++    cache->chain_count = chain_count;
++    for (int32_t i = 0; i < chain_count; ++i) {
++        vn135_reg_chain *chain = &cache->chains[i];
++        chain->chips = allocator->allocate_zeroed(allocator->context,
++            sizeof(vn135_reg_table), (size_t)chip_count);
++        if (!chain->chips) return -1;
++        chain->chip_count = chip_count;
++        table_copy(&chain->common, &cache_defaults[selector]);
++        for (int32_t j = 0; j < chip_count; ++j)
++            table_copy(&chain->chips[j], &cache_defaults[selector]);
++    }
++    cache->initialized = 1;
++    return 0;
++}
++/* 0x106e58; the caller's counts are not stored back into the cache. */
++int vn135_reg_cache_reset(vn135_reg_cache *cache, uint32_t selector,
++    int32_t chain_count, int32_t chip_count)
++{
++    if (selector >= VN135_REG_CACHE_SELECTORS) return -1;
++    if (!cache) return -2;
++    if (!cache->chains) return -1;
++    if (chain_count < 0 || chip_count < 0 || chain_count > cache->chain_count)
++        return -2;
++    for (int32_t i = 0; i < chain_count; ++i) {
++        vn135_reg_chain *chain = &cache->chains[i];
++        if (!chain->chips) return -1;
++        if (chip_count > chain->chip_count) return -2;
++        table_copy(&chain->common, &cache_defaults[selector]);
++        for (int32_t j = 0; j < chip_count; ++j)
++            table_copy(&chain->chips[j], &cache_defaults[selector]);
++    }
++    return 0;
++}
++static int validate_chain(const vn135_reg_cache *cache, int32_t chain, uint32_t reg)
++{
++    if (!cache) return -2;
++    if (!cache->initialized || chain < 0 || chain >= cache->chain_count || reg >= 256)
++        return -1;
++    if (!cache->chains) return -2;
++    return 0;
++}
++/* 0x107188 */
++int vn135_reg_cache_get_chain(const vn135_reg_cache *cache, int32_t chain,
++    uint32_t reg, uint32_t *value)
++{
++    int rc = validate_chain(cache, chain, reg);
++    if (rc) return rc;
++    if (!value) return -1;
++    const vn135_reg_table *table = &cache->chains[chain].common;
++    int slot = find_slot(table, reg);
++    if (slot < 0) return -1;
++    *value = table->entries[slot].value;
++    return 0;
++}
++/* 0x107648 */
++int vn135_reg_cache_set_chain(vn135_reg_cache *cache, int32_t chain,
++    uint32_t reg, uint32_t value)
++{
++    int rc = validate_chain(cache, chain, reg);
++    if (rc) return rc;
++    vn135_reg_chain *record = &cache->chains[chain];
++    int slot = find_slot(&record->common, reg);
++    if (slot < 0) return -1;
++    if (record->chip_count > 0 && !record->chips) return -2;
++    record->common.entries[slot].value = value;
++    for (int32_t chip = 0; chip < record->chip_count; ++chip)
++        record->chips[chip].entries[slot].value = value;
++    return 0;
++}
++static int validate_chip(const vn135_reg_chain *chain, int32_t chip)
++{
++    if (chip < 0 || chip >= chain->chip_count) return -1;
++    return chain->chips ? 0 : -2;
++}
++/* 0x1079f0 */
++int vn135_reg_cache_get_chip(const vn135_reg_cache *cache, int32_t chain,
++    int32_t chip, uint32_t reg, uint32_t *value)
++{
++    int rc = validate_chain(cache, chain, reg);
++    if (rc) return rc;
++    if (!value) return -1;
++    const vn135_reg_chain *record = &cache->chains[chain];
++    rc = validate_chip(record, chip);
++    if (rc) return rc;
++    const vn135_reg_table *table = &record->chips[chip];
++    int slot = find_slot(table, reg);
++    if (slot < 0) return -1;
++    *value = table->entries[slot].value;
++    return 0;
++}
++/* 0x107ed0 */
++int vn135_reg_cache_set_chip(vn135_reg_cache *cache, int32_t chain,
++    int32_t chip, uint32_t reg, uint32_t value)
++{
++    int rc = validate_chain(cache, chain, reg);
++    if (rc) return rc;
++    vn135_reg_chain *record = &cache->chains[chain];
++    rc = validate_chip(record, chip);
++    if (rc) return rc;
++    vn135_reg_table *table = &record->chips[chip];
++    int slot = find_slot(table, reg);
++    if (slot < 0) return -1;
++    table->entries[slot].value = value;
++    return 0;
++}
++/* 0x1082b4; return register is not part of the original void contract. */
++void vn135_reg_cache_destroy(vn135_reg_cache *cache)
++{
++    if (!cache) return;
++    cache->initialized = 0;
++    if (cache->chains) {
++        if (!cache->allocator.release) return;
++        for (int32_t i = 0; i < cache->chain_count; ++i) {
++            if (cache->chains[i].chips) {
++                cache->allocator.release(cache->allocator.context, cache->chains[i].chips);
++                cache->chains[i].chips = NULL;
++            }
++        }
++        cache->allocator.release(cache->allocator.context, cache->chains);
++    }
++    cache->chains = NULL;
++    cache->chain_count = 0;
++}
+--- a/reconstruction/cgminer-overlay.am
++++ b/reconstruction/cgminer-overlay.am
+@@ -4,14 +4,17 @@
+ cgminer_CPPFLAGS += -I$(top_srcdir)/include
+ cgminer_SOURCES += libbitmain/src/chip/chip1398.c \
+                    libbitmain/src/pll.c \
++                   libbitmain/src/reg_cache.c \
+                    libbitmain/src/aml/chip.c \
+                    reconstruction/support/crc5.c \
+                    include/xminer/recovery/chip1398.h \
+                    include/xminer/recovery/pll.h \
+-                   include/xminer/recovery/aml_chip.h
++                   include/xminer/recovery/aml_chip.h \
++                   include/xminer/recovery/reg_cache.h
+ EXTRA_DIST += Makefile.recovery RECONSTRUCTION_README_RU.md \
+               RECONSTRUCTION_STATUS.json reconstruction/upstream.lock.json \
+-              reconstruction/cgminer-overlay.am
++              reconstruction/cgminer-overlay.am \
++              reconstruction/data/reg_cache_defaults.inc
+ .PHONY: recovery-check
+ recovery-check:
+ 	$(MAKE) -C "$(top_srcdir)" -f Makefile.recovery test
+--- /dev/null
++++ b/tests/cache_oracle.py
+@@ -0,0 +1,141 @@
++#!/usr/bin/env python3
++"""Compare register-cache state transitions to complete original A32 routines.
++
++Only calloc/free/memcpy and diagnostics are intercepted. No I/O, hardware, OS,
++opaque-predicate patching, or vendor process execution. The singleton addresses
++are explicit evidence. New C uses native pointers and a caller-owned context.
++"""
++from pathlib import Path
++import collections, ctypes as C, hashlib, json, os, random, sys, time
++ROOT = Path(__file__).resolve().parents[1]
++sys.path.insert(0, str(ROOT/'tools'))
++from elf32 import ELF32
++from arm32_subset import ARM32, signed
++EXPECTED = 'b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9'
++elf = ELF32(ROOT/'reference/cgminer.vendor.elf')
++assert hashlib.sha256(elf.data).hexdigest() == EXPECTED
++lib = C.CDLL(os.environ.get('VN135_TEST_LIB', str(ROOT/'build/libvn135_recovered.so')))
++u32, i32, sz, ptr = C.c_uint32, C.c_int32, C.c_size_t, C.c_void_p
++class Entry(C.Structure): _fields_ = [('address',u32),('value',u32)]
++class Table(C.Structure): _fields_ = [('entries',Entry*64)]
++class Chain(C.Structure):
++    _fields_ = [('common',Table),('chips',C.POINTER(Table)),('chip_count',i32)]
++ALLOC = C.CFUNCTYPE(ptr,ptr,sz,sz)
++FREE = C.CFUNCTYPE(None,ptr,ptr)
++class Allocator(C.Structure): _fields_ = [('context',ptr),('allocate',ALLOC),('release',FREE)]
++class Cache(C.Structure):
++    _fields_ = [('chains',C.POINTER(Chain)),('chain_count',i32),('initialized',C.c_uint8),('allocator',Allocator)]
++P = C.POINTER(Cache)
++lib.vn135_reg_cache_init.argtypes = [P,u32,i32,i32,C.POINTER(Allocator)]
++lib.vn135_reg_cache_reset.argtypes = [P,u32,i32,i32]
++lib.vn135_reg_cache_destroy.argtypes = [P];lib.vn135_reg_cache_destroy.restype = None
++lib.vn135_reg_cache_defaults.argtypes = [u32,C.POINTER(Table)]
++for name, args in [('get_chain',[P,i32,u32,C.POINTER(u32)]),('set_chain',[P,i32,u32,u32]),
++                   ('get_chip',[P,i32,i32,u32,C.POINTER(u32)]),('set_chip',[P,i32,i32,u32,u32])]:
++    getattr(lib,'vn135_reg_cache_'+name).argtypes = args
++GLOBAL_PTR, GLOBAL_COUNT, GLOBAL_READY = 0x654d68,0x654d6c,0x654d70
++ENTRY = {'init':0x106a58,'reset':0x106e58,'get_chain':0x107188,'set_chain':0x107648,
++         'get_chip':0x1079f0,'set_chip':0x107ed0,'destroy':0x1082b4}
++SENTINEL = 0xa5e17f39
++m = ARM32(elf)
++counts = collections.Counter();rng = random.Random(0x135004)
++beg = time.monotonic()
++class Pair:
++    def __init__(self, fail=-1, zero_is_null=False):
++        self.cache = Cache(); self.fail = fail;self.zero_is_null = zero_is_null
++        self.old_trace = [];self.new_trace = [];self.old_blocks = {};self.new_blocks = {}
++        self.keep = [];self.errors = [];self.old_allocs = self.new_allocs = 0
++        self.heap = m.DATA_BASE
++        m.mem[m.DATA_BASE:m.DATA_BASE+0x10000] = b'\0'*0x10000
++        m.write(GLOBAL_PTR,0);m.write(GLOBAL_COUNT,0);m.write(GLOBAL_READY,0,1)
++        @ALLOC
++        def allocate(_, size, count):
++            n = self.new_allocs;self.new_allocs += 1
++            required = C.sizeof(Chain) if n == 0 else 512
++            if size != required:self.errors.append(('allocation size',n,size,required))
++            self.new_trace.append(['alloc',n,520 if n==0 else 512,count])
++            if n == self.fail or (count == 0 and self.zero_is_null):return None
++            total = size*count
++            block = C.create_string_buffer(max(total,1)+64)
++            address = C.addressof(block)+32
++            C.memset(C.addressof(block),0xc7,32)
++            C.memset(address+max(total,1),0x7c,32)
++            self.keep.append(block);self.new_blocks[address] = (n,total)
++            return address
++        @FREE
++        def release(_, address):
++            if address not in self.new_blocks:
++                self.errors.append(('invalid free',address));return
++            n,total = self.new_blocks.pop(address)
++            self.new_trace.append(['free',n])
++        self.allocator = Allocator(None,allocate,release)
++    def old_calloc(self,mm):
++        size,count = mm.r[:2];n = self.old_allocs;self.old_allocs += 1
++        assert size == (520 if n==0 else 512)
++        self.old_trace.append(['alloc',n,size,count])
++        if n == self.fail or (count == 0 and self.zero_is_null):mm.r[0]=0;return
++        total = size*count;assert self.heap+total+64 < m.DATA_BASE+0xe000
++        address = self.heap+32; self.heap = address+max(total,1)+32
++        self.old_blocks[address] = (n,total)
++        mm.mem[address-32:address] = b'\xc7'*32
++        mm.mem[address:address+max(total,1)] = b'\0'*max(total,1)
++        mm.mem[address+max(total,1):address+max(total,1)+32] = b'\x7c'*32
++        mm.r[0]=address
++    def old_free(self,mm):
++        address=mm.r[0];assert address in self.old_blocks
++        n,total=self.old_blocks.pop(address);self.old_trace.append(['free',n]);mm.r[0]=0
++    def old_memcpy(self,mm):
++        dst,src,n=mm.r[:3];mm.check(dst,n);mm.check(src,n)
++        mm.mem[dst:dst+n]=mm.mem[src:src+n];mm.r[0]=dst
++    def run(self,name,args):
++        m.reset(args)
++        return signed(m.run(ENTRY[name],hooks={0x593bb4:self.old_calloc,0x593c8c:self.old_free,
++                       0x5a2ee8:self.old_memcpy,0xfa0c4:lambda _:None},max_steps=100000))
++    def compare(self):
++        assert not self.errors,self.errors
++        assert self.old_trace == self.new_trace,(self.old_trace,self.new_trace)
++        base = m.read(GLOBAL_PTR); n = signed(m.read(GLOBAL_COUNT))
++        assert (bool(base),n,m.read(GLOBAL_READY,1)) == (bool(self.cache.chains),self.cache.chain_count,self.cache.initialized)
++        if base:
++            for i in range(n):
++                cbase=base+i*520;c=self.cache.chains[i]
++                assert bytes(m.mem[cbase:cbase+512]) == bytes(c.common),('common',i)
++                chips=m.read(cbase+512);nc=signed(m.read(cbase+516))
++                assert (bool(chips),nc)==(bool(c.chips),c.chip_count)
++                if chips:
++                    for j in range(nc):
++                        assert bytes(m.mem[chips+j*512:chips+(j+1)*512])==bytes(c.chips[j]),('chip',i,j)
++        for address,(_,total) in self.old_blocks.items():
++            assert m.mem[address-32:address]==b'\xc7'*32
++            assert m.mem[address+max(total,1):address+max(total,1)+32]==b'\x7c'*32
++        for address,(_,total) in self.new_blocks.items():
++            assert C.string_at(address-32,32)==b'\xc7'*32
++            assert C.string_at(address+max(total,1),32)==b'\x7c'*32
++    def init(self,selector,chains,chips):
++        old = self.run('init',(selector,chains,chips))
++        new = lib.vn135_reg_cache_init(C.byref(self.cache),selector,chains,chips,C.byref(self.allocator))
++        assert old==new,('init',selector,chains,chips,old,new)
++        self.compare(); counts['init: return, all tables and allocation ownership']+=1
++        return new
++    def destroy(self):
++        self.run('destroy',())
++        lib.vn135_reg_cache_destroy(C.byref(self.cache));self.compare()
++        assert not self.old_blocks and not self.new_blocks
++        counts['destroy: release order, globals and no retained allocations']+=1
++    def operation(self,name,chain,reg,chip=0,value=0,null_output=False):
++        out=u32(SENTINEL);outptr=None if null_output else C.byref(out)
++        original_out=m.DATA_BASE+0xf000;m.write(original_out,SENTINEL)
++        argout=0 if null_output else original_out
++        if name=='get_chain':args=(chain,reg,argout);cargs=(C.byref(self.cache),chain,reg,outptr)
++        elif name=='set_chain':args=(chain,reg,value);cargs=(C.byref(self.cache),chain,reg,value)
++        elif name=='get_chip':args=(chain,chip,reg,argout);cargs=(C.byref(self.cache),chain,chip,reg,outptr)
++        else:args=(chain,chip,reg,value);cargs=(C.byref(self.cache),chain,chip,reg,value)
++        old=self.run(name,args);new=getattr(lib,'vn135_reg_cache_'+name)(*cargs)
++        assert (old,m.read(original_out))==(new,out.value),(name,args,old,new,m.read(original_out),out.value)
++        self.compare();counts[name+': return, output and whole cache state']+=1
++    def reset(self,selector,chains,chips):
++        old=self.run('reset',(selector,chains,chips))
++        new=lib.vn135_reg_cache_reset(C.byref(self.cache),selector,chains,chips)
++        assert old==new,('reset',selector,chains,chips,old,new)
++        self.compare();counts['reset: return, all tables and preserved counts/flag']+=1
++
+--- /dev/null
++++ b/tests/test_reg_cache.c
+@@ -0,0 +1,145 @@
++/* SPDX-License-Identifier: GPL-3.0-only */
++#include "xminer/recovery/reg_cache.h"
++#include "xminer/recovery/chip1398.h"
++#include <assert.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++
++typedef struct { size_t calls, frees, live; int fail; } heap_state;
++static void *allocate_zeroed(void *ctx, size_t size, size_t count)
++{
++    heap_state *h = ctx;
++    size_t index = h->calls++;
++    if ((int)index == h->fail) return NULL;
++    void *p = calloc(count ? count : 1, size);
++    if (p) ++h->live;
++    return p;
++}
++static void release(void *ctx, void *p)
++{
++    heap_state *h = ctx;
++    assert(p && h->live);
++    --h->live; ++h->frees; free(p);
++}
++static vn135_reg_allocator allocator(heap_state *h)
++{
++    vn135_reg_allocator a = {h, allocate_zeroed, release}; return a;
++}
++typedef struct { unsigned calls; int rc; uint8_t packet[9]; } sender_state;
++static int send_payload(void *ctx, const uint8_t *packet, size_t size)
++{
++    sender_state *s = ctx;assert(size == 9);
++    ++s->calls; memcpy(s->packet, packet, 9);return s->rc;
++}
++static void cache_cases(void)
++{
++    heap_state h = {0, 0, 0, -1};vn135_reg_allocator a = allocator(&h);
++    vn135_reg_cache cache = {0};uint32_t value = 0xa5a5a5a5;
++    assert(vn135_reg_cache_get_chain(&cache, 0, 8, &value) == -1);
++    assert(value == 0xa5a5a5a5);
++    assert(vn135_reg_cache_init(&cache, 5, 2, 3, &a) == 0);
++    assert(cache.initialized && h.live == 3);
++    assert(vn135_reg_cache_init(&cache, 5, 2, 3, &a) == -2);
++    assert(h.calls == 3);
++    assert(vn135_reg_cache_set_chip(&cache, 0, 1, 0x25, 0x13579bdf) == 0);
++    assert(vn135_reg_cache_get_chip(&cache, 0, 1, 0x25, &value) == 0 && value == 0x13579bdf);
++    assert(vn135_reg_cache_get_chain(&cache, 0, 0x25, &value) == 0 && value == 0);
++    assert(vn135_reg_cache_set_chain(&cache, 0, 0x25, 0xfedcba98) == 0);
++    for (int i = 0; i < 3; ++i) {
++        assert(vn135_reg_cache_get_chip(&cache, 0, i, 0x25, &value) == 0);
++        assert(value == 0xfedcba98);
++    }
++    assert(vn135_reg_cache_get_chip(&cache, 1, 1, 0x25, &value) == 0 && value == 0);
++    value = 0xa5a5a5a5;
++    assert(vn135_reg_cache_get_chain(&cache, -1, 8, &value) == -1);
++    assert(vn135_reg_cache_get_chain(&cache, 2, 8, &value) == -1);
++    assert(vn135_reg_cache_get_chain(&cache, 0, 256, &value) == -1);
++    assert(vn135_reg_cache_get_chain(&cache, 0, 3, &value) == -1);
++    assert(vn135_reg_cache_get_chip(&cache, 0, -1, 8, &value) == -1);
++    assert(vn135_reg_cache_get_chip(&cache, 0, 3, 8, &value) == -1);
++    assert(value == 0xa5a5a5a5);
++    assert(vn135_reg_cache_get_chain(&cache, 0, 8, NULL) == -1);
++    assert(vn135_reg_cache_get_chip(&cache, 0, 0, 8, NULL) == -1);
++    vn135_reg_table old = cache.chains[0].common;
++    assert(vn135_reg_cache_reset(&cache, 9, 2, 3) == -1);
++    assert(vn135_reg_cache_reset(&cache, 2, -1, 3) == -2);
++    assert(vn135_reg_cache_reset(&cache, 2, 3, 3) == -2);
++    assert(vn135_reg_cache_reset(&cache, 2, 2, 4) == -2);
++    assert(memcmp(&old, &cache.chains[0].common, sizeof(old)) == 0);
++    assert(vn135_reg_cache_reset(&cache, 2, 1, 1) == 0);
++    assert(cache.chain_count == 2 && cache.chains[0].chip_count == 3);
++    assert(vn135_reg_cache_get_chip(&cache, 0, 0, 0x25, &value) == -1);
++    assert(vn135_reg_cache_get_chip(&cache, 0, 1, 0x25, &value) == 0 && value == 0xfedcba98);
++    cache.initialized = 0;
++    assert(vn135_reg_cache_set_chain(&cache, 0, 8, 0) == -1);
++    assert(vn135_reg_cache_set_chip(&cache, 0, 0, 8, 0) == -1);
++    assert(vn135_reg_cache_reset(&cache, 5, 2, 3) == 0 && cache.initialized == 0);
++    vn135_reg_cache_destroy(&cache);
++    assert(h.live == 0 && h.frees == 3 && cache.chains == NULL && cache.chain_count == 0);
++    vn135_reg_cache_destroy(&cache);vn135_reg_cache_destroy(NULL);
++    assert(h.frees == 3);
++}
++static void failure_cases(void)
++{
++    for (int fail = 0; fail < 4; ++fail) {
++        heap_state h = {0, 0, 0, fail};vn135_reg_allocator a = allocator(&h);
++        vn135_reg_cache cache = {0};
++        assert(vn135_reg_cache_init(&cache, 2, 3, 2, &a) == -1);
++        assert(!cache.initialized && h.live == (size_t)fail);
++        vn135_reg_cache_destroy(&cache);
++        assert(h.live == 0 && h.frees == (size_t)fail);
++    }
++    heap_state h = {0, 0, 0, -1};vn135_reg_allocator a = allocator(&h);
++    vn135_reg_cache cache = {0};vn135_reg_table table;
++    assert(vn135_reg_cache_init(&cache, 8, 1, 1, &a) == -1);
++    assert(vn135_reg_cache_init(&cache, 2, -1, 1, &a) == -2);
++    assert(vn135_reg_cache_init(&cache, 2, 1, -1, &a) == -2);
++    assert(vn135_reg_cache_init(NULL, 2, 1, 1, &a) == -2);
++    assert(vn135_reg_cache_init(&cache, 2, 1, 1, NULL) == -2);
++    assert(h.calls == 0);
++    assert(vn135_reg_cache_defaults(8, &table) == -1);
++    assert(vn135_reg_cache_defaults(0, NULL) == -2);
++    assert(vn135_reg_cache_reset(NULL, 0, 0, 0) == -2);
++    assert(vn135_reg_cache_get_chip(NULL, 0, 0, 8, NULL) == -2);
++    assert(vn135_reg_cache_set_chain(NULL, 0, 8, 0) == -2);
++    assert(vn135_reg_cache_init(&cache, 0, 0, 0, &a) == 0);
++    assert(cache.initialized && cache.chain_count == 0);
++    vn135_reg_cache_destroy(&cache);assert(h.live == 0);
++}
++static void config_cases(void)
++{
++    heap_state h = {0, 0, 0, -1};vn135_reg_allocator a = allocator(&h);
++    vn135_reg_cache cache = {0};assert(vn135_reg_cache_init(&cache, 2, 2, 3, &a) == 0);
++    sender_state s = {0, 0, {0}};vn135_config_sender sender = {&s, send_payload};
++    vn135_chip_reference chip = {1, 0x103};uint32_t value;
++    assert(vn135_bm1398_set_config(&cache, 0, 0, &chip, 8, 0x12345678, &sender) == 0);
++    assert(s.calls == 1 && s.packet[0] == 0x41 && s.packet[2] == 3);
++    assert(vn135_reg_cache_get_chip(&cache, 0, 1, 8, &value) == 0 && value == 0x12345678);
++    assert(vn135_reg_cache_get_chain(&cache, 0, 8, &value) == 0 && value != 0x12345678);
++    assert(vn135_bm1398_set_config(&cache, 0, 2, &chip, 8, 0xaabbccdd, &sender) == 0);
++    assert(s.calls == 2 && s.packet[0] == 0x41);
++    for (int i = 0; i < 3; ++i) {
++        assert(vn135_reg_cache_get_chip(&cache, 0, i, 8, &value) == 0 && value == 0xaabbccdd);
++    }
++    s.rc = -7;
++    assert(vn135_bm1398_set_config(&cache, 0, 1, &chip, 8, 0, &sender) == -1);
++    assert(s.calls == 3 && s.packet[0] == 0x51);
++    assert(vn135_reg_cache_get_chain(&cache, 0, 8, &value) == 0 && value == 0xaabbccdd);
++    s.rc = 0;
++    /* Original sends low address byte, THEN the cache rejects full reg 0x108. */
++    assert(vn135_bm1398_set_config(&cache, 0, 0, NULL, 0x108, 0, &sender) == -1);
++    assert(s.calls == 4 && s.packet[3] == 8);
++    cache.initialized = 0;
++    assert(vn135_bm1398_set_config(&cache, 0, 1, NULL, 8, 0, &sender) == -1);
++    assert(s.calls == 5);
++    assert(vn135_bm1398_set_config(&cache, 0, 1, NULL, 8, 0, NULL) == -2);
++    assert(vn135_bm1398_set_config(NULL, 0, 1, NULL, 8, 0, &sender) == -2);
++    assert(s.calls == 5);
++    vn135_reg_cache_destroy(&cache);assert(h.live == 0);
++}
++int main(void)
++{
++    cache_cases();failure_cases();config_cases();
++    puts("Stage 4 cache/transaction native assertions: PASS");return 0;
++}
+--- /dev/null
++++ b/tests/test_stage4_cache_differential.py
+@@ -0,0 +1,77 @@
++#!/usr/bin/env python3
++"""Register-cache differential cases; see cache_oracle.py for the bounded harness."""
++from cache_oracle import *
++
++# Initialization, including calloc(0) outcomes and every partial failure position.
++for selector in range(8):
++    for nc in (0,1,2,4):
++        for n in (0,1,3,8):
++            for fail in [-1]+list(range(nc+1)):
++                p=Pair(fail);p.init(selector,nc,n);p.destroy();p.destroy()
++    for nc,n in [(0,3),(2,0)]:
++        p=Pair(zero_is_null=True);p.init(selector,nc,n);p.destroy()
++for selector in [8,9,0xffffffff]:
++    p=Pair();p.init(selector,2,3);p.destroy()
++
++# Use original initialization to verify standalone default export for all 8 selectors.
++for selector in range(8):
++    p=Pair();p.init(selector,1,1);out=Table()
++    assert lib.vn135_reg_cache_defaults(selector,C.byref(out))==0
++    assert bytes(out)==bytes(p.cache.chains[0].common)
++    counts['default table: all 512 bytes against original init']+=1;p.destroy()
++
++# Every byte-valued register against every real table, with both lookup scopes.
++for selector in range(8):
++    p=Pair();p.init(selector,2,3)
++    for reg in range(256):
++        p.operation('get_chain',1,reg)
++        p.operation('get_chip',0,reg,chip=2)
++    for _ in range(256):
++        name=rng.choice(['get_chain','set_chain','get_chip','set_chip'])
++        p.operation(name,rng.choice([-2,-1,0,1,2,0x7fffffff]),
++            rng.choice([rng.randrange(256),256,0xffffffff]),
++            chip=rng.choice([-1,0,1,2,3,0x7fffffff]),value=rng.getrandbits(32),
++            null_output=rng.randrange(8)==0)
++    # Guaranteed successful mutation sequences, including non-aligned 0x25.
++    for entry in p.cache.chains[0].common.entries:
++        reg=entry.address
++        if reg>=256:continue
++        p.operation('set_chip',0,reg,chip=1,value=rng.getrandbits(32))
++        p.operation('get_chain',0,reg)
++        p.operation('get_chip',0,reg,chip=1)
++        p.operation('set_chain',0,reg,value=rng.getrandbits(32))
++        p.operation('get_chip',0,reg,chip=2)
++    # Table entries intentionally reordered: broadcast uses common slot index.
++    base=m.read(GLOBAL_PTR); chips=m.read(base+512)
++    table=p.cache.chains[0].chips[0]
++    temp=bytes(table.entries[0]); table.entries[0]=Entry.from_buffer_copy(bytes(table.entries[1]));table.entries[1]=Entry.from_buffer_copy(temp)
++    aa=bytes(m.mem[chips:chips+8]);bb=bytes(m.mem[chips+8:chips+16]);m.mem[chips:chips+16]=bb+aa
++    p.operation('set_chain',0,p.cache.chains[0].common.entries[0].address,value=0xdeadbeef)
++    # Duplicate key: first match semantics, not direct register/4 indexing.
++    reg=table.entries[0].address;table.entries[4].address=reg;m.write(chips+4*8,reg)
++    p.operation('set_chip',0,reg,chip=0,value=0xaabbccdd)
++    p.operation('get_chip',0,reg,chip=0)
++    for nchain,nchip in [(0,0),(1,0),(1,1),(2,2),(2,3)]:p.reset((selector+1)%8,nchain,nchip)
++    p.reset(9,2,3)
++    # Disabling cache prevents accessor use, while reset itself leaves flag alone.
++    p.cache.initialized=0;m.write(GLOBAL_READY,0,1)
++    for name in ['get_chain','set_chain','get_chip','set_chip']:p.operation(name,0,8,chip=0,value=123)
++    p.reset(selector,2,3);assert p.cache.initialized==0;p.destroy()
++# Reset on missing global storage and on a later missing chip array.
++for fail in [0,1,2,3]:
++    p=Pair(fail);p.init(2,3,2)
++    p.reset(5,3,2);p.destroy()
++
++result={'passed':True,'reference_sha256':EXPECTED,'total_cases':sum(counts.values()),'cases':dict(counts),
++        'seconds':round(time.monotonic()-beg,3),'host_chain_size':C.sizeof(Chain),'original_chain_size':520,
++        'original_global_addresses':{'pointer':hex(GLOBAL_PTR),'chain_count':hex(GLOBAL_COUNT),'enabled':hex(GLOBAL_READY)},
++        'hardware_tested':False,'full_miner_tested':False,
++        'method':'Native compiled C state and return compared to complete original A32 cache routines',
++        'limits':['Local bounded A32 interpreter; not an independent certified emulator.',
++                  'calloc/free/memcpy are intercepted; diagnostics are suppressed.',
++                  'Explicit C context/native pointers replace vendor singleton and ARM32 pointers.',
++                  'Allocation sizes normalized for native pointer width; table contents and ownership compared.',
++                  'New integration guards for negative/oversized counts, live reinit and corrupt context tested separately.',
++                  'No hardware/cache coherency, multithreading, timing, actual model selection or miner acceptance.']}
++(ROOT/'build/stage4-cache-differential-results.json').write_text(json.dumps(result,indent=2)+'\n')
++print(json.dumps(result,indent=2))
+--- /dev/null
++++ b/tests/test_stage4_config_differential.py
+@@ -0,0 +1,58 @@
++#!/usr/bin/env python3
++"""Original SET_CONFIG + original CRC + original cache versus compiled modules."""
++from cache_oracle import *
++SEND=C.CFUNCTYPE(C.c_int,ptr,C.POINTER(C.c_uint8),sz)
++class Sender(C.Structure):_fields_=[('context',ptr),('send',SEND)]
++class ChipRef(C.Structure):_fields_=[('index',i32),('address',u32)]
++fn=lib.vn135_bm1398_set_config
++fn.argtypes=[P,i32,u32,C.POINTER(ChipRef),u32,u32,C.POINTER(Sender)]
++case_counts=collections.Counter();examples=[];beg=time.monotonic()
++rng=random.Random(0x1350401)
++for selector in range(8):
++    p=Pair();assert p.init(selector,2,3)==0
++    vectors=[]
++    # Header behavior ==1 differs from cache fanout !=0; exercise all modes.
++    for mode in [0,1,2,0xffffffff]:
++        for status in [0,-1,-5,1]:
++            for reg in [0,8,0x18,0x25,0xfc,0xff,0x108,0xffffffff]:
++                vectors.append((mode,1,reg,1,0x103,False,status,True))
++    for _ in range(128):
++        vectors.append((rng.getrandbits(3),rng.choice([-1,0,1,2]),
++            rng.choice([8,0x14,0x25,0x54,0xf0,256,0xffffffff]),rng.choice([-1,0,1,2,3]),
++            rng.getrandbits(32),rng.choice([True,False]),rng.choice([0,0,0,-1,7]),rng.choice([True,False])))
++    for mode,chain,reg,index,wire,null_chip,send_status,ready in vectors:
++        value=rng.getrandbits(32)
++        p.cache.initialized=int(ready);m.write(GLOBAL_READY,int(ready),1)
++        old_trace=[];new_trace=[]
++        context=m.DATA_BASE+0xd000;chip_addr=context+0x100
++        m.write(context+24,chain)
++        m.write(chip_addr,index);m.write(chip_addr+4,wire)
++        def send_original(mm):
++            assert mm.r[0]==context and mm.r[2]==9
++            old_trace.append(bytes(mm.mem[mm.r[1]:mm.r[1]+9]).hex())
++            mm.r[0]=send_status&0xffffffff
++        m.reset((context,mode,0 if null_chip else chip_addr,reg,value))
++        old=signed(m.run(0xee8e4,hooks={0xd26ac:send_original,0xfa0c4:lambda _:None}))
++        @SEND
++        def send_c(_,data,n):
++            new_trace.append(C.string_at(data,n).hex());return send_status
++        cref=ChipRef(index,wire);sender=Sender(None,send_c)
++        new=fn(C.byref(p.cache),chain,mode,None if null_chip else C.byref(cref),reg,value,C.byref(sender))
++        assert (old,old_trace)==(new,new_trace),(selector,mode,chain,reg,index,old,new,old_trace,new_trace)
++        p.compare()
++        label='transport failure: one dispatch, no cache mutation' if send_status else (
++            'dispatch success, cache success' if new==0 else 'dispatch success, cache failure')
++        case_counts[label]+=1
++        if len(examples)<6 and selector==0 and mode in [0,1,2] and send_status==0:
++            examples.append({'mode':mode,'register':hex(reg),'transport_result':send_status,'return':new,'packet':new_trace[0]})
++    p.destroy()
++result={'passed':True,'total_cases':sum(case_counts.values()),'cases':dict(case_counts),
++        'seconds':round(time.monotonic()-beg,3),'reference_sha256':EXPECTED,'examples':examples,
++        'method':'Complete original 0xee8e4, CRC5 and cache functions run together; only send boundary and diagnostics intercepted',
++        'hardware_tested':False,'full_miner_tested':False,
++        'limits':['Local A32 interpreter; no independent CPU certification.',
++                  'The 0xd26ac transport boundary is injected; no UART or chip acknowledgement.',
++                  'Pointer/context layout adapted. Added invalid API guards are not vendor behavior.',
++                  'All original cache memory changes and return codes are compared; timing/log text omitted.']}
++(ROOT/'build/stage4-config-differential-results.json').write_text(json.dumps(result,indent=2)+'\n')
++print(json.dumps(result,indent=2))
+--- a/tests/test_tree.py
++++ b/tests/test_tree.py
+@@ -6,8 +6,8 @@
+ manifest=json.loads((ROOT/'evidence/source-tree.json').read_text())
+ assert manifest['complete_vendor_file_list'] is False
+ assert len(manifest['modules'])==45
+-assert manifest['pending_modules']==42
+-assert manifest['partial_modules']==3
++assert manifest['pending_modules']==41
++assert manifest['partial_modules']==4
+ for module in manifest['modules']:
+     text=(ROOT/module['path']).read_text()
+     if module['status']=='pending-not-implemented':
+@@ -17,6 +17,6 @@
+ assert (ROOT/'src/backend/work-gen/work-gen.c').is_file()
+ assert not list(ROOT.rglob('recovered_stubs.c'))
+ assert not list(ROOT.rglob('cgminer_reconstructed_full.c'))
+-for name in ('libbitmain/src/pll.c','libbitmain/src/aml/chip.c','libbitmain/src/chip/chip1398.c'):
++for name in ('libbitmain/src/reg_cache.c','libbitmain/src/pll.c','libbitmain/src/aml/chip.c','libbitmain/src/chip/chip1398.c'):
+     assert 'VN135 pending module:' not in (ROOT/name).read_text()
+ print('module tree and no fake stubs: PASS')
+--- a/tools/build_source_tree.py
++++ b/tools/build_source_tree.py
+@@ -45,7 +45,7 @@
+                 entry['candidate_intervals'].append(dict(start=f"0x{interval['start']:08x}",
+                     end_exclusive=(f"0x{interval['end_exclusive']:08x}" if interval['end_exclusive'] else None),
+                     path_references=matched,association='Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven'))
+-    partial_paths=['libbitmain/src/chip/chip1398.c','libbitmain/src/pll.c','libbitmain/src/aml/chip.c']
++    partial_paths=['libbitmain/src/chip/chip1398.c','libbitmain/src/pll.c','libbitmain/src/aml/chip.c','libbitmain/src/reg_cache.c']
+     for partial in partial_paths:
+         paths[partial]['status']='partial-verified-slices'
+         paths[partial]['implementation_files']=[partial]
+--- /dev/null
++++ b/tools/extract_reg_cache_defaults.py
+@@ -0,0 +1,40 @@
++#!/usr/bin/env python3
++"""Regenerate/verify the eight cache templates from the unchanged original ELF.
++Default is read-only comparison; --write updates generated data, not firmware.
++"""
++from pathlib import Path
++import argparse, hashlib, json, struct
++from elf32 import ELF32
++from arm32_subset import ARM32
++ROOT=Path(__file__).resolve().parents[1]
++EXPECTED='b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9'
++ADDRESSES=[0x5b165c,0x5b145c,0x5b125c,0x5b185c,0x5b1c5c,0x5b1a5c,0x5b1e5c,0x5b205c]
++def generated():
++    elf=ELF32(ROOT/'reference/cgminer.vendor.elf')
++    if hashlib.sha256(elf.data).hexdigest()!=EXPECTED:raise ValueError('Wrong original ELF')
++    m=ARM32(elf);tables=[]
++    lines=['/* Extracted from the unchanged reference ELF; see evidence/stage4/cache-defaults.json. */',
++           'static const vn135_reg_table cache_defaults[8] = {']
++    for selector,expected in enumerate(ADDRESSES):
++        m.reset((selector,2,3));m.run(0x106a58,stop=0x106b34)
++        address=m.r[10]
++        if address!=expected:raise ValueError('Selector dispatch changed')
++        raw=elf.read(address,512);pairs=list(struct.iter_unpack('<II',raw))
++        tables.append({'selector':selector,'address':hex(address),'size':512,
++                       'sha256':hashlib.sha256(raw).hexdigest(),'entries':pairs})
++        lines += ['    { /* selector %d, original %s */'%(selector,hex(address)), '        {']
++        lines += ['            { UINT32_C(0x%08x), UINT32_C(0x%08x) },'%p for p in pairs]
++        lines += ['        }','    },']
++    lines.append('};\n')
++    data={'reference_sha256':EXPECTED,'selection_entry':'0x106a58','stop_before_allocation':'0x106b34',
++          'tables':tables,'model_mapping_proven':False,'hardware_settings_recommended':False}
++    return '\n'.join(lines),json.dumps(data,indent=2)+'\n'
++def main():
++    ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--write',action='store_true');args=ap.parse_args()
++    inc,metadata=generated()
++    for path,text in [(ROOT/'reconstruction/data/reg_cache_defaults.inc',inc),
++                      (ROOT/'evidence/stage4/cache-defaults.json',metadata)]:
++        if args.write:path.parent.mkdir(parents=True,exist_ok=True);path.write_text(text)
++        elif path.read_text()!=text:raise ValueError(f'Data mismatch: {path}')
++    print('cache defaults: 8 selectors, 512 bytes each, '+('written' if args.write else 'PASS'))
++if __name__=='__main__':main()

@@ -1,0 +1,27 @@
+{
+  "group": "storage-native",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "./build/test-work-storage"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "storage-native-00.log",
+      "seconds": 0.002,
+      "sha256": "9c8be7126dc262166e28d5177c0edabe8f77b03a6faa04ba9f8d02dc7b8a9786"
+    },
+    {
+      "command": [
+        "./build/vn135-work-lifecycle"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "storage-native-01.log",
+      "seconds": 0.002,
+      "sha256": "e3e82f33fca490b443c38ad2872a094667e410a0873381bcd0d1dcb881e5d255"
+    }
+  ]
+}

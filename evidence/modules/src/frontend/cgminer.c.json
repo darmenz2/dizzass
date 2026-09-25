@@ -1,0 +1,1230 @@
+{
+  "path": "src/frontend/cgminer.c",
+  "observed_as": "/tmp/build/src/frontend/cgminer.c",
+  "status": "partial-verified-slices",
+  "evidence": [
+    {
+      "address": "0x5e2194",
+      "xor": 84,
+      "decoded_length": 34,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x0002a330",
+      "end_exclusive": "0x0002a4b8",
+      "path_references": [
+        {
+          "insn": "0x2a408",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0002a5f8",
+      "end_exclusive": "0x0002a964",
+      "path_references": [
+        {
+          "insn": "0x2a6e4",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x2a8b4",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0002aa30",
+      "end_exclusive": "0x0002b21c",
+      "path_references": [
+        {
+          "insn": "0x2ad30",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x2ae40",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x2b05c",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x2b090",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x2b0dc",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0002b3e0",
+      "end_exclusive": "0x0002b688",
+      "path_references": [
+        {
+          "insn": "0x2b5cc",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0002b688",
+      "end_exclusive": "0x0002c1a8",
+      "path_references": [
+        {
+          "insn": "0x2b95c",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x2ba70",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x2bbc0",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x2be44",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0002c1a8",
+      "end_exclusive": "0x0002c31c",
+      "path_references": [
+        {
+          "insn": "0x2c200",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x2c254",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0002c31c",
+      "end_exclusive": "0x0002ce60",
+      "path_references": [
+        {
+          "insn": "0x2caa4",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x2cb4c",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x2cbc4",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x2cc80",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x2cdcc",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0002ce84",
+      "end_exclusive": "0x0002d138",
+      "path_references": [
+        {
+          "insn": "0x2cef8",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0002d138",
+      "end_exclusive": "0x0002d3e0",
+      "path_references": [
+        {
+          "insn": "0x2d358",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0002d994",
+      "end_exclusive": "0x0002e1f0",
+      "path_references": [
+        {
+          "insn": "0x2dc60",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x2ddd0",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x2df78",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x2e074",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0002e1f0",
+      "end_exclusive": "0x0002e894",
+      "path_references": [
+        {
+          "insn": "0x2e2d4",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x2e6d8",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x2e774",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0002e894",
+      "end_exclusive": "0x0002e9d8",
+      "path_references": [
+        {
+          "insn": "0x2e8dc",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0002ec60",
+      "end_exclusive": "0x0002ee04",
+      "path_references": [
+        {
+          "insn": "0x2ed54",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0002f054",
+      "end_exclusive": "0x0002f130",
+      "path_references": [
+        {
+          "insn": "0x2f0d0",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0002f6ec",
+      "end_exclusive": "0x0002fe60",
+      "path_references": [
+        {
+          "insn": "0x2fcbc",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x2fd50",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x2fd84",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x2fdd0",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0002fe60",
+      "end_exclusive": "0x000300ac",
+      "path_references": [
+        {
+          "insn": "0x2ff48",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x2ffd4",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x30020",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000300ac",
+      "end_exclusive": "0x00030550",
+      "path_references": [
+        {
+          "insn": "0x30218",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00030550",
+      "end_exclusive": "0x00031314",
+      "path_references": [
+        {
+          "insn": "0x30610",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x30694",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x3082c",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x308a0",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x30918",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x30a1c",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x30b1c",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x30d6c",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x30ec8",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00031314",
+      "end_exclusive": "0x00032040",
+      "path_references": [
+        {
+          "insn": "0x313a8",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x318d0",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x31958",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00032040",
+      "end_exclusive": "0x00032528",
+      "path_references": [
+        {
+          "insn": "0x321f0",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x32244",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x32438",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x3248c",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00032610",
+      "end_exclusive": "0x00032e58",
+      "path_references": [
+        {
+          "insn": "0x326e8",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x32aa8",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x32b28",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x32b88",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x32d34",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x32d70",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00032f60",
+      "end_exclusive": "0x00033624",
+      "path_references": [
+        {
+          "insn": "0x32fdc",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00033624",
+      "end_exclusive": "0x00033bc8",
+      "path_references": [
+        {
+          "insn": "0x33a7c",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x33b14",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0003483c",
+      "end_exclusive": "0x00034920",
+      "path_references": [
+        {
+          "insn": "0x3489c",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00035830",
+      "end_exclusive": "0x00036990",
+      "path_references": [
+        {
+          "insn": "0x35cc0",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00036ac8",
+      "end_exclusive": "0x000371c8",
+      "path_references": [
+        {
+          "insn": "0x36bdc",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x36d28",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x36e0c",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0003720c",
+      "end_exclusive": "0x0003abf4",
+      "path_references": [
+        {
+          "insn": "0x37264",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x372b4",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x3792c",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x38740",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x387cc",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x38858",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x388a0",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x38994",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x389ec",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x38a34",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x38b64",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x3907c",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x390bc",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x39324",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x39474",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x394f4",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x39554",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0003abf4",
+      "end_exclusive": "0x0003ae18",
+      "path_references": [
+        {
+          "insn": "0x3acc4",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x3ad1c",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x3ada4",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0003ae18",
+      "end_exclusive": "0x0003bcb0",
+      "path_references": [
+        {
+          "insn": "0x3b098",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x3b5a4",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x3b9a4",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0003bcb0",
+      "end_exclusive": "0x0003c2f8",
+      "path_references": [
+        {
+          "insn": "0x3bd5c",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0003c818",
+      "end_exclusive": "0x0003ed00",
+      "path_references": [
+        {
+          "insn": "0x3ca68",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x3cb30",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x3cbac",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x3cf54",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x3d6d4",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x3da54",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x3dc2c",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x3dea4",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x3dfb4",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x3e008",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x3e138",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x3e18c",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x3eab0",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0003ed00",
+      "end_exclusive": "0x00042ac4",
+      "path_references": [
+        {
+          "insn": "0x3fcd4",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x3fd48",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x407bc",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x41874",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x41954",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x41a30",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x41b40",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x41ebc",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x41fc8",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x42014",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x420a4",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x42260",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x422f8",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x424d4",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x42560",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x425a8",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x42628",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x426a8",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x42734",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x427d4",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00042ac4",
+      "end_exclusive": "0x000454c8",
+      "path_references": [
+        {
+          "insn": "0x4494c",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x449d8",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x44b90",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x44d50",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x44e0c",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x44ea0",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x44fc4",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x45040",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x450e0",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x45248",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x452b0",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000454c8",
+      "end_exclusive": "0x00046540",
+      "path_references": [
+        {
+          "insn": "0x45644",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x456f8",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x45804",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x45a10",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x45a4c",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x45aa8",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x45b04",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x45b60",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x45bbc",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x45d2c",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x45e50",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x45f5c",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x460ac",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x460f4",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x46150",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x4618c",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x461e8",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x46244",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x462a0",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        },
+        {
+          "insn": "0x462fc",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00046540",
+      "end_exclusive": "0x00049b38",
+      "path_references": [
+        {
+          "insn": "0x465ec",
+          "string": "0x5e2194",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/frontend/cgminer.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": [
+    "src/frontend/cgminer.c"
+  ],
+  "stage10_numeric_recovery": {
+    "stage": 10,
+    "state": "partially-reconstructed",
+    "integration_placement_not_independently_proven_original_filename": true,
+    "numeric_regions": [
+      "0x2fe60..0x300ac",
+      "0x31070..0x31100",
+      "0x30c9c..0x30d90"
+    ],
+    "manifest": "evidence/stage10/recovery-manifest.json",
+    "full_work_or_consumer_recovered": false
+  }
+}

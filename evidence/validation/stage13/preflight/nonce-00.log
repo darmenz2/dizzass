@@ -1,0 +1,2 @@
+COMMAND: ['./build/test-work-nonce']
+Stage7 native: SHA KATs, candidate fixture, guards, 176 fragment streams and lookup failure cases PASS

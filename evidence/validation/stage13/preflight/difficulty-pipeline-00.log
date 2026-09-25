@@ -1,0 +1,2 @@
+COMMAND: ['/opt/pyvenv/bin/python3', 'tests/test_stage10_differential.py', 'pipeline']
+{"stage": 10, "group": "pipeline", "status": "PASS", "slice_composition_cases": 60, "not_a_full_original_consumer": true}

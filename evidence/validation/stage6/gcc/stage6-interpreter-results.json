@@ -1,0 +1,9 @@
+{
+  "synthetic_instruction_cases": 2053,
+  "extended_opcodes": [
+    "REV",
+    "LDRSB"
+  ],
+  "independent_hardware_emulator": false,
+  "status": "PASS"
+}

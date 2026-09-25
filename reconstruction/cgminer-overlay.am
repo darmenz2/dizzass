@@ -1,0 +1,52 @@
+# Added to the pinned upstream source, without replacing existing cgminer code.
+# Only offline-verified modules are linked. This DOES NOT register a T21 driver.
+# Preserve paths: root cgminer.c and src/frontend/cgminer.c need distinct objects.
+AUTOMAKE_OPTIONS = subdir-objects
+cgminer_CFLAGS = $(AM_CFLAGS) -ffp-contract=off
+cgminer_CPPFLAGS += -I$(top_srcdir)/include
+cgminer_SOURCES += reconstruction/support/record_fifo.c \
+                   reconstruction/support/nonce_fifo.c \
+                   reconstruction/support/nonce_record_bridge.c \
+                   include/xminer/recovery/nonce_fifo.h \
+                   reconstruction/support/work_time_hex.c \
+                   include/xminer/recovery/work_time.h \
+                   reconstruction/support/work_storage_pipeline.c \
+                   include/xminer/recovery/work_storage.h \
+                   reconstruction/support/work_difficulty_pipeline.c \
+                   include/xminer/recovery/difficulty.h \
+                   reconstruction/support/sha256_bytes.c \
+                   reconstruction/support/work_rebuild_pipeline.c \
+                   include/xminer/recovery/work_rebuild.h \
+                   src/frontend/cgminer.c \
+                   reconstruction/support/sha256d80.c \
+                   reconstruction/support/target256.c \
+                   reconstruction/support/nonce_job_window.c \
+                   include/xminer/recovery/nonce_verify.h \
+                   reconstruction/support/sha256_midstate.c \
+                   reconstruction/support/work_nonce_pipeline.c \
+                   include/xminer/recovery/work_nonce.h \
+                   include/xminer/recovery/sha256_midstate.h \
+                   src/backend/work-gen/work-gen.c \
+                   reconstruction/support/work_rx_stream.c \
+                   include/xminer/recovery/work_rx.h \
+                   libbitmain/src/uart.c \
+                   include/xminer/recovery/uart.h \
+                   libbitmain/src/chip/chip1398.c \
+                   libbitmain/src/pll.c \
+                   libbitmain/src/reg_cache.c \
+                   libbitmain/src/aml/chip.c \
+                   reconstruction/support/crc5.c \
+                   include/xminer/recovery/chip1398.h \
+                   include/xminer/recovery/pll.h \
+                   include/xminer/recovery/aml_chip.h \
+                   include/xminer/recovery/reg_cache.h
+EXTRA_DIST += Makefile.recovery RECONSTRUCTION_README_RU.md \
+              RECONSTRUCTION_STATUS.json reconstruction/upstream.lock.json \
+              reconstruction/cgminer-overlay.am \
+              reconstruction/data/reg_cache_defaults.inc
+.PHONY: recovery-check
+recovery-check:
+	$(MAKE) -C "$(top_srcdir)" -f Makefile.recovery test
+
+# Stage14 source and new header, kept in separate objects.
+cgminer_SOURCES += reconstruction/support/work_freshness_snapshot.c include/xminer/recovery/work_freshness.h

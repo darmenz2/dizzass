@@ -1,0 +1,45 @@
+{
+  "source": "evidence/stage9/genesis-vector.json",
+  "start_time": 1231006505,
+  "synthetic_rolled_headers": true,
+  "pool_policy_checked": false,
+  "submitted": false,
+  "rows": [
+    {
+      "delta": 0,
+      "time": 1231006505,
+      "time_hex": "495fab29",
+      "raw_sha256d": "6fe28c0ab6f1b372c1a6a246ae63f74f931e8365e15a089c68d6190000000000"
+    },
+    {
+      "delta": 1,
+      "time": 1231006506,
+      "time_hex": "495fab2a",
+      "raw_sha256d": "694b169f9ddfba0abb115d1e98b31892dbb22c3cf450c0e60039bc40d7125277"
+    },
+    {
+      "delta": 2,
+      "time": 1231006507,
+      "time_hex": "495fab2b",
+      "raw_sha256d": "9aa92aa72b73bc4fd2faed0cd47529765255f0b9e9aae0d891273a8aef05277a"
+    },
+    {
+      "delta": 1000,
+      "time": 1231007505,
+      "time_hex": "495faf11",
+      "raw_sha256d": "b439bbd04672a3c1391a6787bbda5d4d31d312467404fd43d7c25a4bcf88bc18"
+    },
+    {
+      "delta": 4294967295,
+      "time": 1231006504,
+      "time_hex": "495fab28",
+      "raw_sha256d": "09539d227120d7ca554e146f32827d91599ee93b76abca948f11934b39b8615a"
+    },
+    {
+      "delta": 2147483648,
+      "time": 3378490153,
+      "time_hex": "c95fab29",
+      "raw_sha256d": "5f4ed91ef8257fcff17402db675c78471904fc2e9e937e3735f81863afba8692"
+    }
+  ]
+}

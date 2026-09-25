@@ -1,0 +1,20 @@
+{
+  "group": "clang-verify",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "make",
+        "-f",
+        "Makefile.recovery",
+        "stage8-clang"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "clang-verify-00.log",
+      "seconds": 25.146,
+      "sha256": "e2f13c3a067b459a95edff11061affb110eb4a4395a0d89e1e2046d77bc9a611"
+    }
+  ]
+}

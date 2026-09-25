@@ -1,0 +1,27 @@
+COMMAND: ['make', '-f', 'Makefile.recovery', 'evidence-check']
+python3 tools/check_stage8_evidence.py
+Stage8 evidence: 10 bounded/context ranges, 8 call edges, source-path reference, field offsets and explicit indirect hash boundary PASS
+python3 tools/check_stage9_evidence.py
+Stage9 evidence: 6 bounded/context ranges, 10 call edges, candidate offsets, two REV and 112-byte prefix PASS
+python3 tools/generate_genesis_fixture.py
+Genesis fixture: coinbase, Merkle root, serialized header and hash independently checked
+python3 tools/check_stage10_evidence.py
+Stage10 evidence: 6 slices/helper ranges, 9 exact constants, 17 call edges; numerical domain and scope PASS
+python3 tools/check_stage11_evidence.py
+Stage11 evidence: 7 code ranges, 5 literal blocks, 20 branch edges; normalized ABI/scope PASS
+python3 tools/check_stage12_evidence.py
+Stage12 evidence: 4 code ranges, 7 literal/data blocks, 12 call edges, original XOR and table PASS
+python3 tools/generate_time_fixture.py
+Stage12 hashlib vectors: 6 PASS
+python3 tools/check_stage13_evidence.py
+Stage13 evidence PASS: 17 ranges including one context-only, 42 checked call edges, original queue allocation and globals
+python3 tools/check_evidence.py
+evidence: PASS; 40 code slices, 9 data records, 46 observed paths
+python3 tools/extract_reg_cache_defaults.py
+cache defaults: 8 selectors, 512 bytes each, PASS
+python3 tools/check_stage5_evidence.py
+Stage 5 evidence: constructor length/path and AML -> UART call: PASS
+python3 tools/check_stage6_evidence.py
+Stage6 original slices and RX->ring/filter/enqueue call edges: PASS
+python3 tools/check_stage7_evidence.py
+Stage7 evidence: 10 bounded slices (4 context-only), 10 call edges, table stride/base and 72-vs-68 boundary PASS

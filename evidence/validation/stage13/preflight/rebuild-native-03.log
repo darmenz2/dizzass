@@ -1,0 +1,2 @@
+COMMAND: ['/opt/pyvenv/bin/python3', 'tools/generate_genesis_fixture.py']
+Genesis fixture: coinbase, Merkle root, serialized header and hash independently checked

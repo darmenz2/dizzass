@@ -1,0 +1,9 @@
+{
+  "stage": 12,
+  "status": "PASS",
+  "group": "composition",
+  "separate_compositions": 70,
+  "original_clone_then_original_sha256d": true,
+  "hashlib_independent_check": true,
+  "pool_policy_checked": false
+}

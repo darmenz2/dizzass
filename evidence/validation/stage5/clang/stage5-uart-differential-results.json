@@ -1,0 +1,194 @@
+{
+  "passed": true,
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "cases": {
+    "set_baud": 768,
+    "read": 495,
+    "write_legacy": 1539,
+    "open": 406,
+    "destroy": 20,
+    "flush": 20
+  },
+  "total_cases": 3248,
+  "elapsed_seconds": 0.767,
+  "examples": [
+    {
+      "name": "five_eagain",
+      "result": -1,
+      "trace": [
+        [
+          "lock"
+        ],
+        [
+          "write",
+          42,
+          9,
+          "313233343536373839"
+        ],
+        [
+          "unlock"
+        ],
+        [
+          "errno_pointer"
+        ],
+        [
+          "sleep_ms",
+          20
+        ],
+        [
+          "lock"
+        ],
+        [
+          "write",
+          42,
+          9,
+          "313233343536373839"
+        ],
+        [
+          "unlock"
+        ],
+        [
+          "sleep_ms",
+          20
+        ],
+        [
+          "lock"
+        ],
+        [
+          "write",
+          42,
+          9,
+          "313233343536373839"
+        ],
+        [
+          "unlock"
+        ],
+        [
+          "sleep_ms",
+          20
+        ],
+        [
+          "lock"
+        ],
+        [
+          "write",
+          42,
+          9,
+          "313233343536373839"
+        ],
+        [
+          "unlock"
+        ],
+        [
+          "sleep_ms",
+          20
+        ],
+        [
+          "lock"
+        ],
+        [
+          "write",
+          42,
+          9,
+          "313233343536373839"
+        ],
+        [
+          "unlock"
+        ],
+        [
+          "sleep_ms",
+          20
+        ]
+      ],
+      "state": [
+        false,
+        42,
+        921600
+      ],
+      "attrs": "9c1284acd97d4bac4e2572a55ba177ce7c02ddf7eb915e6611f65ff2166be25dd3ba6d65f5e80aba570bdc50",
+      "buffer": null
+    },
+    {
+      "name": "partial_stale_errno",
+      "result": 9,
+      "trace": [
+        [
+          "lock"
+        ],
+        [
+          "write",
+          42,
+          9,
+          "313233343536373839"
+        ],
+        [
+          "unlock"
+        ],
+        [
+          "errno_pointer"
+        ],
+        [
+          "sleep_ms",
+          20
+        ],
+        [
+          "lock"
+        ],
+        [
+          "write",
+          42,
+          9,
+          "313233343536373839"
+        ],
+        [
+          "unlock"
+        ]
+      ],
+      "state": [
+        false,
+        42,
+        921600
+      ],
+      "attrs": "c030fcb1e8c5c03075f421bef5a11898f8f2b3fc687fc57f6b40281fe3bc2491366076248a7a0cf580071c87",
+      "buffer": null
+    },
+    {
+      "name": "interrupted",
+      "result": -1,
+      "trace": [
+        [
+          "lock"
+        ],
+        [
+          "write",
+          42,
+          9,
+          "313233343536373839"
+        ],
+        [
+          "unlock"
+        ],
+        [
+          "errno_pointer"
+        ]
+      ],
+      "state": [
+        false,
+        42,
+        921600
+      ],
+      "attrs": "b1a1c93d73d0b88078b6b447e2977b04b2bed2d3344c4368e24db39eff552caf830d6770442684fb2cddf3d8",
+      "buffer": null
+    }
+  ],
+  "method": "C compared to complete unchanged A32 UART routines with explicitly traced Linux/POSIX boundary hooks",
+  "hardware_tested": false,
+  "full_miner_tested": false,
+  "limits": [
+    "Local subset interpreter, not an independent emulator or proof for all inputs.",
+    "read/write/ioctl/open/memory/mutex/sleep/errno are deterministic boundary hooks; diagnostics omitted.",
+    "New callback API uses an explicit fd/path context, not the vendor ARM mutex ABI.",
+    "Occupied-context, null callback, pointer/capacity and repeated-destroy guards are new API behavior.",
+    "Legacy write retries preserve even the stale-errno short-write behavior. No safety endorsement."
+  ]
+}

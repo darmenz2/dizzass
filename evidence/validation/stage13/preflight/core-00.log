@@ -1,0 +1,2 @@
+COMMAND: ['./build/test-chip1398']
+host unit tests: PASS (no hardware)

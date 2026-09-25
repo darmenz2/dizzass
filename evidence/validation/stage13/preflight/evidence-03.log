@@ -1,0 +1,2 @@
+COMMAND: ['/opt/pyvenv/bin/python3', 'tools/update_overlay_inventory.py', '--check']
+Overlay inventory: 598 files; PASS

@@ -1,0 +1,113 @@
+{
+  "path": "libbitmain/src/fan_ctrl.c",
+  "observed_as": "/tmp/build/libbitmain/src/fan_ctrl.c",
+  "status": "pending-not-implemented",
+  "evidence": [
+    {
+      "address": "0x5ecde9",
+      "xor": 118,
+      "decoded_length": 37,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x000235c0",
+      "end_exclusive": "0x000239a0",
+      "path_references": [
+        {
+          "insn": "0x2388c",
+          "string": "0x5ecde9",
+          "kind": "literal-abs",
+          "text": "/tmp/build/libbitmain/src/fan_ctrl.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000f86a8",
+      "end_exclusive": "0x000f8a30",
+      "path_references": [
+        {
+          "insn": "0xf876c",
+          "string": "0x5ecde9",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/fan_ctrl.c"
+        },
+        {
+          "insn": "0xf87c8",
+          "string": "0x5ecde9",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/fan_ctrl.c"
+        },
+        {
+          "insn": "0xf884c",
+          "string": "0x5ecde9",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/fan_ctrl.c"
+        },
+        {
+          "insn": "0xf889c",
+          "string": "0x5ecde9",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/fan_ctrl.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000f8a30",
+      "end_exclusive": "0x000f8b60",
+      "path_references": [
+        {
+          "insn": "0xf8a84",
+          "string": "0x5ecde9",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/fan_ctrl.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000f8b60",
+      "end_exclusive": "0x000f8c70",
+      "path_references": [
+        {
+          "insn": "0xf8ba4",
+          "string": "0x5ecde9",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/fan_ctrl.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000f8c70",
+      "end_exclusive": "0x000f8df0",
+      "path_references": [
+        {
+          "insn": "0xf8d18",
+          "string": "0x5ecde9",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/fan_ctrl.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000f92e8",
+      "end_exclusive": "0x000f96a0",
+      "path_references": [
+        {
+          "insn": "0xf92fc",
+          "string": "0x5ecde9",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/fan_ctrl.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": []
+}

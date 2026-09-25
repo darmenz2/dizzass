@@ -1,0 +1,16 @@
+{
+  "stage": 14,
+  "archive_sha256": "0c61e8acea79e1e6bad4b1058d50cbb60cf985fcf98ad3f9eb026d4b25178f50",
+  "upstream_commit": "b8491c66e7e22f23a9edf095dd1337ee581e88bd",
+  "upstream_tree": "2228aee63ac41271bbbe26773ad81f31fdec0373",
+  "imported_file_count": 790,
+  "reference_elf_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "all_archive_files_preserved_byte_for_byte": true,
+  "upstream_file_changes": [
+    "Makefile.am"
+  ],
+  "original_overlay_inventory_preserved": true,
+  "full_upstream_build_tested": false,
+  "hardware_tested": false,
+  "runtime_ready": false
+}

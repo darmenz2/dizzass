@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "group": "registry",
+  "compiler_tag": "gcc",
+  "original_comparison_cases": 861,
+  "library_sha256": "869fb32e6fa073f27d5052eddc863294bcd819797f65a56d07611a5b2813f161",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "details": {
+    "original_membership_calls": 349,
+    "combined_original_consumer_and_membership": 512,
+    "external_mutex_injected": true,
+    "predicate_not_replaced_in_combined_tests": true
+  },
+  "hardware_tested": false,
+  "job_freshness_proven": false
+}

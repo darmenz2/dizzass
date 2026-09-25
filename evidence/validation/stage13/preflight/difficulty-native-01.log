@@ -1,0 +1,2 @@
+COMMAND: ['./build/vn135-rebuild-genesis-difficulty']
+{"fixture":"Bitcoin genesis, not live work","block_hash":"000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f","difficulty":1,"target_derived":true,"header_matches":true,"merkle_matches":true,"meets_target":true,"job_freshness_checked":false,"submitted":false,"hardware_tested":false}

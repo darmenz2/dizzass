@@ -1,0 +1,12 @@
+{
+  "libvn135_recovered.a": {
+    "bytes": 41626,
+    "sha256": "af680215b64fe99607abc36a74ed0143f91e1c768883a8503e1a28d91e98fb41",
+    "kind": "static-library-not-miner-executable"
+  },
+  "libvn135_recovered-armv7.a": {
+    "bytes": 7802,
+    "sha256": "3f70233700577f9a2e81e94b1ce8b4bb94c6a3b044093f96f89f46e612641732",
+    "kind": "static-library-not-miner-executable"
+  }
+}

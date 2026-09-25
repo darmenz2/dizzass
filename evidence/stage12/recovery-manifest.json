@@ -1,0 +1,222 @@
+{
+  "stage": 12,
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "reference_bytes": 6228004,
+  "slices": [
+    {
+      "name": "clone_time",
+      "start": "0x2ce84",
+      "end_exclusive": "0x2d108",
+      "bytes": 644,
+      "sha256": "ce93b4868dfadf7f72cef35ad99a93f9ed203b939f745eda342d509c39c6f579",
+      "disassembly": "evidence/stage12/disasm/clone_time.S",
+      "disassembly_sha256": "81908ac8c92679560013fc2645d391cd9b15b5c6c14236ec506bee972b526dfe",
+      "scope": "Full bounded clone, valid 8-digit time or absent; original allocation success for encoder. Original API/ownership adapted."
+    },
+    {
+      "name": "hex_encode",
+      "start": "0x1068c",
+      "end_exclusive": "0x107a4",
+      "bytes": 280,
+      "sha256": "7866e7e3a43a8cde1d0c7fc57ccaaad14174d583d3c3c621fdab4a1f02ebac34",
+      "disassembly": "evidence/stage12/disasm/hex_encode.S",
+      "disassembly_sha256": "f601529bbf2a7dd01dc46077656e2b51d68fc607fe604d5d3b3bdf849b081164",
+      "scope": "Original body compared for length=4 and successful 12-byte calloc; not general helper API."
+    },
+    {
+      "name": "hex_decode",
+      "start": "0x107b0",
+      "end_exclusive": "0x10964",
+      "bytes": 436,
+      "sha256": "173684197321d4d7888a494f0b66c3f8481d259f34d5979545bc70ef10f34134",
+      "disassembly": "evidence/stage12/disasm/hex_decode.S",
+      "disassembly_sha256": "12dc94e118330469c07709a6e7077de5612b2b98f527f906dcb264a10f835a21",
+      "scope": "Original body compared for exactly 8 valid hex chars and 4 output bytes; malformed partial-output semantics excluded from clone."
+    },
+    {
+      "name": "hex_alphabet_initializer",
+      "start": "0x1ff00",
+      "end_exclusive": "0x1ff2c",
+      "bytes": 44,
+      "sha256": "20b5b2e33dd5a332c604c83b47c9d821587734be210fe3a9667c68ee864734a4",
+      "disassembly": "evidence/stage12/disasm/hex_alphabet_initializer.S",
+      "disassembly_sha256": "1944ea2966d8012171f81dd542ad0a951fa62734c257dbfde8a6d95826876d9e",
+      "scope": "Exact original XOR loop for 16 encoding characters, executed once in the oracle."
+    }
+  ],
+  "literals": [
+    {
+      "name": "clone_literals",
+      "address": "0x2d108",
+      "bytes": 48,
+      "sha256": "cfc078449170b87554d453e2ab513f87f6f7fd8ffbded5b8352b23fed6458725"
+    },
+    {
+      "name": "encode_literals",
+      "address": "0x107a4",
+      "bytes": 12,
+      "sha256": "4baba93e0f9187271cd752ead4adbbd613135d24e6b59eddc4a3dd5510eb430e"
+    },
+    {
+      "name": "decode_literals",
+      "address": "0x10964",
+      "bytes": 56,
+      "sha256": "e9578dba89141e26a2e856255f5d807344bba36824510362a0126e30ad4035c4"
+    },
+    {
+      "name": "initializer_literal",
+      "address": "0x20eec",
+      "bytes": 4,
+      "sha256": "fcb60d8dd140822b90505e1260e762b3f139c72bdad906471d8487ab0430ef12"
+    },
+    {
+      "name": "encoded_hex_alphabet",
+      "address": "0x5e00bc",
+      "bytes": 16,
+      "sha256": "d5d7c036c5ab2612684f795d8811aeba95184f7b98c2e8d56494fcccf7894709"
+    },
+    {
+      "name": "decode_table",
+      "address": "0x5b0310",
+      "bytes": 1024,
+      "sha256": "3bdae4e9a1608b923ce879a3b00044941a145b52410ec3de888000f0dd6df199"
+    },
+    {
+      "name": "initializer_entry",
+      "address": "0x5daf70",
+      "bytes": 740,
+      "sha256": "e32ae4d7a36cc58b813bf793046c82c470a7c80ee12bfefa03b80375e9c9f3d1"
+    }
+  ],
+  "branch_edges": [
+    {
+      "pc": "0x2cea0",
+      "instruction_hex": "eb159b43",
+      "target": "0x593bb4",
+      "link": true
+    },
+    {
+      "pc": "0x2ceb4",
+      "instruction_hex": "eb15e493",
+      "target": "0x5a6108",
+      "link": true
+    },
+    {
+      "pc": "0x2ced4",
+      "instruction_hex": "eb15e5fa",
+      "target": "0x5a66c4",
+      "link": true
+    },
+    {
+      "pc": "0x2cee4",
+      "instruction_hex": "eb15d968",
+      "target": "0x5a348c",
+      "link": true
+    },
+    {
+      "pc": "0x2cf0c",
+      "instruction_hex": "ebff939a",
+      "target": "0x11d7c",
+      "link": true
+    },
+    {
+      "pc": "0x2cf20",
+      "instruction_hex": "eb15da5e",
+      "target": "0x5a38a0",
+      "link": true
+    },
+    {
+      "pc": "0x2cf68",
+      "instruction_hex": "eb15da4c",
+      "target": "0x5a38a0",
+      "link": true
+    },
+    {
+      "pc": "0x2d004",
+      "instruction_hex": "ebff8de9",
+      "target": "0x107b0",
+      "link": true
+    },
+    {
+      "pc": "0x2d024",
+      "instruction_hex": "ebff8d98",
+      "target": "0x1068c",
+      "link": true
+    },
+    {
+      "pc": "0x2d074",
+      "instruction_hex": "eb15da09",
+      "target": "0x5a38a0",
+      "link": true
+    },
+    {
+      "pc": "0x2d0bc",
+      "instruction_hex": "eb15d9f7",
+      "target": "0x5a38a0",
+      "link": true
+    },
+    {
+      "pc": "0x106e8",
+      "instruction_hex": "eb160d31",
+      "target": "0x593bb4",
+      "link": true
+    }
+  ],
+  "initializer_function": "0x1fc04",
+  "hex_alphabet_address": "0x5e00bc",
+  "hex_decode_table_address": "0x5b0310",
+  "original_bodies_execute": [
+    "clone",
+    "hex_decode",
+    "hex_encode",
+    "strdup"
+  ],
+  "original_initializer_slice_executed": true,
+  "normalized_pointer_slots": [
+    "0x18c",
+    "0x19c",
+    "0x1a8",
+    "0x1b0"
+  ],
+  "time_header_offset": "0x44",
+  "time_text_slot": "0x19c",
+  "time_addition": "modulo 2^32; independent header and text values",
+  "new_exported_functions": 4,
+  "modified_observed_source": "src/frontend/cgminer.c",
+  "new_support": "reconstruction/support/work_time_hex.c",
+  "new_header": "include/xminer/recovery/work_time.h",
+  "source_placement": "Integration in observed frontend cluster; original helper filenames not proved.",
+  "failed_original_encoder_allocation_compared": false,
+  "malformed_time_clone_compared": false,
+  "invalid_time_guard_is_new": true,
+  "encoder_allocation_guard_is_new": true,
+  "runtime_time_policy_checked": false,
+  "hash_refreshed_by_clone": false,
+  "live_reference_ownership_recovered": false,
+  "physical_hardware_tested": false,
+  "original_general_hex_api_fully_recovered": false,
+  "original_clone_valid_time_domain_recovered": true,
+  "comparison_counts": {
+    "time_codec": 1188,
+    "clone_time": 1323
+  },
+  "native_scenarios": 6158,
+  "native_assertions": 43397,
+  "oracle": "tests/work_time_oracle.py",
+  "differential_tests": "tests/test_stage12_differential.py",
+  "native_tests": "tests/test_work_time.c",
+  "oracle_external_calls": [
+    "calloc",
+    "malloc",
+    "free",
+    "strlen",
+    "memcpy",
+    "memset",
+    "debug memcpy",
+    "mutex lock",
+    "mutex unlock",
+    "logging"
+  ],
+  "interpreter_instructions_modified": false,
+  "separate_hash_compositions": 70
+}

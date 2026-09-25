@@ -1,0 +1,18 @@
+{
+  "group": "automake",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "tests/test_overlay_automake.py"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "automake-00.log",
+      "seconds": 5.003,
+      "sha256": "21db12fab4cde7d77e31938e0c31c935e6a137597701118f3d6cd1ee77215176"
+    }
+  ]
+}

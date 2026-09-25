@@ -1,0 +1,19 @@
+{
+  "group": "work-math",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage10_differential.py",
+        "math"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "work-math-00.log",
+      "seconds": 11.992,
+      "sha256": "45863cacd41a65da3361de49df662854ac2157e81eaefb27ffc812685f0827a0"
+    }
+  ]
+}

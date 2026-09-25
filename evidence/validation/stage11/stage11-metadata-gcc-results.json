@@ -1,0 +1,8 @@
+{
+  "stage": 11,
+  "group": "metadata",
+  "status": "PASS",
+  "comparisons": 576,
+  "original_strdup_body_executed": true,
+  "all_three_fail_patterns": true
+}

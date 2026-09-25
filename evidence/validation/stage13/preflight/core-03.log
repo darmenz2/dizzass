@@ -1,0 +1,2 @@
+COMMAND: ['./build/test-uart']
+UART native API guards, legacy retry and lifecycle: PASS

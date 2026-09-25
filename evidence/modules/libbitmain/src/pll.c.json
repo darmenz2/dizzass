@@ -1,0 +1,76 @@
+{
+  "path": "libbitmain/src/pll.c",
+  "observed_as": "/tmp/build/libbitmain/src/pll.c",
+  "status": "partial-verified-slices",
+  "evidence": [
+    {
+      "address": "0x5ed119",
+      "xor": 190,
+      "decoded_length": 35,
+      "byte_match": true,
+      "terminal_suffix_hex": "00b59c8b"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x000ff288",
+      "end_exclusive": "0x000ff660",
+      "path_references": [
+        {
+          "insn": "0xff5e4",
+          "string": "0x5ed119",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/pll.c\u0000\ufffd\ufffd\ufffd"
+        },
+        {
+          "insn": "0xff5e8",
+          "string": "0x5ed119",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/pll.c\u0000\ufffd\ufffd\ufffd"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000ff660",
+      "end_exclusive": "0x000ffc0c",
+      "path_references": [
+        {
+          "insn": "0xffb74",
+          "string": "0x5ed119",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/pll.c\u0000\ufffd\ufffd\ufffd"
+        },
+        {
+          "insn": "0xffb78",
+          "string": "0x5ed119",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/pll.c\u0000\ufffd\ufffd\ufffd"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000ffc0c",
+      "end_exclusive": "0x000ffec8",
+      "path_references": [
+        {
+          "insn": "0xffcf4",
+          "string": "0x5ed119",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/pll.c\u0000\ufffd\ufffd\ufffd"
+        },
+        {
+          "insn": "0xffd78",
+          "string": "0x5ed119",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/pll.c\u0000\ufffd\ufffd\ufffd"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": [
+    "libbitmain/src/pll.c"
+  ]
+}

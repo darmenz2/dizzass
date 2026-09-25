@@ -1,0 +1,282 @@
+{
+  "path": "include/xminer/frontend/miner.h",
+  "observed_as": "/tmp/build/include/xminer/frontend/miner.h",
+  "status": "pending-not-implemented",
+  "evidence": [
+    {
+      "address": "0x5e0836",
+      "xor": 232,
+      "decoded_length": 43,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    },
+    {
+      "address": "0x5e6da0",
+      "xor": 117,
+      "decoded_length": 43,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x00010f4c",
+      "end_exclusive": "0x0001100c",
+      "path_references": [
+        {
+          "insn": "0x10fbc",
+          "string": "0x5e0836",
+          "kind": "pc-add",
+          "text": "/tmp/build/include/xminer/frontend/miner.h"
+        },
+        {
+          "insn": "0x10fe4",
+          "string": "0x5e0836",
+          "kind": "pc-add",
+          "text": "/tmp/build/include/xminer/frontend/miner.h"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0001100c",
+      "end_exclusive": "0x00011218",
+      "path_references": [
+        {
+          "insn": "0x11108",
+          "string": "0x5e0836",
+          "kind": "pc-add",
+          "text": "/tmp/build/include/xminer/frontend/miner.h"
+        },
+        {
+          "insn": "0x111e8",
+          "string": "0x5e0836",
+          "kind": "pc-add",
+          "text": "/tmp/build/include/xminer/frontend/miner.h"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00011218",
+      "end_exclusive": "0x000113fc",
+      "path_references": [
+        {
+          "insn": "0x112d0",
+          "string": "0x5e0836",
+          "kind": "pc-add",
+          "text": "/tmp/build/include/xminer/frontend/miner.h"
+        },
+        {
+          "insn": "0x11370",
+          "string": "0x5e0836",
+          "kind": "pc-add",
+          "text": "/tmp/build/include/xminer/frontend/miner.h"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000113fc",
+      "end_exclusive": "0x0001167c",
+      "path_references": [
+        {
+          "insn": "0x1153c",
+          "string": "0x5e0836",
+          "kind": "pc-add",
+          "text": "/tmp/build/include/xminer/frontend/miner.h"
+        },
+        {
+          "insn": "0x1164c",
+          "string": "0x5e0836",
+          "kind": "pc-add",
+          "text": "/tmp/build/include/xminer/frontend/miner.h"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0001243c",
+      "end_exclusive": "0x00013608",
+      "path_references": [
+        {
+          "insn": "0x131cc",
+          "string": "0x5e0836",
+          "kind": "pc-add",
+          "text": "/tmp/build/include/xminer/frontend/miner.h"
+        },
+        {
+          "insn": "0x1327c",
+          "string": "0x5e0836",
+          "kind": "pc-add",
+          "text": "/tmp/build/include/xminer/frontend/miner.h"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00013608",
+      "end_exclusive": "0x00013990",
+      "path_references": [
+        {
+          "insn": "0x13724",
+          "string": "0x5e0836",
+          "kind": "pc-add",
+          "text": "/tmp/build/include/xminer/frontend/miner.h"
+        },
+        {
+          "insn": "0x13940",
+          "string": "0x5e0836",
+          "kind": "pc-add",
+          "text": "/tmp/build/include/xminer/frontend/miner.h"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00013af8",
+      "end_exclusive": "0x00014588",
+      "path_references": [
+        {
+          "insn": "0x144c0",
+          "string": "0x5e0836",
+          "kind": "pc-add",
+          "text": "/tmp/build/include/xminer/frontend/miner.h"
+        },
+        {
+          "insn": "0x144e8",
+          "string": "0x5e0836",
+          "kind": "pc-add",
+          "text": "/tmp/build/include/xminer/frontend/miner.h"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00014b00",
+      "end_exclusive": "0x00019660",
+      "path_references": [
+        {
+          "insn": "0x190b0",
+          "string": "0x5e0836",
+          "kind": "pc-add",
+          "text": "/tmp/build/include/xminer/frontend/miner.h"
+        },
+        {
+          "insn": "0x19228",
+          "string": "0x5e0836",
+          "kind": "pc-add",
+          "text": "/tmp/build/include/xminer/frontend/miner.h"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00019a34",
+      "end_exclusive": "0x0001ec00",
+      "path_references": [
+        {
+          "insn": "0x19f18",
+          "string": "0x5e0836",
+          "kind": "pc-add",
+          "text": "/tmp/build/include/xminer/frontend/miner.h"
+        },
+        {
+          "insn": "0x1a100",
+          "string": "0x5e0836",
+          "kind": "pc-add",
+          "text": "/tmp/build/include/xminer/frontend/miner.h"
+        },
+        {
+          "insn": "0x1d000",
+          "string": "0x5e0836",
+          "kind": "pc-add",
+          "text": "/tmp/build/include/xminer/frontend/miner.h"
+        },
+        {
+          "insn": "0x1d030",
+          "string": "0x5e0836",
+          "kind": "pc-add",
+          "text": "/tmp/build/include/xminer/frontend/miner.h"
+        },
+        {
+          "insn": "0x1e1d4",
+          "string": "0x5e0836",
+          "kind": "pc-add",
+          "text": "/tmp/build/include/xminer/frontend/miner.h"
+        },
+        {
+          "insn": "0x1e904",
+          "string": "0x5e0836",
+          "kind": "pc-add",
+          "text": "/tmp/build/include/xminer/frontend/miner.h"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0001fc04",
+      "end_exclusive": "0x000235c0",
+      "path_references": [
+        {
+          "insn": "0x21830",
+          "string": "0x5e0836",
+          "kind": "pc-add",
+          "text": "/tmp/build/include/xminer/frontend/miner.h"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00075498",
+      "end_exclusive": "0x00076588",
+      "path_references": [
+        {
+          "insn": "0x755a0",
+          "string": "0x5e6da0",
+          "kind": "pc-add",
+          "text": "/tmp/build/include/xminer/frontend/miner.h"
+        },
+        {
+          "insn": "0x76074",
+          "string": "0x5e6da0",
+          "kind": "pc-add",
+          "text": "/tmp/build/include/xminer/frontend/miner.h"
+        },
+        {
+          "insn": "0x760d0",
+          "string": "0x5e6da0",
+          "kind": "pc-add",
+          "text": "/tmp/build/include/xminer/frontend/miner.h"
+        },
+        {
+          "insn": "0x76128",
+          "string": "0x5e6da0",
+          "kind": "pc-add",
+          "text": "/tmp/build/include/xminer/frontend/miner.h"
+        },
+        {
+          "insn": "0x76454",
+          "string": "0x5e6da0",
+          "kind": "pc-add",
+          "text": "/tmp/build/include/xminer/frontend/miner.h"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0007c3d4",
+      "end_exclusive": "0x00081f68",
+      "path_references": [
+        {
+          "insn": "0x81d18",
+          "string": "0x5e6da0",
+          "kind": "pc-add",
+          "text": "/tmp/build/include/xminer/frontend/miner.h"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": []
+}

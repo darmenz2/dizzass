@@ -1,0 +1,2 @@
+COMMAND: ['/opt/pyvenv/bin/python3', 'tests/test_stage6_interpreter.py']
+{"synthetic_instruction_cases": 2053, "extended_opcodes": ["REV", "LDRSB"], "independent_hardware_emulator": false, "status": "PASS"}

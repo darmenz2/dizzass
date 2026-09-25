@@ -1,0 +1,35 @@
+COMMAND: ['/opt/pyvenv/bin/python3', 'tests/test_stage4_cache_differential.py']
+{
+  "passed": true,
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "total_cases": 10346,
+  "cases": {
+    "init: return, all tables and allocation ownership": 519,
+    "destroy: release order, globals and no retained allocations": 999,
+    "default table: all 512 bytes against original init": 8,
+    "get_chain: return, output and whole cache state": 3049,
+    "get_chip: return, output and whole cache state": 3648,
+    "set_chain: return, output and whole cache state": 1021,
+    "set_chip: return, output and whole cache state": 1042,
+    "reset: return, all tables and preserved counts/flag": 60
+  },
+  "seconds": 11.273,
+  "host_chain_size": 528,
+  "original_chain_size": 520,
+  "original_global_addresses": {
+    "pointer": "0x654d68",
+    "chain_count": "0x654d6c",
+    "enabled": "0x654d70"
+  },
+  "hardware_tested": false,
+  "full_miner_tested": false,
+  "method": "Native compiled C state and return compared to complete original A32 cache routines",
+  "limits": [
+    "Local bounded A32 interpreter; not an independent certified emulator.",
+    "calloc/free/memcpy are intercepted; diagnostics are suppressed.",
+    "Explicit C context/native pointers replace vendor singleton and ARM32 pointers.",
+    "Allocation sizes normalized for native pointer width; table contents and ownership compared.",
+    "New integration guards for negative/oversized counts, live reinit and corrupt context tested separately.",
+    "No hardware/cache coherency, multithreading, timing, actual model selection or miner acceptance."
+  ]
+}

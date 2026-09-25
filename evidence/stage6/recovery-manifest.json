@@ -1,0 +1,218 @@
+{
+  "stage": 6,
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "original_parser_function": "0xc4054",
+  "partial_observed_module": "src/backend/work-gen/work-gen.c",
+  "integrated_dispatch_original_file_ownership_proven": false,
+  "new_api_headers": [
+    "include/xminer/recovery/work_rx.h"
+  ],
+  "new_non_vendor_adapter": "reconstruction/support/work_rx_stream.c",
+  "slices": [
+    {
+      "name": "rx-layout-selection",
+      "start": "0x000c4074",
+      "end_exclusive": "0x000c40dc",
+      "size": 104,
+      "original_bytes_sha256": "f1cf2b7d53769c638d87449b70cc0abb69dcfb9c734defeddc508378ffdefc7a",
+      "tested_scope": "Layout variant and minimum length with board/special getters injected.",
+      "disassembly": "evidence/stage6/disasm/rx-layout-selection.S",
+      "hardware_verified": false,
+      "stage": 6
+    },
+    {
+      "name": "rx-prefix-and-classification",
+      "start": "0x000c42b0",
+      "end_exclusive": "0x000c4480",
+      "size": 464,
+      "original_bytes_sha256": "9f2aec212de89a42cc7521ec097bad6578ce349174b5aa28828a7569e558005d",
+      "tested_scope": "One stable-policy receive iteration: count, prefix consumption, payload and classification; stop at next-chain, nonce, or register boundary.",
+      "disassembly": "evidence/stage6/disasm/rx-prefix-and-classification.S",
+      "hardware_verified": false,
+      "stage": 6
+    },
+    {
+      "name": "rx-nonce-job-slot",
+      "start": "0x000c4480",
+      "end_exclusive": "0x000c44dc",
+      "size": 92,
+      "original_bytes_sha256": "8e69e3cbbfedb41b7c12512ed4cd9fba9874a6a797c80d5aaae1263b3600ac93",
+      "tested_scope": "Raw 5-bit job-slot extraction ONLY. Does not execute job lookup or validate nonce.",
+      "disassembly": "evidence/stage6/disasm/rx-nonce-job-slot.S",
+      "hardware_verified": false,
+      "stage": 6
+    },
+    {
+      "name": "rx-register-special",
+      "start": "0x000c4750",
+      "end_exclusive": "0x000c4844",
+      "size": 244,
+      "original_bytes_sha256": "0a13e5f2b023dbcf2a9e81854cf18c3cf1009eb182dba866cbf16069d157f287",
+      "tested_scope": "Seven-byte special register response decoding and filtering; final enqueue injected.",
+      "disassembly": "evidence/stage6/disasm/rx-register-special.S",
+      "hardware_verified": false,
+      "stage": 6
+    },
+    {
+      "name": "rx-register-normal",
+      "start": "0x000c4878",
+      "end_exclusive": "0x000c4a88",
+      "size": 528,
+      "original_bytes_sha256": "b68dc6a242287ba42358b62b0890a54346da7ccf507caacde1cc30e25fe41b26",
+      "tested_scope": "Register fields for three normal layouts and filtering; final enqueue injected.",
+      "disassembly": "evidence/stage6/disasm/rx-register-normal.S",
+      "hardware_verified": false,
+      "stage": 6
+    },
+    {
+      "name": "rx-register-filter-dispatch",
+      "start": "0x000d2a84",
+      "end_exclusive": "0x000d2bf4",
+      "size": 368,
+      "original_bytes_sha256": "7af89d360d70ec308b3bf7f54b75a57c7a7c78ab84b498c43ed4f63dbd5c7d74",
+      "tested_scope": "Full dispatcher with internal selector getter injected; constant-return callees execute.",
+      "disassembly": "evidence/stage6/disasm/rx-register-filter-dispatch.S",
+      "hardware_verified": false,
+      "stage": 6
+    },
+    {
+      "name": "rx-filter-constant-0",
+      "start": "0x000d55cc",
+      "end_exclusive": "0x000d5604",
+      "size": 56,
+      "original_bytes_sha256": "becdc62d16e26e6b43f80c53febbe9bfdf8652e698047571d37354d28a0ff269",
+      "tested_scope": "Constant-return callee of filter dispatcher, selector0.",
+      "disassembly": "evidence/stage6/disasm/rx-filter-constant-0.S",
+      "hardware_verified": false,
+      "stage": 6
+    },
+    {
+      "name": "rx-filter-constant-1",
+      "start": "0x000dac64",
+      "end_exclusive": "0x000dac6c",
+      "size": 8,
+      "original_bytes_sha256": "4fe40444ba4fa963fbe4230783e64a772a93d31a1ee99e83adc54d696880082b",
+      "tested_scope": "Constant-return callee of filter dispatcher, selector1.",
+      "disassembly": "evidence/stage6/disasm/rx-filter-constant-1.S",
+      "hardware_verified": false,
+      "stage": 6
+    },
+    {
+      "name": "rx-filter-constant-2",
+      "start": "0x000ecf24",
+      "end_exclusive": "0x000ecf5c",
+      "size": 56,
+      "original_bytes_sha256": "becdc62d16e26e6b43f80c53febbe9bfdf8652e698047571d37354d28a0ff269",
+      "tested_scope": "Constant-return callee of filter dispatcher, selector2.",
+      "disassembly": "evidence/stage6/disasm/rx-filter-constant-2.S",
+      "hardware_verified": false,
+      "stage": 6
+    },
+    {
+      "name": "rx-filter-constant-3",
+      "start": "0x000df1d8",
+      "end_exclusive": "0x000df1e0",
+      "size": 8,
+      "original_bytes_sha256": "4fe40444ba4fa963fbe4230783e64a772a93d31a1ee99e83adc54d696880082b",
+      "tested_scope": "Constant-return callee of filter dispatcher, selector3.",
+      "disassembly": "evidence/stage6/disasm/rx-filter-constant-3.S",
+      "hardware_verified": false,
+      "stage": 6
+    },
+    {
+      "name": "rx-filter-constant-4",
+      "start": "0x000e3bc4",
+      "end_exclusive": "0x000e3bfc",
+      "size": 56,
+      "original_bytes_sha256": "becdc62d16e26e6b43f80c53febbe9bfdf8652e698047571d37354d28a0ff269",
+      "tested_scope": "Constant-return callee of filter dispatcher, selector4.",
+      "disassembly": "evidence/stage6/disasm/rx-filter-constant-4.S",
+      "hardware_verified": false,
+      "stage": 6
+    },
+    {
+      "name": "rx-oracle-ring-pop-one",
+      "start": "0x000d1df0",
+      "end_exclusive": "0x000d1f18",
+      "size": 296,
+      "original_bytes_sha256": "304b847d2d4686d7eebd86d9b517ce700370685138928e8693d85bad4c53bc27",
+      "tested_scope": "Original helper executes with valid byte-ring fixture; not translated into a new source file.",
+      "disassembly": "evidence/stage6/disasm/rx-oracle-ring-pop-one.S",
+      "hardware_verified": false,
+      "stage": 6
+    },
+    {
+      "name": "rx-oracle-ring-pop-many",
+      "start": "0x000d1f20",
+      "end_exclusive": "0x000d20a4",
+      "size": 388,
+      "original_bytes_sha256": "10a8f81c74c8852addb6ddfeaef3299ca633608f254e36c82f055a623d53fe85",
+      "tested_scope": "Original helper executes, including wraparound; memcpy injected. Not translated into new source.",
+      "disassembly": "evidence/stage6/disasm/rx-oracle-ring-pop-many.S",
+      "hardware_verified": false,
+      "stage": 6
+    },
+    {
+      "name": "rx-oracle-ring-count",
+      "start": "0x000d20ac",
+      "end_exclusive": "0x000d20b4",
+      "size": 8,
+      "original_bytes_sha256": "cdb6597d5f559cc0fcf394f18a78ee566b12548b02900f598ee31e5f2b6efcf8",
+      "tested_scope": "Original count accessor executes in reference oracle only.",
+      "disassembly": "evidence/stage6/disasm/rx-oracle-ring-count.S",
+      "hardware_verified": false,
+      "stage": 6
+    }
+  ],
+  "stable_policy_precondition": "Board/chip/special selectors fixed during a stream. Changing special flag mid-loop was not reconstructed.",
+  "layout_rules": {
+    "normal_frames_bytes": [
+      9,
+      10,
+      11
+    ],
+    "special_frame_bytes": 9,
+    "receive_prefix_hex": "aa55"
+  },
+  "critical_limits": [
+    "Frame kind is not an acceptance verdict.",
+    "No CRC verification at recovered boundary; low five bits merely extracted.",
+    "Nonce result only raw payload/job-slot bits, no job validity or hash/share check.",
+    "Exact T21 model-to-driver mapping is not established.",
+    "One per-chain loop body, not complete scheduler/condition-wait/receiver thread.",
+    "Original ring pop helpers execute only in the reference interpreter; new adapter uses its own bounded buffer.",
+    "New defensive checks and output structure are not vendor ABI.",
+    "No hardware or fault-injection test."
+  ],
+  "branch_edges": [
+    {
+      "pc": "0xc4354",
+      "target": "0xd1df0"
+    },
+    {
+      "pc": "0xc43ac",
+      "target": "0xd1df0"
+    },
+    {
+      "pc": "0xc4420",
+      "target": "0xd1f20"
+    },
+    {
+      "pc": "0xc475c",
+      "target": "0xd1f20"
+    },
+    {
+      "pc": "0xc4798",
+      "target": "0xd2a84"
+    },
+    {
+      "pc": "0xc4a3c",
+      "target": "0xd2a84"
+    },
+    {
+      "pc": "0xc4840",
+      "target": "0x108938"
+    }
+  ],
+  "slice_tested_is_not_whole_function_coverage": true
+}

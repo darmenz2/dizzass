@@ -1,0 +1,29 @@
+{
+  "gcc": "gcc (Debian 14.2.0-19) 14.2.0",
+  "clang": "clang version 17.0.0 (https://github.com/swiftlang/llvm-project.git 10999b6d034fe318f3d56c83bddb6572593a8bb0)",
+  "python": "Python 3.13.5",
+  "build_commands": [
+    "make -f Makefile.recovery clean all test arm evidence-check sanitize"
+  ],
+  "clang_repeat_distinct_cases": 12394,
+  "original_elf_unchanged": true,
+  "artifacts": [
+    {
+      "path": "reference/cgminer.vendor.elf",
+      "bytes": 6228004,
+      "sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9"
+    },
+    {
+      "path": "build/libvn135_recovered.a",
+      "bytes": 73228,
+      "sha256": "f507282c5999807eb645f0a41fa3b375a35efbb0a0bb5db9a629e8a3777bdedf"
+    },
+    {
+      "path": "build/libvn135_recovered-armv7.a",
+      "bytes": 15916,
+      "sha256": "8b8606c67e7ea57cc64c586c548605574c87483c2e249c68e618a8d7a6b8dc48"
+    }
+  ],
+  "no_hardware_or_pool_access": true,
+  "full_upstream_build_tested": false
+}

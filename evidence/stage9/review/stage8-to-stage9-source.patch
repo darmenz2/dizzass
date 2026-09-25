@@ -1,0 +1,3363 @@
+diff --git a/Makefile.recovery b/Makefile.recovery
+index 2f4eac9..0a61997 100644
+--- a/Makefile.recovery
++++ b/Makefile.recovery
+@@ -7,8 +7,8 @@ PYTHON ?= python3
+ CPPFLAGS += -Iinclude
+ CFLAGS ?= -O2 -g
+ STRICT = -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror
+-SOURCES = src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c
+-HEADERS = include/xminer/recovery/nonce_verify.h include/xminer/recovery/work_nonce.h include/xminer/recovery/sha256_midstate.h include/xminer/recovery/work_rx.h include/xminer/recovery/uart.h include/xminer/recovery/chip1398.h include/xminer/recovery/pll.h include/xminer/recovery/aml_chip.h include/xminer/recovery/reg_cache.h reconstruction/data/reg_cache_defaults.inc
++SOURCES = reconstruction/support/sha256_bytes.c reconstruction/support/work_rebuild_pipeline.c src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c
++HEADERS = include/xminer/recovery/work_rebuild.h include/xminer/recovery/nonce_verify.h include/xminer/recovery/work_nonce.h include/xminer/recovery/sha256_midstate.h include/xminer/recovery/work_rx.h include/xminer/recovery/uart.h include/xminer/recovery/chip1398.h include/xminer/recovery/pll.h include/xminer/recovery/aml_chip.h include/xminer/recovery/reg_cache.h reconstruction/data/reg_cache_defaults.inc
+ OBJECTS = $(patsubst %.c,build/host/%.o,$(SOURCES))
+ ARM_OBJECTS = $(patsubst %.c,build/arm/%.o,$(SOURCES))
+ .PHONY: all test linux-pty arm sanitize sanitize-linux-pty evidence-check clean full-runtime
+@@ -197,3 +197,41 @@ evidence-check: evidence-stage8
+ .PHONY: evidence-stage8
+ evidence-stage8:
+ 	$(PYTHON) tools/check_stage8_evidence.py
++
++# Stage 9: saved-template/coinbase/Merkle header prefix, explicit offline binding.
++.PHONY: stage9 stage9-clang sanitize-stage9 fixtures-stage9 evidence-stage9
++build/test-work-rebuild: $(SOURCES) tests/test_work_rebuild.c tests/fixtures/genesis_work.h $(HEADERS)
++	mkdir -p build
++	$(CC) $(CPPFLAGS) $(CFLAGS) $(STRICT) $(SOURCES) tests/test_work_rebuild.c -o $@
++fixtures-stage9:
++	$(CLANG) --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -c tests/arm32_stage9_instructions.S -o tests/fixtures/arm32_stage9_instructions.o
++stage9: build/libvn135_recovered.so build/test-work-rebuild
++	./build/test-work-rebuild
++	$(PYTHON) tests/test_stage9_interpreter.py
++	$(PYTHON) tests/test_stage9_differential.py sha
++	$(PYTHON) tests/test_stage9_differential.py prefix
++	$(PYTHON) tests/test_stage9_differential.py candidate
++	$(PYTHON) tools/generate_genesis_fixture.py
++sanitize-stage9:
++	mkdir -p build
++	$(CC) $(CPPFLAGS) -O1 -g $(STRICT) -fsanitize=address,undefined -fno-omit-frame-pointer $(SOURCES) tests/test_work_rebuild.c -o build/test-work-rebuild-sanitized
++	ASAN_OPTIONS=detect_leaks=1 ./build/test-work-rebuild-sanitized
++stage9-clang: build/libvn135_recovered-clang.so
++	$(CLANG) $(CPPFLAGS) $(CFLAGS) $(STRICT) $(SOURCES) tests/test_work_rebuild.c -o build/test-work-rebuild-clang
++	./build/test-work-rebuild-clang
++	VN135_TEST_LIBRARY=./build/libvn135_recovered-clang.so $(PYTHON) tests/test_stage9_differential.py sha
++	VN135_TEST_LIBRARY=./build/libvn135_recovered-clang.so $(PYTHON) tests/test_stage9_differential.py prefix
++	VN135_TEST_LIBRARY=./build/libvn135_recovered-clang.so $(PYTHON) tests/test_stage9_differential.py candidate
++	$(CLANG) $(CPPFLAGS) -O1 -g $(STRICT) -fsanitize=address,undefined -fno-omit-frame-pointer $(SOURCES) tests/test_work_rebuild.c -o build/test-work-rebuild-clang-sanitized
++	ASAN_OPTIONS=detect_leaks=1 ./build/test-work-rebuild-clang-sanitized
++test: stage9
++sanitize: sanitize-stage9
++build/vn135-rebuild-genesis: $(SOURCES) examples/rebuild_genesis.c tests/fixtures/genesis_work.h $(HEADERS)
++	mkdir -p build
++	$(CC) $(CPPFLAGS) $(CFLAGS) $(STRICT) $(SOURCES) examples/rebuild_genesis.c -o $@
++stage9: build/vn135-rebuild-genesis
++evidence-stage9:
++	$(PYTHON) tools/check_stage9_evidence.py
++	$(PYTHON) tools/generate_genesis_fixture.py
++evidence-check: evidence-stage9
++stage9: evidence-stage9
+diff --git a/RECONSTRUCTION_README_RU.md b/RECONSTRUCTION_README_RU.md
+index e64b3de..677878a 100644
+--- a/RECONSTRUCTION_README_RU.md
++++ b/RECONSTRUCTION_README_RU.md
+@@ -1,19 +1,19 @@
+-# VNishNet T21 AML 1.3.5 — Stage 8, модульная реконструкция
++# VNishNet T21 AML 1.3.5 — Stage 9, модульная реконструкция
+ 
+ **Исходники и проверочные библиотеки, не установочная прошивка.**
+ 
+ ## Текущее состояние
+ 
+-| Показатель | Stage 8 |
++| Показатель | Stage 9 |
+ |---|---:|
+ | Наблюдаемых оригинальных исходных путей | 46 |
+ | Частично восстановлено / исключено из сборки | 7 / 39 |
+-| C-единиц трансляции: 7 наблюдаемых + 7 новых helper/adapter | 14 |
+-| Сравнительных случаев, старые и новые | 101 852 |
++| C-единиц трансляции: 7 наблюдаемых + 9 новых helper/adapter | 16 |
++| Сравнительных случаев, старые и новые | 102 406 |
+ | Работа реального T21 / аппаратный стенд / полный автотюн | Не подтверждены |
+ 
+-Подробный текущий отчёт: **[STAGE8_CHANGELOG_RU.md](STAGE8_CHANGELOG_RU.md)**.
+-Исторические отчёты Stage 3–7 сохранены без перезаписи.
++Подробный текущий отчёт: **[STAGE9_CHANGELOG_RU.md](STAGE9_CHANGELOG_RU.md)**.
++Исторические отчёты Stage 3–8 сохранены без перезаписи.
+ 
+ ## Основные модули
+ 
+@@ -24,18 +24,23 @@
+ Остальные 39 путей имеют `#error` и не включены в сборку. Монолита и фиктивных
+ успешных заглушек нет. Количество файлов/тестов не означает процент готовности.
+ 
+-Новый этап: полный SHA256d известного 80-байтного заголовка, исходное сравнение
+-с target, префильтр дубликата/high-word, выбор первого совпадения в трёх
+-сохранённых записях и проверка ссылки по списку. Подробности границ — в отчёте.
+-**Нельзя автоматически подать сюда 68-байтный кандидат Stage 7 вместо полного
+-заголовка. Восстановление work из сохранённого шаблона ещё не реализовано.**
++Новый этап: сборка 112-байтного префикса work из сохранённого шаблона,
++coinbase, 64-битного счётчика и Merkle-ветвей; подтверждённая связь полей
++68-байтного nonce-кандидата с оригинальным caller/wrapper. Новый адаптер
++соединяет её с уже восстановленными SHA256d/префильтром/target.
++
++**Кандидат без соответствующего сохранённого шаблона всё ещё недостаточен.**
++Шаблон/target должны быть согласованы и удерживаться вызывающим кодом.
++Адаптер не угадывает пропущенные поля и не подтверждает свежесть задания.
++112 байт не являются всем 632-байтным оригинальным work. Сетевая отправка,
++полный consumer и менеджер заданий пока отсутствуют.
+ 
+ ## Сборка
+ 
+ ```sh
+-make -f Makefile.recovery all arm stage8
++make -f Makefile.recovery all arm stage9
+ make -f Makefile.recovery test evidence-check sanitize
+-make -f Makefile.recovery stage8-clang
++make -f Makefile.recovery stage9-clang
+ make -f Makefile.recovery linux-pty sanitize-linux-pty
+ make -f Makefile.recovery linux-pty-rx sanitize-linux-pty-rx
+ python3 tests/test_assembler.py
+@@ -44,7 +49,8 @@ python3 tests/test_overlay_automake.py
+ 
+ Результат: host `.a`/`.so`, ARMv7 freestanding `.a`, native тесты и отдельная
+ офлайн-утилита `build/vn135-verify-header`. Последняя не майнит, не передаёт шары
+-и не проверяет актуальность задания. Target передаётся 32 байтами little-endian,
++и не проверяет актуальность задания. `build/vn135-rebuild-genesis` отдельно
++демонстрирует полную офлайн-цепочку на историческом тестовом векторе, не майнит. Target передаётся 32 байтами little-endian,
+ заголовок — 80 сериализованными байтами, оба аргумента в hex.
+ 
+ ## Наложение на неизменённую публичную основу
+@@ -67,15 +73,19 @@ python3 tools/assemble_on_cgminer.py --source /path/to/cgminer --output ../cgmin
+ 
+ ## Проверки и границы
+ 
+-Новый набор: 5 413 сравнительных случаев, повторён на GCC и Clang. Исторические
+-96 439 повторены. Большая часть прежнего числа — 65 536 входов небольшой
+-перестановки, а не десятки тысяч функций. Native ASan/UBSan не означает, что
+-все ctypes/интерпретаторные сравнения запущены под санитайзером.
++Новый основной набор содержит 554 сравнения с исходными инструкциями:
++212 SHA, 198 префикса и 144 caller/wrapper/prefix; повторяется GCC/Clang.
++Отдельно проверяются 144 композиции с префильтром, 12 genesis-композиций,
++338 нативных условий и 11 фрагментированных RX-прогонов. Протоколы реально
++выполненной окончательной проверки идут отдельным логом/JSON. Совокупный
++набор — 102 406 случаев; 65 536 из прежних случаев относятся к небольшой
++двухбайтной перестановке, а не к десяткам тысяч восстановленных функций.
++Native ASan/UBSan не означает, что все ctypes-сравнения покрыты санитайзером.
+ 
+ Сравнение использует ограниченный локальный ARM-интерпретатор и явные внешние
+ обработчики. Оригинальный ELF как Linux-процесс не запускается. PTY — виртуальная
+ пара, не электрический UART. Точные границы и источники доступны в
+-`evidence/stage8/recovery-manifest.json` и прошлых картах. Реальный SHA и поиск
++`evidence/stage9/recovery-manifest.json` и прошлых картах. Реальный SHA и поиск
+ по исходному массиву указателей исполняются в соответствующих тестах, не
+ подменяются ожидаемыми ответами.
+ 
+@@ -92,7 +102,8 @@ python3 tools/assemble_on_cgminer.py --source /path/to/cgminer --output ../cgmin
+ частичного восстановления не утверждают восстановление оригинальных имён/API.
+ Полные функции нельзя считать по EHABI: 1 570 записей не являются таблицей всех функций.
+ 
+-Группы чистой проверки: `python3 tools/verify_stage8.py GROUP --logs /outside/path`.
++Все группы можно запустить `python3 tools/verify_stage9_all.py --logs /outside/path`.
++Группы чистой проверки: `python3 tools/verify_stage9.py GROUP --logs /outside/path`.
+ Начать с `build`, остальные перечислены в текущем отчёте. Логи вне дерева, чтобы
+ не изменять инвентарь. Финальные лог и JSON распакованного ZIP поставляются отдельно.
+ 
+diff --git a/RECONSTRUCTION_STATUS.json b/RECONSTRUCTION_STATUS.json
+index 6b3798b..533cb74 100644
+--- a/RECONSTRUCTION_STATUS.json
++++ b/RECONSTRUCTION_STATUS.json
+@@ -1,16 +1,16 @@
+ {
+-  "artifact": "modular-source-overlay-stage8",
++  "artifact": "modular-source-overlay-stage9",
+   "reference": "VNishNet T21 AML 1.3.5 cgminer",
+   "observed_source_paths": 46,
+   "partially_reconstructed_observed_files": 7,
+   "pending_observed_files": 39,
+-  "compiled_c_translation_units": 14,
+-  "public_reconstruction_c_functions": 49,
++  "compiled_c_translation_units": 16,
++  "public_reconstruction_c_functions": 53,
+   "public_functions_are_not_a_count_of_recovered_original_functions": true,
+   "original_data_records_verified": 9,
+   "stage2_differential_cases_repeated": 2546,
+   "stage3_differential_cases_passed": 3219,
+-  "cumulative_distinct_test_cases": 101852,
++  "cumulative_distinct_test_cases": 102406,
+   "stage3_cases_repeated_with_clang": 3219,
+   "separate_synthetic_interpreter_checks": 1318,
+   "full_vendor_tree_recovered": false,
+@@ -45,7 +45,7 @@
+   "source_path_count_increased_by_correcting_truncated_string": true,
+   "stage5_scope": "Common UART routines and combined original AML/UART TX with injected external calls, plus separate Linux PTY test",
+   "stage3_one_write_claim_corrected": "One UART helper invocation in AML, up to five OS write attempts inside UART helper",
+-  "archive_verification_record": "Delivered separately: VNish135_Stage8_Final_Verification.json",
++  "archive_verification_record": "Delivered separately: VNish135_Stage9_Final_Verification.json",
+   "stage6_rx_differential_cases_passed": 6088,
+   "stage6_cases_repeated_with_clang": 6088,
+   "stage6_distinct_streams_compared": 96,
+@@ -113,5 +113,32 @@
+   "stage8_automake_fixture_passed": true,
+   "stage8_actual_upstream_build_tested": false,
+   "stage8_fullwork_rebuild_0x300ac_implemented": false,
+-  "stage8_scope": "Bounded hash/prefilter/target/recent-record/reference-list logic; new explicit APIs; no production hardware/pool registration"
++  "stage8_scope": "Bounded hash/prefilter/target/recent-record/reference-list logic; new explicit APIs; no production hardware/pool registration",
++  "stage9_original_instruction_comparisons": 554,
++  "stage9_counts": {
++    "variable_sha": 212,
++    "header_prefix": 198,
++    "caller_wrapper_prefix": 144
++  },
++  "stage9_separate_slice_composition_cases": 144,
++  "stage9_independent_genesis_compositions": 12,
++  "stage9_native_checks": 338,
++  "stage9_fragmented_genesis_replays": 11,
++  "stage9_synthetic_interpreter_checks": 2649,
++  "stage9_sha_overlap_checks": 212,
++  "stage9_comparisons_repeated_with_clang": 554,
++  "stage9_header_prefix_bytes": 112,
++  "stage9_full632byte_work_implemented": false,
++  "stage9_saved_snapshot_candidate_binding": true,
++  "stage9_counter_word_meaning_confirmed": true,
++  "stage9_counter_width_supported": [
++    0,
++    8
++  ],
++  "stage9_mutable_snapshot_copied_to_scratch": true,
++  "stage9_full_wrapper_or_consumer_implemented": false,
++  "stage9_pool_share_acceptance_tested": false,
++  "stage9_original_instruction_scope": "Original core prefix 0x30550..0x30a6c; original caller 0x74f14 and wrapper 0x300ac executed to that boundary with successful external calls. New APIs use explicit arrays and scratch storage.",
++  "stage9_historical_genesis_vector_provenance": "Bitcoin Core v29.0 src/kernel/chainparams.cpp",
++  "stage9_remaining": "Full work metadata and difficulty-to-target, reference lifetime/queue, T21 dispatch/initialization, hardware safeguards, upstream runtime driver and autotune"
+ }
+diff --git a/STAGE9_CHANGELOG_RU.md b/STAGE9_CHANGELOG_RU.md
+new file mode 100644
+index 0000000..1123ab9
+--- /dev/null
++++ b/STAGE9_CHANGELOG_RU.md
+@@ -0,0 +1,154 @@
++# Stage 9 — восстановление заголовка из сохранённого задания
++
++**Модульная реконструкция. Не готовый T21 cgminer и не установочная прошивка.**
++Пулы, серверы и физические ASIC не подключались. Исходный ELF не изменён:
++`b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9`.
++
++## Реализованный участок
++
++`src/frontend/cgminer.c` расширен восстановленным префиксом `0x30550–0x30a6c`.
++Размещение в frontend — интеграционный выбор в существующем кластере cgminer,
++а не отдельное доказательство имени исходного файла каждой процедуры.
++
++Из явно переданного снимка и буферов код:
++
++1. Копирует младшие байты 64-битного счётчика в указанное место coinbase.
++2. Увеличивает полный счётчик с переносом между словами и wrap по модулю 2^64.
++3. Считает SHA256d всей coinbase.
++4. Для каждой Merkle-ветви считает SHA256d от `текущий корень || ветвь`.
++5. Копирует 112 байт шаблона, заменяет 32 байта по смещению 36 корнем с перестановкой
++   байтов внутри каждого 32-битного слова.
++
++Даже при ширине вставки 0 счётчик увеличивается. Корень возвращается также отдельно
++в сырых байтах digest. Публичные имена функций и типы нового API — не двоичный ABI VNish.
++
++**112 байт — префикс исходного work, не весь work размером 632 байта.** Первые 80 байт
++содержат заголовок в word-swapped представлении. Хвост 32 байта сохраняется из шаблона,
++его нельзя считать дополнительными полями сериализованного Bitcoin-заголовка.
++Суффикс оригинальной функции — строки, target из difficulty, учёт и владение объектами —
++этим этапом не перенесён. Остальные байты work при сравнении не считаются восстановленными.
++
++## Подтверждённая связь с кандидатом Stage 7
++
++Выполнена в ограниченном интерпретаторе исходная цепочка:
++`0x74f14 → 0x300ac → 0x30550`, с остановкой перед `0x30a6c`.
++
++- `job_word_70` и `job_word_74` действительно передаются как младшее и старшее слова
++  счётчика coinbase. Прежние имена полей оставлены для совместимости нового API.
++- `version_word` проходит два REV, в вызывающем коде и обёртке. В результате в первый
++  word work попадает исходное значение кандидата в little-endian представлении.
++- Существующий `nonce` передаётся в префильтр без подстановки другого значения.
++
++Условия теста: правильные template/reference уже выбраны и удерживаются вызывающим
++кодом, выделение work успешно, mutex/rwlock успешны. Обёртка выполняется только до
++исследованной границы. Это **не** восстановление всех её ошибок и полного consumer.
++
++## Новые вспомогательные файлы
++
++`reconstruction/support/sha256_bytes.c` — переносимый одноразовый SHA256/SHA256d для
++сообщений переменной длины, построенный на ранее проверенной функции сжатия.
++Реальные оригинальные SHA-инструкции выполняются при сравнении; результат не заменён
++константой. Неполные блоки, границы padding и перекрытие входа/выхода проверяются отдельно.
++Имя support-файла новое, не восстановленное имя библиотеки производителя.
++
++`reconstruction/support/work_rebuild_pipeline.c` — **новый адаптер**, не полный
++оригинальный поток обработки. Он копирует coinbase в предоставленный scratch-буфер,
++подставляет счётчик и версию кандидата и вызывает восстановленный prefix. Сохранённый
++снимок не меняется. Нет скрытых аллокаций, отправок, переподключений и аппаратных команд.
++
++Вторая функция адаптера соединяет восстановление заголовка с префильтром Stage 8 и
++сравнением target. Target передаётся явно: преобразование сложности в target не
++придумано. Флаги `hash_computed`, `target_checked`, `meets_target` различают дубликат,
++отказ старшего слова хеша и результат порогового сравнения. Код возврата 0 означает
++завершённое вычисление, **не принятую пулом шару**.
++
++## Границы и память
++
++Новый API добавляет явно обозначенные проверки: длина coinbase <= UINT32_MAX;
++ширина вставки счётчика 0–8; вставка внутри буфера; корректность указателей на пустые
++и непустые массивы; безопасный размер списка ветвей; достаточная ёмкость scratch.
++Неверные аргументы отклоняются до изменения output/scratch/last_nonce.
++
++Оригинальный код не даёт доказанной проверки всех этих размеров. Проверки нового
++API не выдаются за восстановленные защиты VNish. Массивы должны быть реально
++доступны, изменяемые объекты должны быть неперекрывающимися, как указано в заголовке.
++SHA-helper отдельно поддерживает перекрытие входа с 32-байтным выходом.
++
++Оригинал меняет coinbase под write-lock, затем снимает его и берёт read-lock для
++дальнейшей сборки. Тесты воспроизводят последовательность успешных вызовов, но не
++параллельные потоки. Низкоуровневому новому prefix нужна внешняя синхронизация;
++адаптер снимка использует отдельную копию coinbase. Это сознательная интеграционная
++изоляция, не доказательство потокобезопасности исходного consumer.
++
++`last_nonce` сохраняет прежнюю семантику Stage 8: изменяется до проверки хеша и не
++откатывается после отказа. Нет утверждения о полной дедупликации между заданиями.
++Индекс 0–31 и совпавший ключ сами по себе не подтверждают свежесть задания. Все поля
++снимка, включая Merkle-ветви и target, вызывающий код обязан получать из правильного,
++согласованного и удерживаемого задания.
++
++## Наборы проверок
++
++| Проверяемый новый контракт | Число случаев в воспроизводимом наборе |
++|---|---:|
++| SHA256 / SHA256d переменной длины против оригинальной SHA | 212 |
++| Префикс сборки: все 112 байт, coinbase и 64-битный счётчик | 198 |
++| Оригинальная цепочка caller → wrapper → prefix против адаптера кандидата | 144 |
++| **Основные новые сравнения** | **554** |
++
++Отдельно, без прибавления к 554: 144 композиции prefix/префильтр/target с оригинальными
++участками; 212 проверок SHA с перекрытием памяти; 12 композиций на известном genesis;
++338 нативных проверок, включая 11 вариантов фрагментации RX; 2 649 синтетических
++проверок добавленных ADC/ADCS и LDRD/STRD. Это число тестовых случаев, не функций.
++Новые сравнительные наборы повторяются на GCC и Clang. Санитайзеры покрывают нативные
++C-наборы, не все Python/ctypes сравнения.
++
++Ограниченный ARM-интерпретатор — локальный инструмент, не независимо сертифицированный
++CPU. Он не запускает исходный ELF как Linux-процесс. Внешние memcpy/memset, успешные
++аллокации и блокировки внедрены. Оригинальные SHA/арифметика/сборка выполняются.
++Физические тайминги, потоковые гонки, аппаратные ответы и принятие пулом не проверены.
++
++## Независимый исторический вектор
++
++Из параметров genesis в Bitcoin Core v29.0 собраны coinbase, Merkle root и заголовок.
++Генератор перепроверяет их Python hashlib. Нативный тест принимает **синтетический**
++RX-кадр с известным nonce, разбитый на фрагменты 1–11 байт. После RX и кандидата
++восстанавливает заголовок и получает ожидаемый хеш:
++
++`000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f`.
++
++Это сквозной офлайн-вектор на заранее известных данных. Не захват T21, не найденный
++новый блок, не живая шара и не проверка жизненного цикла пула. Chip/core attribution
++и reader задания в этом тесте — явно введённые фикстуры.
++
++Первоисточник данных: Bitcoin Core `v29.0`, `src/kernel/chainparams.cpp`,
++https://github.com/bitcoin/bitcoin/blob/v29.0/src/kernel/chainparams.cpp
++(blob `ac3fc9eadad6f32500697f978c7bbfc17acc183a`). Дополнение SHA: RFC 6234,
++https://www.rfc-editor.org/rfc/rfc6234.html . Они объясняют независимый тестовый
++вектор и алгоритм, а поведение VNish обосновывают исходные байты ELF и сравнения.
++
++## Сборка и продолжение
++
++```sh
++make -f Makefile.recovery all arm stage9
++make -f Makefile.recovery stage9-clang sanitize-stage9
++./build/vn135-rebuild-genesis
++```
++
++Групповая проверка чистого архива: `tools/verify_stage9.py`, логи в каталоге вне
++исходников. Наследует группы Stage 8 и добавляет `rebuild-sha`, `rebuild-prefix`,
++`rebuild-candidate`, `rebuild-native`, `clang-rebuild`. Инвентарь и карты оригинальных
++байтов проверяются отдельно. Результаты реальных запусков — в передаваемом финальном
++логе и машинной сводке; описание набора само по себе не заменяет протокол прогона.
++
++46 наблюдаемых исходных путей; 7 частично восстановлены; 39 исключены. Теперь
++компилируются **16 C-модулей**: 7 на наблюдаемых путях и 9 явно новых helper/adapter-файлов.
++Полный список файлов производителя и процент восстановления не установлены.
++
++Публичный upstream cgminer по-прежнему не включён и совместная полная сборка не
++заявляется. Наложение сохраняет исходные пути, авторство и объектные каталоги.
++Выход — host/ARMv7 библиотеки и офлайн-проверка, **не исполняемый T21-майнер**.
++
++Остались target из сложности и полный work/consumer, жизненный цикл/владение
++заданиями, очередь 72/68, проверка CRC ответов, T21 model dispatch, запуск хешплат,
++PSU/датчики/охлаждение/защиты, интеграция драйвера upstream и автотюн.
++**Не заменять штатный `/usr/bin/cgminer` этим комплектом.**
+diff --git a/evidence/stage9/disasm/consumer_argument_mapping.S b/evidence/stage9/disasm/consumer_argument_mapping.S
+new file mode 100644
+index 0000000..ed0b26e
+--- /dev/null
++++ b/evidence/stage9/disasm/consumer_argument_mapping.S
+@@ -0,0 +1,21 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   74f14: e59d2024     	ldr	r2, [sp, #0x24]
++   74f18: e59d0054     	ldr	r0, [sp, #0x54]
++   74f1c: e59d1060     	ldr	r1, [sp, #0x60]
++   74f20: e1c220d0     	ldrd	r2, r3, [r2]
++   74f24: e6bf0f30     	rev	r0, r0
++   74f28: e58d2008     	str	r2, [sp, #0x8]
++   74f2c: e2842d0a     	add	r2, r4, #640
++   74f30: e59d4028     	ldr	r4, [sp, #0x28]
++   74f34: e58d1000     	str	r1, [sp]
++   74f38: e24b1020     	sub	r1, r11, #32
++   74f3c: e58d300c     	str	r3, [sp, #0xc]
++   74f40: e1a0300a     	mov	r3, r10
++   74f44: e58d0010     	str	r0, [sp, #0x10]
++   74f48: e1a00004     	mov	r0, r4
++   74f4c: ebfeec56     	bl	0x300ac <.text+0x1ffac> @ imm = #-0x44ea8
+diff --git a/evidence/stage9/disasm/consumer_nonce_to_prefilter.S b/evidence/stage9/disasm/consumer_nonce_to_prefilter.S
+new file mode 100644
+index 0000000..cc50b09
+--- /dev/null
++++ b/evidence/stage9/disasm/consumer_nonce_to_prefilter.S
+@@ -0,0 +1,22 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   7511c: e2401001     	sub	r1, r0, #1
++   75120: e58dc014     	str	r12, [sp, #0x14]
++   75124: e58de020     	str	lr, [sp, #0x20]
++   75128: e0000190     	mul	r0, r0, r1
++   7512c: e3100001     	tst	r0, #1
++   75130: 0a000005     	beq	0x7514c <.text+0x6504c> @ imm = #0x14
++   75134: e5970000     	ldr	r0, [r7]
++   75138: e3500009     	cmp	r0, #9
++   7513c: ca00000e     	bgt	0x7517c <.text+0x6507c> @ imm = #0x38
++   75140: ea000001     	b	0x7514c <.text+0x6504c> @ imm = #0x4
++   75144: e3a03000     	mov	r3, #0
++   75148: eaffff8e     	b	0x74f88 <.text+0x64e88> @ imm = #-0x1c8
++   7514c: e59d0028     	ldr	r0, [sp, #0x28]
++   75150: e1a0100a     	mov	r1, r10
++   75154: ebfef781     	bl	0x32f60 <.text+0x22e60> @ imm = #-0x421fc
++   75158: e5981000     	ldr	r1, [r8]
+diff --git a/evidence/stage9/disasm/metadata_suffix_context.S b/evidence/stage9/disasm/metadata_suffix_context.S
+new file mode 100644
+index 0000000..18244bc
+--- /dev/null
++++ b/evidence/stage9/disasm/metadata_suffix_context.S
+@@ -0,0 +1,502 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   30a6c: ed990bea     	vldr	d0, [r9, #936]
++   30a70: ed840b68     	vstr	d0, [r4, #416]
++   30a74: e59903d0     	ldr	r0, [r9, #0x3d0]
++   30a78: eb15cb88     	bl	0x5a38a0 <.text+0x5937a0> @ imm = #0x572e20
++   30a7c: e584018c     	str	r0, [r4, #0x18c]
++   30a80: e59903ec     	ldr	r0, [r9, #0x3ec]
++   30a84: eb15cb85     	bl	0x5a38a0 <.text+0x5937a0> @ imm = #0x572e14
++   30a88: e58401a8     	str	r0, [r4, #0x1a8]
++   30a8c: e3000396     	movw	r0, #0x396
++   30a90: e0890000     	add	r0, r9, r0
++   30a94: eb15cb81     	bl	0x5a38a0 <.text+0x5937a0> @ imm = #0x572e04
++   30a98: e584019c     	str	r0, [r4, #0x19c]
++   30a9c: e59d000c     	ldr	r0, [sp, #0xc]
++   30aa0: eb15d7f4     	bl	0x5a6a78 <.text+0x596978> @ imm = #0x575fd0
++   30aa4: e59f17dc     	ldr	r1, [pc, #0x7dc]        @ 0x31288 <.text+0x21188>
++   30aa8: e79f1001     	ldr	r1, [pc, r1]
++   30aac: e5911000     	ldr	r1, [r1]
++   30ab0: e2412001     	sub	r2, r1, #1
++   30ab4: e0010291     	mul	r1, r1, r2
++   30ab8: e3110001     	tst	r1, #1
++   30abc: 0a000039     	beq	0x30ba8 <.text+0x20aa8> @ imm = #0xe4
++   30ac0: e59a1000     	ldr	r1, [r10]
++   30ac4: e3510009     	cmp	r1, #9
++   30ac8: da000036     	ble	0x30ba8 <.text+0x20aa8> @ imm = #0xd8
++   30acc: e28dc01c     	add	r12, sp, #28
++   30ad0: e59d5038     	ldr	r5, [sp, #0x38]
++   30ad4: e89c10cf     	ldm	r12, {r0, r1, r2, r3, r6, r7, r12}
++   30ad8: e6bf0f30     	rev	r0, r0
++   30adc: e58d005c     	str	r0, [sp, #0x5c]
++   30ae0: e6bf0f31     	rev	r0, r1
++   30ae4: e58d0060     	str	r0, [sp, #0x60]
++   30ae8: e6bf0f32     	rev	r0, r2
++   30aec: e59f87fc     	ldr	r8, [pc, #0x7fc]        @ 0x312f0 <.text+0x211f0>
++   30af0: e58d0064     	str	r0, [sp, #0x64]
++   30af4: e6bf0f33     	rev	r0, r3
++   30af8: e58d0068     	str	r0, [sp, #0x68]
++   30afc: e6bf0f36     	rev	r0, r6
++   30b00: e58d006c     	str	r0, [sp, #0x6c]
++   30b04: e6bf0f37     	rev	r0, r7
++   30b08: e58d0070     	str	r0, [sp, #0x70]
++   30b0c: e6bf0f3c     	rev	r0, r12
++   30b10: e58d0074     	str	r0, [sp, #0x74]
++   30b14: e6bf0f35     	rev	r0, r5
++   30b18: e58d0078     	str	r0, [sp, #0x78]
++   30b1c: e08f8008     	add	r8, pc, r8
++   30b20: e59f17cc     	ldr	r1, [pc, #0x7cc]        @ 0x312f4 <.text+0x211f4>
++   30b24: e30003a6     	movw	r0, #0x3a6
++   30b28: e58d0004     	str	r0, [sp, #0x4]
++   30b2c: e1a00004     	mov	r0, r4
++   30b30: e08f1001     	add	r1, pc, r1
++   30b34: e58d1000     	str	r1, [sp]
++   30b38: e3a02070     	mov	r2, #112
++   30b3c: e1a03008     	mov	r3, r8
++   30b40: e1a05001     	mov	r5, r1
++   30b44: e2891fa6     	add	r1, r9, #664
++   30b48: ebff848b     	bl	0x11d7c <.text+0x1c7c>  @ imm = #-0x1edd4
++   30b4c: e30003a7     	movw	r0, #0x3a7
++   30b50: e28d105c     	add	r1, sp, #92
++   30b54: e58d0004     	str	r0, [sp, #0x4]
++   30b58: e2840024     	add	r0, r4, #36
++   30b5c: e3a02020     	mov	r2, #32
++   30b60: e1a03008     	mov	r3, r8
++   30b64: e58d5000     	str	r5, [sp]
++   30b68: ebff8483     	bl	0x11d7c <.text+0x1c7c>  @ imm = #-0x1edf4
++   30b6c: ed990bea     	vldr	d0, [r9, #936]
++   30b70: ed840b68     	vstr	d0, [r4, #416]
++   30b74: e59903d0     	ldr	r0, [r9, #0x3d0]
++   30b78: eb15cb48     	bl	0x5a38a0 <.text+0x5937a0> @ imm = #0x572d20
++   30b7c: e584018c     	str	r0, [r4, #0x18c]
++   30b80: e59903ec     	ldr	r0, [r9, #0x3ec]
++   30b84: eb15cb45     	bl	0x5a38a0 <.text+0x5937a0> @ imm = #0x572d14
++   30b88: e58401a8     	str	r0, [r4, #0x1a8]
++   30b8c: e3000396     	movw	r0, #0x396
++   30b90: e0890000     	add	r0, r9, r0
++   30b94: eb15cb41     	bl	0x5a38a0 <.text+0x5937a0> @ imm = #0x572d04
++   30b98: e584019c     	str	r0, [r4, #0x19c]
++   30b9c: e59d000c     	ldr	r0, [sp, #0xc]
++   30ba0: eb15d7b4     	bl	0x5a6a78 <.text+0x596978> @ imm = #0x575ed0
++   30ba4: eaffff88     	b	0x309cc <.text+0x208cc> @ imm = #-0x1e0
++   30ba8: e59f86dc     	ldr	r8, [pc, #0x6dc]        @ 0x3128c <.text+0x2118c>
++   30bac: e3500000     	cmp	r0, #0
++   30bb0: e79f8008     	ldr	r8, [pc, r8]
++   30bb4: 1a00000b     	bne	0x30be8 <.text+0x20ae8> @ imm = #0x2c
++   30bb8: e5980000     	ldr	r0, [r8]
++   30bbc: e284ac01     	add	r10, r4, #256
++   30bc0: e2401001     	sub	r1, r0, #1
++   30bc4: e0000190     	mul	r0, r0, r1
++   30bc8: e3100001     	tst	r0, #1
++   30bcc: 0a00002e     	beq	0x30c8c <.text+0x20b8c> @ imm = #0xb8
++   30bd0: e59f06c4     	ldr	r0, [pc, #0x6c4]        @ 0x3129c <.text+0x2119c>
++   30bd4: e79f0000     	ldr	r0, [pc, r0]
++   30bd8: e5900000     	ldr	r0, [r0]
++   30bdc: e3500009     	cmp	r0, #9
++   30be0: ca00007f     	bgt	0x30de4 <.text+0x20ce4> @ imm = #0x1fc
++   30be4: ea000028     	b	0x30c8c <.text+0x20b8c> @ imm = #0xa0
++   30be8: e5980000     	ldr	r0, [r8]
++   30bec: e2401001     	sub	r1, r0, #1
++   30bf0: e0000190     	mul	r0, r0, r1
++   30bf4: e3100001     	tst	r0, #1
++   30bf8: 0a000002     	beq	0x30c08 <.text+0x20b08> @ imm = #0x8
++   30bfc: e59a0000     	ldr	r0, [r10]
++   30c00: e3500009     	cmp	r0, #9
++   30c04: ca000013     	bgt	0x30c58 <.text+0x20b58> @ imm = #0x4c
++   30c08: eb158975     	bl	0x5931e4 <.text+0x5830e4> @ imm = #0x5625d4
++   30c0c: e59f267c     	ldr	r2, [pc, #0x67c]        @ 0x31290 <.text+0x21190>
++   30c10: e59f167c     	ldr	r1, [pc, #0x67c]        @ 0x31294 <.text+0x21194>
++   30c14: e5900000     	ldr	r0, [r0]
++   30c18: e08f2002     	add	r2, pc, r2
++   30c1c: e59f3674     	ldr	r3, [pc, #0x674]        @ 0x31298 <.text+0x21198>
++   30c20: e08f1001     	add	r1, pc, r1
++   30c24: e58d0000     	str	r0, [sp]
++   30c28: e1a00002     	mov	r0, r2
++   30c2c: e08f3003     	add	r3, pc, r3
++   30c30: e300224f     	movw	r2, #0x24f
++   30c34: ebff7d97     	bl	0x10298 <.text+0x198>   @ imm = #-0x209a4
++   30c38: e5980000     	ldr	r0, [r8]
++   30c3c: e2401001     	sub	r1, r0, #1
++   30c40: e0000190     	mul	r0, r0, r1
++   30c44: e3100001     	tst	r0, #1
++   30c48: 0affffda     	beq	0x30bb8 <.text+0x20ab8> @ imm = #-0x98
++   30c4c: e59a0000     	ldr	r0, [r10]
++   30c50: e3500009     	cmp	r0, #9
++   30c54: daffffd7     	ble	0x30bb8 <.text+0x20ab8> @ imm = #-0xa4
++   30c58: eb158961     	bl	0x5931e4 <.text+0x5830e4> @ imm = #0x562584
++   30c5c: e59f2694     	ldr	r2, [pc, #0x694]        @ 0x312f8 <.text+0x211f8>
++   30c60: e59f1694     	ldr	r1, [pc, #0x694]        @ 0x312fc <.text+0x211fc>
++   30c64: e5900000     	ldr	r0, [r0]
++   30c68: e08f2002     	add	r2, pc, r2
++   30c6c: e59f368c     	ldr	r3, [pc, #0x68c]        @ 0x31300 <.text+0x21200>
++   30c70: e08f1001     	add	r1, pc, r1
++   30c74: e58d0000     	str	r0, [sp]
++   30c78: e1a00002     	mov	r0, r2
++   30c7c: e08f3003     	add	r3, pc, r3
++   30c80: e300224f     	movw	r2, #0x24f
++   30c84: ebff7d83     	bl	0x10298 <.text+0x198>   @ imm = #-0x209f4
++   30c88: eaffffde     	b	0x30c08 <.text+0x20b08> @ imm = #-0x88
++   30c8c: e59f060c     	ldr	r0, [pc, #0x60c]        @ 0x312a0 <.text+0x211a0>
++   30c90: e79f0000     	ldr	r0, [pc, r0]
++   30c94: e5900000     	ldr	r0, [r0]
++   30c98: e12fff30     	blx	r0
++   30c9c: e894004f     	ldm	r4, {r0, r1, r2, r3, r6}
++   30ca0: e284c014     	add	r12, r4, #20
++   30ca4: e6bf0f30     	rev	r0, r0
++   30ca8: e89c10a0     	ldm	r12, {r5, r7, r12}
++   30cac: e50b006c     	str	r0, [r11, #-0x6c]
++   30cb0: e6bf0f31     	rev	r0, r1
++   30cb4: e50b0068     	str	r0, [r11, #-0x68]
++   30cb8: e6bf0f32     	rev	r0, r2
++   30cbc: e50b0064     	str	r0, [r11, #-0x64]
++   30cc0: e6bf0f33     	rev	r0, r3
++   30cc4: e50b0060     	str	r0, [r11, #-0x60]
++   30cc8: e6bf0f36     	rev	r0, r6
++   30ccc: e50b005c     	str	r0, [r11, #-0x5c]
++   30cd0: e6bf0f35     	rev	r0, r5
++   30cd4: e50b0058     	str	r0, [r11, #-0x58]
++   30cd8: e6bf0f37     	rev	r0, r7
++   30cdc: e2847020     	add	r7, r4, #32
++   30ce0: e50b0054     	str	r0, [r11, #-0x54]
++   30ce4: e6bf0f3c     	rev	r0, r12
++   30ce8: e50b0050     	str	r0, [r11, #-0x50]
++   30cec: e897008f     	ldm	r7, {r0, r1, r2, r3, r7}
++   30cf0: e6bf0f30     	rev	r0, r0
++   30cf4: e5946034     	ldr	r6, [r4, #0x34]
++   30cf8: e5945038     	ldr	r5, [r4, #0x38]
++   30cfc: e594c03c     	ldr	r12, [r4, #0x3c]
++   30d00: e50b004c     	str	r0, [r11, #-0x4c]
++   30d04: e6bf0f31     	rev	r0, r1
++   30d08: e50b0048     	str	r0, [r11, #-0x48]
++   30d0c: e6bf0f32     	rev	r0, r2
++   30d10: e50b0044     	str	r0, [r11, #-0x44]
++   30d14: e6bf0f33     	rev	r0, r3
++   30d18: e50b0040     	str	r0, [r11, #-0x40]
++   30d1c: e6bf0f37     	rev	r0, r7
++   30d20: e50b003c     	str	r0, [r11, #-0x3c]
++   30d24: e6bf0f36     	rev	r0, r6
++   30d28: e50b0038     	str	r0, [r11, #-0x38]
++   30d2c: e6bf0f35     	rev	r0, r5
++   30d30: e28d507c     	add	r5, sp, #124
++   30d34: e50b0034     	str	r0, [r11, #-0x34]
++   30d38: e6bf0f3c     	rev	r0, r12
++   30d3c: e50b0030     	str	r0, [r11, #-0x30]
++   30d40: e1a00005     	mov	r0, r5
++   30d44: eb0360f5     	bl	0x109120 <.text+0xf9020> @ imm = #0xd83d4
++   30d48: e24b106c     	sub	r1, r11, #108
++   30d4c: e1a00005     	mov	r0, r5
++   30d50: e3a02040     	mov	r2, #64
++   30d54: eb036105     	bl	0x109170 <.text+0xf9070> @ imm = #0xd8414
++   30d58: e59f3544     	ldr	r3, [pc, #0x544]        @ 0x312a4 <.text+0x211a4>
++   30d5c: e3000151     	movw	r0, #0x151
++   30d60: e59f1540     	ldr	r1, [pc, #0x540]        @ 0x312a8 <.text+0x211a8>
++   30d64: e3a02020     	mov	r2, #32
++   30d68: e58d0004     	str	r0, [sp, #0x4]
++   30d6c: e08f3003     	add	r3, pc, r3
++   30d70: e08f1001     	add	r1, pc, r1
++   30d74: e58d1000     	str	r1, [sp]
++   30d78: e2840080     	add	r0, r4, #128
++   30d7c: e2851088     	add	r1, r5, #136
++   30d80: ebff83fd     	bl	0x11d7c <.text+0x1c7c>  @ imm = #-0x1f00c
++   30d84: ed940b68     	vldr	d0, [r4, #416]
++   30d88: e1a0000a     	mov	r0, r10
++   30d8c: ebfffc33     	bl	0x2fe60 <.text+0x1fd60> @ imm = #-0xf34
++   30d90: e3a00053     	mov	r0, #83
++   30d94: e3a0203c     	mov	r2, #60
++   30d98: e5c40250     	strb	r0, [r4, #0x250]
++   30d9c: e3a00000     	mov	r0, #0
++   30da0: e584916c     	str	r9, [r4, #0x16c]
++   30da4: e59f1500     	ldr	r1, [pc, #0x500]        @ 0x312ac <.text+0x211ac>
++   30da8: e79f1001     	ldr	r1, [pc, r1]
++   30dac: e584215c     	str	r2, [r4, #0x15c]
++   30db0: e5840160     	str	r0, [r4, #0x160]
++   30db4: e58411b8     	str	r1, [r4, #0x1b8]
++   30db8: e5980000     	ldr	r0, [r8]
++   30dbc: ed948b68     	vldr	d8, [r4, #416]
++   30dc0: e2401001     	sub	r1, r0, #1
++   30dc4: e0000190     	mul	r0, r0, r1
++   30dc8: e3100001     	tst	r0, #1
++   30dcc: 0a000051     	beq	0x30f18 <.text+0x20e18> @ imm = #0x144
++   30dd0: e59f04d8     	ldr	r0, [pc, #0x4d8]        @ 0x312b0 <.text+0x211b0>
++   30dd4: e79f0000     	ldr	r0, [pc, r0]
++   30dd8: e5900000     	ldr	r0, [r0]
++   30ddc: e3500009     	cmp	r0, #9
++   30de0: da00004c     	ble	0x30f18 <.text+0x20e18> @ imm = #0x130
++   30de4: e59f0518     	ldr	r0, [pc, #0x518]        @ 0x31304 <.text+0x21204>
++   30de8: e79f0000     	ldr	r0, [pc, r0]
++   30dec: e5900000     	ldr	r0, [r0]
++   30df0: e12fff30     	blx	r0
++   30df4: e894008f     	ldm	r4, {r0, r1, r2, r3, r7}
++   30df8: e6bf0f30     	rev	r0, r0
++   30dfc: e5946014     	ldr	r6, [r4, #0x14]
++   30e00: e5945018     	ldr	r5, [r4, #0x18]
++   30e04: e594c01c     	ldr	r12, [r4, #0x1c]
++   30e08: e50b006c     	str	r0, [r11, #-0x6c]
++   30e0c: e6bf0f31     	rev	r0, r1
++   30e10: e50b0068     	str	r0, [r11, #-0x68]
++   30e14: e6bf0f32     	rev	r0, r2
++   30e18: e50b0064     	str	r0, [r11, #-0x64]
++   30e1c: e6bf0f33     	rev	r0, r3
++   30e20: e50b0060     	str	r0, [r11, #-0x60]
++   30e24: e6bf0f37     	rev	r0, r7
++   30e28: e50b005c     	str	r0, [r11, #-0x5c]
++   30e2c: e6bf0f36     	rev	r0, r6
++   30e30: e50b0058     	str	r0, [r11, #-0x58]
++   30e34: e6bf0f35     	rev	r0, r5
++   30e38: e2847020     	add	r7, r4, #32
++   30e3c: e50b0054     	str	r0, [r11, #-0x54]
++   30e40: e6bf0f3c     	rev	r0, r12
++   30e44: e50b0050     	str	r0, [r11, #-0x50]
++   30e48: e897008f     	ldm	r7, {r0, r1, r2, r3, r7}
++   30e4c: e6bf0f30     	rev	r0, r0
++   30e50: e5946034     	ldr	r6, [r4, #0x34]
++   30e54: e5945038     	ldr	r5, [r4, #0x38]
++   30e58: e594c03c     	ldr	r12, [r4, #0x3c]
++   30e5c: e50b004c     	str	r0, [r11, #-0x4c]
++   30e60: e6bf0f31     	rev	r0, r1
++   30e64: e50b0048     	str	r0, [r11, #-0x48]
++   30e68: e6bf0f32     	rev	r0, r2
++   30e6c: e50b0044     	str	r0, [r11, #-0x44]
++   30e70: e6bf0f33     	rev	r0, r3
++   30e74: e50b0040     	str	r0, [r11, #-0x40]
++   30e78: e6bf0f37     	rev	r0, r7
++   30e7c: e50b003c     	str	r0, [r11, #-0x3c]
++   30e80: e6bf0f36     	rev	r0, r6
++   30e84: e50b0038     	str	r0, [r11, #-0x38]
++   30e88: e6bf0f35     	rev	r0, r5
++   30e8c: e28d507c     	add	r5, sp, #124
++   30e90: e50b0034     	str	r0, [r11, #-0x34]
++   30e94: e6bf0f3c     	rev	r0, r12
++   30e98: e50b0030     	str	r0, [r11, #-0x30]
++   30e9c: e1a00005     	mov	r0, r5
++   30ea0: eb03609e     	bl	0x109120 <.text+0xf9020> @ imm = #0xd8278
++   30ea4: e24b106c     	sub	r1, r11, #108
++   30ea8: e1a00005     	mov	r0, r5
++   30eac: e3a02040     	mov	r2, #64
++   30eb0: eb0360ae     	bl	0x109170 <.text+0xf9070> @ imm = #0xd82b8
++   30eb4: e59f344c     	ldr	r3, [pc, #0x44c]        @ 0x31308 <.text+0x21208>
++   30eb8: e3000151     	movw	r0, #0x151
++   30ebc: e59f1448     	ldr	r1, [pc, #0x448]        @ 0x3130c <.text+0x2120c>
++   30ec0: e3a02020     	mov	r2, #32
++   30ec4: e58d0004     	str	r0, [sp, #0x4]
++   30ec8: e08f3003     	add	r3, pc, r3
++   30ecc: e08f1001     	add	r1, pc, r1
++   30ed0: e58d1000     	str	r1, [sp]
++   30ed4: e2840080     	add	r0, r4, #128
++   30ed8: e2851088     	add	r1, r5, #136
++   30edc: ebff83a6     	bl	0x11d7c <.text+0x1c7c>  @ imm = #-0x1f168
++   30ee0: ed940b68     	vldr	d0, [r4, #416]
++   30ee4: e1a0000a     	mov	r0, r10
++   30ee8: ebfffbdc     	bl	0x2fe60 <.text+0x1fd60> @ imm = #-0x1090
++   30eec: e3a00053     	mov	r0, #83
++   30ef0: e3a0203c     	mov	r2, #60
++   30ef4: e5c40250     	strb	r0, [r4, #0x250]
++   30ef8: e3a00000     	mov	r0, #0
++   30efc: e584916c     	str	r9, [r4, #0x16c]
++   30f00: e59f1408     	ldr	r1, [pc, #0x408]        @ 0x31310 <.text+0x21210>
++   30f04: e79f1001     	ldr	r1, [pc, r1]
++   30f08: e584215c     	str	r2, [r4, #0x15c]
++   30f0c: e5840160     	str	r0, [r4, #0x160]
++   30f10: e58411b8     	str	r1, [r4, #0x1b8]
++   30f14: eaffff5c     	b	0x30c8c <.text+0x20b8c> @ imm = #-0x290
++   30f18: eeb58b40     	vcmp.f64	d8, #0
++   30f1c: eef1fa10     	vmrs	APSR_nzcv, fpscr
++   30f20: 1a000021     	bne	0x30fac <.text+0x20eac> @ imm = #0x84
++   30f24: e59f6388     	ldr	r6, [pc, #0x388]        @ 0x312b4 <.text+0x211b4>
++   30f28: e79f6006     	ldr	r6, [pc, r6]
++   30f2c: e5960000     	ldr	r0, [r6]
++   30f30: e2401001     	sub	r1, r0, #1
++   30f34: e0000190     	mul	r0, r0, r1
++   30f38: e3100001     	tst	r0, #1
++   30f3c: 0a000004     	beq	0x30f54 <.text+0x20e54> @ imm = #0x10
++   30f40: e59f0370     	ldr	r0, [pc, #0x370]        @ 0x312b8 <.text+0x211b8>
++   30f44: e79f0000     	ldr	r0, [pc, r0]
++   30f48: e5900000     	ldr	r0, [r0]
++   30f4c: e3500009     	cmp	r0, #9
++   30f50: ca00000d     	bgt	0x30f8c <.text+0x20e8c> @ imm = #0x34
++   30f54: e3a00018     	mov	r0, #24
++   30f58: e5905000     	ldr	r5, [r0]
++   30f5c: e3a00000     	mov	r0, #0
++   30f60: ebffe0b4     	bl	0x29238 <.text+0x19138> @ imm = #-0x7d30
++   30f64: e5961000     	ldr	r1, [r6]
++   30f68: e2412001     	sub	r2, r1, #1
++   30f6c: e0010291     	mul	r1, r1, r2
++   30f70: e3110001     	tst	r1, #1
++   30f74: 0a000007     	beq	0x30f98 <.text+0x20e98> @ imm = #0x1c
++   30f78: e59f133c     	ldr	r1, [pc, #0x33c]        @ 0x312bc <.text+0x211bc>
++   30f7c: e79f1001     	ldr	r1, [pc, r1]
++   30f80: e5911000     	ldr	r1, [r1]
++   30f84: e3510009     	cmp	r1, #9
++   30f88: da000002     	ble	0x30f98 <.text+0x20e98> @ imm = #0x8
++   30f8c: e3a00000     	mov	r0, #0
++   30f90: ebffe0a8     	bl	0x29238 <.text+0x19138> @ imm = #-0x7d60
++   30f94: eaffffee     	b	0x30f54 <.text+0x20e54> @ imm = #-0x48
++   30f98: e3500000     	cmp	r0, #0
++   30f9c: ed9f8b97     	vldr	d8, [pc, #604]          @ 0x31200 <.text+0x21100>
++   30fa0: 15900014     	ldrne	r0, [r0, #0x14]
++   30fa4: 13500000     	cmpne	r0, #0
++   30fa8: 1a00002a     	bne	0x31058 <.text+0x20f58> @ imm = #0xa8
++   30fac: eeb00b48     	vmov.f64	d0, d8
++   30fb0: eb1595f0     	bl	0x596778 <.text+0x586678> @ imm = #0x5657c0
++   30fb4: ec510b10     	vmov	r0, r1, d0
++   30fb8: ed848b78     	vstr	d8, [r4, #480]
++   30fbc: ed898b6a     	vstr	d8, [r9, #424]
++   30fc0: eb158150     	bl	0x591508 <.text+0x581408> @ imm = #0x560540
++   30fc4: e594216c     	ldr	r2, [r4, #0x16c]
++   30fc8: e3a03000     	mov	r3, #0
++   30fcc: e58d3000     	str	r3, [sp]
++   30fd0: e3a03008     	mov	r3, #8
++   30fd4: e2822090     	add	r2, r2, #144
++   30fd8: ebfff100     	bl	0x2d3e0 <.text+0x1d2e0> @ imm = #-0x3c00
++   30fdc: ed990b66     	vldr	d0, [r9, #408]
++   30fe0: eeb48b40     	vcmp.f64	d8, d0
++   30fe4: eef1fa10     	vmrs	APSR_nzcv, fpscr
++   30fe8: 1a000007     	bne	0x3100c <.text+0x20f0c> @ imm = #0x1c
++   30fec: e59901b0     	ldr	r0, [r9, #0x1b0]
++   30ff0: e2800001     	add	r0, r0, #1
++   30ff4: e58901b0     	str	r0, [r9, #0x1b0]
++   30ff8: e59f52cc     	ldr	r5, [pc, #0x2cc]        @ 0x312cc <.text+0x211cc>
++   30ffc: e79f5005     	ldr	r5, [pc, r5]
++   31000: e59f62c8     	ldr	r6, [pc, #0x2c8]        @ 0x312d0 <.text+0x211d0>
++   31004: e79f6006     	ldr	r6, [pc, r6]
++   31008: ea000056     	b	0x31168 <.text+0x21068> @ imm = #0x158
++   3100c: e59f52c0     	ldr	r5, [pc, #0x2c0]        @ 0x312d4 <.text+0x211d4>
++   31010: eeb48bc0     	vcmpe.f64	d8, d0
++   31014: e79f5005     	ldr	r5, [pc, r5]
++   31018: e59f62b8     	ldr	r6, [pc, #0x2b8]        @ 0x312d8 <.text+0x211d8>
++   3101c: eef1fa10     	vmrs	APSR_nzcv, fpscr
++   31020: e79f6006     	ldr	r6, [pc, r6]
++   31024: 4a000002     	bmi	0x31034 <.text+0x20f34> @ imm = #0x8
++   31028: eeb50b40     	vcmp.f64	d0, #0
++   3102c: eef1fa10     	vmrs	APSR_nzcv, fpscr
++   31030: 1a00004c     	bne	0x31168 <.text+0x21068> @ imm = #0x130
++   31034: e5950000     	ldr	r0, [r5]
++   31038: e2401001     	sub	r1, r0, #1
++   3103c: e0000190     	mul	r0, r0, r1
++   31040: e3100001     	tst	r0, #1
++   31044: 0a000038     	beq	0x3112c <.text+0x2102c> @ imm = #0xe0
++   31048: e5960000     	ldr	r0, [r6]
++   3104c: e3500009     	cmp	r0, #9
++   31050: ca000040     	bgt	0x31158 <.text+0x21058> @ imm = #0x100
++   31054: ea000034     	b	0x3112c <.text+0x2102c> @ imm = #0xd0
++   31058: e59f0260     	ldr	r0, [pc, #0x260]        @ 0x312c0 <.text+0x211c0>
++   3105c: e79f0000     	ldr	r0, [pc, r0]
++   31060: e5900000     	ldr	r0, [r0]
++   31064: e2401001     	sub	r1, r0, #1
++   31068: e0000190     	mul	r0, r0, r1
++   3106c: e3100001     	tst	r0, #1
++   31070: e1ca01d8     	ldrd	r0, r1, [r10, #24]
++   31074: eb1580af     	bl	0x591338 <.text+0x581238> @ imm = #0x5602bc
++   31078: e1a08000     	mov	r8, r0
++   3107c: e1a06001     	mov	r6, r1
++   31080: e1ca01d0     	ldrd	r0, r1, [r10, #16]
++   31084: eb1580ab     	bl	0x591338 <.text+0x581238> @ imm = #0x5602ac
++   31088: ec410b11     	vmov	d1, r0, r1
++   3108c: ed9f0b5d     	vldr	d0, [pc, #372]          @ 0x31208 <.text+0x21108>
++   31090: e59a0008     	ldr	r0, [r10, #0x8]
++   31094: ee218b00     	vmul.f64	d8, d1, d0
++   31098: e59a100c     	ldr	r1, [r10, #0xc]
++   3109c: ec468b11     	vmov	d1, r8, r6
++   310a0: ed9f0b5a     	vldr	d0, [pc, #360]          @ 0x31210 <.text+0x21110>
++   310a4: e89a0140     	ldm	r10, {r6, r8}
++   310a8: ee018b00     	vmla.f64	d8, d1, d0
++   310ac: eb1580a1     	bl	0x591338 <.text+0x581238> @ imm = #0x560284
++   310b0: ec410b11     	vmov	d1, r0, r1
++   310b4: ed9f0b57     	vldr	d0, [pc, #348]          @ 0x31218 <.text+0x21118>
++   310b8: e1a00006     	mov	r0, r6
++   310bc: e1a01008     	mov	r1, r8
++   310c0: ee018b00     	vmla.f64	d8, d1, d0
++   310c4: eb15809b     	bl	0x591338 <.text+0x581238> @ imm = #0x56026c
++   310c8: ec410b10     	vmov	d0, r0, r1
++   310cc: e5950034     	ldr	r0, [r5, #0x34]
++   310d0: ed9f1b4a     	vldr	d1, [pc, #296]          @ 0x31200 <.text+0x21100>
++   310d4: e28f1f51     	add	r1, pc, #324
++   310d8: ee380b00     	vadd.f64	d0, d8, d0
++   310dc: eeb50b40     	vcmp.f64	d0, #0
++   310e0: eef1fa10     	vmrs	APSR_nzcv, fpscr
++   310e4: 0eb00b41     	vmoveq.f64	d0, d1
++   310e8: e3500001     	cmp	r0, #1
++   310ec: 02811008     	addeq	r1, r1, #8
++   310f0: e59f01cc     	ldr	r0, [pc, #0x1cc]        @ 0x312c4 <.text+0x211c4>
++   310f4: ed911b00     	vldr	d1, [r1]
++   310f8: e79f0000     	ldr	r0, [pc, r0]
++   310fc: ee818b00     	vdiv.f64	d8, d1, d0
++   31100: e5900000     	ldr	r0, [r0]
++   31104: e2401001     	sub	r1, r0, #1
++   31108: e0000190     	mul	r0, r0, r1
++   3110c: e3100001     	tst	r0, #1
++   31110: 0affffa5     	beq	0x30fac <.text+0x20eac> @ imm = #-0x16c
++   31114: e59f01ac     	ldr	r0, [pc, #0x1ac]        @ 0x312c8 <.text+0x211c8>
++   31118: e79f0000     	ldr	r0, [pc, r0]
++   3111c: e5900000     	ldr	r0, [r0]
++   31120: e3500009     	cmp	r0, #9
++   31124: caffffd1     	bgt	0x31070 <.text+0x20f70> @ imm = #-0xbc
++   31128: eaffff9f     	b	0x30fac <.text+0x20eac> @ imm = #-0x184
++   3112c: e3a00001     	mov	r0, #1
++   31130: e58901b0     	str	r0, [r9, #0x1b0]
++   31134: ed898b66     	vstr	d8, [r9, #408]
++   31138: e5950000     	ldr	r0, [r5]
++   3113c: e2401001     	sub	r1, r0, #1
++   31140: e0000190     	mul	r0, r0, r1
++   31144: e3100001     	tst	r0, #1
++   31148: 0a000006     	beq	0x31168 <.text+0x21068> @ imm = #0x18
++   3114c: e5960000     	ldr	r0, [r6]
++   31150: e3500009     	cmp	r0, #9
++   31154: da000003     	ble	0x31168 <.text+0x21068> @ imm = #0xc
++   31158: e3a00001     	mov	r0, #1
++   3115c: e58901b0     	str	r0, [r9, #0x1b0]
++   31160: ed898b66     	vstr	d8, [r9, #408]
++   31164: eafffff0     	b	0x3112c <.text+0x2102c> @ imm = #-0x40
++   31168: ed990b68     	vldr	d0, [r9, #416]
++   3116c: eeb48b40     	vcmp.f64	d8, d0
++   31170: eef1fa10     	vmrs	APSR_nzcv, fpscr
++   31174: 1a000003     	bne	0x31188 <.text+0x21088> @ imm = #0xc
++   31178: e59901b4     	ldr	r0, [r9, #0x1b4]
++   3117c: e2800001     	add	r0, r0, #1
++   31180: e58901b4     	str	r0, [r9, #0x1b4]
++   31184: ea000004     	b	0x3119c <.text+0x2109c> @ imm = #0x10
++   31188: eeb48bc0     	vcmpe.f64	d8, d0
++   3118c: eef1fa10     	vmrs	APSR_nzcv, fpscr
++   31190: c3a00001     	movgt	r0, #1
++   31194: c58901b4     	strgt	r0, [r9, #0x1b4]
++   31198: cd898b68     	vstrgt	d8, [r9, #416]
++   3119c: e5950000     	ldr	r0, [r5]
++   311a0: e2401001     	sub	r1, r0, #1
++   311a4: e0000190     	mul	r0, r0, r1
++   311a8: e3100001     	tst	r0, #1
++   311ac: 0a000002     	beq	0x311bc <.text+0x210bc> @ imm = #0x8
++   311b0: e5960000     	ldr	r0, [r6]
++   311b4: e3500009     	cmp	r0, #9
++   311b8: ca000009     	bgt	0x311e4 <.text+0x210e4> @ imm = #0x24
++   311bc: e2840e17     	add	r0, r4, #368
++   311c0: ebff8419     	bl	0x1222c <.text+0x212c>  @ imm = #-0x1ef9c
++   311c4: e5950000     	ldr	r0, [r5]
++   311c8: e2401001     	sub	r1, r0, #1
++   311cc: e0000190     	mul	r0, r0, r1
++   311d0: e3100001     	tst	r0, #1
++   311d4: 0a000005     	beq	0x311f0 <.text+0x210f0> @ imm = #0x14
++   311d8: e5960000     	ldr	r0, [r6]
++   311dc: e3500009     	cmp	r0, #9
++   311e0: da000002     	ble	0x311f0 <.text+0x210f0> @ imm = #0x8
++   311e4: e2840e17     	add	r0, r4, #368
++   311e8: ebff840f     	bl	0x1222c <.text+0x212c>  @ imm = #-0x1efc4
++   311ec: eafffff2     	b	0x311bc <.text+0x210bc> @ imm = #-0x38
++   311f0: e24bd028     	sub	sp, r11, #40
++   311f4: ecbd8b02     	vpop	{d8}
++   311f8: e28dd004     	add	sp, sp, #4
++   311fc: e8bd8ff0     	pop	{r4, r5, r6, r7, r8, r9, r10, r11, pc}
++   31200: 00000000     	andeq	r0, r0, r0
++   31204: 3ff00000     	svclo	#0xf00000
++   31208: 00000000     	andeq	r0, r0, r0
++   3120c: 47f00000     	ldrbmi	r0, [r0, r0]!
++   31210: 00000000     	andeq	r0, r0, r0
++   31214: 4bf00000     	blmi	0xffc3121c              @ imm = #-0x400000
++   31218: 00000000     	andeq	r0, r0, r0
++   3121c: 43f00000     	mvnsmi	r0, #0
++   31220: 00000000     	andeq	r0, r0, r0
++   31224: 4defffe0     	stclmi	p15, c15, [pc, #896]!
++   31228: 00000000     	andeq	r0, r0, r0
+diff --git a/evidence/stage9/disasm/sha_oneshot.S b/evidence/stage9/disasm/sha_oneshot.S
+new file mode 100644
+index 0000000..e47f10c
+--- /dev/null
++++ b/evidence/stage9/disasm/sha_oneshot.S
+@@ -0,0 +1,128 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++  108f38: e92d4ff0     	push	{r4, r5, r6, r7, r8, r9, r10, r11, lr}
++  108f3c: e28db01c     	add	r11, sp, #28
++  108f40: e24dd0b4     	sub	sp, sp, #180
++  108f44: e58d2004     	str	r2, [sp, #0x4]
++  108f48: e1a08001     	mov	r8, r1
++  108f4c: e59f11b8     	ldr	r1, [pc, #0x1b8]        @ 0x10910c <.text+0xf900c>
++  108f50: e3580040     	cmp	r8, #64
++  108f54: e1a0a008     	mov	r10, r8
++  108f58: 23a0a040     	movhs	r10, #64
++  108f5c: e79f1001     	ldr	r1, [pc, r1]
++  108f60: e991008c     	ldmib	r1, {r2, r3, r7}
++  108f64: e591c000     	ldr	r12, [r1]
++  108f68: e58dc090     	str	r12, [sp, #0x90]
++  108f6c: e28dc094     	add	r12, sp, #148
++  108f70: e88c008c     	stm	r12, {r2, r3, r7}
++  108f74: e1a07000     	mov	r7, r0
++  108f78: e3a00000     	mov	r0, #0
++  108f7c: e5916010     	ldr	r6, [r1, #0x10]
++  108f80: e1a0200a     	mov	r2, r10
++  108f84: e5915014     	ldr	r5, [r1, #0x14]
++  108f88: e5914018     	ldr	r4, [r1, #0x18]
++  108f8c: e591101c     	ldr	r1, [r1, #0x1c]
++  108f90: e58d60a0     	str	r6, [sp, #0xa0]
++  108f94: e58d50a4     	str	r5, [sp, #0xa4]
++  108f98: e58d40a8     	str	r4, [sp, #0xa8]
++  108f9c: e58d10ac     	str	r1, [sp, #0xac]
++  108fa0: e1a01007     	mov	r1, r7
++  108fa4: e58d000c     	str	r0, [sp, #0xc]
++  108fa8: e58d0008     	str	r0, [sp, #0x8]
++  108fac: e28d0008     	add	r0, sp, #8
++  108fb0: e2809008     	add	r9, r0, #8
++  108fb4: e1a00009     	mov	r0, r9
++  108fb8: eb1267ca     	bl	0x5a2ee8 <.text+0x592de8> @ imm = #0x499f28
++  108fbc: e358003f     	cmp	r8, #63
++  108fc0: 8a000001     	bhi	0x108fcc <.text+0xf8ecc> @ imm = #0x4
++  108fc4: e58d800c     	str	r8, [sp, #0xc]
++  108fc8: ea00004a     	b	0x1090f8 <.text+0xf8ff8> @ imm = #0x128
++  108fcc: e59f013c     	ldr	r0, [pc, #0x13c]        @ 0x109110 <.text+0xf9010>
++  108fd0: e79f0000     	ldr	r0, [pc, r0]
++  108fd4: e5900000     	ldr	r0, [r0]
++  108fd8: e2401001     	sub	r1, r0, #1
++  108fdc: e0000190     	mul	r0, r0, r1
++  108fe0: e3100001     	tst	r0, #1
++  108fe4: 0a000004     	beq	0x108ffc <.text+0xf8efc> @ imm = #0x10
++  108fe8: e59f0124     	ldr	r0, [pc, #0x124]        @ 0x109114 <.text+0xf9014>
++  108fec: e79f0000     	ldr	r0, [pc, r0]
++  108ff0: e5900000     	ldr	r0, [r0]
++  108ff4: e3500009     	cmp	r0, #9
++  108ff8: ca000024     	bgt	0x109090 <.text+0xf8f90> @ imm = #0x90
++  108ffc: e28d6008     	add	r6, sp, #8
++  109000: e1a01009     	mov	r1, r9
++  109004: e3a02001     	mov	r2, #1
++  109008: e1a00006     	mov	r0, r6
++  10900c: ebfffeda     	bl	0x108b7c <.text+0xf8a7c> @ imm = #-0x498
++  109010: e087500a     	add	r5, r7, r10
++  109014: e1a04008     	mov	r4, r8
++  109018: e048800a     	sub	r8, r8, r10
++  10901c: e1a00006     	mov	r0, r6
++  109020: e1a01005     	mov	r1, r5
++  109024: e1a02328     	lsr	r2, r8, #6
++  109028: ebfffed3     	bl	0x108b7c <.text+0xf8a7c> @ imm = #-0x4b4
++  10902c: e3c8003f     	bic	r0, r8, #63
++  109030: e0851000     	add	r1, r5, r0
++  109034: e208503f     	and	r5, r8, #63
++  109038: e1a00009     	mov	r0, r9
++  10903c: e1a02005     	mov	r2, r5
++  109040: eb1267a8     	bl	0x5a2ee8 <.text+0x592de8> @ imm = #0x499ea0
++  109044: e59f00cc     	ldr	r0, [pc, #0xcc]         @ 0x109118 <.text+0xf9018>
++  109048: e79f0000     	ldr	r0, [pc, r0]
++  10904c: e58d500c     	str	r5, [sp, #0xc]
++  109050: e59d3008     	ldr	r3, [sp, #0x8]
++  109054: e5900000     	ldr	r0, [r0]
++  109058: e2401001     	sub	r1, r0, #1
++  10905c: e0010190     	mul	r1, r0, r1
++  109060: e2880040     	add	r0, r8, #64
++  109064: e3c0203f     	bic	r2, r0, #63
++  109068: e59f00ac     	ldr	r0, [pc, #0xac]         @ 0x10911c <.text+0xf901c>
++  10906c: e0832002     	add	r2, r3, r2
++  109070: e79f0000     	ldr	r0, [pc, r0]
++  109074: e3110001     	tst	r1, #1
++  109078: e58d2008     	str	r2, [sp, #0x8]
++  10907c: e5900000     	ldr	r0, [r0]
++  109080: 0a00001c     	beq	0x1090f8 <.text+0xf8ff8> @ imm = #0x70
++  109084: e1a08004     	mov	r8, r4
++  109088: e3500009     	cmp	r0, #9
++  10908c: da000019     	ble	0x1090f8 <.text+0xf8ff8> @ imm = #0x64
++  109090: e28d5008     	add	r5, sp, #8
++  109094: e1a01009     	mov	r1, r9
++  109098: e3a02001     	mov	r2, #1
++  10909c: e1a00005     	mov	r0, r5
++  1090a0: ebfffeb5     	bl	0x108b7c <.text+0xf8a7c> @ imm = #-0x52c
++  1090a4: e087600a     	add	r6, r7, r10
++  1090a8: e1a04007     	mov	r4, r7
++  1090ac: e048700a     	sub	r7, r8, r10
++  1090b0: e1a00005     	mov	r0, r5
++  1090b4: e1a01006     	mov	r1, r6
++  1090b8: e1a02327     	lsr	r2, r7, #6
++  1090bc: ebfffeae     	bl	0x108b7c <.text+0xf8a7c> @ imm = #-0x548
++  1090c0: e3c7003f     	bic	r0, r7, #63
++  1090c4: e207503f     	and	r5, r7, #63
++  1090c8: e0861000     	add	r1, r6, r0
++  1090cc: e1a00009     	mov	r0, r9
++  1090d0: e1a02005     	mov	r2, r5
++  1090d4: eb126783     	bl	0x5a2ee8 <.text+0x592de8> @ imm = #0x499e0c
++  1090d8: e58d500c     	str	r5, [sp, #0xc]
++  1090dc: e2871040     	add	r1, r7, #64
++  1090e0: e59d0008     	ldr	r0, [sp, #0x8]
++  1090e4: e3c1103f     	bic	r1, r1, #63
++  1090e8: e1a07004     	mov	r7, r4
++  1090ec: e0800001     	add	r0, r0, r1
++  1090f0: e58d0008     	str	r0, [sp, #0x8]
++  1090f4: eaffffc0     	b	0x108ffc <.text+0xf8efc> @ imm = #-0x100
++  1090f8: e59d1004     	ldr	r1, [sp, #0x4]
++  1090fc: e28d0008     	add	r0, sp, #8
++  109100: eb0000a5     	bl	0x10939c <.text+0xf929c> @ imm = #0x294
++  109104: e24bd01c     	sub	sp, r11, #28
++  109108: e8bd8ff0     	pop	{r4, r5, r6, r7, r8, r9, r10, r11, pc}
++  10910c: 004d66f0     	strdeq	r6, r7, [sp], #-96
++  109110: 004d5770     	subeq	r5, sp, r0, ror r7
++  109114: 004d5eac     	subeq	r5, sp, r12, lsr #29
++  109118: 004d56f8     	strdeq	r5, r6, [sp], #-104
++  10911c: 004d5e28     	subeq	r5, sp, r8, lsr #28
+diff --git a/evidence/stage9/disasm/work_header_materialization.S b/evidence/stage9/disasm/work_header_materialization.S
+new file mode 100644
+index 0000000..8209254
+--- /dev/null
++++ b/evidence/stage9/disasm/work_header_materialization.S
+@@ -0,0 +1,333 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   30550: e92d4ff0     	push	{r4, r5, r6, r7, r8, r9, r10, r11, lr}
++   30554: e28db01c     	add	r11, sp, #28
++   30558: e24dd004     	sub	sp, sp, #4
++   3055c: ed2d8b02     	vpush	{d8}
++   30560: e24ddf5a     	sub	sp, sp, #360
++   30564: e1a09000     	mov	r9, r0
++   30568: e2800030     	add	r0, r0, #48
++   3056c: e1a04001     	mov	r4, r1
++   30570: e58d000c     	str	r0, [sp, #0xc]
++   30574: eb15d967     	bl	0x5a6b18 <.text+0x596a18> @ imm = #0x57659c
++   30578: e3500000     	cmp	r0, #0
++   3057c: 1a00000f     	bne	0x305c0 <.text+0x204c0> @ imm = #0x3c
++   30580: e59facb4     	ldr	r10, [pc, #0xcb4]       @ 0x3123c <.text+0x2113c>
++   30584: e2846e19     	add	r6, r4, #400
++   30588: e79fa00a     	ldr	r10, [pc, r10]
++   3058c: e59a0000     	ldr	r0, [r10]
++   30590: e59f8ca8     	ldr	r8, [pc, #0xca8]        @ 0x31240 <.text+0x21140>
++   30594: e2401001     	sub	r1, r0, #1
++   30598: e0000190     	mul	r0, r0, r1
++   3059c: e79f8008     	ldr	r8, [pc, r8]
++   305a0: e59f5c9c     	ldr	r5, [pc, #0xc9c]        @ 0x31244 <.text+0x21144>
++   305a4: e08f5005     	add	r5, pc, r5
++   305a8: e3100001     	tst	r0, #1
++   305ac: 0a000010     	beq	0x305f4 <.text+0x204f4> @ imm = #0x40
++   305b0: e5980000     	ldr	r0, [r8]
++   305b4: e3500009     	cmp	r0, #9
++   305b8: ca00002e     	bgt	0x30678 <.text+0x20578> @ imm = #0xb8
++   305bc: ea00000c     	b	0x305f4 <.text+0x204f4> @ imm = #0x30
++   305c0: eb158b07     	bl	0x5931e4 <.text+0x5830e4> @ imm = #0x562c1c
++   305c4: e59f2c64     	ldr	r2, [pc, #0xc64]        @ 0x31230 <.text+0x21130>
++   305c8: e59f1c64     	ldr	r1, [pc, #0xc64]        @ 0x31234 <.text+0x21134>
++   305cc: e5900000     	ldr	r0, [r0]
++   305d0: e08f2002     	add	r2, pc, r2
++   305d4: e59f3c5c     	ldr	r3, [pc, #0xc5c]        @ 0x31238 <.text+0x21138>
++   305d8: e08f1001     	add	r1, pc, r1
++   305dc: e58d0000     	str	r0, [sp]
++   305e0: e1a00002     	mov	r0, r2
++   305e4: e08f3003     	add	r3, pc, r3
++   305e8: e300223d     	movw	r2, #0x23d
++   305ec: ebff7f29     	bl	0x10298 <.text+0x198>   @ imm = #-0x2035c
++   305f0: eaffffe2     	b	0x30580 <.text+0x20480> @ imm = #-0x78
++   305f4: e2897d0f     	add	r7, r9, #960
++   305f8: e59923cc     	ldr	r2, [r9, #0x3cc]
++   305fc: e8970083     	ldm	r7, {r0, r1, r7}
++   30600: e59f3c40     	ldr	r3, [pc, #0xc40]        @ 0x31248 <.text+0x21148>
++   30604: e58d1014     	str	r1, [sp, #0x14]
++   30608: e3001392     	movw	r1, #0x392
++   3060c: e58d0010     	str	r0, [sp, #0x10]
++   30610: e08f3003     	add	r3, pc, r3
++   30614: e59903b4     	ldr	r0, [r9, #0x3b4]
++   30618: e58d1004     	str	r1, [sp, #0x4]
++   3061c: e28d1010     	add	r1, sp, #16
++   30620: e0800007     	add	r0, r0, r7
++   30624: e58d5000     	str	r5, [sp]
++   30628: ebff85d3     	bl	0x11d7c <.text+0x1c7c>  @ imm = #-0x1e8b4
++   3062c: e59903c0     	ldr	r0, [r9, #0x3c0]
++   30630: e59913c4     	ldr	r1, [r9, #0x3c4]
++   30634: e2902001     	adds	r2, r0, #1
++   30638: e58923c0     	str	r2, [r9, #0x3c0]
++   3063c: e2a13000     	adc	r3, r1, #0
++   30640: e58933c4     	str	r3, [r9, #0x3c4]
++   30644: e1c600f0     	strd	r0, r1, [r6]
++   30648: e59903cc     	ldr	r0, [r9, #0x3cc]
++   3064c: e5840198     	str	r0, [r4, #0x198]
++   30650: e59d000c     	ldr	r0, [sp, #0xc]
++   30654: eb15d907     	bl	0x5a6a78 <.text+0x596978> @ imm = #0x57641c
++   30658: e59a1000     	ldr	r1, [r10]
++   3065c: e2412001     	sub	r2, r1, #1
++   30660: e0010291     	mul	r1, r1, r2
++   30664: e3110001     	tst	r1, #1
++   30668: 0a00001c     	beq	0x306e0 <.text+0x205e0> @ imm = #0x70
++   3066c: e5981000     	ldr	r1, [r8]
++   30670: e3510009     	cmp	r1, #9
++   30674: da000019     	ble	0x306e0 <.text+0x205e0> @ imm = #0x64
++   30678: e2897d0f     	add	r7, r9, #960
++   3067c: e59923cc     	ldr	r2, [r9, #0x3cc]
++   30680: e8970083     	ldm	r7, {r0, r1, r7}
++   30684: e59f3c50     	ldr	r3, [pc, #0xc50]        @ 0x312dc <.text+0x211dc>
++   30688: e58d1014     	str	r1, [sp, #0x14]
++   3068c: e3001392     	movw	r1, #0x392
++   30690: e58d0010     	str	r0, [sp, #0x10]
++   30694: e08f3003     	add	r3, pc, r3
++   30698: e59903b4     	ldr	r0, [r9, #0x3b4]
++   3069c: e58d1004     	str	r1, [sp, #0x4]
++   306a0: e28d1010     	add	r1, sp, #16
++   306a4: e0800007     	add	r0, r0, r7
++   306a8: e58d5000     	str	r5, [sp]
++   306ac: ebff85b2     	bl	0x11d7c <.text+0x1c7c>  @ imm = #-0x1e938
++   306b0: e59903c0     	ldr	r0, [r9, #0x3c0]
++   306b4: e59913c4     	ldr	r1, [r9, #0x3c4]
++   306b8: e2902001     	adds	r2, r0, #1
++   306bc: e58923c0     	str	r2, [r9, #0x3c0]
++   306c0: e2a13000     	adc	r3, r1, #0
++   306c4: e58933c4     	str	r3, [r9, #0x3c4]
++   306c8: e1c600f0     	strd	r0, r1, [r6]
++   306cc: e59903cc     	ldr	r0, [r9, #0x3cc]
++   306d0: e5840198     	str	r0, [r4, #0x198]
++   306d4: e59d000c     	ldr	r0, [sp, #0xc]
++   306d8: eb15d8e6     	bl	0x5a6a78 <.text+0x596978> @ imm = #0x576398
++   306dc: eaffffc4     	b	0x305f4 <.text+0x204f4> @ imm = #-0xf0
++   306e0: e3500000     	cmp	r0, #0
++   306e4: 1a00000c     	bne	0x3071c <.text+0x2061c> @ imm = #0x30
++   306e8: e59d000c     	ldr	r0, [sp, #0xc]
++   306ec: eb15d87d     	bl	0x5a68e8 <.text+0x5967e8> @ imm = #0x5761f4
++   306f0: e3500000     	cmp	r0, #0
++   306f4: 1a000015     	bne	0x30750 <.text+0x20650> @ imm = #0x54
++   306f8: e59a0000     	ldr	r0, [r10]
++   306fc: e2401001     	sub	r1, r0, #1
++   30700: e0000190     	mul	r0, r0, r1
++   30704: e3100001     	tst	r0, #1
++   30708: 0a000039     	beq	0x307f4 <.text+0x206f4> @ imm = #0xe4
++   3070c: e5980000     	ldr	r0, [r8]
++   30710: e3500009     	cmp	r0, #9
++   30714: ca000053     	bgt	0x30868 <.text+0x20768> @ imm = #0x14c
++   30718: ea000035     	b	0x307f4 <.text+0x206f4> @ imm = #0xd4
++   3071c: eb158ab0     	bl	0x5931e4 <.text+0x5830e4> @ imm = #0x562ac0
++   30720: e59f2b24     	ldr	r2, [pc, #0xb24]        @ 0x3124c <.text+0x2114c>
++   30724: e59f1b24     	ldr	r1, [pc, #0xb24]        @ 0x31250 <.text+0x21150>
++   30728: e5900000     	ldr	r0, [r0]
++   3072c: e08f2002     	add	r2, pc, r2
++   30730: e59f3b1c     	ldr	r3, [pc, #0xb1c]        @ 0x31254 <.text+0x21154>
++   30734: e08f1001     	add	r1, pc, r1
++   30738: e58d0000     	str	r0, [sp]
++   3073c: e1a00002     	mov	r0, r2
++   30740: e08f3003     	add	r3, pc, r3
++   30744: e300224f     	movw	r2, #0x24f
++   30748: ebff7ed2     	bl	0x10298 <.text+0x198>   @ imm = #-0x204b8
++   3074c: eaffffe5     	b	0x306e8 <.text+0x205e8> @ imm = #-0x6c
++   30750: e59a0000     	ldr	r0, [r10]
++   30754: e2401001     	sub	r1, r0, #1
++   30758: e0000190     	mul	r0, r0, r1
++   3075c: e3100001     	tst	r0, #1
++   30760: 0a000002     	beq	0x30770 <.text+0x20670> @ imm = #0x8
++   30764: e5980000     	ldr	r0, [r8]
++   30768: e3500009     	cmp	r0, #9
++   3076c: ca000013     	bgt	0x307c0 <.text+0x206c0> @ imm = #0x4c
++   30770: eb158a9b     	bl	0x5931e4 <.text+0x5830e4> @ imm = #0x562a6c
++   30774: e59f2adc     	ldr	r2, [pc, #0xadc]        @ 0x31258 <.text+0x21158>
++   30778: e59f1adc     	ldr	r1, [pc, #0xadc]        @ 0x3125c <.text+0x2115c>
++   3077c: e5900000     	ldr	r0, [r0]
++   30780: e08f2002     	add	r2, pc, r2
++   30784: e59f3ad4     	ldr	r3, [pc, #0xad4]        @ 0x31260 <.text+0x21160>
++   30788: e08f1001     	add	r1, pc, r1
++   3078c: e58d0000     	str	r0, [sp]
++   30790: e1a00002     	mov	r0, r2
++   30794: e08f3003     	add	r3, pc, r3
++   30798: e3002249     	movw	r2, #0x249
++   3079c: ebff7ebd     	bl	0x10298 <.text+0x198>   @ imm = #-0x2050c
++   307a0: e59a0000     	ldr	r0, [r10]
++   307a4: e2401001     	sub	r1, r0, #1
++   307a8: e0000190     	mul	r0, r0, r1
++   307ac: e3100001     	tst	r0, #1
++   307b0: 0affffd0     	beq	0x306f8 <.text+0x205f8> @ imm = #-0xc0
++   307b4: e5980000     	ldr	r0, [r8]
++   307b8: e3500009     	cmp	r0, #9
++   307bc: daffffcd     	ble	0x306f8 <.text+0x205f8> @ imm = #-0xcc
++   307c0: eb158a87     	bl	0x5931e4 <.text+0x5830e4> @ imm = #0x562a1c
++   307c4: e59f2b14     	ldr	r2, [pc, #0xb14]        @ 0x312e0 <.text+0x211e0>
++   307c8: e59f1b14     	ldr	r1, [pc, #0xb14]        @ 0x312e4 <.text+0x211e4>
++   307cc: e5900000     	ldr	r0, [r0]
++   307d0: e08f2002     	add	r2, pc, r2
++   307d4: e59f3b0c     	ldr	r3, [pc, #0xb0c]        @ 0x312e8 <.text+0x211e8>
++   307d8: e08f1001     	add	r1, pc, r1
++   307dc: e58d0000     	str	r0, [sp]
++   307e0: e1a00002     	mov	r0, r2
++   307e4: e08f3003     	add	r3, pc, r3
++   307e8: e3002249     	movw	r2, #0x249
++   307ec: ebff7ea9     	bl	0x10298 <.text+0x198>   @ imm = #-0x2055c
++   307f0: eaffffde     	b	0x30770 <.text+0x20670> @ imm = #-0x88
++   307f4: e28d607c     	add	r6, sp, #124
++   307f8: e59903b4     	ldr	r0, [r9, #0x3b4]
++   307fc: e59913b8     	ldr	r1, [r9, #0x3b8]
++   30800: e1a02006     	mov	r2, r6
++   30804: eb0361cb     	bl	0x108f38 <.text+0xf8e38> @ imm = #0xd872c
++   30808: e28d705c     	add	r7, sp, #92
++   3080c: e1a00006     	mov	r0, r6
++   30810: e3a01020     	mov	r1, #32
++   30814: e1a02007     	mov	r2, r7
++   30818: eb0361c6     	bl	0x108f38 <.text+0xf8e38> @ imm = #0xd8718
++   3081c: e59f3a40     	ldr	r3, [pc, #0xa40]        @ 0x31264 <.text+0x21164>
++   30820: e28d601c     	add	r6, sp, #28
++   30824: e300039b     	movw	r0, #0x39b
++   30828: e1a01007     	mov	r1, r7
++   3082c: e08f3003     	add	r3, pc, r3
++   30830: e58d0004     	str	r0, [sp, #0x4]
++   30834: e1a00006     	mov	r0, r6
++   30838: e3a02020     	mov	r2, #32
++   3083c: e58d5000     	str	r5, [sp]
++   30840: ebff854d     	bl	0x11d7c <.text+0x1c7c>  @ imm = #-0x1eacc
++   30844: e59a0000     	ldr	r0, [r10]
++   30848: e2401001     	sub	r1, r0, #1
++   3084c: e0010190     	mul	r1, r0, r1
++   30850: e59903e8     	ldr	r0, [r9, #0x3e8]
++   30854: e3110001     	tst	r1, #1
++   30858: 0a000016     	beq	0x308b8 <.text+0x207b8> @ imm = #0x58
++   3085c: e5981000     	ldr	r1, [r8]
++   30860: e3510009     	cmp	r1, #9
++   30864: da000013     	ble	0x308b8 <.text+0x207b8> @ imm = #0x4c
++   30868: e28d607c     	add	r6, sp, #124
++   3086c: e59903b4     	ldr	r0, [r9, #0x3b4]
++   30870: e59913b8     	ldr	r1, [r9, #0x3b8]
++   30874: e1a02006     	mov	r2, r6
++   30878: eb0361ae     	bl	0x108f38 <.text+0xf8e38> @ imm = #0xd86b8
++   3087c: e28d705c     	add	r7, sp, #92
++   30880: e1a00006     	mov	r0, r6
++   30884: e3a01020     	mov	r1, #32
++   30888: e1a02007     	mov	r2, r7
++   3088c: eb0361a9     	bl	0x108f38 <.text+0xf8e38> @ imm = #0xd86a4
++   30890: e59f3a54     	ldr	r3, [pc, #0xa54]        @ 0x312ec <.text+0x211ec>
++   30894: e300039b     	movw	r0, #0x39b
++   30898: e58d0004     	str	r0, [sp, #0x4]
++   3089c: e28d001c     	add	r0, sp, #28
++   308a0: e08f3003     	add	r3, pc, r3
++   308a4: e1a01007     	mov	r1, r7
++   308a8: e3a02020     	mov	r2, #32
++   308ac: e58d5000     	str	r5, [sp]
++   308b0: ebff8531     	bl	0x11d7c <.text+0x1c7c>  @ imm = #-0x1eb3c
++   308b4: eaffffce     	b	0x307f4 <.text+0x206f4> @ imm = #-0xc8
++   308b8: e3500001     	cmp	r0, #1
++   308bc: ba000036     	blt	0x3099c <.text+0x2089c> @ imm = #0xd8
++   308c0: e59f29a0     	ldr	r2, [pc, #0x9a0]        @ 0x31268 <.text+0x21168>
++   308c4: e79f2002     	ldr	r2, [pc, r2]
++   308c8: e5920000     	ldr	r0, [r2]
++   308cc: e59f3998     	ldr	r3, [pc, #0x998]        @ 0x3126c <.text+0x2116c>
++   308d0: e2401001     	sub	r1, r0, #1
++   308d4: e0000190     	mul	r0, r0, r1
++   308d8: e79f3003     	ldr	r3, [pc, r3]
++   308dc: e3100001     	tst	r0, #1
++   308e0: e5920000     	ldr	r0, [r2]
++   308e4: e2401001     	sub	r1, r0, #1
++   308e8: e0000190     	mul	r0, r0, r1
++   308ec: e3100001     	tst	r0, #1
++   308f0: 0a000002     	beq	0x30900 <.text+0x20800> @ imm = #0x8
++   308f4: e5930000     	ldr	r0, [r3]
++   308f8: e3500009     	cmp	r0, #9
++   308fc: cafffff7     	bgt	0x308e0 <.text+0x207e0> @ imm = #-0x24
++   30900: e2860020     	add	r0, r6, #32
++   30904: e58d0008     	str	r0, [sp, #0x8]
++   30908: e59f6960     	ldr	r6, [pc, #0x960]        @ 0x31270 <.text+0x21170>
++   3090c: e3a0a000     	mov	r10, #0
++   30910: e59f795c     	ldr	r7, [pc, #0x95c]        @ 0x31274 <.text+0x21174>
++   30914: e08f6006     	add	r6, pc, r6
++   30918: e08f7007     	add	r7, pc, r7
++   3091c: e59903d4     	ldr	r0, [r9, #0x3d4]
++   30920: e3a02020     	mov	r2, #32
++   30924: e1a03007     	mov	r3, r7
++   30928: e790110a     	ldr	r1, [r0, r10, lsl #2]
++   3092c: e300039d     	movw	r0, #0x39d
++   30930: e58d0004     	str	r0, [sp, #0x4]
++   30934: e59d0008     	ldr	r0, [sp, #0x8]
++   30938: e58d6000     	str	r6, [sp]
++   3093c: ebff850e     	bl	0x11d7c <.text+0x1c7c>  @ imm = #-0x1ebc8
++   30940: e28d801c     	add	r8, sp, #28
++   30944: e28d507c     	add	r5, sp, #124
++   30948: e3a01040     	mov	r1, #64
++   3094c: e1a00008     	mov	r0, r8
++   30950: e1a02005     	mov	r2, r5
++   30954: eb036177     	bl	0x108f38 <.text+0xf8e38> @ imm = #0xd85dc
++   30958: e1a00005     	mov	r0, r5
++   3095c: e28d505c     	add	r5, sp, #92
++   30960: e3a01020     	mov	r1, #32
++   30964: e1a02005     	mov	r2, r5
++   30968: eb036172     	bl	0x108f38 <.text+0xf8e38> @ imm = #0xd85c8
++   3096c: e300039f     	movw	r0, #0x39f
++   30970: e1a01005     	mov	r1, r5
++   30974: e58d0004     	str	r0, [sp, #0x4]
++   30978: e1a00008     	mov	r0, r8
++   3097c: e3a02020     	mov	r2, #32
++   30980: e1a03007     	mov	r3, r7
++   30984: e58d6000     	str	r6, [sp]
++   30988: ebff84fb     	bl	0x11d7c <.text+0x1c7c>  @ imm = #-0x1ec14
++   3098c: e59903e8     	ldr	r0, [r9, #0x3e8]
++   30990: e28aa001     	add	r10, r10, #1
++   30994: e15a0000     	cmp	r10, r0
++   30998: baffffdf     	blt	0x3091c <.text+0x2081c> @ imm = #-0x84
++   3099c: e59f08d4     	ldr	r0, [pc, #0x8d4]        @ 0x31278 <.text+0x21178>
++   309a0: e79f0000     	ldr	r0, [pc, r0]
++   309a4: e5900000     	ldr	r0, [r0]
++   309a8: e59fa8cc     	ldr	r10, [pc, #0x8cc]       @ 0x3127c <.text+0x2117c>
++   309ac: e2401001     	sub	r1, r0, #1
++   309b0: e0000190     	mul	r0, r0, r1
++   309b4: e79fa00a     	ldr	r10, [pc, r10]
++   309b8: e3100001     	tst	r0, #1
++   309bc: 0a000002     	beq	0x309cc <.text+0x208cc> @ imm = #0x8
++   309c0: e59a0000     	ldr	r0, [r10]
++   309c4: e3500009     	cmp	r0, #9
++   309c8: ca00003f     	bgt	0x30acc <.text+0x209cc> @ imm = #0xfc
++   309cc: e28dc01c     	add	r12, sp, #28
++   309d0: e59d6038     	ldr	r6, [sp, #0x38]
++   309d4: e89c10af     	ldm	r12, {r0, r1, r2, r3, r5, r7, r12}
++   309d8: e6bf0f30     	rev	r0, r0
++   309dc: e58d005c     	str	r0, [sp, #0x5c]
++   309e0: e6bf0f31     	rev	r0, r1
++   309e4: e58d0060     	str	r0, [sp, #0x60]
++   309e8: e6bf0f32     	rev	r0, r2
++   309ec: e59f888c     	ldr	r8, [pc, #0x88c]        @ 0x31280 <.text+0x21180>
++   309f0: e58d0064     	str	r0, [sp, #0x64]
++   309f4: e6bf0f33     	rev	r0, r3
++   309f8: e58d0068     	str	r0, [sp, #0x68]
++   309fc: e6bf0f35     	rev	r0, r5
++   30a00: e58d006c     	str	r0, [sp, #0x6c]
++   30a04: e6bf0f37     	rev	r0, r7
++   30a08: e58d0070     	str	r0, [sp, #0x70]
++   30a0c: e6bf0f3c     	rev	r0, r12
++   30a10: e58d0074     	str	r0, [sp, #0x74]
++   30a14: e6bf0f36     	rev	r0, r6
++   30a18: e58d0078     	str	r0, [sp, #0x78]
++   30a1c: e08f8008     	add	r8, pc, r8
++   30a20: e59f185c     	ldr	r1, [pc, #0x85c]        @ 0x31284 <.text+0x21184>
++   30a24: e30003a6     	movw	r0, #0x3a6
++   30a28: e58d0004     	str	r0, [sp, #0x4]
++   30a2c: e1a00004     	mov	r0, r4
++   30a30: e08f1001     	add	r1, pc, r1
++   30a34: e58d1000     	str	r1, [sp]
++   30a38: e3a02070     	mov	r2, #112
++   30a3c: e1a03008     	mov	r3, r8
++   30a40: e1a05001     	mov	r5, r1
++   30a44: e2891fa6     	add	r1, r9, #664
++   30a48: ebff84cb     	bl	0x11d7c <.text+0x1c7c>  @ imm = #-0x1ecd4
++   30a4c: e30003a7     	movw	r0, #0x3a7
++   30a50: e28d105c     	add	r1, sp, #92
++   30a54: e58d0004     	str	r0, [sp, #0x4]
++   30a58: e2840024     	add	r0, r4, #36
++   30a5c: e3a02020     	mov	r2, #32
++   30a60: e1a03008     	mov	r3, r8
++   30a64: e58d5000     	str	r5, [sp]
++   30a68: ebff84c3     	bl	0x11d7c <.text+0x1c7c>  @ imm = #-0x1ecf4
+diff --git a/evidence/stage9/disasm/work_wrapper_context.S b/evidence/stage9/disasm/work_wrapper_context.S
+new file mode 100644
+index 0000000..5838c62
+--- /dev/null
++++ b/evidence/stage9/disasm/work_wrapper_context.S
+@@ -0,0 +1,303 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   300ac: e92d4ff0     	push	{r4, r5, r6, r7, r8, r9, r10, r11, lr}
++   300b0: e28db01c     	add	r11, sp, #28
++   300b4: e24dd00c     	sub	sp, sp, #12
++   300b8: e50b3028     	str	r3, [r11, #-0x28]
++   300bc: e1a06001     	mov	r6, r1
++   300c0: e50b0024     	str	r0, [r11, #-0x24]
++   300c4: e1a0a002     	mov	r10, r2
++   300c8: e59f0408     	ldr	r0, [pc, #0x408]        @ 0x304d8 <.text+0x203d8>
++   300cc: e79f0000     	ldr	r0, [pc, r0]
++   300d0: e5900000     	ldr	r0, [r0]
++   300d4: e2401001     	sub	r1, r0, #1
++   300d8: e0000190     	mul	r0, r0, r1
++   300dc: e3100001     	tst	r0, #1
++   300e0: 0a000004     	beq	0x300f8 <.text+0x1fff8> @ imm = #0x10
++   300e4: e59f03f0     	ldr	r0, [pc, #0x3f0]        @ 0x304dc <.text+0x203dc>
++   300e8: e79f0000     	ldr	r0, [pc, r0]
++   300ec: e5900000     	ldr	r0, [r0]
++   300f0: e3500009     	cmp	r0, #9
++   300f4: ca000027     	bgt	0x30198 <.text+0x20098> @ imm = #0x9c
++   300f8: e1a0000d     	mov	r0, sp
++   300fc: e2407008     	sub	r7, r0, #8
++   30100: e1a0d007     	mov	sp, r7
++   30104: e59b1018     	ldr	r1, [r11, #0x18]
++   30108: e5001008     	str	r1, [r0, #-0x8]
++   3010c: e3a01f9e     	mov	r1, #632
++   30110: e51b0024     	ldr	r0, [r11, #-0x24]
++   30114: e5908000     	ldr	r8, [r0]
++   30118: e3a00001     	mov	r0, #1
++   3011c: eb158ea4     	bl	0x593bb4 <.text+0x583ab4> @ imm = #0x563a90
++   30120: e59f53b8     	ldr	r5, [pc, #0x3b8]        @ 0x304e0 <.text+0x203e0>
++   30124: e1a04000     	mov	r4, r0
++   30128: e79f5005     	ldr	r5, [pc, r5]
++   3012c: e1a00005     	mov	r0, r5
++   30130: eb15d7f4     	bl	0x5a6108 <.text+0x596008> @ imm = #0x575fd0
++   30134: e59f93a8     	ldr	r9, [pc, #0x3a8]        @ 0x304e4 <.text+0x203e4>
++   30138: e79f9009     	ldr	r9, [pc, r9]
++   3013c: e59f13a4     	ldr	r1, [pc, #0x3a4]        @ 0x304e8 <.text+0x203e8>
++   30140: e2890001     	add	r0, r9, #1
++   30144: e08f1001     	add	r1, pc, r1
++   30148: e5810000     	str	r0, [r1]
++   3014c: e1a00005     	mov	r0, r5
++   30150: eb15d95b     	bl	0x5a66c4 <.text+0x5965c4> @ imm = #0x57656c
++   30154: e58491bc     	str	r9, [r4, #0x1bc]
++   30158: e5864000     	str	r4, [r6]
++   3015c: e28a4030     	add	r4, r10, #48
++   30160: e1a00004     	mov	r0, r4
++   30164: eb15da6b     	bl	0x5a6b18 <.text+0x596a18> @ imm = #0x5769ac
++   30168: e59f137c     	ldr	r1, [pc, #0x37c]        @ 0x304ec <.text+0x203ec>
++   3016c: e79f1001     	ldr	r1, [pc, r1]
++   30170: e5911000     	ldr	r1, [r1]
++   30174: e2412001     	sub	r2, r1, #1
++   30178: e0010291     	mul	r1, r1, r2
++   3017c: e3110001     	tst	r1, #1
++   30180: 0a00001d     	beq	0x301fc <.text+0x200fc> @ imm = #0x74
++   30184: e59f1364     	ldr	r1, [pc, #0x364]        @ 0x304f0 <.text+0x203f0>
++   30188: e79f1001     	ldr	r1, [pc, r1]
++   3018c: e5911000     	ldr	r1, [r1]
++   30190: e3510009     	cmp	r1, #9
++   30194: da000018     	ble	0x301fc <.text+0x200fc> @ imm = #0x60
++   30198: e1a0000d     	mov	r0, sp
++   3019c: e240d008     	sub	sp, r0, #8
++   301a0: e59b1018     	ldr	r1, [r11, #0x18]
++   301a4: e5001008     	str	r1, [r0, #-0x8]
++   301a8: e3a00001     	mov	r0, #1
++   301ac: e3a01f9e     	mov	r1, #632
++   301b0: eb158e7f     	bl	0x593bb4 <.text+0x583ab4> @ imm = #0x5639fc
++   301b4: e59f5384     	ldr	r5, [pc, #0x384]        @ 0x30540 <.text+0x20440>
++   301b8: e1a04000     	mov	r4, r0
++   301bc: e79f5005     	ldr	r5, [pc, r5]
++   301c0: e1a00005     	mov	r0, r5
++   301c4: eb15d7cf     	bl	0x5a6108 <.text+0x596008> @ imm = #0x575f3c
++   301c8: e59f7374     	ldr	r7, [pc, #0x374]        @ 0x30544 <.text+0x20444>
++   301cc: e79f7007     	ldr	r7, [pc, r7]
++   301d0: e59f1370     	ldr	r1, [pc, #0x370]        @ 0x30548 <.text+0x20448>
++   301d4: e2870001     	add	r0, r7, #1
++   301d8: e08f1001     	add	r1, pc, r1
++   301dc: e5810000     	str	r0, [r1]
++   301e0: e1a00005     	mov	r0, r5
++   301e4: eb15d936     	bl	0x5a66c4 <.text+0x5965c4> @ imm = #0x5764d8
++   301e8: e28a0030     	add	r0, r10, #48
++   301ec: e58471bc     	str	r7, [r4, #0x1bc]
++   301f0: e5864000     	str	r4, [r6]
++   301f4: eb15da47     	bl	0x5a6b18 <.text+0x596a18> @ imm = #0x57691c
++   301f8: eaffffbe     	b	0x300f8 <.text+0x1fff8> @ imm = #-0x108
++   301fc: e59b9014     	ldr	r9, [r11, #0x14]
++   30200: e3500000     	cmp	r0, #0
++   30204: e59b5010     	ldr	r5, [r11, #0x10]
++   30208: 1a000037     	bne	0x302ec <.text+0x201ec> @ imm = #0xdc
++   3020c: e59f32ec     	ldr	r3, [pc, #0x2ec]        @ 0x30500 <.text+0x20400>
++   30210: e59f02ec     	ldr	r0, [pc, #0x2ec]        @ 0x30504 <.text+0x20404>
++   30214: e59b1018     	ldr	r1, [r11, #0x18]
++   30218: e08f3003     	add	r3, pc, r3
++   3021c: e08f0000     	add	r0, pc, r0
++   30220: e58a53c0     	str	r5, [r10, #0x3c0]
++   30224: e58a93c4     	str	r9, [r10, #0x3c4]
++   30228: e6bf1f31     	rev	r1, r1
++   3022c: e5871000     	str	r1, [r7]
++   30230: e24dd008     	sub	sp, sp, #8
++   30234: e3001bc7     	movw	r1, #0xbc7
++   30238: e88d0003     	stm	sp, {r0, r1}
++   3023c: e28a0fa6     	add	r0, r10, #664
++   30240: e1a01007     	mov	r1, r7
++   30244: e3a02004     	mov	r2, #4
++   30248: ebff86cb     	bl	0x11d7c <.text+0x1c7c>  @ imm = #-0x1e4d4
++   3024c: e28dd008     	add	sp, sp, #8
++   30250: e51b0028     	ldr	r0, [r11, #-0x28]
++   30254: ed9a1bea     	vldr	d1, [r10, #936]
++   30258: ed900bea     	vldr	d0, [r0, #936]
++   3025c: e1a00004     	mov	r0, r4
++   30260: eeb41bc0     	vcmpe.f64	d1, d0
++   30264: eef1fa10     	vmrs	APSR_nzcv, fpscr
++   30268: 4d8a0bea     	vstrmi	d0, [r10, #936]
++   3026c: eb15da01     	bl	0x5a6a78 <.text+0x596978> @ imm = #0x576804
++   30270: e3500000     	cmp	r0, #0
++   30274: 1a00002b     	bne	0x30328 <.text+0x20228> @ imm = #0xac
++   30278: e51b5028     	ldr	r5, [r11, #-0x28]
++   3027c: e2854030     	add	r4, r5, #48
++   30280: e1a00004     	mov	r0, r4
++   30284: eb15da23     	bl	0x5a6b18 <.text+0x596a18> @ imm = #0x57688c
++   30288: e3500000     	cmp	r0, #0
++   3028c: 1a000034     	bne	0x30364 <.text+0x20264> @ imm = #0xd0
++   30290: e59b0010     	ldr	r0, [r11, #0x10]
++   30294: e2900001     	adds	r0, r0, #1
++   30298: e58503c0     	str	r0, [r5, #0x3c0]
++   3029c: e1a00004     	mov	r0, r4
++   302a0: e2a91000     	adc	r1, r9, #0
++   302a4: e58513c4     	str	r1, [r5, #0x3c4]
++   302a8: eb15d9f2     	bl	0x5a6a78 <.text+0x596978> @ imm = #0x5767c8
++   302ac: e3500000     	cmp	r0, #0
++   302b0: 1a00003a     	bne	0x303a0 <.text+0x202a0> @ imm = #0xe8
++   302b4: e59f0270     	ldr	r0, [pc, #0x270]        @ 0x3052c <.text+0x2042c>
++   302b8: e59b4008     	ldr	r4, [r11, #0x8]
++   302bc: e79f0000     	ldr	r0, [pc, r0]
++   302c0: e5900000     	ldr	r0, [r0]
++   302c4: e2401001     	sub	r1, r0, #1
++   302c8: e0000190     	mul	r0, r0, r1
++   302cc: e3100001     	tst	r0, #1
++   302d0: 0a000041     	beq	0x303dc <.text+0x202dc> @ imm = #0x104
++   302d4: e59f0254     	ldr	r0, [pc, #0x254]        @ 0x30530 <.text+0x20430>
++   302d8: e79f0000     	ldr	r0, [pc, r0]
++   302dc: e5900000     	ldr	r0, [r0]
++   302e0: e3500009     	cmp	r0, #9
++   302e4: ca000060     	bgt	0x3046c <.text+0x2036c> @ imm = #0x180
++   302e8: ea00003b     	b	0x303dc <.text+0x202dc> @ imm = #0xec
++   302ec: eb158bbc     	bl	0x5931e4 <.text+0x5830e4> @ imm = #0x562ef0
++   302f0: e59f21fc     	ldr	r2, [pc, #0x1fc]        @ 0x304f4 <.text+0x203f4>
++   302f4: e59f11fc     	ldr	r1, [pc, #0x1fc]        @ 0x304f8 <.text+0x203f8>
++   302f8: e5900000     	ldr	r0, [r0]
++   302fc: e08f2002     	add	r2, pc, r2
++   30300: e59f31f4     	ldr	r3, [pc, #0x1f4]        @ 0x304fc <.text+0x203fc>
++   30304: e08f1001     	add	r1, pc, r1
++   30308: e08f3003     	add	r3, pc, r3
++   3030c: e24dd008     	sub	sp, sp, #8
++   30310: e58d0000     	str	r0, [sp]
++   30314: e1a00002     	mov	r0, r2
++   30318: e300223d     	movw	r2, #0x23d
++   3031c: ebff7fdd     	bl	0x10298 <.text+0x198>   @ imm = #-0x2008c
++   30320: e28dd008     	add	sp, sp, #8
++   30324: eaffffb8     	b	0x3020c <.text+0x2010c> @ imm = #-0x120
++   30328: eb158bad     	bl	0x5931e4 <.text+0x5830e4> @ imm = #0x562eb4
++   3032c: e59f21d4     	ldr	r2, [pc, #0x1d4]        @ 0x30508 <.text+0x20408>
++   30330: e59f11d4     	ldr	r1, [pc, #0x1d4]        @ 0x3050c <.text+0x2040c>
++   30334: e5900000     	ldr	r0, [r0]
++   30338: e08f2002     	add	r2, pc, r2
++   3033c: e59f31cc     	ldr	r3, [pc, #0x1cc]        @ 0x30510 <.text+0x20410>
++   30340: e08f1001     	add	r1, pc, r1
++   30344: e08f3003     	add	r3, pc, r3
++   30348: e24dd008     	sub	sp, sp, #8
++   3034c: e58d0000     	str	r0, [sp]
++   30350: e1a00002     	mov	r0, r2
++   30354: e300224f     	movw	r2, #0x24f
++   30358: ebff7fce     	bl	0x10298 <.text+0x198>   @ imm = #-0x200c8
++   3035c: e28dd008     	add	sp, sp, #8
++   30360: eaffffc4     	b	0x30278 <.text+0x20178> @ imm = #-0xf0
++   30364: eb158b9e     	bl	0x5931e4 <.text+0x5830e4> @ imm = #0x562e78
++   30368: e59f21a4     	ldr	r2, [pc, #0x1a4]        @ 0x30514 <.text+0x20414>
++   3036c: e59f11a4     	ldr	r1, [pc, #0x1a4]        @ 0x30518 <.text+0x20418>
++   30370: e5900000     	ldr	r0, [r0]
++   30374: e08f2002     	add	r2, pc, r2
++   30378: e59f319c     	ldr	r3, [pc, #0x19c]        @ 0x3051c <.text+0x2041c>
++   3037c: e08f1001     	add	r1, pc, r1
++   30380: e08f3003     	add	r3, pc, r3
++   30384: e24dd008     	sub	sp, sp, #8
++   30388: e58d0000     	str	r0, [sp]
++   3038c: e1a00002     	mov	r0, r2
++   30390: e300223d     	movw	r2, #0x23d
++   30394: ebff7fbf     	bl	0x10298 <.text+0x198>   @ imm = #-0x20104
++   30398: e28dd008     	add	sp, sp, #8
++   3039c: eaffffbb     	b	0x30290 <.text+0x20190> @ imm = #-0x114
++   303a0: eb158b8f     	bl	0x5931e4 <.text+0x5830e4> @ imm = #0x562e3c
++   303a4: e59f2174     	ldr	r2, [pc, #0x174]        @ 0x30520 <.text+0x20420>
++   303a8: e59f1174     	ldr	r1, [pc, #0x174]        @ 0x30524 <.text+0x20424>
++   303ac: e5900000     	ldr	r0, [r0]
++   303b0: e08f2002     	add	r2, pc, r2
++   303b4: e59f316c     	ldr	r3, [pc, #0x16c]        @ 0x30528 <.text+0x20428>
++   303b8: e08f1001     	add	r1, pc, r1
++   303bc: e08f3003     	add	r3, pc, r3
++   303c0: e24dd008     	sub	sp, sp, #8
++   303c4: e58d0000     	str	r0, [sp]
++   303c8: e1a00002     	mov	r0, r2
++   303cc: e300224f     	movw	r2, #0x24f
++   303d0: ebff7fb0     	bl	0x10298 <.text+0x198>   @ imm = #-0x20140
++   303d4: e28dd008     	add	sp, sp, #8
++   303d8: eaffffb5     	b	0x302b4 <.text+0x201b4> @ imm = #-0x12c
++   303dc: e5961000     	ldr	r1, [r6]
++   303e0: e1a0000a     	mov	r0, r10
++   303e4: eb000059     	bl	0x30550 <.text+0x20450> @ imm = #0x164
++   303e8: e5960000     	ldr	r0, [r6]
++   303ec: e580516c     	str	r5, [r0, #0x16c]
++   303f0: e5960000     	ldr	r0, [r6]
++   303f4: e5808168     	str	r8, [r0, #0x168]
++   303f8: e5960000     	ldr	r0, [r6]
++   303fc: e59f1130     	ldr	r1, [pc, #0x130]        @ 0x30534 <.text+0x20434>
++   30400: e79f1001     	ldr	r1, [pc, r1]
++   30404: e58011b8     	str	r1, [r0, #0x1b8]
++   30408: e5960000     	ldr	r0, [r6]
++   3040c: e590016c     	ldr	r0, [r0, #0x16c]
++   30410: e5901098     	ldr	r1, [r0, #0x98]
++   30414: e2811001     	add	r1, r1, #1
++   30418: e5801098     	str	r1, [r0, #0x98]
++   3041c: e5960000     	ldr	r0, [r6]
++   30420: e3a01001     	mov	r1, #1
++   30424: e5804160     	str	r4, [r0, #0x160]
++   30428: e5960000     	ldr	r0, [r6]
++   3042c: e5c01180     	strb	r1, [r0, #0x180]
++   30430: e5960000     	ldr	r0, [r6]
++   30434: e5971000     	ldr	r1, [r7]
++   30438: e5801254     	str	r1, [r0, #0x254]
++   3043c: e59f00f4     	ldr	r0, [pc, #0xf4]         @ 0x30538 <.text+0x20438>
++   30440: e79f0000     	ldr	r0, [pc, r0]
++   30444: e5900000     	ldr	r0, [r0]
++   30448: e2401001     	sub	r1, r0, #1
++   3044c: e0000190     	mul	r0, r0, r1
++   30450: e3100001     	tst	r0, #1
++   30454: 0a00001d     	beq	0x304d0 <.text+0x203d0> @ imm = #0x74
++   30458: e59f00dc     	ldr	r0, [pc, #0xdc]         @ 0x3053c <.text+0x2043c>
++   3045c: e79f0000     	ldr	r0, [pc, r0]
++   30460: e5900000     	ldr	r0, [r0]
++   30464: e3500009     	cmp	r0, #9
++   30468: da000018     	ble	0x304d0 <.text+0x203d0> @ imm = #0x60
++   3046c: e5961000     	ldr	r1, [r6]
++   30470: e1a0000a     	mov	r0, r10
++   30474: eb000035     	bl	0x30550 <.text+0x20450> @ imm = #0xd4
++   30478: e5960000     	ldr	r0, [r6]
++   3047c: e580516c     	str	r5, [r0, #0x16c]
++   30480: e5960000     	ldr	r0, [r6]
++   30484: e5808168     	str	r8, [r0, #0x168]
++   30488: e5960000     	ldr	r0, [r6]
++   3048c: e59f10b8     	ldr	r1, [pc, #0xb8]         @ 0x3054c <.text+0x2044c>
++   30490: e79f1001     	ldr	r1, [pc, r1]
++   30494: e58011b8     	str	r1, [r0, #0x1b8]
++   30498: e5960000     	ldr	r0, [r6]
++   3049c: e590016c     	ldr	r0, [r0, #0x16c]
++   304a0: e5901098     	ldr	r1, [r0, #0x98]
++   304a4: e2811001     	add	r1, r1, #1
++   304a8: e5801098     	str	r1, [r0, #0x98]
++   304ac: e5960000     	ldr	r0, [r6]
++   304b0: e3a01001     	mov	r1, #1
++   304b4: e5804160     	str	r4, [r0, #0x160]
++   304b8: e5960000     	ldr	r0, [r6]
++   304bc: e5c01180     	strb	r1, [r0, #0x180]
++   304c0: e5960000     	ldr	r0, [r6]
++   304c4: e5971000     	ldr	r1, [r7]
++   304c8: e5801254     	str	r1, [r0, #0x254]
++   304cc: eaffffc2     	b	0x303dc <.text+0x202dc> @ imm = #-0xf8
++   304d0: e24bd01c     	sub	sp, r11, #28
++   304d4: e8bd8ff0     	pop	{r4, r5, r6, r7, r8, r9, r10, r11, pc}
++   304d8: 005af54c     	subseq	pc, r10, r12, asr #10
++   304dc: 005ae890     	<unknown>
++   304e0: 005af934     	subseq	pc, r10, r4, lsr r9
++   304e4: 005e06c8     	subseq	r0, lr, r8, asr #13
++   304e8: 005e06bc     	ldrheq	r0, [lr], #-108
++   304ec: 005af4ac     	subseq	pc, r10, r12, lsr #9
++   304f0: 005ae7f0     	ldrsheq	lr, [r10], #-112
++   304f4: 005b2373     	subseq	r2, r11, r3, ror r3
++   304f8: 005b1eb9     	ldrheq	r1, [r11], #-233
++   304fc: 005b2c4c     	subseq	r2, r11, r12, asr #24
++   30500: 005b1f74     	subseq	r1, r11, r4, ror pc
++   30504: 005b1f92     	<unknown>
++   30508: 005b2337     	subseq	r2, r11, r7, lsr r3
++   3050c: 005b1e7d     	subseq	r1, r11, sp, ror lr
++   30510: 005b2372     	subseq	r2, r11, r2, ror r3
++   30514: 005b22fb     	ldrsheq	r2, [r11], #-43
++   30518: 005b1e41     	subseq	r1, r11, r1, asr #28
++   3051c: 005b2bd4     	ldrsbeq	r2, [r11], #-180
++   30520: 005b22bf     	ldrheq	r2, [r11], #-47
++   30524: 005b1e05     	subseq	r1, r11, r5, lsl #28
++   30528: 005b22fa     	ldrsheq	r2, [r11], #-42
++   3052c: 005af35c     	subseq	pc, r10, r12, asr r3
++   30530: 005ae6a0     	subseq	lr, r10, r0, lsr #13
++   30534: 005e0380     	subseq	r0, lr, r0, lsl #7
++   30538: 005af1d8     	ldrsbeq	pc, [r10], #-24
++   3053c: 005ae51c     	subseq	lr, r10, r12, lsl r5
++   30540: 005af8a0     	subseq	pc, r10, r0, lsr #17
++   30544: 005e0634     	subseq	r0, lr, r4, lsr r6
++   30548: 005e0628     	subseq	r0, lr, r8, lsr #12
++   3054c: 005e02f0     	ldrsheq	r0, [lr], #-32
+diff --git a/evidence/stage9/genesis-vector.json b/evidence/stage9/genesis-vector.json
+new file mode 100644
+index 0000000..9e87f98
+--- /dev/null
++++ b/evidence/stage9/genesis-vector.json
+@@ -0,0 +1,14 @@
++{
++  "provenance": "Bitcoin Core v29.0 src/kernel/chainparams.cpp",
++  "source_url": "https://github.com/bitcoin/bitcoin/blob/v29.0/src/kernel/chainparams.cpp",
++  "source_blob_sha": "ac3fc9eadad6f32500697f978c7bbfc17acc183a",
++  "not_a_live_share": true,
++  "data": {
++    "coinbase": "01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff4d04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73ffffffff0100f2052a01000000434104678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5fac00000000",
++    "header": "0100000000000000000000000000000000000000000000000000000000000000000000003ba3edfd7a7b12b27ac72c3e67768f617fc81bc3888a51323a9fb8aa4b1e5e4a29ab5f49ffff001d1dac2b7c",
++    "words": "000000010000000000000000000000000000000000000000000000000000000000000000fdeda33bb2127b7a3e2cc77a618f7667c31bc87f32518a88aab89f3a4a5e1e4b495fab291d00ffff7c2bac1d000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
++    "root": "3ba3edfd7a7b12b27ac72c3e67768f617fc81bc3888a51323a9fb8aa4b1e5e4a",
++    "hash": "6fe28c0ab6f1b372c1a6a246ae63f74f931e8365e15a089c68d6190000000000",
++    "target": "0000000000000000000000000000000000000000000000000000ffff00000000"
++  }
++}
+diff --git a/evidence/stage9/recovery-manifest.json b/evidence/stage9/recovery-manifest.json
+new file mode 100644
+index 0000000..e5bb638
+--- /dev/null
++++ b/evidence/stage9/recovery-manifest.json
+@@ -0,0 +1,224 @@
++{
++  "stage": 9,
++  "reference_bytes": 6228004,
++  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
++  "slices": [
++    {
++      "name": "consumer_argument_mapping",
++      "start": "0x74f14",
++      "end_exclusive": "0x74f50",
++      "size": 60,
++      "scope": "original-executed-caller-prefix",
++      "original_bytes_sha256": "8182ccc6af8da94f32d1dbd412bd8aeee174a50f7372512bd01f6d6969ebcb31",
++      "disassembly": "evidence/stage9/disasm/consumer_argument_mapping.S",
++      "disassembly_sha256": "2e99a64d6a686793b43c6d1e95fe15e65edf25aa4b8f8950c1e133301163349c"
++    },
++    {
++      "name": "work_wrapper_context",
++      "start": "0x300ac",
++      "end_exclusive": "0x30550",
++      "size": 1188,
++      "scope": "original-wrapper-tested-to-core-prefix-not-full-C-port",
++      "original_bytes_sha256": "961d430a860264ba58116089edb21d990ee5a92a164b19bdfebc969d33093aa5",
++      "disassembly": "evidence/stage9/disasm/work_wrapper_context.S",
++      "disassembly_sha256": "8a51c334f24c594f90fec7d9070abc4562e7f31a1dd5ef8558ddf7f4f7e74dc4"
++    },
++    {
++      "name": "work_header_materialization",
++      "start": "0x30550",
++      "end_exclusive": "0x30a6c",
++      "size": 1308,
++      "scope": "recovered-prefix",
++      "original_bytes_sha256": "39d15ddb1880ed7b4bcd8cc48a1603125025d0b5a41a8c3c231d532defb129b2",
++      "disassembly": "evidence/stage9/disasm/work_header_materialization.S",
++      "disassembly_sha256": "153b2c1cc2687fd28d667a7894d15203075064c9a0e2d276b004b658aec02930"
++    },
++    {
++      "name": "metadata_suffix_context",
++      "start": "0x30a6c",
++      "end_exclusive": "0x3122c",
++      "size": 1984,
++      "scope": "context-only-not-recovered",
++      "original_bytes_sha256": "cd90279d4a48f68450458bf24039420cf24edd0686ecec4432befbdf24d163d1",
++      "disassembly": "evidence/stage9/disasm/metadata_suffix_context.S",
++      "disassembly_sha256": "edfb4dd5a531dd7da5ae4b57a5ab8ccc35b54b91504578725d898be5460cb3ce"
++    },
++    {
++      "name": "sha_oneshot",
++      "start": "0x108f38",
++      "end_exclusive": "0x109120",
++      "size": 488,
++      "scope": "original-reference-with-new-one-shot-API",
++      "original_bytes_sha256": "8d4ae18bfe64e96a84f4cf5b3b4280978e0457d78a599b041687bd9506775885",
++      "disassembly": "evidence/stage9/disasm/sha_oneshot.S",
++      "disassembly_sha256": "e6580aebdcd213a952cda68d8e87271e4c97aa8b0d5eadc67350751ae9dda76e"
++    },
++    {
++      "name": "consumer_nonce_to_prefilter",
++      "start": "0x7511c",
++      "end_exclusive": "0x7515c",
++      "size": 64,
++      "scope": "context-only-call-mapping",
++      "original_bytes_sha256": "9da2c2f3c3c3beca339c780033c77c12ca3aea1c97958bc180099b023d64ec79",
++      "disassembly": "evidence/stage9/disasm/consumer_nonce_to_prefilter.S",
++      "disassembly_sha256": "309622fbd8dffc0d2a907349b0e571c8b0d6cda0fd1c88e27e00352f27ff237d"
++    }
++  ],
++  "branch_edges": [
++    {
++      "pc": "0x74f4c",
++      "instruction_hex": "ebfeec56",
++      "target": "0x300ac"
++    },
++    {
++      "pc": "0x30248",
++      "instruction_hex": "ebff86cb",
++      "target": "0x11d7c"
++    },
++    {
++      "pc": "0x303e4",
++      "instruction_hex": "eb000059",
++      "target": "0x30550"
++    },
++    {
++      "pc": "0x30628",
++      "instruction_hex": "ebff85d3",
++      "target": "0x11d7c"
++    },
++    {
++      "pc": "0x30804",
++      "instruction_hex": "eb0361cb",
++      "target": "0x108f38"
++    },
++    {
++      "pc": "0x30818",
++      "instruction_hex": "eb0361c6",
++      "target": "0x108f38"
++    },
++    {
++      "pc": "0x30878",
++      "instruction_hex": "eb0361ae",
++      "target": "0x108f38"
++    },
++    {
++      "pc": "0x3088c",
++      "instruction_hex": "eb0361a9",
++      "target": "0x108f38"
++    },
++    {
++      "pc": "0x30a48",
++      "instruction_hex": "ebff84cb",
++      "target": "0x11d7c"
++    },
++    {
++      "pc": "0x30a68",
++      "instruction_hex": "ebff84c3",
++      "target": "0x11d7c"
++    }
++  ],
++  "field_offsets": {
++    "header_template": "0x298",
++    "coinbase_pointer": "0x3b4",
++    "coinbase_size": "0x3b8",
++    "counter_low": "0x3c0",
++    "counter_high": "0x3c4",
++    "counter_offset": "0x3c8",
++    "counter_width": "0x3cc",
++    "branch_pointer_list": "0x3d4",
++    "signed_branch_count": "0x3e8",
++    "work_counter": "0x190",
++    "work_counter_width": "0x198"
++  },
++  "instruction_assertions": [
++    {
++      "address": "0x74f18",
++      "word_hex": "e59d0054"
++    },
++    {
++      "address": "0x74f20",
++      "word_hex": "e1c220d0"
++    },
++    {
++      "address": "0x74f24",
++      "word_hex": "e6bf0f30"
++    },
++    {
++      "address": "0x74f28",
++      "word_hex": "e58d2008"
++    },
++    {
++      "address": "0x74f3c",
++      "word_hex": "e58d300c"
++    },
++    {
++      "address": "0x74f44",
++      "word_hex": "e58d0010"
++    },
++    {
++      "address": "0x30220",
++      "word_hex": "e58a53c0"
++    },
++    {
++      "address": "0x30224",
++      "word_hex": "e58a93c4"
++    },
++    {
++      "address": "0x30228",
++      "word_hex": "e6bf1f31"
++    },
++    {
++      "address": "0x30294",
++      "word_hex": "e2900001"
++    },
++    {
++      "address": "0x302a0",
++      "word_hex": "e2a91000"
++    },
++    {
++      "address": "0x30a38",
++      "word_hex": "e3a02070"
++    },
++    {
++      "address": "0x30a44",
++      "word_hex": "e2891fa6"
++    },
++    {
++      "address": "0x30a58",
++      "word_hex": "e2840024"
++    },
++    {
++      "address": "0x30a5c",
++      "word_hex": "e3a02020"
++    }
++  ],
++  "new_helpers": [
++    "reconstruction/support/sha256_bytes.c",
++    "reconstruction/support/work_rebuild_pipeline.c"
++  ],
++  "scope": "112-byte header prefix and consumer argument mapping, explicit saved snapshot integration; not full 632-byte work, queue or T21 runtime",
++  "test_boundaries": {
++    "core_entry": "0x30550",
++    "core_stop_exclusive": "0x30a6c",
++    "caller_entry": "0x74f14",
++    "injected": [
++      "memcpy/memset",
++      "successful calloc(1,632) in caller-wrapper tests",
++      "successful mutex/rwlock calls"
++    ],
++    "actual_original_sha": "0x108f38 and original compression/finalizer, not a constant hash"
++  },
++  "new_API_restrictions": [
++    "coinbase size <= UINT32_MAX",
++    "counter copy width 0..8 and inside coinbase",
++    "nonnegative merkle count <= INT32_MAX and multiplication safe",
++    "caller supplies valid nonoverlapping arrays and exclusive access; snapshot pinned externally"
++  ],
++  "not_reconstructed": [
++    "difficulty-to-target suffix",
++    "strings and reference ownership",
++    "full wrapper allocation/lifetime/error paths",
++    "job invalidation, duplicate policy across jobs",
++    "original queue72-byte ABI",
++    "T21 mapping/hardware initialization"
++  ]
++}
+diff --git a/evidence/validation/stage9/candidate-clang.json b/evidence/validation/stage9/candidate-clang.json
+new file mode 100644
+index 0000000..8ab5a91
+--- /dev/null
++++ b/evidence/validation/stage9/candidate-clang.json
+@@ -0,0 +1,9 @@
++{
++  "stage": 9,
++  "group": "candidate",
++  "status": "PASS",
++  "comparisons": 144,
++  "slice_composition_cases": 144,
++  "real_caller_wrapper_core": true,
++  "full_consumer_or_job_lifecycle": false
++}
+diff --git a/evidence/validation/stage9/candidate-gcc.json b/evidence/validation/stage9/candidate-gcc.json
+new file mode 100644
+index 0000000..8ab5a91
+--- /dev/null
++++ b/evidence/validation/stage9/candidate-gcc.json
+@@ -0,0 +1,9 @@
++{
++  "stage": 9,
++  "group": "candidate",
++  "status": "PASS",
++  "comparisons": 144,
++  "slice_composition_cases": 144,
++  "real_caller_wrapper_core": true,
++  "full_consumer_or_job_lifecycle": false
++}
+diff --git a/evidence/validation/stage9/genesis.json b/evidence/validation/stage9/genesis.json
+new file mode 100644
+index 0000000..c4425e8
+--- /dev/null
++++ b/evidence/validation/stage9/genesis.json
+@@ -0,0 +1,8 @@
++{
++  "status": "PASS",
++  "separate_original_slice_compositions": 12,
++  "known_genesis_header": true,
++  "digest": "000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f",
++  "submitted": false,
++  "hardware_tested": false
++}
+diff --git a/evidence/validation/stage9/interpreter.json b/evidence/validation/stage9/interpreter.json
+new file mode 100644
+index 0000000..d4171a6
+--- /dev/null
++++ b/evidence/validation/stage9/interpreter.json
+@@ -0,0 +1,9 @@
++{
++  "status": "PASS",
++  "synthetic_instruction_cases": 2649,
++  "instructions": [
++    "ADC/ADCS",
++    "LDRD/STRD restricted aligned forms"
++  ],
++  "independent_hardware_validation": false
++}
+diff --git a/evidence/validation/stage9/prefix-clang.json b/evidence/validation/stage9/prefix-clang.json
+new file mode 100644
+index 0000000..20d763f
+--- /dev/null
++++ b/evidence/validation/stage9/prefix-clang.json
+@@ -0,0 +1,9 @@
++{
++  "stage": 9,
++  "group": "prefix",
++  "status": "PASS",
++  "comparisons": 198,
++  "original_sha_calls": 2376,
++  "compared_work_bytes": 112,
++  "full_632byte_work_reconstructed": false
++}
+diff --git a/evidence/validation/stage9/prefix-gcc.json b/evidence/validation/stage9/prefix-gcc.json
+new file mode 100644
+index 0000000..20d763f
+--- /dev/null
++++ b/evidence/validation/stage9/prefix-gcc.json
+@@ -0,0 +1,9 @@
++{
++  "stage": 9,
++  "group": "prefix",
++  "status": "PASS",
++  "comparisons": 198,
++  "original_sha_calls": 2376,
++  "compared_work_bytes": 112,
++  "full_632byte_work_reconstructed": false
++}
+diff --git a/evidence/validation/stage9/preflight-clang-build-evidence.log b/evidence/validation/stage9/preflight-clang-build-evidence.log
+new file mode 100644
+index 0000000..bb52cd9
+--- /dev/null
++++ b/evidence/validation/stage9/preflight-clang-build-evidence.log
+@@ -0,0 +1,96 @@
++mkdir -p build/host/reconstruction/support/
++cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c reconstruction/support/sha256_bytes.c -o build/host/reconstruction/support/sha256_bytes.o
++mkdir -p build/host/reconstruction/support/
++cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c reconstruction/support/work_rebuild_pipeline.c -o build/host/reconstruction/support/work_rebuild_pipeline.o
++mkdir -p build/host/src/frontend/
++cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c src/frontend/cgminer.c -o build/host/src/frontend/cgminer.o
++mkdir -p build/host/reconstruction/support/
++cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c reconstruction/support/sha256d80.c -o build/host/reconstruction/support/sha256d80.o
++mkdir -p build/host/reconstruction/support/
++cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c reconstruction/support/target256.c -o build/host/reconstruction/support/target256.o
++mkdir -p build/host/reconstruction/support/
++cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c reconstruction/support/nonce_job_window.c -o build/host/reconstruction/support/nonce_job_window.o
++mkdir -p build/host/reconstruction/support/
++cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c reconstruction/support/sha256_midstate.c -o build/host/reconstruction/support/sha256_midstate.o
++mkdir -p build/host/reconstruction/support/
++cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c reconstruction/support/work_nonce_pipeline.c -o build/host/reconstruction/support/work_nonce_pipeline.o
++mkdir -p build/host/src/backend/work-gen/
++cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c src/backend/work-gen/work-gen.c -o build/host/src/backend/work-gen/work-gen.o
++mkdir -p build/host/reconstruction/support/
++cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c reconstruction/support/work_rx_stream.c -o build/host/reconstruction/support/work_rx_stream.o
++mkdir -p build/host/libbitmain/src/
++cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c libbitmain/src/uart.c -o build/host/libbitmain/src/uart.o
++mkdir -p build/host/libbitmain/src/chip/
++cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c libbitmain/src/chip/chip1398.c -o build/host/libbitmain/src/chip/chip1398.o
++mkdir -p build/host/libbitmain/src/
++cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c libbitmain/src/pll.c -o build/host/libbitmain/src/pll.o
++mkdir -p build/host/libbitmain/src/aml/
++cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c libbitmain/src/aml/chip.c -o build/host/libbitmain/src/aml/chip.o
++mkdir -p build/host/reconstruction/support/
++cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c reconstruction/support/crc5.c -o build/host/reconstruction/support/crc5.o
++mkdir -p build/host/libbitmain/src/
++cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c libbitmain/src/reg_cache.c -o build/host/libbitmain/src/reg_cache.o
++ar rcs build/libvn135_recovered.a build/host/reconstruction/support/sha256_bytes.o build/host/reconstruction/support/work_rebuild_pipeline.o build/host/src/frontend/cgminer.o build/host/reconstruction/support/sha256d80.o build/host/reconstruction/support/target256.o build/host/reconstruction/support/nonce_job_window.o build/host/reconstruction/support/sha256_midstate.o build/host/reconstruction/support/work_nonce_pipeline.o build/host/src/backend/work-gen/work-gen.o build/host/reconstruction/support/work_rx_stream.o build/host/libbitmain/src/uart.o build/host/libbitmain/src/chip/chip1398.o build/host/libbitmain/src/pll.o build/host/libbitmain/src/aml/chip.o build/host/reconstruction/support/crc5.o build/host/libbitmain/src/reg_cache.o
++mkdir -p build/arm/reconstruction/support/
++clang --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -ffreestanding -Iinclude -O2 -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c reconstruction/support/sha256_bytes.c -o build/arm/reconstruction/support/sha256_bytes.o
++mkdir -p build/arm/reconstruction/support/
++clang --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -ffreestanding -Iinclude -O2 -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c reconstruction/support/work_rebuild_pipeline.c -o build/arm/reconstruction/support/work_rebuild_pipeline.o
++mkdir -p build/arm/src/frontend/
++clang --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -ffreestanding -Iinclude -O2 -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c src/frontend/cgminer.c -o build/arm/src/frontend/cgminer.o
++mkdir -p build/arm/reconstruction/support/
++clang --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -ffreestanding -Iinclude -O2 -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c reconstruction/support/sha256d80.c -o build/arm/reconstruction/support/sha256d80.o
++mkdir -p build/arm/reconstruction/support/
++clang --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -ffreestanding -Iinclude -O2 -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c reconstruction/support/target256.c -o build/arm/reconstruction/support/target256.o
++mkdir -p build/arm/reconstruction/support/
++clang --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -ffreestanding -Iinclude -O2 -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c reconstruction/support/nonce_job_window.c -o build/arm/reconstruction/support/nonce_job_window.o
++mkdir -p build/arm/reconstruction/support/
++clang --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -ffreestanding -Iinclude -O2 -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c reconstruction/support/sha256_midstate.c -o build/arm/reconstruction/support/sha256_midstate.o
++mkdir -p build/arm/reconstruction/support/
++clang --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -ffreestanding -Iinclude -O2 -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c reconstruction/support/work_nonce_pipeline.c -o build/arm/reconstruction/support/work_nonce_pipeline.o
++mkdir -p build/arm/src/backend/work-gen/
++clang --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -ffreestanding -Iinclude -O2 -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c src/backend/work-gen/work-gen.c -o build/arm/src/backend/work-gen/work-gen.o
++mkdir -p build/arm/reconstruction/support/
++clang --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -ffreestanding -Iinclude -O2 -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c reconstruction/support/work_rx_stream.c -o build/arm/reconstruction/support/work_rx_stream.o
++mkdir -p build/arm/libbitmain/src/
++clang --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -ffreestanding -Iinclude -O2 -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c libbitmain/src/uart.c -o build/arm/libbitmain/src/uart.o
++mkdir -p build/arm/libbitmain/src/chip/
++clang --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -ffreestanding -Iinclude -O2 -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c libbitmain/src/chip/chip1398.c -o build/arm/libbitmain/src/chip/chip1398.o
++mkdir -p build/arm/libbitmain/src/
++clang --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -ffreestanding -Iinclude -O2 -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c libbitmain/src/pll.c -o build/arm/libbitmain/src/pll.o
++mkdir -p build/arm/libbitmain/src/aml/
++clang --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -ffreestanding -Iinclude -O2 -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c libbitmain/src/aml/chip.c -o build/arm/libbitmain/src/aml/chip.o
++mkdir -p build/arm/reconstruction/support/
++clang --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -ffreestanding -Iinclude -O2 -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c reconstruction/support/crc5.c -o build/arm/reconstruction/support/crc5.o
++mkdir -p build/arm/libbitmain/src/
++clang --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -ffreestanding -Iinclude -O2 -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c libbitmain/src/reg_cache.c -o build/arm/libbitmain/src/reg_cache.o
++llvm-ar rcs build/libvn135_recovered-armv7.a build/arm/reconstruction/support/sha256_bytes.o build/arm/reconstruction/support/work_rebuild_pipeline.o build/arm/src/frontend/cgminer.o build/arm/reconstruction/support/sha256d80.o build/arm/reconstruction/support/target256.o build/arm/reconstruction/support/nonce_job_window.o build/arm/reconstruction/support/sha256_midstate.o build/arm/reconstruction/support/work_nonce_pipeline.o build/arm/src/backend/work-gen/work-gen.o build/arm/reconstruction/support/work_rx_stream.o build/arm/libbitmain/src/uart.o build/arm/libbitmain/src/chip/chip1398.o build/arm/libbitmain/src/pll.o build/arm/libbitmain/src/aml/chip.o build/arm/reconstruction/support/crc5.o build/arm/libbitmain/src/reg_cache.o
++mkdir -p build
++clang -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -shared -fPIC reconstruction/support/sha256_bytes.c reconstruction/support/work_rebuild_pipeline.c src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c -o build/libvn135_recovered-clang.so
++clang -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror reconstruction/support/sha256_bytes.c reconstruction/support/work_rebuild_pipeline.c src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_work_rebuild.c -o build/test-work-rebuild-clang
++./build/test-work-rebuild-clang
++{"status":"PASS","native_checks":338,"fragmented_genesis_replays":11,"hardware_tested":false,"submitted":false}
++VN135_TEST_LIBRARY=./build/libvn135_recovered-clang.so python3 tests/test_stage9_differential.py sha
++{"stage": 9, "group": "sha", "status": "PASS", "comparisons": 212, "alias_api_checks": 212, "original_sha_executed": true}
++VN135_TEST_LIBRARY=./build/libvn135_recovered-clang.so python3 tests/test_stage9_differential.py prefix
++{"stage": 9, "group": "prefix", "status": "PASS", "comparisons": 198, "original_sha_calls": 2376, "compared_work_bytes": 112, "full_632byte_work_reconstructed": false}
++VN135_TEST_LIBRARY=./build/libvn135_recovered-clang.so python3 tests/test_stage9_differential.py candidate
++{"stage": 9, "group": "candidate", "status": "PASS", "comparisons": 144, "slice_composition_cases": 144, "real_caller_wrapper_core": true, "full_consumer_or_job_lifecycle": false}
++clang -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer reconstruction/support/sha256_bytes.c reconstruction/support/work_rebuild_pipeline.c src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_work_rebuild.c -o build/test-work-rebuild-clang-sanitized
++ASAN_OPTIONS=detect_leaks=1 ./build/test-work-rebuild-clang-sanitized
++{"status":"PASS","native_checks":338,"fragmented_genesis_replays":11,"hardware_tested":false,"submitted":false}
++python3 tools/check_stage8_evidence.py
++Stage8 evidence: 10 bounded/context ranges, 8 call edges, source-path reference, field offsets and explicit indirect hash boundary PASS
++python3 tools/check_stage9_evidence.py
++Stage9 evidence: 6 bounded/context ranges, 10 call edges, candidate offsets, two REV and 112-byte prefix PASS
++python3 tools/generate_genesis_fixture.py
++Genesis fixture: coinbase, Merkle root, serialized header and hash independently checked
++python3 tools/check_evidence.py
++evidence: PASS; 40 code slices, 9 data records, 46 observed paths
++python3 tools/extract_reg_cache_defaults.py
++cache defaults: 8 selectors, 512 bytes each, PASS
++python3 tools/check_stage5_evidence.py
++Stage 5 evidence: constructor length/path and AML -> UART call: PASS
++python3 tools/check_stage6_evidence.py
++Stage6 original slices and RX->ring/filter/enqueue call edges: PASS
++python3 tools/check_stage7_evidence.py
++Stage7 evidence: 10 bounded slices (4 context-only), 10 call edges, table stride/base and 72-vs-68 boundary PASS
+diff --git a/evidence/validation/stage9/preflight-gcc-sanitize.log b/evidence/validation/stage9/preflight-gcc-sanitize.log
+new file mode 100644
+index 0000000..2bcd0a8
+--- /dev/null
++++ b/evidence/validation/stage9/preflight-gcc-sanitize.log
+@@ -0,0 +1,6 @@
++mkdir -p build
++cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror reconstruction/support/sha256_bytes.c reconstruction/support/work_rebuild_pipeline.c src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c examples/rebuild_genesis.c -o build/vn135-rebuild-genesis
++mkdir -p build
++cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer reconstruction/support/sha256_bytes.c reconstruction/support/work_rebuild_pipeline.c src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_work_rebuild.c -o build/test-work-rebuild-sanitized
++ASAN_OPTIONS=detect_leaks=1 ./build/test-work-rebuild-sanitized
++{"status":"PASS","native_checks":338,"fragmented_genesis_replays":11,"hardware_tested":false,"submitted":false}
+diff --git a/evidence/validation/stage9/sha-clang.json b/evidence/validation/stage9/sha-clang.json
+new file mode 100644
+index 0000000..d3700f8
+--- /dev/null
++++ b/evidence/validation/stage9/sha-clang.json
+@@ -0,0 +1,8 @@
++{
++  "stage": 9,
++  "group": "sha",
++  "status": "PASS",
++  "comparisons": 212,
++  "alias_api_checks": 212,
++  "original_sha_executed": true
++}
+diff --git a/evidence/validation/stage9/sha-gcc.json b/evidence/validation/stage9/sha-gcc.json
+new file mode 100644
+index 0000000..d3700f8
+--- /dev/null
++++ b/evidence/validation/stage9/sha-gcc.json
+@@ -0,0 +1,8 @@
++{
++  "stage": 9,
++  "group": "sha",
++  "status": "PASS",
++  "comparisons": 212,
++  "alias_api_checks": 212,
++  "original_sha_executed": true
++}
+diff --git a/examples/rebuild_genesis.c b/examples/rebuild_genesis.c
+new file mode 100644
+index 0000000..95a8fa8
+--- /dev/null
++++ b/examples/rebuild_genesis.c
+@@ -0,0 +1,20 @@
++/* Offline historical fixture demonstration; no devices, sockets or nonce search. */
++#include "xminer/recovery/work_rebuild.h"
++#include "../tests/fixtures/genesis_work.h"
++#include <stdio.h>
++#include <string.h>
++static uint32_t get_le(const uint8_t *p){return p[0]|((uint32_t)p[1]<<8)|((uint32_t)p[2]<<16)|((uint32_t)p[3]<<24);}
++int main(void){
++    vn135_rebuild_snapshot s={0};vn135_nonce_candidate c={0};vn135_rebuild_check result;
++    uint8_t scratch[sizeof(fixture_coinbase)];uint32_t last=0;
++    memcpy(s.header_words_le,fixture_words,112);memset(s.header_words_le+36,0x5a,32);
++    s.coinbase=fixture_coinbase;s.coinbase_size=sizeof(fixture_coinbase);
++    c.version_word=get_le(fixture_words);c.nonce=get_le(fixture_words+76);
++    if(vn135_candidate_verify_snapshot(&c,&s,scratch,sizeof(scratch),fixture_target,&last,0,&result))return 1;
++    if(memcmp(result.rebuilt.merkle_root,fixture_root,32)||memcmp(result.work.digest,fixture_hash,32)||
++       memcmp(result.work.header_words_le,fixture_words,80)||!result.meets_target)return 1;
++    printf("{\"fixture\":\"Bitcoin genesis, not live work\",\"block_hash\":\"");
++    for(unsigned i=0;i<32;i++)printf("%02x",result.work.digest[31-i]);
++    puts("\",\"header_matches\":true,\"merkle_matches\":true,\"meets_target\":true,\"job_freshness_checked\":false,\"submitted\":false,\"hardware_tested\":false}");
++    return 0;
++}
+diff --git a/include/xminer/recovery/work_nonce.h b/include/xminer/recovery/work_nonce.h
+index 07c59e8..370d666 100644
+--- a/include/xminer/recovery/work_nonce.h
++++ b/include/xminer/recovery/work_nonce.h
+@@ -25,7 +25,8 @@ typedef struct {
+     uint32_t chain_id,chip_id,core_id;
+     uint32_t job_word_a4;    /* Copied raw job word; semantic name unproven. */
+     uint32_t job_slot,version_word;
+-    uint32_t job_word_70,job_word_74; /* Raw job words; not renamed speculatively. */
++    uint32_t job_word_70,job_word_74; /* Stage9 caller/wrapper proves low/high coinbase counter.
++                                   * Names retained for existing source API compatibility. */
+     uint32_t nonce;
+     uint32_t midstate[8];   /* Numeric SHA-256 state after exactly one block. */
+ } vn135_nonce_candidate;
+diff --git a/include/xminer/recovery/work_rebuild.h b/include/xminer/recovery/work_rebuild.h
+new file mode 100644
+index 0000000..5cb0b14
+--- /dev/null
++++ b/include/xminer/recovery/work_rebuild.h
+@@ -0,0 +1,107 @@
++/* SPDX-License-Identifier: GPL-3.0-only
++ * New normalized APIs for bounded original work materialization. These are
++ * NOT the vendor's work/pool ABI and do not register a runtime mining driver.
++ */
++#ifndef VN135_RECOVERY_WORK_REBUILD_H
++#define VN135_RECOVERY_WORK_REBUILD_H
++#include <stddef.h>
++#include <stdint.h>
++#include "xminer/recovery/work_nonce.h"
++#include "xminer/recovery/nonce_verify.h"
++#ifdef __cplusplus
++extern "C" {
++#endif
++#define VN135_WORK_PREFIX_BYTES 112u
++
++/* New one-shot support, compared with original SHA 0x108f38. Original length
++ * argument is uint32_t; larger messages are deliberately rejected. NULL data
++ * is allowed ONLY with size zero. Output may overlap input: all input is read
++ * before writing the 32-byte digest. No heap, I/O or global mutable state. */
++int vn135_sha256_bytes(const uint8_t *data,size_t size,uint8_t digest[32]);
++int vn135_sha256d_bytes(const uint8_t *data,size_t size,uint8_t digest[32]);
++
++/* Coherent caller-owned view of fields read by 0x30550..0x30a6c.
++ * See evidence/stage9/ for original offsets. Not a full original structure.
++ * The caller supplies accessible arrays and exclusive access; mutable objects,
++ * inputs and output MUST NOT overlap. This function implements no rwlock.
++ * merkle_branches is a flat array of merkle_count consecutive 32-byte hashes.
++ * counter_size <=8 is an explicit valid-domain restriction of the new API;
++ * original code can read beyond its 8-byte temporary if given bad dimensions.
++ */
++typedef struct {
++    uint8_t header_words_le[112]; /* word-swapped representation, not wire bytes */
++    uint8_t *coinbase;
++    size_t coinbase_size;
++    size_t counter_offset;
++    uint32_t counter_size;
++    uint64_t counter;
++    const uint8_t *merkle_branches;
++    size_t merkle_count;
++} vn135_work_template;
++
++typedef struct {
++    uint8_t header_words_le[112];
++    uint8_t merkle_root[32]; /* raw SHA digest; not reversed display hex */
++    uint64_t counter_used;
++    uint32_t counter_size;
++} vn135_rebuilt_header;
++
++/* Original bounded prefix: patch low counter bytes into coinbase, advance full
++ * uint64 counter modulo 2^64, SHA256d coinbase, SHA256d(root||branch) in order,
++ * copy 112 template bytes and replace words at offsets 36..67 with root.
++ * Returns 0 or -2. Invalid arguments do not mutate any object. Original locking,
++ * string duplication, target-from-difficulty and later metadata are excluded.
++ * Output is 112 meaningful bytes, NOT a complete 632-byte original work. */
++int vn135_frontend_rebuild_prefix(vn135_work_template *job,vn135_rebuilt_header *out);
++
++/* Read-only saved-template view. The caller must already have selected and
++ * pinned the correct job. A matching 5-bit slot or scalar key is NOT freshness.
++ * Pointers are normal validated caller-owned arrays, not pointers read from ELF.
++ */
++typedef struct {
++    uint8_t header_words_le[112];
++    const uint8_t *coinbase;
++    size_t coinbase_size;
++    size_t counter_offset;
++    uint32_t counter_size;
++    const uint8_t *merkle_branches;
++    size_t merkle_count;
++} vn135_rebuild_snapshot;
++
++/* New isolated binding of the proved consumer argument mapping and core prefix.
++ * candidate words +0x18/+0x1c become the uint64 coinbase counter; +0x14 becomes
++ * the first work word after two REV operations in caller/wrapper.
++ * Copies coinbase into caller scratch; never mutates the shared saved template.
++ * Scratch must be at least coinbase_size, and disjoint from all input/output.
++ * Returns 0, -2 invalid input, or -3 insufficient scratch. On failure, no writes.
++ * Does not consume candidate.midstate as proof or implement pool reference life.
++ */
++int vn135_rebuild_from_candidate(const vn135_nonce_candidate *candidate,
++    const vn135_rebuild_snapshot *snapshot,uint8_t *scratch,size_t scratch_size,
++    vn135_rebuilt_header *out);
++
++typedef struct {
++    vn135_rebuilt_header rebuilt;
++    vn135_verify_work work;
++    int prefilter_result;
++    uint32_t hash_computed;
++    uint32_t target_checked;
++    uint32_t meets_target;
++} vn135_rebuild_check;
++
++/* New offline composition, NOT the complete original consumer:
++ * rebuild -> recovered scalar duplicate/high-word prefilter -> target check.
++ * target is explicitly supplied; difficulty->target is not fabricated.
++ * last_nonce obeys original prefilter semantics and stays changed after hash
++ * rejection. Returns 0 for a completed computation, NOT for accepted work.
++ * Duplicate: hash_computed=0, digest remains zero, target_checked=0.
++ * No global dedup, job freshness, queue ownership, submission, device or network.
++ */
++int vn135_candidate_verify_snapshot(const vn135_nonce_candidate *candidate,
++    const vn135_rebuild_snapshot *snapshot,uint8_t *scratch,size_t scratch_size,
++    const uint8_t target_le[32],uint32_t *last_nonce,uint32_t selector,
++    vn135_rebuild_check *out);
++#ifdef __cplusplus
++}
++#endif
++#endif
+diff --git a/reconstruction/cgminer-overlay.am b/reconstruction/cgminer-overlay.am
+index 42e7bab..8ce8506 100644
+--- a/reconstruction/cgminer-overlay.am
++++ b/reconstruction/cgminer-overlay.am
+@@ -4,7 +4,10 @@
+ AUTOMAKE_OPTIONS = subdir-objects
+ cgminer_CFLAGS = $(AM_CFLAGS) -ffp-contract=off
+ cgminer_CPPFLAGS += -I$(top_srcdir)/include
+-cgminer_SOURCES += src/frontend/cgminer.c \
++cgminer_SOURCES += reconstruction/support/sha256_bytes.c \
++                   reconstruction/support/work_rebuild_pipeline.c \
++                   include/xminer/recovery/work_rebuild.h \
++                   src/frontend/cgminer.c \
+                    reconstruction/support/sha256d80.c \
+                    reconstruction/support/target256.c \
+                    reconstruction/support/nonce_job_window.c \
+diff --git a/reconstruction/support/sha256_bytes.c b/reconstruction/support/sha256_bytes.c
+new file mode 100644
+index 0000000..10a1d0a
+--- /dev/null
++++ b/reconstruction/support/sha256_bytes.c
+@@ -0,0 +1,39 @@
++/* SPDX-License-Identifier: GPL-3.0-only
++ * New one-shot SHA adapter over the previously verified compression function.
++ * No claim of original library context layout or source filename.
++ * RFC 6234 section 4.1: padding/64-bit message length for SHA-256.
++ */
++#include "xminer/recovery/work_rebuild.h"
++#include "xminer/recovery/sha256_midstate.h"
++int vn135_sha256_bytes(const uint8_t *data,size_t size,uint8_t digest[32]) {
++    uint32_t state[8]={0x6a09e667u,0xbb67ae85u,0x3c6ef372u,0xa54ff53au,
++                       0x510e527fu,0x9b05688cu,0x1f83d9abu,0x5be0cd19u};
++    uint8_t tail[128]={0};
++    size_t offset=0,remaining,tail_size;
++    uint64_t bits;
++    if(!digest||(!data&&size)||size>UINT32_MAX)return VN135_VERIFY_INVALID;
++    remaining=size;
++    while(remaining>=64u){
++        (void)vn135_sha256_compress_block(state,data+offset);
++        offset+=64u;remaining-=64u;
++    }
++    for(size_t i=0;i<remaining;++i)tail[i]=data[offset+i];
++    tail[remaining]=0x80u;tail_size=remaining<56u?64u:128u;
++    bits=(uint64_t)size*8u;
++    for(size_t i=0;i<8u;++i)tail[tail_size-1u-i]=(uint8_t)(bits>>(8u*i));
++    (void)vn135_sha256_compress_block(state,tail);
++    if(tail_size==128u)(void)vn135_sha256_compress_block(state,tail+64u);
++    for(size_t i=0;i<8u;++i){
++        digest[4u*i]=(uint8_t)(state[i]>>24);
++        digest[4u*i+1u]=(uint8_t)(state[i]>>16);
++        digest[4u*i+2u]=(uint8_t)(state[i]>>8);
++        digest[4u*i+3u]=(uint8_t)state[i];
++    }
++    return 0;
++}
++int vn135_sha256d_bytes(const uint8_t *data,size_t size,uint8_t digest[32]) {
++    uint8_t first[32];
++    if(!digest)return VN135_VERIFY_INVALID;
++    if(vn135_sha256_bytes(data,size,first))return VN135_VERIFY_INVALID;
++    return vn135_sha256_bytes(first,32u,digest);
++}
+diff --git a/reconstruction/support/work_rebuild_pipeline.c b/reconstruction/support/work_rebuild_pipeline.c
+new file mode 100644
+index 0000000..14fb453
+--- /dev/null
++++ b/reconstruction/support/work_rebuild_pipeline.c
+@@ -0,0 +1,48 @@
++/* SPDX-License-Identifier: GPL-3.0-only
++ * New snapshot/scratch adapter. Original producer/caller/wrapper mapping is
++ * tested, but this is not the original allocator/queue/pool lifetime code.
++ */
++#include "xminer/recovery/work_rebuild.h"
++#include <limits.h>
++static int valid_snapshot(const vn135_rebuild_snapshot *s) {
++    return s&&(!s->coinbase_size||s->coinbase)&&s->coinbase_size<=UINT32_MAX&&
++        s->counter_size<=8u&&s->counter_offset<=s->coinbase_size&&
++        s->counter_size<=s->coinbase_size-s->counter_offset&&
++        (!s->merkle_count||s->merkle_branches)&&s->merkle_count<=INT32_MAX&&
++        s->merkle_count<=SIZE_MAX/32u;
++}
++int vn135_rebuild_from_candidate(const vn135_nonce_candidate *candidate,
++    const vn135_rebuild_snapshot *snapshot,uint8_t *scratch,size_t scratch_size,
++    vn135_rebuilt_header *out) {
++    vn135_work_template job={0};
++    if(!candidate||!out||!valid_snapshot(snapshot)||
++       (!scratch&&snapshot->coinbase_size))return VN135_VERIFY_INVALID;
++    if(scratch_size<snapshot->coinbase_size)return -3;
++    for(size_t i=0;i<112u;++i)job.header_words_le[i]=snapshot->header_words_le[i];
++    for(size_t i=0;i<4u;++i)job.header_words_le[i]=(uint8_t)(candidate->version_word>>(8u*i));
++    for(size_t i=0;i<snapshot->coinbase_size;++i)scratch[i]=snapshot->coinbase[i];
++    job.coinbase=scratch;job.coinbase_size=snapshot->coinbase_size;
++    job.counter_offset=snapshot->counter_offset;job.counter_size=snapshot->counter_size;
++    job.counter=(uint64_t)candidate->job_word_70|((uint64_t)candidate->job_word_74<<32);
++    job.merkle_branches=snapshot->merkle_branches;job.merkle_count=snapshot->merkle_count;
++    return vn135_frontend_rebuild_prefix(&job,out);
++}
++int vn135_candidate_verify_snapshot(const vn135_nonce_candidate *candidate,
++    const vn135_rebuild_snapshot *snapshot,uint8_t *scratch,size_t scratch_size,
++    const uint8_t target_le[32],uint32_t *last_nonce,uint32_t selector,
++    vn135_rebuild_check *out) {
++    vn135_rebuild_check result={0};
++    int rc;
++    if(!target_le||!last_nonce||!out)return VN135_VERIFY_INVALID;
++    rc=vn135_rebuild_from_candidate(candidate,snapshot,scratch,scratch_size,&result.rebuilt);
++    if(rc)return rc;
++    for(size_t i=0;i<80u;++i)result.work.header_words_le[i]=result.rebuilt.header_words_le[i];
++    result.prefilter_result=vn135_frontend_sha256d_prefilter(&result.work,last_nonce,candidate->nonce,selector);
++    result.hash_computed=result.prefilter_result==VN135_PREFILTER_DUPLICATE?0u:1u;
++    if(result.prefilter_result==VN135_PREFILTER_CONTINUE){
++        result.target_checked=1u;
++        result.meets_target=(uint32_t)vn135_target256_check_le(result.work.digest,target_le);
++    }
++    *out=result;
++    return 0;
++}
+diff --git a/src/frontend/cgminer.c b/src/frontend/cgminer.c
+index cd9f1d3..fd86796 100644
+--- a/src/frontend/cgminer.c
++++ b/src/frontend/cgminer.c
+@@ -37,3 +37,38 @@ int vn135_frontend_sha256d_prefilter(vn135_verify_work *work,uint32_t *last_nonc
+     uint32_t nonce,uint32_t selector) {
+     return vn135_frontend_nonce_prefilter(work,last_nonce,nonce,selector,sha_hash,0);
+ }
++
++/* Stage9: bounded materializer at 0x30550..0x30a6c. Original SHA calls execute
++ * in differential tests. Explicit array view replaces pool pointers/rwlocks.
++ * The remainder (target, strings, accounting and ownership) is NOT implemented
++ * by this prefix. All 112 source bytes are preserved except the Merkle words. */
++#include "xminer/recovery/work_rebuild.h"
++#include <limits.h>
++int vn135_frontend_rebuild_prefix(vn135_work_template *job,vn135_rebuilt_header *out) {
++    vn135_rebuilt_header result={0};
++    uint8_t pair[64];
++    if(!job||!out||(!job->coinbase&&job->coinbase_size)||
++       job->coinbase_size>UINT32_MAX||job->counter_size>8u||
++       job->counter_offset>job->coinbase_size||
++       job->counter_size>job->coinbase_size-job->counter_offset||
++       (job->merkle_count&&!job->merkle_branches)||
++       job->merkle_count>INT32_MAX||job->merkle_count>SIZE_MAX/32u)
++        return VN135_VERIFY_INVALID;
++    result.counter_used=job->counter;
++    result.counter_size=job->counter_size;
++    for(size_t i=0;i<job->counter_size;++i)
++        job->coinbase[job->counter_offset+i]=(uint8_t)(job->counter>>(8u*i));
++    job->counter+=UINT64_C(1); /* Defined unsigned wrap even for counter_size=0. */
++    (void)vn135_sha256d_bytes(job->coinbase,job->coinbase_size,result.merkle_root);
++    for(size_t i=0;i<job->merkle_count;++i){
++        for(size_t j=0;j<32u;++j){
++            pair[j]=result.merkle_root[j];pair[32u+j]=job->merkle_branches[32u*i+j];
++        }
++        (void)vn135_sha256d_bytes(pair,64u,result.merkle_root);
++    }
++    for(size_t i=0;i<112u;++i)result.header_words_le[i]=job->header_words_le[i];
++    for(size_t i=0;i<32u;i+=4u)
++        for(size_t j=0;j<4u;++j)result.header_words_le[36u+i+j]=result.merkle_root[i+3u-j];
++    *out=result;
++    return 0;
++}
+diff --git a/tests/arm32_stage9_instructions.S b/tests/arm32_stage9_instructions.S
+new file mode 100644
+index 0000000..8ebb1b1
+--- /dev/null
++++ b/tests/arm32_stage9_instructions.S
+@@ -0,0 +1,18 @@
++.syntax unified
++.arm
++.fpu vfpv3
++.text
++.global stage9_probe
++stage9_probe:
++    adcs r2, r0, r1
++    adc r2, r0, #0
++    adcs r2, r0, r1, lsl #3
++    ldrd r0, r1, [r2, #8]
++    ldrd r0, r1, [r2, #-8]!
++    ldrd r0, r1, [r2], #8
++    ldrd r0, r1, [r2, r3]
++    strd r0, r1, [r2, #8]
++    strd r0, r1, [r2, #-8]!
++    strd r0, r1, [r2], #8
++    strd r0, r1, [r2, r3]
++    bx lr
+diff --git a/tests/fixtures/arm32_stage9_instructions.o b/tests/fixtures/arm32_stage9_instructions.o
+new file mode 100644
+index 0000000000000000000000000000000000000000..7abd1b02cbad0d47ccb9782aea035f69885efa05
+GIT binary patch
+literal 432
+zcmb<-^>JflWMqH=Mg|QA1doB?1w?|?1Wao%umWWn6*fFzP+0J&QE|hA8w`gY-e5=q
+z;zJKEGc-N?0p$Mx@`3b&&p^K1fBlD!(m>6LsfkIM42*(6CL0&KBL^cV6Bn}*vQ=Ok
+zAohTnK!S-u9L5CF0zf{4UP)?234@+vkgr~1Nl8&=QfWzQF+*`lVtT4&d_hruQYwR9
+zaY<20ViJ(9%mvXZiAaVJV5$J+nUU0N0J6=I_%H{9Xb@(D%7NT%0A+(H7ATt?NCV9)
+kfN~j9fD9QJ2S~%r(*d%9zJr4XAPZz3NFF2(GEV@A0ZlkImH+?%
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/fixtures/genesis_work.h b/tests/fixtures/genesis_work.h
+new file mode 100644
+index 0000000..c64ed6f
+--- /dev/null
++++ b/tests/fixtures/genesis_work.h
+@@ -0,0 +1,48 @@
++/* Public historical test vector; generated by tools/generate_genesis_fixture.py. */
++#ifndef VN135_GENESIS_FIXTURE_H
++#define VN135_GENESIS_FIXTURE_H
++#include <stdint.h>
++static const uint8_t fixture_coinbase[204] = {
++    0x01,0x00,0x00,0x00,0x01,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
++    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
++    0x00,0x00,0x00,0x00,0x00,0xff,0xff,0xff,0xff,0x4d,0x04,0xff,0xff,0x00,0x1d,0x01,
++    0x04,0x45,0x54,0x68,0x65,0x20,0x54,0x69,0x6d,0x65,0x73,0x20,0x30,0x33,0x2f,0x4a,
++    0x61,0x6e,0x2f,0x32,0x30,0x30,0x39,0x20,0x43,0x68,0x61,0x6e,0x63,0x65,0x6c,0x6c,
++    0x6f,0x72,0x20,0x6f,0x6e,0x20,0x62,0x72,0x69,0x6e,0x6b,0x20,0x6f,0x66,0x20,0x73,
++    0x65,0x63,0x6f,0x6e,0x64,0x20,0x62,0x61,0x69,0x6c,0x6f,0x75,0x74,0x20,0x66,0x6f,
++    0x72,0x20,0x62,0x61,0x6e,0x6b,0x73,0xff,0xff,0xff,0xff,0x01,0x00,0xf2,0x05,0x2a,
++    0x01,0x00,0x00,0x00,0x43,0x41,0x04,0x67,0x8a,0xfd,0xb0,0xfe,0x55,0x48,0x27,0x19,
++    0x67,0xf1,0xa6,0x71,0x30,0xb7,0x10,0x5c,0xd6,0xa8,0x28,0xe0,0x39,0x09,0xa6,0x79,
++    0x62,0xe0,0xea,0x1f,0x61,0xde,0xb6,0x49,0xf6,0xbc,0x3f,0x4c,0xef,0x38,0xc4,0xf3,
++    0x55,0x04,0xe5,0x1e,0xc1,0x12,0xde,0x5c,0x38,0x4d,0xf7,0xba,0x0b,0x8d,0x57,0x8a,
++    0x4c,0x70,0x2b,0x6b,0xf1,0x1d,0x5f,0xac,0x00,0x00,0x00,0x00,
++};
++static const uint8_t fixture_header[80] = {
++    0x01,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
++    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
++    0x00,0x00,0x00,0x00,0x3b,0xa3,0xed,0xfd,0x7a,0x7b,0x12,0xb2,0x7a,0xc7,0x2c,0x3e,
++    0x67,0x76,0x8f,0x61,0x7f,0xc8,0x1b,0xc3,0x88,0x8a,0x51,0x32,0x3a,0x9f,0xb8,0xaa,
++    0x4b,0x1e,0x5e,0x4a,0x29,0xab,0x5f,0x49,0xff,0xff,0x00,0x1d,0x1d,0xac,0x2b,0x7c,
++};
++static const uint8_t fixture_words[112] = {
++    0x00,0x00,0x00,0x01,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
++    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
++    0x00,0x00,0x00,0x00,0xfd,0xed,0xa3,0x3b,0xb2,0x12,0x7b,0x7a,0x3e,0x2c,0xc7,0x7a,
++    0x61,0x8f,0x76,0x67,0xc3,0x1b,0xc8,0x7f,0x32,0x51,0x8a,0x88,0xaa,0xb8,0x9f,0x3a,
++    0x4a,0x5e,0x1e,0x4b,0x49,0x5f,0xab,0x29,0x1d,0x00,0xff,0xff,0x7c,0x2b,0xac,0x1d,
++    0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f,
++    0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,0x18,0x19,0x1a,0x1b,0x1c,0x1d,0x1e,0x1f,
++};
++static const uint8_t fixture_root[32] = {
++    0x3b,0xa3,0xed,0xfd,0x7a,0x7b,0x12,0xb2,0x7a,0xc7,0x2c,0x3e,0x67,0x76,0x8f,0x61,
++    0x7f,0xc8,0x1b,0xc3,0x88,0x8a,0x51,0x32,0x3a,0x9f,0xb8,0xaa,0x4b,0x1e,0x5e,0x4a,
++};
++static const uint8_t fixture_hash[32] = {
++    0x6f,0xe2,0x8c,0x0a,0xb6,0xf1,0xb3,0x72,0xc1,0xa6,0xa2,0x46,0xae,0x63,0xf7,0x4f,
++    0x93,0x1e,0x83,0x65,0xe1,0x5a,0x08,0x9c,0x68,0xd6,0x19,0x00,0x00,0x00,0x00,0x00,
++};
++static const uint8_t fixture_target[32] = {
++    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
++    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xff,0xff,0x00,0x00,0x00,0x00,
++};
++#endif
+diff --git a/tests/rebuild_oracle.py b/tests/rebuild_oracle.py
+new file mode 100644
+index 0000000..657a3f3
+--- /dev/null
++++ b/tests/rebuild_oracle.py
+@@ -0,0 +1,120 @@
++"""Execute bounded ORIGINAL work-build instructions, including original SHA.
++External memory copy and successful rwlocks are explicit injected boundaries.
++The original process, its threads, devices and network are never started.
++"""
++from pathlib import Path
++import hashlib, struct, sys
++ROOT=Path(__file__).resolve().parents[1]
++sys.path.insert(0,str(ROOT/'tools'))
++from elf32 import ELF32
++from arm32_rebuild_subset import ARM32Rebuild
++from nonce_oracle import NonceOracle, SHA
++
++class ObservedARM(ARM32Rebuild):
++    def reset(self,args=()):
++        super().reset(args);self.sha_inputs=[]
++    def extra_instruction(self,w,pc):
++        if pc == 0x108f38:
++            p,n=self.r[0],self.r[1];self.check(p,n)
++            self.sha_inputs.append(bytes(self.mem[p:p+n]))
++        return super().extra_instruction(w,pc)
++
++class RebuildOracle:
++    def __init__(self):
++        self.elf=ELF32(ROOT/'reference/cgminer.vendor.elf')
++        assert hashlib.sha256(self.elf.data).hexdigest()==SHA
++        self.m=ObservedARM(self.elf)
++    def sha(self,data):
++        m=self.m;p=m.DATA_BASE;out=p+0xc000
++        assert len(data)<0x8000
++        m.mem[p:p+len(data)]=data;m.reset((p,len(data),out))
++        m.run(0x108f38,hooks={0x5a2ee8:NonceOracle.copy,0x5a348c:NonceOracle.fill},max_steps=4000000)
++        return bytes(m.mem[out:out+32])
++    def setup(self,words,coinbase,offset,width,counter,branches):
++        assert len(words)==112 and 0<=width<=8 and offset+width<=len(coinbase)
++        m=self.m;a=m.DATA_BASE
++        template=a;work=a+0x1000;cb=a+0x2000;table=a+0xa000;branchdata=a+0xa800
++        assert len(coinbase)<=0x7000 and len(branches)<=32
++        image=bytearray(b'\x93'*0x480)
++        image[0x298:0x308]=words
++        struct.pack_into('<II',image,0x3b4,cb,len(coinbase))
++        struct.pack_into('<QII',image,0x3c0,counter,offset,width)
++        struct.pack_into('<I',image,0x3d4,table);struct.pack_into('<i',image,0x3e8,len(branches))
++        m.mem[template:template+len(image)]=image
++        m.mem[cb:cb+len(coinbase)]=coinbase
++        for i,b in enumerate(branches):
++            assert len(b)==32;m.write(table+4*i,branchdata+32*i)
++            m.mem[branchdata+32*i:branchdata+32*(i+1)]=b
++        workimage=bytearray(b'\xa7'*632);m.mem[work:work+632]=workimage
++        self.pointers=(template,work,cb,table,branchdata)
++        return image,workimage
++    def prefix(self,words,coinbase,offset,width,counter,branches):
++        image,workimage=self.setup(words,coinbase,offset,width,counter,branches)
++        m=self.m;template,work,cb,table,branchdata=self.pointers
++        m.reset((template,work));events=[]
++        def lock(kind):
++            def invoke(mm):
++                assert mm.r[0]==template+0x30
++                events.append(kind);mm.r[0]=0
++            return invoke
++        hooks={0x11d7c:NonceOracle.copy,0x5a2ee8:NonceOracle.copy,0x5a348c:NonceOracle.fill,
++               0x5a6b18:lock('write-lock'),0x5a6a78:lock('unlock'),0x5a68e8:lock('read-lock')}
++        m.run(0x30550,stop=0x30a6c,hooks=hooks,max_steps=4000000)
++        got=bytes(m.mem[work:work+112]);used=m.read(work+0x190,8);size=m.read(work+0x198)
++        workimage[:112]=got;struct.pack_into('<QI',workimage,0x190,used,size)
++        assert m.mem[work:work+632]==workimage,'Unexpected prefix work mutation'
++        next_counter=m.read(template+0x3c0,8);struct.pack_into('<Q',image,0x3c0,next_counter)
++        assert m.mem[template:template+len(image)]==image,'Unexpected template mutation'
++        assert events==['write-lock','unlock','read-lock'],events
++        return {'words':got,'counter_used':used,'counter_next':next_counter,'counter_size':size,
++                'coinbase':bytes(m.mem[cb:cb+len(coinbase)]),'sha_inputs':m.sha_inputs[:],
++                'events':events,'steps':m.steps}
++    def candidate_prefix(self,words,coinbase,offset,width,candidate,branches):
++        """Real caller 0x74f14 -> wrapper 0x300ac -> core 0x30550 prefix.
++        Chosen and pinned template/reference are explicit test preconditions.
++        Allocation succeeds; locks succeed. Stop excludes core metadata suffix.
++        """
++        assert len(candidate)==68
++        counter=int.from_bytes(candidate[24:32],'little')
++        image,workimage=self.setup(words,coinbase,offset,width,0xabcdef0123456789,branches)
++        m=self.m;template,work,cb,table,branchdata=self.pointers
++        reference=m.DATA_BASE+0xc800;thread=m.DATA_BASE+0xd000
++        m.mem[reference:reference+0x480]=bytes(0x480)
++        m.write(thread,7);m.write(template+0x3a8,0x4010000000000000,8)
++        m.write(reference+0x3a8,0x4020000000000000,8)
++        m.reset();sp=m.STACK_TOP-0x800;fp=sp+0x300
++        m.r[13]=sp;m.r[11]=fp;m.r[4]=template-0x280;m.r[10]=reference
++        m.mem[sp+0x40:sp+0x84]=candidate;m.write(sp+0x84,0xa1b2c3d4)
++        m.write(sp+0x24,sp+0x58);m.write(sp+0x28,thread)
++        events=[]
++        def allocation(mm):
++            assert (mm.r[0],mm.r[1])==(1,632)
++            m.mem[work:work+632]=bytes(632);mm.r[0]=work;events.append('calloc632')
++        def ok(kind):
++            def invoke(mm):events.append((kind,mm.r[0]));mm.r[0]=0
++            return invoke
++        hooks={0x11d7c:NonceOracle.copy,0x5a2ee8:NonceOracle.copy,0x5a348c:NonceOracle.fill,
++               0x593bb4:allocation,0x5a6108:ok('mutex-lock'),0x5a66c4:ok('mutex-unlock'),
++               0x5a6b18:ok('write-lock'),0x5a6a78:ok('unlock'),0x5a68e8:ok('read-lock')}
++        m.run(0x74f14,stop=0x30a6c,hooks=hooks,max_steps=4000000)
++        assert bytes(m.mem[sp+0x40:sp+0x84])==candidate
++        assert m.read(sp+0x84)==0xa1b2c3d4
++        assert m.read(fp-32)==work
++        assert m.read(work+0x190,8)==counter
++        assert m.read(template+0x3c0,8)==(counter+1)&0xffffffffffffffff
++        assert m.read(reference+0x3c0,8)==(counter+1)&0xffffffffffffffff
++        assert m.read(template+0x298)==int.from_bytes(candidate[20:24],'little')
++        assert m.read(template+0x3a8,8)==0x4020000000000000
++        assert [e[0] if isinstance(e,tuple) else e for e in events]==[
++            'calloc632','mutex-lock','mutex-unlock','write-lock','unlock',
++            'write-lock','unlock','write-lock','unlock','read-lock']
++        return {'words':bytes(m.mem[work:work+112]),'counter_used':counter,
++                'counter_next':m.read(template+0x3c0,8),'counter_size':m.read(work+0x198),
++                'coinbase':bytes(m.mem[cb:cb+len(coinbase)]),
++                'sha_inputs':m.sha_inputs[:],'events':events,'steps':m.steps}
++if __name__=='__main__':
++    o=RebuildOracle();d=bytes(range(113))
++    assert o.sha(d)==hashlib.sha256(d).digest()
++    x=o.prefix(bytes(range(112)),bytes(range(100)),13,8,0xffffffffffffffff,[b'\x01'*32,b'\x02'*32])
++    print({k:(v.hex() if isinstance(v,bytes) else v) for k,v in x.items() if k!='sha_inputs'})
++    print('original SHA calls:',len(x['sha_inputs']))
+diff --git a/tests/test_stage9_differential.py b/tests/test_stage9_differential.py
+new file mode 100644
+index 0000000..0aa6a81
+--- /dev/null
++++ b/tests/test_stage9_differential.py
+@@ -0,0 +1,127 @@
++#!/usr/bin/env python3
++"""Compare new C to bounded original work-build/SHA instructions.
++Caller-owned snapshots, successful locks/allocation and no concurrent mutation.
++No ASIC, pool, acceptance, queue ownership or full vendor process execution.
++"""
++from pathlib import Path
++import argparse,ctypes as C,hashlib,json,os,random,struct,sys
++ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'tests'))
++from rebuild_oracle import RebuildOracle
++from verify_oracle import VerifyOracle
++U8=C.c_uint8;U32=C.c_uint32;P=C.POINTER(U8)
++class Candidate(C.Structure):
++    _fields_=[('chain_id',U32),('chip_id',U32),('core_id',U32),('job_word_a4',U32),
++      ('job_slot',U32),('version_word',U32),('job_word_70',U32),('job_word_74',U32),
++      ('nonce',U32),('midstate',U32*8)]
++class Template(C.Structure):
++    _fields_=[('words',U8*112),('coinbase',P),('size',C.c_size_t),('offset',C.c_size_t),
++      ('width',U32),('counter',C.c_uint64),('branches',P),('count',C.c_size_t)]
++class Snapshot(C.Structure):
++    _fields_=[('words',U8*112),('coinbase',P),('size',C.c_size_t),('offset',C.c_size_t),
++      ('width',U32),('branches',P),('count',C.c_size_t)]
++class Rebuilt(C.Structure):
++    _fields_=[('words',U8*112),('root',U8*32),('counter',C.c_uint64),('width',U32)]
++class VerifyWork(C.Structure):_fields_=[('words',U8*80),('digest',U8*32)]
++class Check(C.Structure):
++    _fields_=[('rebuilt',Rebuilt),('work',VerifyWork),('prefilter',C.c_int),
++      ('hash_computed',U32),('target_checked',U32),('meets_target',U32)]
++def buf(b):return (U8*max(1,len(b))).from_buffer_copy(b if b else b'\x00')
++def ptr(a,off=0):return C.cast(C.byref(a,off),P)
++def swap(b):return b''.join(b[i:i+4][::-1] for i in range(0,len(b),4))
++def sha2(b):return hashlib.sha256(hashlib.sha256(b).digest()).digest()
++def load():
++    lib=C.CDLL(str(Path(os.environ.get('VN135_TEST_LIBRARY',ROOT/'build/libvn135_recovered.so')).resolve()))
++    for name in ('vn135_sha256_bytes','vn135_sha256d_bytes'):
++        getattr(lib,name).argtypes=[P,C.c_size_t,P];getattr(lib,name).restype=C.c_int
++    lib.vn135_frontend_rebuild_prefix.argtypes=[C.POINTER(Template),C.POINTER(Rebuilt)]
++    lib.vn135_rebuild_from_candidate.argtypes=[C.POINTER(Candidate),C.POINTER(Snapshot),P,C.c_size_t,C.POINTER(Rebuilt)]
++    lib.vn135_candidate_verify_snapshot.argtypes=[C.POINTER(Candidate),C.POINTER(Snapshot),P,C.c_size_t,P,C.POINTER(U32),U32,C.POINTER(Check)]
++    return lib
++
++def sha_tests(lib):
++    o=RebuildOracle();r=random.Random(9001);n=0;aliases=0
++    sizes=[0,1,2,7,8,31,32,33,55,56,57,63,64,65,79,80,81,95,111,112,119,120,121,127,128,129,255,256,257,511,512,513,1024,4096]
++    values=[r.randbytes(s) for s in sizes]+[r.randbytes(r.randrange(0,800)) for _ in range(72)]
++    for b in values:
++        raw=buf(b);out=buf(b'\x99'*32)
++        expected=o.sha(b);assert expected==hashlib.sha256(b).digest()
++        assert lib.vn135_sha256_bytes(raw,len(b),out)==0 and bytes(out)==expected;n+=1
++        twice=o.sha(expected);assert twice==sha2(b)
++        assert lib.vn135_sha256d_bytes(raw,len(b),out)==0 and bytes(out)==twice;n+=1
++        # Separate API checks: overlapping/unaligned output does not clobber unread input.
++        for fun,expected in [(lib.vn135_sha256_bytes,expected),(lib.vn135_sha256d_bytes,twice)]:
++            a=buf(b'\xcd'+b+b'\xcd'*40)
++            assert fun(ptr(a,1),len(b),ptr(a,3))==0 and bytes(a)[3:35]==expected;aliases+=1
++    return {'comparisons':n,'alias_api_checks':aliases,'original_sha_executed':True}
++
++def cases(seed,count):
++    r=random.Random(seed)
++    for i in range(count):
++        width=i%9;size=max(width,[0,1,8,55,56,63,64,65,100,128,257,512][i%12])
++        offset=(0 if i%3==0 else size-width if i%3==1 else r.randrange(size-width+1))
++        counter=[0,1,0xffffffff,0x100000000,0xffffffffffffffff,0x7fffffffffffffff][i%6] if i<54 else r.getrandbits(64)
++        nb=[0,1,2,3,8,16][i%6]
++        yield r.randbytes(112),r.randbytes(size),offset,width,counter,[r.randbytes(32) for _ in range(nb)]
++
++def expected_root(coinbase,offset,width,counter,branches):
++    cb=bytearray(coinbase);cb[offset:offset+width]=counter.to_bytes(8,'little')[:width]
++    root=sha2(cb)
++    for b in branches:root=sha2(root+b)
++    return bytes(cb),root
++
++def prefix_tests(lib):
++    o=RebuildOracle();n=0;sha_calls=0
++    for words,coinbase,offset,width,counter,branches in cases(9002,198):
++        original=o.prefix(words,coinbase,offset,width,counter,branches)
++        cb=buf(b'\xa5'+coinbase+b'\x5a');br=buf(b''.join(branches));out=Rebuilt()
++        job=Template((U8*112).from_buffer_copy(words),ptr(cb,1),len(coinbase),offset,width,counter,br,len(branches))
++        assert lib.vn135_frontend_rebuild_prefix(C.byref(job),C.byref(out))==0
++        mutated,root=expected_root(coinbase,offset,width,counter,branches)
++        expect=words[:36]+swap(root)+words[68:]
++        assert bytes(out.words)==original['words']==expect
++        assert bytes(out.root)==root
++        assert out.counter==original['counter_used']==counter and out.width==original['counter_size']==width
++        assert job.counter==original['counter_next']==(counter+1)&0xffffffffffffffff
++        assert bytes(cb)==b'\xa5'+original['coinbase']+b'\x5a'==b'\xa5'+mutated+b'\x5a'
++        assert bytes(job.words)==words
++        assert len(original['sha_inputs'])==2+2*len(branches)
++        assert original['sha_inputs'][0]==mutated
++        sha_calls+=len(original['sha_inputs']);n+=1
++    return {'comparisons':n,'original_sha_calls':sha_calls,'compared_work_bytes':112,
++            'full_632byte_work_reconstructed':False}
++
++def candidate_tests(lib):
++    o=RebuildOracle();v=VerifyOracle();r=random.Random(9003);n=0;integrated=0
++    for i,(words,coinbase,offset,width,counter,branches) in enumerate(cases(9004,144)):
++        cs=[r.getrandbits(32) for _ in range(17)];cs[4]=i%32;cs[6]=counter&0xffffffff;cs[7]=counter>>32
++        candidate=Candidate.from_buffer_copy(struct.pack('<17I',*cs));candidate_before=bytes(candidate)
++        original=o.candidate_prefix(words,coinbase,offset,width,candidate_before,branches)
++        cb=buf(coinbase);br=buf(b''.join(branches));scratch=buf(b'\xe5'*(len(coinbase)+2));out=Rebuilt()
++        snap=Snapshot((U8*112).from_buffer_copy(words),cb,len(coinbase),offset,width,br,len(branches))
++        before=bytes(snap)
++        assert lib.vn135_rebuild_from_candidate(C.byref(candidate),C.byref(snap),ptr(scratch,1),len(coinbase),C.byref(out))==0
++        mutated,root=expected_root(coinbase,offset,width,counter,branches)
++        assert bytes(out.words)==original['words']==struct.pack('<I',candidate.version_word)+words[4:36]+swap(root)+words[68:]
++        assert bytes(out.root)==root and out.counter==counter and out.width==width
++        assert bytes(scratch)==b'\xe5'+mutated+b'\xe5'
++        assert bytes(candidate)==candidate_before and bytes(snap)==before and bytes(cb)[:len(coinbase)]==coinbase;n+=1
++        # Composition of original slices, NOT whole consumer execution.
++        last=candidate.nonce if i%4==0 else (candidate.nonce+1)&0xffffffff;selector=i%3
++        original_verify=v.prefilter(original['words'][:80],bytes(32),last,candidate.nonce,selector)
++        target=r.randbytes(32);t=buf(target);previous=U32(last);check=Check()
++        rc=lib.vn135_candidate_verify_snapshot(C.byref(candidate),C.byref(snap),ptr(scratch,1),len(coinbase),t,C.byref(previous),selector,C.byref(check))
++        assert rc==0 and previous.value==original_verify['last']
++        assert check.prefilter==original_verify['outcome']
++        assert bytes(check.work.words)==original_verify['words'] and bytes(check.work.digest)==original_verify['digest']
++        assert check.hash_computed==(check.prefilter!=1)
++        assert check.target_checked==(check.prefilter==0)
++        assert check.meets_target==(v.target(original_verify['digest'],target) if check.target_checked else 0)
++        assert bytes(snap)==before and bytes(candidate)==candidate_before;integrated+=1
++    return {'comparisons':n,'slice_composition_cases':integrated,'real_caller_wrapper_core':True,
++            'full_consumer_or_job_lifecycle':False}
++
++def main():
++    p=argparse.ArgumentParser(description=__doc__);p.add_argument('group',choices=['sha','prefix','candidate']);a=p.parse_args()
++    lib=load();result={'stage':9,'group':a.group,'status':'PASS',**{'sha':sha_tests,'prefix':prefix_tests,'candidate':candidate_tests}[a.group](lib)}
++    (ROOT/f'build/stage9-{a.group}-{"clang" if "clang" in os.environ.get("VN135_TEST_LIBRARY","") else "gcc"}-results.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result),flush=True)
++if __name__=='__main__':main()
+diff --git a/tests/test_stage9_genesis.py b/tests/test_stage9_genesis.py
+new file mode 100644
+index 0000000..36b4647
+--- /dev/null
++++ b/tests/test_stage9_genesis.py
+@@ -0,0 +1,28 @@
++#!/usr/bin/env python3
++"""Public reference vector across real original caller/core/SHA/target slices.
++Separate end-to-end offline fixture, NOT a claimed full consumer or live share.
++"""
++from test_stage9_differential import *
++import subprocess
++f=json.loads((ROOT/'evidence/stage9/genesis-vector.json').read_text())
++d={k:bytes.fromhex(v) for k,v in f['data'].items()};words=bytearray(d['words'])
++words[:4]=b'\xa8'*4;words[36:68]=b'\xd3'*32
++coinbase=d['coinbase'];c=Candidate();c.version_word=int.from_bytes(d['words'][:4],'little')
++c.nonce=int.from_bytes(d['words'][76:80],'little');c.job_word_70=c.job_word_74=0xffffffff
++r=RebuildOracle().candidate_prefix(words,coinbase,0,0,bytes(c),[])
++assert r['words']==d['words'];v=VerifyOracle();lib=load();count=0
++cb=buf(coinbase);snap=Snapshot((U8*112).from_buffer_copy(words),cb,len(coinbase),0,0,None,0)
++for selector in range(3):
++    original=v.prefilter(r['words'][:80],bytes(32),0,c.nonce,selector)
++    assert original['outcome']==0 and original['digest']==d['hash']
++    for target in [d['target'],d['hash'],(int.from_bytes(d['hash'],'little')-1).to_bytes(32,'little'),bytes(32)]:
++        answer=v.target(d['hash'],target);last=U32(0);result=Check();scratch=buf(coinbase)
++        assert lib.vn135_candidate_verify_snapshot(C.byref(c),C.byref(snap),scratch,len(coinbase),buf(target),C.byref(last),selector,C.byref(result))==0
++        assert result.prefilter==0 and result.hash_computed==result.target_checked==1
++        assert result.meets_target==answer and bytes(result.work.digest)==d['hash'];count+=1
++actual=json.loads(subprocess.check_output([str(ROOT/'build/vn135-rebuild-genesis')],text=True))
++assert actual['block_hash']==d['hash'][::-1].hex() and actual['meets_target'] is True
++assert actual['submitted'] is False and actual['job_freshness_checked'] is False
++result={'status':'PASS','separate_original_slice_compositions':count,'known_genesis_header':True,
++        'digest':actual['block_hash'],'submitted':False,'hardware_tested':False}
++(ROOT/'build/stage9-genesis-results.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result))
+diff --git a/tests/test_stage9_interpreter.py b/tests/test_stage9_interpreter.py
+new file mode 100644
+index 0000000..6d436f8
+--- /dev/null
++++ b/tests/test_stage9_interpreter.py
+@@ -0,0 +1,60 @@
++#!/usr/bin/env python3
++"""Synthetic instruction checks, separate from vendor reconstruction counts."""
++from pathlib import Path
++import json,random,sys
++ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'tools'))
++from elf32 import ELF32
++from arm32_rebuild_subset import ARM32Rebuild
++MASK=(1<<32)-1
++m=ARM32Rebuild(ELF32(ROOT/'reference/cgminer.vendor.elf'))
++a=m.DATA_BASE;data=a+0x1000
++code=ELF32(ROOT/'tests/fixtures/arm32_stage9_instructions.o').section('.text')
++ops=[int.from_bytes(code[i:i+4],'little') for i in range(0,len(code),4)]
++assert ops[:3]==[0xe0b02001,0xe2a02000,0xe0b02181]
++count=0;r=random.Random(910)
++def single(w):
++    m.write(a,w);m.run(a,stop=a+4,max_steps=2)
++def sig(x):return x-(1<<32) if x>>31 else x
++for x,y in [(0,0),(MASK,0),(MASK,1),(0x7fffffff,0),(0x7fffffff,1),
++            (0x80000000,0x80000000),(MASK,MASK)]+[(r.getrandbits(32),r.getrandbits(32)) for _ in range(256)]:
++    for carry in (False,True):
++        for i in range(3):
++            m.reset((x,y));m.n,m.z,m.c,m.v=True,False,carry,True
++            b=y if i==0 else 0 if i==1 else (y<<3)&MASK
++            total=x+b+int(carry);expected=total&MASK
++            single(ops[i]);assert m.r[2]==expected
++            if i!=1:
++                assert (m.n,m.z,m.c,m.v)==(bool(expected>>31),expected==0,total>MASK,
++                         not -(1<<31)<=sig(x)+sig(b)+int(carry)<(1<<31))
++            else:assert (m.n,m.z,m.c,m.v)==(True,False,carry,True)
++            count+=1
++for val in [0,1,0xffffffffffffffff,0x0123456789abcdef]+[r.getrandbits(64) for _ in range(128)]:
++    for i in range(3,11):
++        m.reset((val&MASK,val>>32,data,12));m.n,m.z,m.c,m.v=True,False,True,False
++        kind=(i-3)%4;address=data+(8 if kind==0 else -8 if kind==1 else 0 if kind==2 else 12)
++        end=data+(-8 if kind==1 else 8) if kind in (1,2) else data
++        # Address divisible by 4 but not necessarily 8 is supported explicitly.
++        m.mem[data-16:data+32]=b'\xcc'*48
++        if i<7:m.write(address,val,8)
++        single(ops[i])
++        if i<7:assert (m.r[0]|m.r[1]<<32)==val
++        else:assert m.read(address,8)==val
++        assert m.r[2]==end
++        assert (m.n,m.z,m.c,m.v)==(True,False,True,False);count+=1
++# Conditional instruction with condition false must not act.
++for w in ops[:11]:
++    m.reset();m.z=False;m.r[2]=1
++    before=m.r[:15];single(w&0x0fffffff)
++    assert m.r[:15]==before;count+=1
++# Unsupported PC, odd destination, writeback alias and unaligned form.
++for w,base in [(ops[0]|(15<<12),data),(ops[3]|(1<<12),data),
++               ((ops[4]&~(15<<16))|(0<<16),data), (ops[3],data+1)]:
++    m.reset((data,0,base))
++    try:single(w)
++    except ValueError:count+=1
++    else:raise AssertionError('unsupported form accepted')
++result={'status':'PASS','synthetic_instruction_cases':count,
++        'instructions':['ADC/ADCS','LDRD/STRD restricted aligned forms'],
++        'independent_hardware_validation':False}
++(ROOT/'build/stage9-interpreter-results.json').write_text(json.dumps(result,indent=2)+'\n')
++print(json.dumps(result))
+diff --git a/tests/test_work_rebuild.c b/tests/test_work_rebuild.c
+new file mode 100644
+index 0000000..e5c42a0
+--- /dev/null
++++ b/tests/test_work_rebuild.c
+@@ -0,0 +1,145 @@
++/* New API/memory/stream tests. Genesis input is public historical data,
++ * not an ASIC capture. Chip/core attribution and job lifetime are fixtures. */
++#include "xminer/recovery/work_rebuild.h"
++#include "xminer/recovery/sha256_midstate.h"
++#include "fixtures/genesis_work.h"
++#include <stdio.h>
++#include <string.h>
++#include <limits.h>
++static unsigned checks;
++#define CHECK(x) do {++checks;if(!(x)){fprintf(stderr,"FAIL line %d: %s\n",__LINE__,#x);return 1;}}while(0)
++static uint32_t get_le(const uint8_t *p){return p[0]|((uint32_t)p[1]<<8)|((uint32_t)p[2]<<16)|((uint32_t)p[3]<<24);}
++static void put_le(uint8_t *p,uint32_t x){for(unsigned i=0;i<4;i++)p[i]=(uint8_t)(x>>(8*i));}
++static void setup(vn135_rebuild_snapshot *s,vn135_nonce_candidate *c){
++    memset(s,0,sizeof(*s));memset(c,0,sizeof(*c));
++    memcpy(s->header_words_le,fixture_words,112);
++    memset(s->header_words_le,0xa8,4);memset(s->header_words_le+36,0xd3,32);
++    s->coinbase=fixture_coinbase;s->coinbase_size=sizeof(fixture_coinbase);
++    c->version_word=get_le(fixture_words);c->nonce=get_le(fixture_words+76);
++    c->job_word_70=UINT32_MAX;c->job_word_74=UINT32_MAX;c->job_slot=3;
++}
++static int invalids(void){
++    uint8_t output[32],old[32],scratch[256],scratch_before[256];
++    vn135_rebuild_snapshot s,bad;vn135_nonce_candidate c;vn135_rebuilt_header out,before;
++    vn135_rebuild_check check,oldcheck;uint32_t last=123;
++    setup(&s,&c);memset(output,0xf1,32);memcpy(old,output,32);
++    CHECK(vn135_sha256_bytes(NULL,1,output)==-2);CHECK(memcmp(output,old,32)==0);
++    CHECK(vn135_sha256d_bytes(NULL,1,output)==-2);CHECK(memcmp(output,old,32)==0);
++    CHECK(vn135_sha256_bytes(output,1,NULL)==-2);
++    CHECK(vn135_sha256d_bytes(output,1,NULL)==-2);
++#if SIZE_MAX > UINT32_MAX
++    CHECK(vn135_sha256_bytes(output,(size_t)UINT32_MAX+1,output)==-2);
++#endif
++    memset(scratch,0x6e,sizeof(scratch));memcpy(scratch_before,scratch,sizeof(scratch));
++    memset(&out,0x77,sizeof(out));memcpy(&before,&out,sizeof(out));
++    for(unsigned k=0;k<10;k++){
++        bad=s;
++        switch(k){
++        case 0:bad.counter_size=9;break;
++        case 1:bad.counter_offset=bad.coinbase_size+1;break;
++        case 2:bad.counter_offset=bad.coinbase_size;bad.counter_size=1;break;
++        case 3:bad.coinbase=NULL;break;
++        case 4:bad.merkle_count=1;bad.merkle_branches=NULL;break;
++        case 5:bad.merkle_count=(size_t)INT32_MAX+1;bad.merkle_branches=output;break;
++        default:break;
++        }
++        int rc=vn135_rebuild_from_candidate(k==6?NULL:&c,k==7?NULL:&bad,k==8?NULL:scratch,
++            k==9?s.coinbase_size-1:sizeof(scratch),&out);
++        CHECK(rc==(k==9?-3:-2));CHECK(memcmp(&out,&before,sizeof(out))==0);
++        CHECK(memcmp(scratch,scratch_before,sizeof(scratch))==0);
++    }
++    memset(&check,0x3b,sizeof(check));memcpy(&oldcheck,&check,sizeof(check));
++    CHECK(vn135_candidate_verify_snapshot(&c,&s,scratch,1,fixture_target,&last,0,&check)==-3);
++    CHECK(last==123);CHECK(memcmp(&check,&oldcheck,sizeof(check))==0);
++    CHECK(vn135_candidate_verify_snapshot(&c,&s,scratch,sizeof(scratch),NULL,&last,0,&check)==-2);
++    CHECK(vn135_candidate_verify_snapshot(&c,&s,scratch,sizeof(scratch),fixture_target,NULL,0,&check)==-2);
++    CHECK(memcmp(scratch,scratch_before,sizeof(scratch))==0);
++    vn135_work_template job={0};vn135_rebuilt_header empty;
++    job.counter=UINT64_MAX;CHECK(vn135_frontend_rebuild_prefix(&job,&empty)==0);
++    CHECK(job.counter==0 && empty.counter_used==UINT64_MAX);
++    CHECK(vn135_sha256d_bytes(NULL,0,output)==0 && memcmp(output,empty.merkle_root,32)==0);
++    for(unsigned k=0;k<5;k++){
++        job.counter=77;job.counter_size=0;job.coinbase_size=0;job.coinbase=NULL;job.counter_offset=0;
++        job.merkle_count=0;job.merkle_branches=NULL;
++        if(k==0)job.counter_size=9;
++        if(k==1)job.coinbase_size=1;
++        if(k==2)job.counter_offset=1;
++        if(k==3)job.merkle_count=1;
++        vn135_work_template original=job;memcpy(&out,&before,sizeof(out));
++        CHECK(vn135_frontend_rebuild_prefix(k==4?NULL:&job,&out)==-2);
++        CHECK(memcmp(&job,&original,sizeof(job))==0 && memcmp(&out,&before,sizeof(out))==0);
++    }
++    return 0;
++}
++static int genesis(void){
++    vn135_rebuild_snapshot s,before;vn135_nonce_candidate c;
++    vn135_rebuild_check out;uint8_t scratch[sizeof(fixture_coinbase)+2],target[32];
++    setup(&s,&c);memcpy(&before,&s,sizeof(s));
++    for(unsigned selector=0;selector<3;selector++){
++        uint32_t last=0;memset(scratch,0x19,sizeof(scratch));
++        CHECK(vn135_candidate_verify_snapshot(&c,&s,scratch+1,sizeof(fixture_coinbase),fixture_target,&last,selector,&out)==0);
++        CHECK(out.prefilter_result==0 && out.hash_computed==1 && out.target_checked==1 && out.meets_target==1);
++        CHECK(memcmp(out.rebuilt.header_words_le,fixture_words,112)==0);
++        CHECK(memcmp(out.rebuilt.merkle_root,fixture_root,32)==0);
++        CHECK(memcmp(out.work.digest,fixture_hash,32)==0 && last==c.nonce);
++        CHECK(scratch[0]==0x19 && scratch[sizeof(scratch)-1]==0x19);
++        CHECK(memcmp(scratch+1,fixture_coinbase,sizeof(fixture_coinbase))==0);
++        CHECK(memcmp(&s,&before,sizeof(s))==0);
++        CHECK(vn135_candidate_verify_snapshot(&c,&s,scratch+1,sizeof(fixture_coinbase),fixture_target,&last,selector,&out)==0);
++        CHECK(out.prefilter_result==1 && out.hash_computed==0 && out.target_checked==0 && out.meets_target==0);
++        for(unsigned i=0;i<32;i++)CHECK(out.work.digest[i]==0);
++    }
++    for(unsigned mode=0;mode<3;mode++){
++        memcpy(target,fixture_hash,32);
++        if(mode==1)target[0]--; /* Raw genesis digest low byte nonzero. */
++        if(mode==2)memset(target,0,32);
++        uint32_t last=0;
++        CHECK(vn135_candidate_verify_snapshot(&c,&s,scratch,sizeof(scratch),target,&last,0,&out)==0);
++        CHECK(out.target_checked==1 && out.meets_target==(mode==0));
++    }
++    c.nonce^=1;uint32_t last=0;
++    CHECK(vn135_candidate_verify_snapshot(&c,&s,scratch,sizeof(scratch),fixture_target,&last,0,&out)==0);
++    CHECK(out.prefilter_result==2 && out.hash_computed==1 && out.target_checked==0 && last==c.nonce);
++    CHECK(vn135_candidate_verify_snapshot(&c,&s,scratch,sizeof(scratch),fixture_target,&last,0,&out)==0);
++    CHECK(out.prefilter_result==1 && out.hash_computed==0);
++    return 0;
++}
++typedef struct {vn135_work_job_snapshot row;uint32_t slot;unsigned reads,chips,cores;} reader_context;
++static int read_job(void *opaque,uint32_t slot,vn135_work_job_snapshot *out){
++    reader_context *x=opaque;x->reads++;if(slot!=x->slot)return 0;*out=x->row;return 1;
++}
++static uint32_t chip(void *opaque,uint32_t nonce){reader_context *x=opaque;(void)nonce;x->chips++;return 2;}
++static uint32_t core(void *opaque,uint32_t nonce){reader_context *x=opaque;(void)nonce;x->cores++;return 7;}
++static int stream(void){
++    vn135_rebuild_snapshot snap;vn135_nonce_candidate desired;
++    setup(&snap,&desired);
++    reader_context ctx={0};ctx.slot=3;
++    put_le(ctx.row.bytes+0x78,desired.version_word);
++    put_le(ctx.row.bytes+0x70,desired.job_word_70);put_le(ctx.row.bytes+0x74,desired.job_word_74);
++    memcpy(ctx.row.bytes+0x84,fixture_words+4,32);memcpy(ctx.row.bytes+0x50,fixture_words+36,28);
++    put_le(ctx.row.bytes+0xa4,0x12345678);
++    vn135_work_job_reader reader={&ctx,read_job};vn135_nonce_attribution ids={&ctx,chip,core};
++    uint8_t frame[11]={0xaa,0x55,0,0,0,0,0,24,0,0,0x80};
++    for(unsigned j=0;j<4;j++)frame[2+j]=(uint8_t)(desired.nonce>>(24-8*j));
++    for(size_t fragment=1;fragment<=11;fragment++){
++        vn135_work_rx_stream rx;vn135_work_rx_message msg;
++        CHECK(vn135_work_rx_stream_init(&rx,0,1,6,0)==0);
++        size_t pos=0;int event=0;
++        while(pos<sizeof(frame)){
++            size_t n=sizeof(frame)-pos,used=999;if(n>fragment)n=fragment;
++            event=vn135_work_rx_stream_feed(&rx,frame+pos,n,&used,&msg);
++            CHECK(used>0 && used<=n);pos+=used;
++            CHECK(event==(pos==sizeof(frame)?VN135_RX_NONCE_RAW:VN135_RX_NEED_MORE));
++        }
++        vn135_work_nonce_result candidate;vn135_rebuild_check checked;uint8_t scratch[sizeof(fixture_coinbase)];uint32_t last=0;
++        CHECK(vn135_work_nonce_from_rx(&rx.policy,&msg,&reader,&ids,&candidate)==0);
++        CHECK(candidate.candidate.nonce==desired.nonce && candidate.candidate.version_word==desired.version_word);
++        CHECK(memcmp(candidate.compression_block,fixture_header,64)==0);
++        CHECK(vn135_candidate_verify_snapshot(&candidate.candidate,&snap,scratch,sizeof(scratch),fixture_target,&last,0,&checked)==0);
++        CHECK(checked.meets_target==1 && checked.target_checked==1 && memcmp(checked.work.digest,fixture_hash,32)==0);
++    }
++    CHECK(ctx.reads==11 && ctx.chips==11 && ctx.cores==11);
++    return 0;
++}
++int main(void){CHECK(invalids()==0);CHECK(genesis()==0);CHECK(stream()==0);
++    printf("{\"status\":\"PASS\",\"native_checks\":%u,\"fragmented_genesis_replays\":11,\"hardware_tested\":false,\"submitted\":false}\n",checks);return 0;}
+diff --git a/tools/arm32_rebuild_subset.py b/tools/arm32_rebuild_subset.py
+new file mode 100644
+index 0000000..37fc528
+--- /dev/null
++++ b/tools/arm32_rebuild_subset.py
+@@ -0,0 +1,46 @@
++"""Stage9 bounded A32 test aid: combine previous integer/VFP subsets; add
++ADC and aligned-pair LDRD/STRD forms needed by the work materializer.
++No OS, devices, Thumb, atomics or complete CPU/FPSCR implementation.
++"""
++from arm32_verify_subset import ARM32Verify
++from arm32_vfp_subset import ARM32VFP
++from arm32_subset import MASK, signed
++
++class ARM32Rebuild(ARM32Verify, ARM32VFP):
++    def extra_instruction(self, w, pc):
++        # ADC{S}, data processing immediate or shifted register.
++        if (w & 0x0de00000) == 0x00a00000 and (w & (1 << 25) or not (w & 0x90) == 0x90):
++            d = (w >> 12) & 15
++            if d == 15: raise ValueError('ADC PC destination unsupported')
++            a = self.get((w >> 16) & 15, pc)
++            b, _ = self.operand2(w, pc)
++            carry_in = int(self.c)
++            total = a + b + carry_in
++            y = total & MASK
++            self.r[d] = y
++            if w & (1 << 20):
++                self.n, self.z, self.c = bool(y >> 31), y == 0, total > MASK
++                mathematical = signed(a) + signed(b) + carry_in
++                self.v = not (-0x80000000 <= mathematical <= 0x7fffffff)
++            return True
++        op = w & 0x0e1000f0
++        if op in (0x000000d0, 0x000000f0):
++            rn = (w >> 16) & 15; rt = (w >> 12) & 15
++            pre, wb = bool(w & (1 << 24)), bool(w & (1 << 21))
++            if rt & 1 or rt > 12 or rn == 15:
++                raise ValueError('Unsupported doubleword register form')
++            if (wb or not pre) and rn in (rt, rt + 1):
++                raise ValueError('Unsupported doubleword writeback alias')
++            offset = (((w >> 4) & 0xf0) | (w & 15)) if w & (1 << 22) else self.get(w & 15, pc)
++            base = self.get(rn, pc)
++            end = (base + (offset if w & (1 << 23) else -offset)) & MASK
++            address = end if pre else base
++            if address & 3: raise ValueError('Unaligned doubleword unsupported')
++            if op == 0x000000d0:
++                x = self.read(address, 8)
++                self.r[rt], self.r[rt + 1] = x & MASK, x >> 32
++            else:
++                self.write(address, self.get(rt, pc) | (self.get(rt + 1, pc) << 32), 8)
++            if wb or not pre: self.r[rn] = end
++            return True
++        return super().extra_instruction(w, pc)
+diff --git a/tools/check_stage9_evidence.py b/tools/check_stage9_evidence.py
+new file mode 100644
+index 0000000..bbaafd4
+--- /dev/null
++++ b/tools/check_stage9_evidence.py
+@@ -0,0 +1,34 @@
++#!/usr/bin/env python3
++"""Read-only checks linking the supplied ELF, disassembly and reconstructed API."""
++from pathlib import Path
++import hashlib,json
++from elf32 import ELF32
++ROOT=Path(__file__).resolve().parents[1];e=ELF32(ROOT/'reference/cgminer.vendor.elf')
++m=json.loads((ROOT/'evidence/stage9/recovery-manifest.json').read_text())
++def sha(b):return hashlib.sha256(b).hexdigest()
++def w(a):return int.from_bytes(e.read(a,4),'little')
++assert len(e.data)==m['reference_bytes'] and sha(e.data)==m['reference_sha256']
++for s in m['slices']:
++ a=int(s['start'],16);b=int(s['end_exclusive'],16)
++ assert b-a==s['size'] and sha(e.read(a,b-a))==s['original_bytes_sha256']
++ assert sha((ROOT/s['disassembly']).read_bytes())==s['disassembly_sha256']
++for edge in m['branch_edges']:
++ pc=int(edge['pc'],16);insn=w(pc);d=insn&0xffffff;d=d-(1<<24) if d&(1<<23) else d
++ assert insn>>24==0xeb and f'{insn:08x}'==edge['instruction_hex']
++ assert pc+8+4*d==int(edge['target'],16)
++for row in m['instruction_assertions']:assert f"{w(int(row['address'],16)):08x}"==row['word_hex']
++# Non-tautological decoded correspondences for the candidate binding and output.
++assert w(0x74f18)==0xe59d0054  # candidate +20
++assert w(0x74f20)==0xe1c220d0  # two counter words
++assert w(0x74f24)==0xe6bf0f30 and w(0x30228)==0xe6bf1f31 # caller/wrapper two REV
++assert w(0x30220)==0xe58a53c0 and w(0x30224)==0xe58a93c4
++assert w(0x30a38)==0xe3a02070 and w(0x30a58)==0xe2840024 and w(0x30a5c)==0xe3a02020
++am=(ROOT/'reconstruction/cgminer-overlay.am').read_text()
++for s in m['new_helpers']:assert s in am
++hdr=(ROOT/'include/xminer/recovery/work_rebuild.h').read_text()
++assert '#define VN135_WORK_PREFIX_BYTES 112u' in hdr
++assert 'NOT a complete 632-byte original work' in hdr
++assert 'last_nonce obeys original prefilter semantics' in hdr
++state=json.loads((ROOT/'evidence/source-tree.json').read_text())
++assert state['partial_modules']==7 and state['pending_modules']==39
++print('Stage9 evidence: 6 bounded/context ranges, 10 call edges, candidate offsets, two REV and 112-byte prefix PASS')
+diff --git a/tools/generate_genesis_fixture.py b/tools/generate_genesis_fixture.py
+new file mode 100644
+index 0000000..ffb918a
+--- /dev/null
++++ b/tools/generate_genesis_fixture.py
+@@ -0,0 +1,38 @@
++#!/usr/bin/env python3
++"""Independent public genesis vector, not a captured T21 job or live share.
++Data transcribed from Bitcoin Core v29.0 src/kernel/chainparams.cpp.
++No vendor code or Bitcoin Core implementation is copied into this generator.
++"""
++from pathlib import Path
++import argparse,hashlib,json,struct
++ROOT=Path(__file__).resolve().parents[1]
++def dsha(b):return hashlib.sha256(hashlib.sha256(b).digest()).digest()
++def outputs():
++    text=b'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks'
++    sig=bytes.fromhex('04ffff001d0104')+bytes([len(text)])+text
++    pub=bytes.fromhex('04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f')
++    script=bytes([len(pub)])+pub+b'\xac'
++    tx=struct.pack('<I',1)+b'\x01'+bytes(32)+b'\xff'*4+bytes([len(sig)])+sig+b'\xff'*4+b'\x01'+struct.pack('<Q',5000000000)+bytes([len(script)])+script+bytes(4)
++    root=dsha(tx);assert root[::-1].hex()=='4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'
++    header=struct.pack('<I',1)+bytes(32)+root+struct.pack('<III',1231006505,0x1d00ffff,2083236893)
++    digest=dsha(header);assert digest[::-1].hex()=='000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
++    words=b''.join(header[i:i+4][::-1] for i in range(0,80,4))+bytes(range(32))
++    target=(0xffff<<(8*(0x1d-3))).to_bytes(32,'little')
++    arrays={'coinbase':tx,'header':header,'words':words,'root':root,'hash':digest,'target':target}
++    meta={'provenance':'Bitcoin Core v29.0 src/kernel/chainparams.cpp',
++      'source_url':'https://github.com/bitcoin/bitcoin/blob/v29.0/src/kernel/chainparams.cpp',
++      'source_blob_sha':'ac3fc9eadad6f32500697f978c7bbfc17acc183a',
++      'not_a_live_share':True,'data':{k:v.hex() for k,v in arrays.items()}}
++    c='/* Public historical test vector; generated by tools/generate_genesis_fixture.py. */\n#ifndef VN135_GENESIS_FIXTURE_H\n#define VN135_GENESIS_FIXTURE_H\n#include <stdint.h>\n'
++    for k,v in arrays.items():
++        c+=f'static const uint8_t fixture_{k}[{len(v)}] = {{\n'
++        c+='\n'.join('    '+','.join('0x'+v[j:j+1].hex() for j in range(i,min(i+16,len(v))))+',' for i in range(0,len(v),16))+'\n};\n'
++    c+='#endif\n'
++    return {ROOT/'tests/fixtures/genesis_work.h':c,ROOT/'evidence/stage9/genesis-vector.json':json.dumps(meta,indent=2)+'\n'}
++def main():
++    p=argparse.ArgumentParser();p.add_argument('--write',action='store_true');a=p.parse_args()
++    for path,text in outputs().items():
++        if a.write:path.parent.mkdir(parents=True,exist_ok=True);path.write_text(text)
++        else:assert path.read_text()==text,path
++    print('Genesis fixture: coinbase, Merkle root, serialized header and hash independently checked')
++if __name__=='__main__':main()
+diff --git a/tools/verify_stage9.py b/tools/verify_stage9.py
+new file mode 100644
+index 0000000..76f9dc5
+--- /dev/null
++++ b/tools/verify_stage9.py
+@@ -0,0 +1,39 @@
++#!/usr/bin/env python3
++"""Checked per-group verification of a fresh Stage9 extraction.
++Logs MUST be outside source tree. No vendor ELF process or external network.
++"""
++from pathlib import Path
++import argparse,hashlib,json,subprocess,sys,time
++from verify_stage8 import GROUPS as PRIOR
++ROOT=Path(__file__).resolve().parents[1];PY=sys.executable
++GROUPS={name:[list(cmd) for cmd in cmds] for name,cmds in PRIOR.items()}
++GROUPS['build'][-1]+=['build/test-work-rebuild','build/vn135-rebuild-genesis']
++GROUPS.update({
++ 'rebuild-sha':[[PY,'tests/test_stage9_differential.py','sha']],
++ 'rebuild-prefix':[[PY,'tests/test_stage9_differential.py','prefix']],
++ 'rebuild-candidate':[[PY,'tests/test_stage9_differential.py','candidate']],
++ 'rebuild-native':[['./build/test-work-rebuild'],[PY,'tests/test_stage9_interpreter.py'],
++                   [PY,'tests/test_stage9_genesis.py'],[PY,'tools/generate_genesis_fixture.py']],
++ 'clang-rebuild':[['make','-f','Makefile.recovery','stage9-clang']]
++})
++def main():
++    p=argparse.ArgumentParser(description=__doc__);p.add_argument('group',choices=GROUPS)
++    p.add_argument('--logs',type=Path,required=True);a=p.parse_args();directory=a.logs.resolve()
++    if directory.is_relative_to(ROOT):p.error('--logs must be outside source tree')
++    directory.mkdir(parents=True,exist_ok=True);records=[]
++    for i,cmd in enumerate(GROUPS[a.group]):
++        expected=2 if a.group=='full-runtime-blocked' else 0
++        log=directory/f'{a.group}-{i:02d}.log';start=time.monotonic()
++        with log.open('w') as out:
++            out.write('COMMAND: '+repr(cmd)+'\n');out.flush()
++            result=subprocess.run(cmd,cwd=ROOT,stdout=out,stderr=subprocess.STDOUT,check=False)
++        row={'command':cmd,'returncode':result.returncode,'expected_returncode':expected,'log':log.name,
++             'seconds':round(time.monotonic()-start,3),'sha256':hashlib.sha256(log.read_bytes()).hexdigest()}
++        records.append(row)
++        summary={'group':a.group,'status':'PASS' if all(x['returncode']==x['expected_returncode'] for x in records) else 'FAIL',
++                 'complete':len(records)==len(GROUPS[a.group]),'records':records}
++        (directory/(a.group+'.json')).write_text(json.dumps(summary,indent=2)+'\n')
++        print(f'{a.group} {i+1}/{len(GROUPS[a.group])}: return={result.returncode} expected={expected} ({row["seconds"]}s)',flush=True)
++        if result.returncode!=expected:return 1
++    return 0
++if __name__=='__main__':raise SystemExit(main())
+diff --git a/tools/verify_stage9_all.py b/tools/verify_stage9_all.py
+new file mode 100644
+index 0000000..c0f9c9a
+--- /dev/null
++++ b/tools/verify_stage9_all.py
+@@ -0,0 +1,46 @@
++#!/usr/bin/env python3
++"""Full local check with isolated per-command logs and bounded parallel groups.
++Use on a fresh extraction. Source files stay unchanged; build outputs are local.
++No network, firmware install, ASIC access or original ELF process execution.
++"""
++from pathlib import Path
++from concurrent.futures import ThreadPoolExecutor,as_completed
++import argparse,hashlib,json,subprocess,sys,time
++from verify_stage9 import GROUPS
++ROOT=Path(__file__).resolve().parents[1]
++def main():
++    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--logs',type=Path,required=True)
++    p.add_argument('--workers',type=int,default=2,choices=[1,2]);a=p.parse_args();logs=a.logs.resolve()
++    if logs.is_relative_to(ROOT):p.error('Logs must be outside the source tree')
++    logs.mkdir(parents=True,exist_ok=True);started=time.monotonic();done={};supplemental=[]
++    def run(group):
++        with (logs/(group+'-driver.log')).open('w') as f:
++            rc=subprocess.run([sys.executable,'tools/verify_stage9.py',group,'--logs',str(logs)],cwd=ROOT,stdout=f,stderr=subprocess.STDOUT).returncode
++        file=logs/(group+'.json')
++        row=json.loads(file.read_text()) if file.exists() else {'group':group,'status':'FAIL','complete':False,'records':[]}
++        row['driver_returncode']=rc
++        print(group,row['status'],'complete='+str(row['complete']),flush=True)
++        return group,row
++    group,row=run('build');done[group]=row
++    if row['status']=='PASS':
++        # Build shared Clang library once before independent Clang groups.
++        with (logs/'clang-library-prebuild.log').open('w') as f:
++            rc=subprocess.run(['make','-f','Makefile.recovery','build/libvn135_recovered-clang.so'],cwd=ROOT,stdout=f,stderr=subprocess.STDOUT).returncode
++        supplemental.append({'command':['make','-f','Makefile.recovery','build/libvn135_recovered-clang.so'],'returncode':rc,'log':'clang-library-prebuild.log','sha256':hashlib.sha256((logs/'clang-library-prebuild.log').read_bytes()).hexdigest()})
++        if rc:print('Clang library build failed',flush=True);return rc
++        pending=[g for g in GROUPS if g not in ('build','evidence','full-runtime-blocked')]
++        with ThreadPoolExecutor(max_workers=a.workers) as pool:
++            for f in as_completed([pool.submit(run,g) for g in pending]):
++                group,row=f.result();done[group]=row
++        for group in ('evidence','full-runtime-blocked'):
++            g,row=run(group);done[g]=row
++    success=len(done)==len(GROUPS) and all(x['status']=='PASS' and x['complete'] and x['driver_returncode']==0 for x in done.values())
++    result={'status':'PASS' if success else 'FAIL','complete':len(done)==len(GROUPS),
++       'groups_expected':len(GROUPS),'groups_run':len(done),'command_count':sum(len(x['records']) for x in done.values())+len(supplemental),'supplemental_commands':supplemental,
++       'seconds':round(time.monotonic()-started,3),'group_results':done,
++       'elf_sha256':hashlib.sha256((ROOT/'reference/cgminer.vendor.elf').read_bytes()).hexdigest(),
++       'hardware_tested':False,'full_upstream_build_tested':False,'full_runtime_expected_to_fail':True}
++    (logs/'ALL_GROUPS.json').write_text(json.dumps(result,indent=2)+'\n')
++    print('ALL_GROUPS',result['status'],result['groups_run'],result['command_count'],flush=True)
++    return 0 if success else 1
++if __name__=='__main__':raise SystemExit(main())

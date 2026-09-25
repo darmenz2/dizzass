@@ -1,0 +1,119 @@
+{
+  "path": "libbitmain/src/xil/fan_ctrl.c",
+  "observed_as": "/tmp/build/libbitmain/src/xil/fan_ctrl.c",
+  "status": "pending-not-implemented",
+  "evidence": [
+    {
+      "address": "0x5edcda",
+      "xor": 236,
+      "decoded_length": 41,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x0010fd38",
+      "end_exclusive": "0x0010ff88",
+      "path_references": [
+        {
+          "insn": "0x10fdfc",
+          "string": "0x5edcda",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/fan_ctrl.c"
+        },
+        {
+          "insn": "0x10fea8",
+          "string": "0x5edcda",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/fan_ctrl.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x001100d8",
+      "end_exclusive": "0x001102d8",
+      "path_references": [
+        {
+          "insn": "0x1101e8",
+          "string": "0x5edcda",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/fan_ctrl.c"
+        },
+        {
+          "insn": "0x110234",
+          "string": "0x5edcda",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/fan_ctrl.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x001103b8",
+      "end_exclusive": "0x00110480",
+      "path_references": [
+        {
+          "insn": "0x110424",
+          "string": "0x5edcda",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/fan_ctrl.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00110480",
+      "end_exclusive": "0x00110594",
+      "path_references": [
+        {
+          "insn": "0x110504",
+          "string": "0x5edcda",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/fan_ctrl.c"
+        },
+        {
+          "insn": "0x110550",
+          "string": "0x5edcda",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/fan_ctrl.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00110594",
+      "end_exclusive": "0x001106a4",
+      "path_references": [
+        {
+          "insn": "0x110610",
+          "string": "0x5edcda",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/fan_ctrl.c"
+        },
+        {
+          "insn": "0x11065c",
+          "string": "0x5edcda",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/fan_ctrl.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00110954",
+      "end_exclusive": "0x00110cbc",
+      "path_references": [
+        {
+          "insn": "0x1109d4",
+          "string": "0x5edcda",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/fan_ctrl.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": []
+}

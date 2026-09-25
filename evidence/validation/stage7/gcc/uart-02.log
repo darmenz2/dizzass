@@ -1,0 +1,6 @@
+COMMAND: ['make', '-f', 'Makefile.recovery', 'linux-pty']
+mkdir -p build
+cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror libbitmain/src/uart.c libbitmain/src/aml/chip.c tests/test_uart_linux_pty.c -pthread -o build/test-uart-pty
+./build/test-uart-pty
+Linux PTY: open/termios2/arbitrary baud/fragmented RX/TX frame/flush/destroy: PASS
+No physical UART, chip protocol, timings, init, mining or autotune tested.

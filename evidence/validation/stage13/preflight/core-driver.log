@@ -1,0 +1,8 @@
+core 1/8: return=0 expected=0 (0.002s)
+core 2/8: return=0 expected=0 (0.002s)
+core 3/8: return=0 expected=0 (0.002s)
+core 4/8: return=0 expected=0 (0.002s)
+core 5/8: return=0 expected=0 (1.276s)
+core 6/8: return=0 expected=0 (3.438s)
+core 7/8: return=0 expected=0 (0.927s)
+core 8/8: return=0 expected=0 (9.033s)

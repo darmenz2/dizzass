@@ -1,0 +1,20 @@
+{
+  "group": "clang-nonce",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "make",
+        "-f",
+        "Makefile.recovery",
+        "stage7-clang"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "clang-nonce-00.log",
+      "seconds": 43.483,
+      "sha256": "0ea633b42a0eaad74843e248303f8cd284e1bea805181630ba8d3abcefe71813"
+    }
+  ]
+}

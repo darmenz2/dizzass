@@ -1,0 +1,4 @@
+rebuild-native 1/4: return=0 expected=0 (0.002s)
+rebuild-native 2/4: return=0 expected=0 (0.894s)
+rebuild-native 3/4: return=0 expected=0 (1.167s)
+rebuild-native 4/4: return=0 expected=0 (0.805s)

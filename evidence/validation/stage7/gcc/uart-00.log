@@ -1,0 +1,14 @@
+COMMAND: ['/opt/pyvenv/bin/python3', 'tests/test_stage5_uart_differential.py']
+{
+  "passed": true,
+  "total_cases": 3248,
+  "cases": {
+    "set_baud": 768,
+    "read": 495,
+    "write_legacy": 1539,
+    "open": 406,
+    "destroy": 20,
+    "flush": 20
+  },
+  "elapsed_seconds": 0.528
+}

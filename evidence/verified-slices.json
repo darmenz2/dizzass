@@ -1,0 +1,495 @@
+{
+  "binary_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "slices": [
+    {
+      "name": "ticket-mask",
+      "start": "0x000eb750",
+      "end_exclusive": "0x000eb8c8",
+      "size": 376,
+      "original_bytes_sha256": "1110941086f450aab2f6f23003a0c0b99bd406837b1418d2ac261de883cb2875",
+      "tested_scope": "payload to SET_CONFIG only",
+      "disassembly": "evidence/disasm/ticket-mask.S",
+      "hardware_verified": false
+    },
+    {
+      "name": "sweep-clock",
+      "start": "0x000ec9f0",
+      "end_exclusive": "0x000ecb68",
+      "size": 376,
+      "original_bytes_sha256": "0b93f319abb68f28f3f02ba859fbe072c00f8e834c410a0e8173a07216f87a3c",
+      "tested_scope": "payload to SET_CONFIG only",
+      "disassembly": "evidence/disasm/sweep-clock.S",
+      "hardware_verified": false
+    },
+    {
+      "name": "clock-delay-chip",
+      "start": "0x000ecb68",
+      "end_exclusive": "0x000ecca0",
+      "size": 312,
+      "original_bytes_sha256": "5c8a71cd6ed510092923a4890a41a49b5ab5e233615af58d39cd2b480229cdf7",
+      "tested_scope": "payload to SET_CONFIG only",
+      "disassembly": "evidence/disasm/clock-delay-chip.S",
+      "hardware_verified": false
+    },
+    {
+      "name": "clock-delay-null",
+      "start": "0x000ecca0",
+      "end_exclusive": "0x000ece3c",
+      "size": 412,
+      "original_bytes_sha256": "45a97730a7b3e5218510c0b252d2025b7247af5a8e97aff98aac806723e34d88",
+      "tested_scope": "payload to SET_CONFIG only",
+      "disassembly": "evidence/disasm/clock-delay-null.S",
+      "hardware_verified": false
+    },
+    {
+      "name": "analog-mux",
+      "start": "0x000ece3c",
+      "end_exclusive": "0x000eced4",
+      "size": 152,
+      "original_bytes_sha256": "348f4d2611230b8b9373f5df7ac10680d2a0ae7940223ada04eecdb1e68ac2ac",
+      "tested_scope": "payload to SET_CONFIG only",
+      "disassembly": "evidence/disasm/analog-mux.S",
+      "hardware_verified": false
+    },
+    {
+      "name": "misc-control",
+      "start": "0x000ecf64",
+      "end_exclusive": "0x000ed00c",
+      "size": 168,
+      "original_bytes_sha256": "f30e11be2a184bc4c7db2d32e0f964e63a16e247bb6a9554155758fb458569c7",
+      "tested_scope": "successful injected cache read; first payload only",
+      "disassembly": "evidence/disasm/misc-control.S",
+      "hardware_verified": false
+    },
+    {
+      "name": "set-config",
+      "start": "0x000ee8e4",
+      "end_exclusive": "0x000eeaec",
+      "size": 520,
+      "original_bytes_sha256": "408cc1b98e9542d39afe667de5c5f446ac8a90603897889b2561db15db24dc28",
+      "tested_scope": "Full original routine including CRC5 and cache; send boundary injected; return, packet and all cache state compared",
+      "disassembly": "evidence/stage4/chip1398-set-config-full.S",
+      "hardware_verified": false
+    },
+    {
+      "name": "crc5",
+      "start": "0x000f7f10",
+      "end_exclusive": "0x000f8048",
+      "size": 312,
+      "original_bytes_sha256": "8b3d2cf2b36838d6cd4cbabd65fc6755f410ec2647614bf827f4fcaee8357c5b",
+      "tested_scope": "complete CRC function, valid mapped inputs",
+      "disassembly": "evidence/disasm/crc5.S",
+      "hardware_verified": false
+    },
+    {
+      "name": "pll-legacy",
+      "start": "0x000ff288",
+      "end_exclusive": "0x000ff660",
+      "size": 984,
+      "original_bytes_sha256": "7ece050139fa0096db96c7345d6e4defe17b678a3a62b0c04d5ce69fea8b936d",
+      "tested_scope": "Full computational search and 32-byte result, logging excluded",
+      "disassembly": "evidence/stage3/pll-legacy.S",
+      "hardware_verified": false
+    },
+    {
+      "name": "pll-round4",
+      "start": "0x000ff660",
+      "end_exclusive": "0x000ffc0c",
+      "size": 1452,
+      "original_bytes_sha256": "5abd6e05aada946b34b550cf2373563b2013e6aef8e85793e88bf0100b419789",
+      "tested_scope": "Full computational search and 32-byte result, logging excluded",
+      "disassembly": "evidence/stage3/pll-round4.S",
+      "hardware_verified": false
+    },
+    {
+      "name": "aml-send",
+      "start": "0x00117f7c",
+      "end_exclusive": "0x00118180",
+      "size": 516,
+      "original_bytes_sha256": "e72d69c3a9be866a094500bc9d26986cc86faf17fcd412c7a89dcbabff7358ba",
+      "tested_scope": "Full observed AML routine invokes original UART-write helper in Stage 5 tests; only final OS calls and external memory/locks/delay injected.",
+      "disassembly": "evidence/stage3/aml-send.S",
+      "hardware_verified": false
+    },
+    {
+      "name": "aml-chain-mask",
+      "start": "0x00118180",
+      "end_exclusive": "0x0011827c",
+      "size": 252,
+      "original_bytes_sha256": "15fd00e919bf4011a6511161fdb0e363ffba42e354075d4e710cd8b223f62343",
+      "tested_scope": "Integer result with injected model lookup",
+      "disassembly": "evidence/stage3/aml-chain-mask.S",
+      "hardware_verified": false
+    },
+    {
+      "name": "pll-parameter-word",
+      "start": "0x000ec01c",
+      "end_exclusive": "0x000ec060",
+      "size": 68,
+      "original_bytes_sha256": "c9e99a632334f63b7eaa0767378bb4ea9ec4d4f36eda727e10985f53c9d15330",
+      "tested_scope": "Argument and stack word at SET_CONFIG boundary, not full caller",
+      "disassembly": "evidence/stage3/pll-parameter-word.S",
+      "hardware_verified": false
+    },
+    {
+      "name": "reg-cache-init",
+      "start": "0x00106a58",
+      "end_exclusive": "0x00106e58",
+      "size": 1024,
+      "original_bytes_sha256": "e28de4b131c206888d039ca64fb63044827acfaa85600020a5794c14ba28c85d",
+      "tested_scope": "Complete A32 routine on documented valid allocation domain; diagnostics and allocation/copy/free intercepted; state and return compared",
+      "disassembly": "evidence/stage4/reg-cache-init.S",
+      "hardware_verified": false
+    },
+    {
+      "name": "reg-cache-reset",
+      "start": "0x00106e58",
+      "end_exclusive": "0x00107188",
+      "size": 816,
+      "original_bytes_sha256": "2ffbe52aca4862aa6d656064de574fb2649e4abafc122c9faac268fff4149a07",
+      "tested_scope": "Complete A32 routine on documented valid allocation domain; diagnostics and allocation/copy/free intercepted; state and return compared",
+      "disassembly": "evidence/stage4/reg-cache-reset.S",
+      "hardware_verified": false
+    },
+    {
+      "name": "reg-cache-get-chain",
+      "start": "0x00107188",
+      "end_exclusive": "0x00107648",
+      "size": 1216,
+      "original_bytes_sha256": "12acbdebd155221b6e87c0ffab8506e2e179466fbe96c783592463b799fcb185",
+      "tested_scope": "Complete A32 routine on documented valid allocation domain; diagnostics and allocation/copy/free intercepted; state and return compared",
+      "disassembly": "evidence/stage4/reg-cache-get-chain.S",
+      "hardware_verified": false
+    },
+    {
+      "name": "reg-cache-set-chain",
+      "start": "0x00107648",
+      "end_exclusive": "0x001079f0",
+      "size": 936,
+      "original_bytes_sha256": "73eefcd9c5d223ebbdf987a7dcbdda3279fb47c6b9cd7cd1902ce4d044ca8bd2",
+      "tested_scope": "Complete A32 routine on documented valid allocation domain; diagnostics and allocation/copy/free intercepted; state and return compared",
+      "disassembly": "evidence/stage4/reg-cache-set-chain.S",
+      "hardware_verified": false
+    },
+    {
+      "name": "reg-cache-get-chip",
+      "start": "0x001079f0",
+      "end_exclusive": "0x00107ed0",
+      "size": 1248,
+      "original_bytes_sha256": "395027b617b534714ebfa2c35c4b4f0b8b9006ff134edac9124a334b40695ea4",
+      "tested_scope": "Complete A32 routine on documented valid allocation domain; diagnostics and allocation/copy/free intercepted; state and return compared",
+      "disassembly": "evidence/stage4/reg-cache-get-chip.S",
+      "hardware_verified": false
+    },
+    {
+      "name": "reg-cache-set-chip",
+      "start": "0x00107ed0",
+      "end_exclusive": "0x001082b4",
+      "size": 996,
+      "original_bytes_sha256": "dddc9cdb5bda8b4b091bcd4a872238b2e8c85e5106fe697cbb84bb1fdc8613fc",
+      "tested_scope": "Complete A32 routine on documented valid allocation domain; diagnostics and allocation/copy/free intercepted; state and return compared",
+      "disassembly": "evidence/stage4/reg-cache-set-chip.S",
+      "hardware_verified": false
+    },
+    {
+      "name": "reg-cache-destroy",
+      "start": "0x001082b4",
+      "end_exclusive": "0x001083e4",
+      "size": 304,
+      "original_bytes_sha256": "d4a19859236936f1fca9dfae9f653f40007477164c7b476433c30a984c5badd8",
+      "tested_scope": "Complete A32 routine on documented valid allocation domain; diagnostics and allocation/copy/free intercepted; state and return compared",
+      "disassembly": "evidence/stage4/reg-cache-destroy.S",
+      "hardware_verified": false
+    },
+    {
+      "name": "uart-open",
+      "start": "0x0010e0c8",
+      "end_exclusive": "0x0010e518",
+      "size": 1104,
+      "original_bytes_sha256": "c770726b5b4b9018a8ec7aee1b79f586a56519a0009718f3ffc5489c58248546",
+      "tested_scope": "Full observed UART routine, original OS/libc/mutex/logging calls injected; state/return/bytes/call order compared. New API guards separate.",
+      "disassembly": "evidence/stage5/disasm/uart-open.S",
+      "hardware_verified": false
+    },
+    {
+      "name": "uart-baud",
+      "start": "0x0010e518",
+      "end_exclusive": "0x0010e6c0",
+      "size": 424,
+      "original_bytes_sha256": "0989dd7eab3f06b8eec8ee998e5fe9197b1d6788a733e092b7ea4a1b33b1623d",
+      "tested_scope": "Full observed UART routine, original OS/libc/mutex/logging calls injected; state/return/bytes/call order compared. New API guards separate.",
+      "disassembly": "evidence/stage5/disasm/uart-baud.S",
+      "hardware_verified": false
+    },
+    {
+      "name": "uart-write-legacy",
+      "start": "0x0010e6c0",
+      "end_exclusive": "0x0010e938",
+      "size": 632,
+      "original_bytes_sha256": "1faefeb1f0743139f9992f6c4410f70aae515c158395db435ba071782e990b78",
+      "tested_scope": "Full observed UART routine, original OS/libc/mutex/logging calls injected; state/return/bytes/call order compared. New API guards separate.",
+      "disassembly": "evidence/stage5/disasm/uart-write-legacy.S",
+      "hardware_verified": false
+    },
+    {
+      "name": "uart-read",
+      "start": "0x0010e938",
+      "end_exclusive": "0x0010e994",
+      "size": 92,
+      "original_bytes_sha256": "ed3e9d204d7ae8c9987c419a0c9d930626f3f91a6162683fe13e2e05612482cc",
+      "tested_scope": "Full observed UART routine, original OS/libc/mutex/logging calls injected; state/return/bytes/call order compared. New API guards separate.",
+      "disassembly": "evidence/stage5/disasm/uart-read.S",
+      "hardware_verified": false
+    },
+    {
+      "name": "uart-flush",
+      "start": "0x0010e994",
+      "end_exclusive": "0x0010e9a0",
+      "size": 12,
+      "original_bytes_sha256": "5e3f181fc583fba9d33771cf457d798713e2dd00f83b98711a4ef2592e2d1792",
+      "tested_scope": "Full observed UART routine, original OS/libc/mutex/logging calls injected; state/return/bytes/call order compared. New API guards separate.",
+      "disassembly": "evidence/stage5/disasm/uart-flush.S",
+      "hardware_verified": false
+    },
+    {
+      "name": "uart-destroy",
+      "start": "0x0010e9a0",
+      "end_exclusive": "0x0010ea5c",
+      "size": 188,
+      "original_bytes_sha256": "b8d5537fa9d3a563d8c9327d507f033a0b599894d44d2919237daed9deb2fddd",
+      "tested_scope": "Full observed UART routine, original OS/libc/mutex/logging calls injected; state/return/bytes/call order compared. New API guards separate.",
+      "disassembly": "evidence/stage5/disasm/uart-destroy.S",
+      "hardware_verified": false
+    },
+    {
+      "name": "rx-layout-selection",
+      "start": "0x000c4074",
+      "end_exclusive": "0x000c40dc",
+      "size": 104,
+      "original_bytes_sha256": "f1cf2b7d53769c638d87449b70cc0abb69dcfb9c734defeddc508378ffdefc7a",
+      "tested_scope": "Layout variant and minimum length with board/special getters injected.",
+      "disassembly": "evidence/stage6/disasm/rx-layout-selection.S",
+      "hardware_verified": false,
+      "stage": 6
+    },
+    {
+      "name": "rx-prefix-and-classification",
+      "start": "0x000c42b0",
+      "end_exclusive": "0x000c4480",
+      "size": 464,
+      "original_bytes_sha256": "9f2aec212de89a42cc7521ec097bad6578ce349174b5aa28828a7569e558005d",
+      "tested_scope": "One stable-policy receive iteration: count, prefix consumption, payload and classification; stop at next-chain, nonce, or register boundary.",
+      "disassembly": "evidence/stage6/disasm/rx-prefix-and-classification.S",
+      "hardware_verified": false,
+      "stage": 6
+    },
+    {
+      "name": "rx-nonce-job-slot",
+      "start": "0x000c4480",
+      "end_exclusive": "0x000c44dc",
+      "size": 92,
+      "original_bytes_sha256": "8e69e3cbbfedb41b7c12512ed4cd9fba9874a6a797c80d5aaae1263b3600ac93",
+      "tested_scope": "Raw 5-bit job-slot extraction ONLY. Does not execute job lookup or validate nonce.",
+      "disassembly": "evidence/stage6/disasm/rx-nonce-job-slot.S",
+      "hardware_verified": false,
+      "stage": 6
+    },
+    {
+      "name": "rx-register-special",
+      "start": "0x000c4750",
+      "end_exclusive": "0x000c4844",
+      "size": 244,
+      "original_bytes_sha256": "0a13e5f2b023dbcf2a9e81854cf18c3cf1009eb182dba866cbf16069d157f287",
+      "tested_scope": "Seven-byte special register response decoding and filtering; final enqueue injected.",
+      "disassembly": "evidence/stage6/disasm/rx-register-special.S",
+      "hardware_verified": false,
+      "stage": 6
+    },
+    {
+      "name": "rx-register-normal",
+      "start": "0x000c4878",
+      "end_exclusive": "0x000c4a88",
+      "size": 528,
+      "original_bytes_sha256": "b68dc6a242287ba42358b62b0890a54346da7ccf507caacde1cc30e25fe41b26",
+      "tested_scope": "Register fields for three normal layouts and filtering; final enqueue injected.",
+      "disassembly": "evidence/stage6/disasm/rx-register-normal.S",
+      "hardware_verified": false,
+      "stage": 6
+    },
+    {
+      "name": "rx-register-filter-dispatch",
+      "start": "0x000d2a84",
+      "end_exclusive": "0x000d2bf4",
+      "size": 368,
+      "original_bytes_sha256": "7af89d360d70ec308b3bf7f54b75a57c7a7c78ab84b498c43ed4f63dbd5c7d74",
+      "tested_scope": "Full dispatcher with internal selector getter injected; constant-return callees execute.",
+      "disassembly": "evidence/stage6/disasm/rx-register-filter-dispatch.S",
+      "hardware_verified": false,
+      "stage": 6
+    },
+    {
+      "name": "rx-filter-constant-0",
+      "start": "0x000d55cc",
+      "end_exclusive": "0x000d5604",
+      "size": 56,
+      "original_bytes_sha256": "becdc62d16e26e6b43f80c53febbe9bfdf8652e698047571d37354d28a0ff269",
+      "tested_scope": "Constant-return callee of filter dispatcher, selector0.",
+      "disassembly": "evidence/stage6/disasm/rx-filter-constant-0.S",
+      "hardware_verified": false,
+      "stage": 6
+    },
+    {
+      "name": "rx-filter-constant-1",
+      "start": "0x000dac64",
+      "end_exclusive": "0x000dac6c",
+      "size": 8,
+      "original_bytes_sha256": "4fe40444ba4fa963fbe4230783e64a772a93d31a1ee99e83adc54d696880082b",
+      "tested_scope": "Constant-return callee of filter dispatcher, selector1.",
+      "disassembly": "evidence/stage6/disasm/rx-filter-constant-1.S",
+      "hardware_verified": false,
+      "stage": 6
+    },
+    {
+      "name": "rx-filter-constant-2",
+      "start": "0x000ecf24",
+      "end_exclusive": "0x000ecf5c",
+      "size": 56,
+      "original_bytes_sha256": "becdc62d16e26e6b43f80c53febbe9bfdf8652e698047571d37354d28a0ff269",
+      "tested_scope": "Constant-return callee of filter dispatcher, selector2.",
+      "disassembly": "evidence/stage6/disasm/rx-filter-constant-2.S",
+      "hardware_verified": false,
+      "stage": 6
+    },
+    {
+      "name": "rx-filter-constant-3",
+      "start": "0x000df1d8",
+      "end_exclusive": "0x000df1e0",
+      "size": 8,
+      "original_bytes_sha256": "4fe40444ba4fa963fbe4230783e64a772a93d31a1ee99e83adc54d696880082b",
+      "tested_scope": "Constant-return callee of filter dispatcher, selector3.",
+      "disassembly": "evidence/stage6/disasm/rx-filter-constant-3.S",
+      "hardware_verified": false,
+      "stage": 6
+    },
+    {
+      "name": "rx-filter-constant-4",
+      "start": "0x000e3bc4",
+      "end_exclusive": "0x000e3bfc",
+      "size": 56,
+      "original_bytes_sha256": "becdc62d16e26e6b43f80c53febbe9bfdf8652e698047571d37354d28a0ff269",
+      "tested_scope": "Constant-return callee of filter dispatcher, selector4.",
+      "disassembly": "evidence/stage6/disasm/rx-filter-constant-4.S",
+      "hardware_verified": false,
+      "stage": 6
+    },
+    {
+      "name": "rx-oracle-ring-pop-one",
+      "start": "0x000d1df0",
+      "end_exclusive": "0x000d1f18",
+      "size": 296,
+      "original_bytes_sha256": "304b847d2d4686d7eebd86d9b517ce700370685138928e8693d85bad4c53bc27",
+      "tested_scope": "Original helper executes with valid byte-ring fixture; not translated into a new source file.",
+      "disassembly": "evidence/stage6/disasm/rx-oracle-ring-pop-one.S",
+      "hardware_verified": false,
+      "stage": 6
+    },
+    {
+      "name": "rx-oracle-ring-pop-many",
+      "start": "0x000d1f20",
+      "end_exclusive": "0x000d20a4",
+      "size": 388,
+      "original_bytes_sha256": "10a8f81c74c8852addb6ddfeaef3299ca633608f254e36c82f055a623d53fe85",
+      "tested_scope": "Original helper executes, including wraparound; memcpy injected. Not translated into new source.",
+      "disassembly": "evidence/stage6/disasm/rx-oracle-ring-pop-many.S",
+      "hardware_verified": false,
+      "stage": 6
+    },
+    {
+      "name": "rx-oracle-ring-count",
+      "start": "0x000d20ac",
+      "end_exclusive": "0x000d20b4",
+      "size": 8,
+      "original_bytes_sha256": "cdb6597d5f559cc0fcf394f18a78ee566b12548b02900f598ee31e5f2b6efcf8",
+      "tested_scope": "Original count accessor executes in reference oracle only.",
+      "disassembly": "evidence/stage6/disasm/rx-oracle-ring-count.S",
+      "hardware_verified": false,
+      "stage": 6
+    }
+  ],
+  "data_records": [
+    {
+      "name": "bm1398-pll-constraint-record",
+      "start": "0x005ebea8",
+      "size": 56,
+      "original_bytes_sha256": "8d3788f711f55ad93dca8ca83deca4262439b71d8d1e38da67aadc427cef80de",
+      "original_bytes_hex": "0000000000003940000000000000a9400000000000c0a2400000000000409f4002000000fa00000007000000000000000000000000000440",
+      "references": [
+        {
+          "pc_relative_add": "0x000eb8f0",
+          "literal_address": "0x000ebcbc"
+        },
+        {
+          "pc_relative_add": "0x000ebd54",
+          "literal_address": "0x000ec170"
+        }
+      ],
+      "T21_model_mapping_confirmed": false
+    },
+    {
+      "name": "reg-cache-defaults-selector-0",
+      "start": "0x5b165c",
+      "size": 512,
+      "original_bytes_sha256": "84c61179d6017a23b3b845b861fb65c20d0a41e5e9ef73a2bcbd8b4c311438de",
+      "scope": "Original internal enum template, NOT a T21 operating profile"
+    },
+    {
+      "name": "reg-cache-defaults-selector-1",
+      "start": "0x5b145c",
+      "size": 512,
+      "original_bytes_sha256": "11c47dbe8a8711b464d467debf0b6b14752b0d54915ecfcb2981ce21e62bf261",
+      "scope": "Original internal enum template, NOT a T21 operating profile"
+    },
+    {
+      "name": "reg-cache-defaults-selector-2",
+      "start": "0x5b125c",
+      "size": 512,
+      "original_bytes_sha256": "520fd67f8587502c0f5da430d18752e45d3ea6cd661f77d2da55d9467f1250e6",
+      "scope": "Original internal enum template, NOT a T21 operating profile"
+    },
+    {
+      "name": "reg-cache-defaults-selector-3",
+      "start": "0x5b185c",
+      "size": 512,
+      "original_bytes_sha256": "281c0158f181285330e64f076c117ca64fd4bcc1f1a1716d99e46ef6c926b5a6",
+      "scope": "Original internal enum template, NOT a T21 operating profile"
+    },
+    {
+      "name": "reg-cache-defaults-selector-4",
+      "start": "0x5b1c5c",
+      "size": 512,
+      "original_bytes_sha256": "b8a80b0cafd5a474cdf8b38eba8b329a20032cde7a93c18f7a2fe31fe9282deb",
+      "scope": "Original internal enum template, NOT a T21 operating profile"
+    },
+    {
+      "name": "reg-cache-defaults-selector-5",
+      "start": "0x5b1a5c",
+      "size": 512,
+      "original_bytes_sha256": "be129546d9d917ab436408fa4c98fed65a2a26b2d51f79903b2074adfd513d62",
+      "scope": "Original internal enum template, NOT a T21 operating profile"
+    },
+    {
+      "name": "reg-cache-defaults-selector-6",
+      "start": "0x5b1e5c",
+      "size": 512,
+      "original_bytes_sha256": "2f3023e9b8637db1075b9161b83df7cd0768f32f41cd77d198f235939496359c",
+      "scope": "Original internal enum template, NOT a T21 operating profile"
+    },
+    {
+      "name": "reg-cache-defaults-selector-7",
+      "start": "0x5b205c",
+      "size": 512,
+      "original_bytes_sha256": "8f1e7c1cf9445766a973c0a41e04186221112cd2868dd17408e7ee1674606ab6",
+      "scope": "Original internal enum template, NOT a T21 operating profile"
+    }
+  ]
+}

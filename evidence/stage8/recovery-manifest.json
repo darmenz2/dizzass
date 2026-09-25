@@ -1,0 +1,190 @@
+{
+  "stage": 8,
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "reference_bytes": 6228004,
+  "slices": [
+    {
+      "name": "frontend_header_hash",
+      "start": "0x2d994",
+      "end_exclusive": "0x2dc0c",
+      "size": 632,
+      "original_bytes_sha256": "f4b743748984aee4fac782ef17f261488f1c96442e6b1d5c0390905d08c5e5d6",
+      "disassembly": "evidence/stage8/disasm/frontend_header_hash.S",
+      "disassembly_sha256": "f938fa8440160ce5a68b93eb7f2f9f5271350d0e57a9c38ac544f868a4afc971",
+      "scope": "complete original function, including literal pool; opaque unreachable branches not forced"
+    },
+    {
+      "name": "target256_compare",
+      "start": "0x10c1c",
+      "end_exclusive": "0x10e1c",
+      "size": 512,
+      "original_bytes_sha256": "fe96caf93a2e8588be9f70f92d663ac87be13883c81195396792a58446dc82a2",
+      "disassembly": "evidence/stage8/disasm/target256_compare.S",
+      "disassembly_sha256": "3af2e2745063f1d4380ee7e76414c1e3a9ed7f97e69bd9d6e221b616130744ca",
+      "scope": "complete original unsigned comparator, including literal pool"
+    },
+    {
+      "name": "nonce_prefilter",
+      "start": "0x32f74",
+      "end_exclusive": "0x330a4",
+      "size": 304,
+      "original_bytes_sha256": "a9886fa640c057f8136accc118021dffccad78df4cd5df8a59f5ca9a88925488",
+      "disassembly": "evidence/stage8/disasm/nonce_prefilter.S",
+      "disassembly_sha256": "d486fe384a3f0a42504b17150f120bc34c81889591af746cfde36e6321672933",
+      "scope": "bounded prefix, reject boundary 0x33520 and continue boundary 0x330a4; stack pre-established"
+    },
+    {
+      "name": "nonce_prologue_context",
+      "start": "0x32f60",
+      "end_exclusive": "0x32f74",
+      "size": 20,
+      "original_bytes_sha256": "84729a8bed0813c88c03457afb9400e4eb4ed31c7735096bf7c0c5a7356455e9",
+      "disassembly": "evidence/stage8/disasm/nonce_prologue_context.S",
+      "disassembly_sha256": "fefcccfdfe589d3f7f04e4255db5f8c9acaa2ce65d5cae8b9f36d3fca3af36dc",
+      "scope": "context-only; prologue not executed in prefilter oracle"
+    },
+    {
+      "name": "nonce_literals_context",
+      "start": "0x33580",
+      "end_exclusive": "0x3359c",
+      "size": 28,
+      "original_bytes_sha256": "e1bb1b41856bf01a324d1657eddc4342ab581fec8850a0ed48d231cae922d52e",
+      "disassembly": "evidence/stage8/disasm/nonce_literals_context.S",
+      "disassembly_sha256": "65dae30c78d83aee8d692a680cded8a19d939b1d2a1641c0567644eef8d244dc",
+      "scope": "data-only literal pool used by prefilter"
+    },
+    {
+      "name": "consumer_first_match",
+      "start": "0x74de4",
+      "end_exclusive": "0x74e7c",
+      "size": 152,
+      "original_bytes_sha256": "c299f6b9e2fa6b8801f7996d4b5791481731389de9c1aba3444a5ce9d1b48afc",
+      "disassembly": "evidence/stage8/disasm/consumer_first_match.S",
+      "disassembly_sha256": "77e8e7b685280385b74b9da38ec38fc6f9a6f559de1d1d67ff45387b5ce1d46d",
+      "scope": "bounded selector; stop at skip 0x74e7c or continue 0x74f14"
+    },
+    {
+      "name": "reference_list_membership",
+      "start": "0x34d54",
+      "end_exclusive": "0x34dd8",
+      "size": 132,
+      "original_bytes_sha256": "b0fb6fc88f5b30372ece327c26a24d76139849a4c609ea738e5a39bae77d09af",
+      "disassembly": "evidence/stage8/disasm/reference_list_membership.S",
+      "disassembly_sha256": "633923581d7b34f0ae03bb11f0f50524d84ba654ca7ea06d13cb9c98b34d162a",
+      "scope": "complete function with injected mutex calls, including literals"
+    },
+    {
+      "name": "sha256_oneshot",
+      "start": "0x108f38",
+      "end_exclusive": "0x109120",
+      "size": 488,
+      "original_bytes_sha256": "8d4ae18bfe64e96a84f4cf5b3b4280978e0457d78a599b041687bd9506775885",
+      "disassembly": "evidence/stage8/disasm/sha256_oneshot.S",
+      "disassembly_sha256": "e6580aebdcd213a952cda68d8e87271e4c97aa8b0d5eadc67350751ae9dda76e",
+      "scope": "complete called SHA wrapper with original compression/finalizer"
+    },
+    {
+      "name": "target_callsite_context",
+      "start": "0x327b4",
+      "end_exclusive": "0x327dc",
+      "size": 40,
+      "original_bytes_sha256": "3ab802e405e83e74bc5675c0528908f479d5002a4e88dbac76463d2cffd53309",
+      "disassembly": "evidence/stage8/disasm/target_callsite_context.S",
+      "disassembly_sha256": "b3e487ec94381c6fe06d6a5d04a85c748a8b4489dc99cf844a81cbc4ac658761",
+      "scope": "context-only: original hash and target pointers at call"
+    },
+    {
+      "name": "consumer_work_rebuild_context",
+      "start": "0x74f14",
+      "end_exclusive": "0x75020",
+      "size": 268,
+      "original_bytes_sha256": "d0d96eeb2e9c7a799af832701e49ccd446e6dd0f3ca3c12f3af723cfe8e91144",
+      "disassembly": "evidence/stage8/disasm/consumer_work_rebuild_context.S",
+      "disassembly_sha256": "11117fd2c88632162392ba9ac44778b1ca5bc6d879d2b54592528492d169d671",
+      "scope": "context-only: caller data and work reconstruction call, not recovered lifecycle"
+    }
+  ],
+  "branch_edges": [
+    {
+      "pc": "0x2dabc",
+      "target": "0x108f38",
+      "instruction_hex": "eb036d1d"
+    },
+    {
+      "pc": "0x2dacc",
+      "target": "0x108f38",
+      "instruction_hex": "eb036d19"
+    },
+    {
+      "pc": "0x3300c",
+      "target": "0x29238",
+      "instruction_hex": "ebffd889"
+    },
+    {
+      "pc": "0x3301c",
+      "target": "0x29238",
+      "instruction_hex": "ebffd885"
+    },
+    {
+      "pc": "0x74e64",
+      "target": "0x34d54",
+      "instruction_hex": "ebfeffba"
+    },
+    {
+      "pc": "0x327c8",
+      "target": "0x10c1c",
+      "instruction_hex": "ebff7913"
+    },
+    {
+      "pc": "0x34d68",
+      "target": "0x5a6108",
+      "instruction_hex": "eb15c4e6"
+    },
+    {
+      "pc": "0x34dbc",
+      "target": "0x5a66c4",
+      "instruction_hex": "eb15c640"
+    }
+  ],
+  "new_helpers": [
+    "reconstruction/support/sha256d80.c",
+    "reconstruction/support/target256.c",
+    "reconstruction/support/nonce_job_window.c"
+  ],
+  "compiled_observed_path": "src/frontend/cgminer.c",
+  "path_proof": {
+    "source_reference_pc": "0x32fdc",
+    "string_address": "0x5e2194",
+    "original_text": "/tmp/build/src/frontend/cgminer.c",
+    "hash_function_source_path_individually_proven": false
+  },
+  "external_operations": [
+    "memcpy/memset",
+    "config getter",
+    "logging",
+    "mutex lock/unlock"
+  ],
+  "additional_boundaries": [
+    "forced hash callback in 752 boundary cases",
+    "forced reference reject in 1024 isolated selector cases"
+  ],
+  "original_functions_executed_together": [
+    "0x2d994 and 0x108f38 plus compression/finalizer",
+    "0x32f74 prefix with hash pointer set to 0x2d994 (test-only binding)",
+    "0x74de4 consumer and 0x34d54 membership"
+  ],
+  "limits": [
+    "No T21 model hash dispatch proven",
+    "No complete nonce queue or work reconstruction",
+    "No generation/freshness or share submission",
+    "Reference snapshots assumed coherent; mutex semantics not tested",
+    "Full target check and prefilter are distinct stages; not every mathematical target success passes the legacy prefix"
+  ],
+  "tests": [
+    "tests/test_stage8_differential.py",
+    "tests/verify_oracle.py",
+    "tests/test_nonce_verify.c",
+    "tests/test_stage8_interpreter.py",
+    "tests/test_verify_header_cli.py"
+  ]
+}

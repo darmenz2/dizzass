@@ -1,0 +1,168 @@
+{
+  "stage": 14,
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "reference_bytes": 6228004,
+  "slices": [
+    {
+      "name": "pool_gate",
+      "start": "0x2a560",
+      "end_exclusive": "0x2a5f8",
+      "bytes": 152,
+      "sha256": "151f28da1d42e1e60c78cd57a1a02acde384794ebf5a2020afb26cc0913e37bd",
+      "role": "predicate and literals",
+      "disassembly": "evidence/stage14/disasm/pool_gate.S",
+      "disassembly_sha256": "5b6ac8fa7b7ec845477e79e3c55241c3c5ae22c8c2ce783d15155b5a47c4bb4a"
+    },
+    {
+      "name": "stale_work",
+      "start": "0x32040",
+      "end_exclusive": "0x32528",
+      "bytes": 1256,
+      "sha256": "fa581da26c1407b00a543f8919d4b7420aac48fb53d6a951f6e9c0f3bf562855",
+      "role": "predicate plus literals; synchronization replaced by snapshot precondition",
+      "disassembly": "evidence/stage14/disasm/stale_work.S",
+      "disassembly_sha256": "761d3e3fb034d94a0ebed079aefb376f0e5dc49154355e3fab37e83cbcfc1ace"
+    },
+    {
+      "name": "signed64_to_double",
+      "start": "0x59134c",
+      "end_exclusive": "0x5913ac",
+      "bytes": 96,
+      "sha256": "4fbc34a5e5d0b52e484af28466ea60abfad1e558f87c25a5618efae3c8931118",
+      "role": "original oracle helper, NOT a new C unit",
+      "disassembly": "evidence/stage14/disasm/signed64_to_double.S",
+      "disassembly_sha256": "51545a81deaf641718ea373d90696ce316e24da20bf9891e2e268605a886af42"
+    },
+    {
+      "name": "int_double_shared_tail",
+      "start": "0x5910e4",
+      "end_exclusive": "0x591310",
+      "bytes": 556,
+      "sha256": "d0310d7f27347276ce6ecaf1f8b500e02bc0697a3a06f8575189b1f1f2432944",
+      "role": "original conversion shared code; context/helper, not reconstructed unit",
+      "disassembly": "evidence/stage14/disasm/int_double_shared_tail.S",
+      "disassembly_sha256": "72da7b7ff5cf42b7868e88dd0e89f7777657982958ab79b470b3a8cd10dfdcf3"
+    }
+  ],
+  "branch_edges": [
+    {
+      "pc": "0x320d4",
+      "target": "0x1222c",
+      "instruction_hex": "ebff8054"
+    },
+    {
+      "pc": "0x320f0",
+      "target": "0x59134c",
+      "instruction_hex": "eb157c95"
+    },
+    {
+      "pc": "0x32208",
+      "target": "0xfa0c4",
+      "instruction_hex": "eb031fad"
+    },
+    {
+      "pc": "0x3225c",
+      "target": "0xfa0c4",
+      "instruction_hex": "eb031f98"
+    },
+    {
+      "pc": "0x3226c",
+      "target": "0x5a68e8",
+      "instruction_hex": "eb15d19d"
+    },
+    {
+      "pc": "0x32294",
+      "target": "0x5a68e8",
+      "instruction_hex": "eb15d193"
+    },
+    {
+      "pc": "0x32310",
+      "target": "0x5931e4",
+      "instruction_hex": "eb1583b3"
+    },
+    {
+      "pc": "0x3233c",
+      "target": "0x10298",
+      "instruction_hex": "ebff77d5"
+    },
+    {
+      "pc": "0x3234c",
+      "target": "0x5a375c",
+      "instruction_hex": "eb15c502"
+    },
+    {
+      "pc": "0x32380",
+      "target": "0x5a375c",
+      "instruction_hex": "eb15c4f5"
+    },
+    {
+      "pc": "0x3238c",
+      "target": "0x5a6a78",
+      "instruction_hex": "eb15d1b9"
+    },
+    {
+      "pc": "0x323b4",
+      "target": "0x5a6a78",
+      "instruction_hex": "eb15d1af"
+    },
+    {
+      "pc": "0x323e4",
+      "target": "0x5931e4",
+      "instruction_hex": "eb15837e"
+    },
+    {
+      "pc": "0x32410",
+      "target": "0x10298",
+      "instruction_hex": "ebff77a0"
+    },
+    {
+      "pc": "0x32450",
+      "target": "0xfa0c4",
+      "instruction_hex": "eb031f1b"
+    },
+    {
+      "pc": "0x324a4",
+      "target": "0xfa0c4",
+      "instruction_hex": "eb031f06"
+    }
+  ],
+  "data": [
+    {
+      "address": "0x32418",
+      "size": 8,
+      "hex": "0000000000c08240",
+      "value_f64": 600.0
+    },
+    {
+      "address": "0x324c0",
+      "size": 8,
+      "hex": "0000000000001440",
+      "value_f64": 5.0
+    }
+  ],
+  "global_work_block_address": "0x610788",
+  "comparisons": {
+    "pool_gate": 1440,
+    "stale_work": 6926
+  },
+  "new_main_comparisons": 8366,
+  "separate_adapter_compositions": 408,
+  "separate_interpreter_synthetic_cases": 5768,
+  "separate_signed_conversion_cases": 264,
+  "source_paths": [
+    "src/frontend/cgminer.c"
+  ],
+  "new_support_modules": [
+    "reconstruction/support/work_freshness_snapshot.c"
+  ],
+  "new_api_headers": [
+    "include/xminer/recovery/work_freshness.h"
+  ],
+  "original_locks_implemented": false,
+  "full_reference_lifetime_recovered": false,
+  "full_consumer_recovered": false,
+  "exact_vendor_ancestor_proven": false,
+  "public_upstream_downloaded": false,
+  "remote_fork_created": false,
+  "physical_hardware_tested": false
+}

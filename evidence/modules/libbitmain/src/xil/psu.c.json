@@ -1,0 +1,87 @@
+{
+  "path": "libbitmain/src/xil/psu.c",
+  "observed_as": "/tmp/build/libbitmain/src/xil/psu.c",
+  "status": "pending-not-implemented",
+  "evidence": [
+    {
+      "address": "0x5ee139",
+      "xor": 203,
+      "decoded_length": 36,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x001165ac",
+      "end_exclusive": "0x00116804",
+      "path_references": [
+        {
+          "insn": "0x116658",
+          "string": "0x5ee139",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/psu.c"
+        },
+        {
+          "insn": "0x1166b4",
+          "string": "0x5ee139",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/psu.c"
+        },
+        {
+          "insn": "0x116778",
+          "string": "0x5ee139",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/psu.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00116814",
+      "end_exclusive": "0x00116930",
+      "path_references": [
+        {
+          "insn": "0x116898",
+          "string": "0x5ee139",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/psu.c"
+        },
+        {
+          "insn": "0x1168e0",
+          "string": "0x5ee139",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/psu.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00116930",
+      "end_exclusive": "0x001169c0",
+      "path_references": [
+        {
+          "insn": "0x116980",
+          "string": "0x5ee139",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/psu.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00116a08",
+      "end_exclusive": "0x00116dd8",
+      "path_references": [
+        {
+          "insn": "0x116af0",
+          "string": "0x5ee139",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/psu.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": []
+}

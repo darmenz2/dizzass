@@ -1,0 +1,93 @@
+{
+  "path": "libbitmain/src/stm/psu.c",
+  "observed_as": "/tmp/build/libbitmain/src/stm/psu.c",
+  "status": "pending-not-implemented",
+  "evidence": [
+    {
+      "address": "0x5edadb",
+      "xor": 103,
+      "decoded_length": 36,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x0010d74c",
+      "end_exclusive": "0x0010da5c",
+      "path_references": [
+        {
+          "insn": "0x10d7f8",
+          "string": "0x5edadb",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/stm/psu.c"
+        },
+        {
+          "insn": "0x10d904",
+          "string": "0x5edadb",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/stm/psu.c"
+        },
+        {
+          "insn": "0x10d950",
+          "string": "0x5edadb",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/stm/psu.c"
+        },
+        {
+          "insn": "0x10d9cc",
+          "string": "0x5edadb",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/stm/psu.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0010daa4",
+      "end_exclusive": "0x0010dbf0",
+      "path_references": [
+        {
+          "insn": "0x10db58",
+          "string": "0x5edadb",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/stm/psu.c"
+        },
+        {
+          "insn": "0x10dba0",
+          "string": "0x5edadb",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/stm/psu.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0010dbf0",
+      "end_exclusive": "0x0010dce8",
+      "path_references": [
+        {
+          "insn": "0x10dca0",
+          "string": "0x5edadb",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/stm/psu.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0010dd30",
+      "end_exclusive": "0x0010e0c8",
+      "path_references": [
+        {
+          "insn": "0x10de38",
+          "string": "0x5edadb",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/stm/psu.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": []
+}

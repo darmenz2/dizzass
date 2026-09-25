@@ -1,0 +1,1078 @@
+--- a/Makefile.recovery
++++ b/Makefile.recovery
+@@ -7,11 +7,11 @@
+ CPPFLAGS += -Iinclude
+ CFLAGS ?= -O2 -g
+ STRICT = -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror
+-SOURCES = libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c
+-HEADERS = include/xminer/recovery/chip1398.h include/xminer/recovery/pll.h include/xminer/recovery/aml_chip.h include/xminer/recovery/reg_cache.h reconstruction/data/reg_cache_defaults.inc
++SOURCES = libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c
++HEADERS = include/xminer/recovery/uart.h include/xminer/recovery/chip1398.h include/xminer/recovery/pll.h include/xminer/recovery/aml_chip.h include/xminer/recovery/reg_cache.h reconstruction/data/reg_cache_defaults.inc
+ OBJECTS = $(patsubst %.c,build/host/%.o,$(SOURCES))
+ ARM_OBJECTS = $(patsubst %.c,build/arm/%.o,$(SOURCES))
+-.PHONY: all test arm sanitize evidence-check clean full-runtime
++.PHONY: all test linux-pty arm sanitize sanitize-linux-pty evidence-check clean full-runtime
+ all: build/libvn135_recovered.a
+ build/host/%.o: %.c $(HEADERS)
+ 	mkdir -p $(dir $@)
+@@ -30,16 +30,32 @@
+ build/test-reg-cache: $(SOURCES) tests/test_reg_cache.c $(HEADERS)
+ 	mkdir -p build
+ 	$(CC) $(CPPFLAGS) $(CFLAGS) $(STRICT) $(SOURCES) tests/test_reg_cache.c -o $@
+-test: build/test-chip1398 build/test-pll-aml build/test-reg-cache build/libvn135_recovered.so
++build/test-uart: libbitmain/src/uart.c tests/test_uart.c include/xminer/recovery/uart.h
++	mkdir -p build
++	$(CC) $(CPPFLAGS) $(CFLAGS) $(STRICT) libbitmain/src/uart.c tests/test_uart.c -o $@
++build/test-uart-pty: libbitmain/src/uart.c libbitmain/src/aml/chip.c tests/test_uart_linux_pty.c $(HEADERS)
++	mkdir -p build
++	$(CC) $(CPPFLAGS) $(CFLAGS) $(STRICT) libbitmain/src/uart.c libbitmain/src/aml/chip.c tests/test_uart_linux_pty.c -pthread -o $@
++linux-pty: build/test-uart-pty
++	./build/test-uart-pty
++sanitize-linux-pty:
++	mkdir -p build
++	$(CC) $(CPPFLAGS) -O1 -g $(STRICT) -fsanitize=address,undefined -fno-omit-frame-pointer libbitmain/src/uart.c libbitmain/src/aml/chip.c tests/test_uart_linux_pty.c -pthread -o build/test-uart-pty-sanitized
++	ASAN_OPTIONS=detect_leaks=1 ./build/test-uart-pty-sanitized
++test: build/test-chip1398 build/test-pll-aml build/test-reg-cache build/test-uart build/libvn135_recovered.so
+ 	./build/test-chip1398
+ 	./build/test-pll-aml
+ 	./build/test-reg-cache
++	./build/test-uart
+ 	$(PYTHON) tests/test_arm_subset.py
+ 	$(PYTHON) tests/test_arm_differential.py
+ 	$(PYTHON) tests/test_stage3_interpreter.py
+ 	$(PYTHON) tests/test_stage3_differential.py
+ 	$(PYTHON) tests/test_stage4_cache_differential.py
+ 	$(PYTHON) tests/test_stage4_config_differential.py
++	$(PYTHON) tests/test_stage5_uart_differential.py
++	$(PYTHON) tests/test_stage5_aml_uart_differential.py
++	$(PYTHON) tools/check_stage5_evidence.py
+ 	$(PYTHON) tests/test_tree.py
+ arm: $(ARM_OBJECTS)
+ 	$(LLVM_AR) rcs build/libvn135_recovered-armv7.a $(ARM_OBJECTS)
+@@ -54,9 +70,12 @@
+ 	ASAN_OPTIONS=detect_leaks=0 ./build/test-pll-aml-sanitized
+ 	$(CC) $(CPPFLAGS) -O1 -g $(STRICT) -fsanitize=address,undefined -fno-omit-frame-pointer $(SOURCES) tests/test_reg_cache.c -o build/test-reg-cache-sanitized
+ 	ASAN_OPTIONS=detect_leaks=1 ./build/test-reg-cache-sanitized
++	$(CC) $(CPPFLAGS) -O1 -g $(STRICT) -fsanitize=address,undefined -fno-omit-frame-pointer libbitmain/src/uart.c tests/test_uart.c -o build/test-uart-sanitized
++	ASAN_OPTIONS=detect_leaks=1 ./build/test-uart-sanitized
+ evidence-check:
+ 	$(PYTHON) tools/check_evidence.py
+ 	$(PYTHON) tools/extract_reg_cache_defaults.py
++	$(PYTHON) tools/check_stage5_evidence.py
+ full-runtime:
+ 	@echo "NOT IMPLEMENTED: T21 runtime/model dispatch/live transport/PLL programming/PSU/autotune are incomplete." >&2
+ 	@exit 2
+--- a/RECONSTRUCTION_README_RU.md
++++ b/RECONSTRUCTION_README_RU.md
+@@ -1,93 +1,150 @@
+-# VNishNet T21 AML 1.3.5 — модульная реконструкция, Stage 4
++# VNishNet T21 AML 1.3.5 — Stage 5, модульная реконструкция
+ 
+-**Текущий этап:** кэш регистров + полный управляющий путь SET_CONFIG.
+-Дерево поверх cgminer, не монолитный файл и не готовый майнер.
++**Исходники и библиотеки, не готовая прошивка и не заменяющий cgminer бинарник.**
++Восстанавливаются отдельные проверенные участки оригинального ARM-кода на
++наблюдаемых путях исходников. Нет монолитного `.c`, симулятора майнера или
++тысяч функций, которые притворяются восстановленными и всегда возвращают успех.
+ 
+-Из 45 наблюдаемых исходных путей частично реализованы **4**, не реализован **41**.
+-В сборку входят 5 C-модулей: четыре на наблюдаемых путях и отдельный CRC5-helper.
++## Текущее состояние
+ 
+-Подробности этапа: [STAGE4_CHANGELOG_RU.md](STAGE4_CHANGELOG_RU.md).
+-Точные границы функций, оговорки ABI и сравнения:
+-[evidence/stage4/RECOVERY_NOTES.md](evidence/stage4/RECOVERY_NOTES.md).
+-Статус: [RECONSTRUCTION_STATUS.json](RECONSTRUCTION_STATUS.json).
++| Показатель | Stage 5 |
++|---|---:|
++| Наблюдаемых исходных путей | 46 |
++| Частично восстановленных наблюдаемых файлов | 5 |
++| Невосстановленных, исключённых из сборки | 41 |
++| Единиц трансляции библиотеки, включая новый CRC5-helper | 6 |
++| Сравнительных случаев, повторённый совокупный набор | 22 096 |
++| Реальный T21 майнинг, hardware acceptance, полный автотюн | Не выполнены |
+ 
+-## Модульная структура
++Количество файлов/тестов **не является процентом готовности** и не доказывает
++полноту всех ветвей или входных условий.
+ 
+-```text
+-libbitmain/src/
+-  chip/chip1398.c     # поля/пакеты PLL и регистров + SET_CONFIG с кэшем
+-  pll.c              # два восстановленных алгоритма поиска делителей
+-  aml/chip.c         # отправка кадра через callbacks, расчёт маски
+-  reg_cache.c        # init/reset/get/set/destroy
+-include/xminer/recovery/
+-  chip1398.h
+-  pll.h
+-  aml_chip.h
+-  reg_cache.h
+-reconstruction/
+-  support/crc5.c
+-  data/reg_cache_defaults.inc
+-  cgminer-overlay.am
+-```
++### Восстановленные части на исходных путях
+ 
+-Остальные наблюдаемые файлы сохраняют исходные пути, содержат явный `#error`
+-и не включаются в сборку. Пустых функций с фиктивным успехом нет. Подтверждение
+-пути не является восстановлением всего содержимого файла.
++- `libbitmain/src/chip/chip1398.c`: отдельные битовые преобразования регистров,
++  пакет SET_CONFIG, его исследованный управляющий путь и связь с кэшем.
++- `libbitmain/src/pll.c`: два расчёта делителей PLL, не замена всего физического
++  программирования PLL.
++- `libbitmain/src/aml/chip.c`: префикс `55 AA`, оболочка вызова UART-helper,
++  освобождение ресурсов и отдельное преобразование маски цепи.
++- `libbitmain/src/reg_cache.c`: семь процедур программного кэша, восемь таблиц,
++  контекст вместо оригинального глобального состояния.
++- `libbitmain/src/uart.c`: шесть процедур open/baud/read/write/flush/destroy
++  с явными callbacks вместо оригинальных внешних Linux/libc/mutex функций.
++
++Новые support-файлы, заголовки API, тесты и инструменты находятся отдельно.
++Они не выдаются за оригинальные имена/сигнатуры VNish. Невосстановленные исходные
++пути сохраняют явный `#error` и не включены в сборку. Файлы `src/backend/tuner/`,
++`src/backend/work-gen/` и `src/frontend/` пока НЕ являются реализацией майнера.
++
++Новый путь `uart.c` найден исправлением доказуемо обрезанной XOR-строки Stage 1.
++Исходная запись Stage 1 сохранена, длина 33 проверяется настоящим участком
++ARM-конструктора в локальном интерпретаторе. Все 46 путей не обязательно
++составляют весь оригинальный проект.
++
++Подробности текущего этапа: **`STAGE5_CHANGELOG_RU.md`**. Отчёты Stage 3/4
++сохранены как исторические; исправление значения «одна запись AML» находится
++в Stage 5: один вызов helper может содержать до пяти системных записей.
+ 
+ ## Сборка и тесты
+ 
+ ```sh
+ make -f Makefile.recovery clean all test arm evidence-check sanitize
++make -f Makefile.recovery linux-pty sanitize-linux-pty
+ python3 tests/test_assembler.py
++python3 tools/update_overlay_inventory.py --check
+ ```
+ 
+-Нужны Python 3.10+, C-компилятор и make. Для `arm` — Clang/llvm-ar;
+-объекты ARMv7-A/A32 hard-float freestanding, без Linux sysroot. Для тестов
+-сборщика нужен Git. Зависимостей pip у сравнительных тестов нет.
++Нужны Python 3.10+ для инструмента сборки, **Python 3.10+ с randbytes** для тестов,
++C11-компилятор, Clang и llvm-ar для ARM-цели. Linux PTY-тесту также нужны заголовки
++ядра Linux, pthread и рабочий `/dev/ptmx`. Проверенное окружение: Python 3.13.5,
++GCC 14.2.0, Clang 17.0.0, Linux x86-64.
+ 
+-Выход: `build/libvn135_recovered.a`, `build/libvn135_recovered-armv7.a`.
+-**Это библиотеки, не ARM-исполняемый cgminer.** Цель `full-runtime` остаётся
+-заблокированной. Успешная компиляция не считается подтверждением майнинга.
++Выходные файлы:
+ 
+-Сравнительные наборы: 2 546 Stage 2 + 3 219 Stage 3 + 10 346 кэш Stage 4 +
+-2 048 SET_CONFIG Stage 4 = **18 159**. Метод — локальный ограниченный ARM
+-интерпретатор; внешние операции явно подменены, физическая плата не тестировалась.
+-Дополнительные native C-проверки и sanitizer-проверки не добавлены в этот счётчик.
++```text
++build/libvn135_recovered.a          host-библиотека
++build/libvn135_recovered-armv7.a    ARMv7-A/A32 freestanding библиотека
++build/*results.json               машинные протоколы сравнений
++```
+ 
+-## Наложение на исходный cgminer
++ARM собирается с `--target=armv7-none-eabihf`, hard-float calling convention,
++без Linux sysroot. Это **не ARM Linux executable**. Совпадение исходных структур
++на 64-битном host и original ARM ABI не предполагается.
+ 
+-Сохраняется зафиксированная публичная база `ckolivas/cgminer`, commit
+-`b8491c66e7e22f23a9edf095dd1337ee581e88bd`; это выбранная интеграционная база,
+-не доказанный точный исходный предок VNish. Upstream целиком не включён.
+-Полная совместная сборка upstream на этом этапе не выполнялась.
++Совокупный сравнительный набор: 18 159 прежних случаев + 3 248 UART + 689
++совмещённых AML/UART. Новые случаи повторены на Clang; это не новые уникальные
++случаи. Прежние 1 318 синтетических проверок интерпретатора идут отдельно.
++ASan/UBSan проверяют native C-тесты, не заявляются для всех ctypes случаев.
++
++Сравнение выполняет исходные инструкции в ограниченном локальном A32/VFP-
++интерпретаторе, с явно подменёнными внешними вызовами. Диагностика пропускается.
++Неизвестная инструкция, выход за память, превышение лимита шагов или исключение
++callback останавливают проверку. Это не независимый CPU-эмулятор и не доказательство
++многопоточности/таймингов/поведения железа.
++
++Linux PTY-тест отдельно вызывает настоящее ядро для созданной им виртуальной
++пары. Проверены скорость/атрибуты, фрагменты RX и байты TX; он не воспроизводит
++физический интерфейс или ответы ASIC. Оригинальный ELF не запускается как процесс.
++
++## Ограничения UART, которые нельзя потерять при интеграции
++
++`vn135_uart_write_legacy` сохраняет оригинальные повторы **всего** буфера.
++Неполный результат со старым `errno == EAGAIN` тоже может привести к повтору.
++Это не безопасный write-all. У `vn135_uart_read` ошибка FIONREAD возвращает 0,
++как пустая очередь. Ошибки позднего open требуют явного destroy. В оригинале
++результаты mutex-init/strdup не являются немедленным условием отказа; безопасный
++производственный адаптер должен определить отдельную политику.
++
++Внешний mutex AML и внутренний UART mutex не следует без анализа объединять.
++Новая библиотека не подключена по умолчанию к физическим устройствам. Для
++производственного запуска необходимы законченные аппаратные протоколы и стенд.
++
++## Поверх обычного cgminer
++
++Зафиксирован public upstream `ckolivas/cgminer`, commit
++`b8491c66e7e22f23a9edf095dd1337ee581e88bd` в `reconstruction/upstream.lock.json`.
++Это выбранная основа, **не доказанный точный предок** VNish.
++Полная база пока не включена; повторное скачивание Stage 5 остановилось на ошибке
++DNS. Полная сборка upstream с overlay здесь не проводилась.
+ 
+ ```sh
+ python3 tools/assemble_on_cgminer.py --fetch --output ../cgminer-vnish135
+-# либо чистый checkout закреплённого commit:
++# либо уже имеющийся чистый checkout зафиксированного commit:
+ python3 tools/assemble_on_cgminer.py --source /path/to/cgminer --output ../cgminer-vnish135
+ ```
+ 
+-Создаётся новая папка. Исходный checkout не изменяется; при совпадении файлов
+-скрипт останавливается. В Makefile.am добавляется подключение восстановленных
+-модулей, но настоящий runtime-драйвер T21 пока не зарегистрирован.
++Сборщик создаёт новую папку, проверяет commit/tree/Makefile.am и контрольные суммы
++всех файлов overlay. Существующий checkout не изменяется. Совпадения файлов
++вызывают отказ, не скрытую перезапись. В Makefile.am добавляется один include;
++исходные `cgminer.c`, `api.c`, Stratum, старые драйверы и авторство не заменяются.
+ 
+-## Существенные ограничения
++Это подключение вспомогательных модулей на этапе линковки, **не регистрация
++рабочего T21-драйвера**. Проверка сборщика на локальной Git-фикстуре не равна
++сборке самого upstream.
+ 
+-Кэш — не измерение аппаратного состояния. SET_CONFIG сначала отправляет команду,
+-а затем обновляет кэш; -1 может вернуться уже после успешной отправки. Такой
+-вызов нельзя автоматически повторять. Успех записи байтов не равен ответу чипа.
+-Обработчик реального UART по умолчанию отсутствует.
++## Доказательства
+ 
+-Таблицы восьми внутренних селекторов — извлечённые данные, а не рекомендованные
+-настройки T21. Привязка T21 к chip1398 пока не доказана. Сериализация доступа к
+-кэшу возложена на вызывающий код. Оригинальные диагностические сообщения и
+-XOR-конструкторы кэша не воссоздавались; имена функций и интеграционные типы новые.
++- `reference/cgminer.vendor.elf`: неизменённые 6 228 004 байта.
++- SHA-256: `b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9`.
++- `evidence/source-tree.json` и `evidence/modules/`: пути, статусы и ссылки.
++- `evidence/verified-slices.json`: хеши 26 проверяемых участков кода и 9 записей данных.
++- `evidence/stage5/`: листинги UART, поправка длины исходной строки и примечания.
++- `evidence/validation/stage5/`: GCC/Clang протоколы этого этапа.
++- `evidence/ehabi-ranges.json`: 1 570 unwind-записей, **не список всех функций**.
+ 
+-Ещё не восстановлены полный аппаратный RX/запуск цепей, PSU/датчики/защиты,
+-тракт заданий/nonce и состояния автотюна. Ни ASIC, ни сервер, ни пул не изменялись.
++Извлечение reference из пользовательского образа:
+ 
+-Оригинальный ELF: `reference/cgminer.vendor.elf`, SHA-256
+-`b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9`.
+-Подробности предшествующего этапа сохранены в `evidence/stage3/README_AT_STAGE3_RU.md`.
++```sh
++python3 tools/extract_reference.py /path/to/vnishnet-t21-aml-nand-v1.3.5.tar.gz
++```
+ 
+-**Не устанавливать библиотеку вместо штатного cgminer.**
++## Осталось
++
++Связь модели T21 с конкретным chip-драйвером, аппаратная инициализация и приём
++с разбором протокола, управление PLL/baud на двух концах, PSU/датчики/защиты,
++работа → nonce → подтверждённая пулом шара, адаптер драйвера cgminer и автотюн.
++`dashd`, `hwscan`, `updater`, WebUI и ядро не восстанавливаются этим overlay целиком.
++
++**Не устанавливать библиотеку вместо `/usr/bin/cgminer`. `full-runtime`
++намеренно выдаёт ошибку: полноценный майнер ещё не реализован.**
+--- a/include/xminer/recovery/aml_chip.h
++++ b/include/xminer/recovery/aml_chip.h
+@@ -16,7 +16,10 @@
+     void (*release)(void *context, void *ptr);
+     void (*lock)(void *context);
+     void (*unlock)(void *context);
+-    /* Must attempt one write only and return its signed byte count. */
++    /* Called ONCE by this AML layer and returns the helper's signed count.
++     * The original target is UART helper 0x10e6c0, which CAN internally retry
++     * whole buffers. A direct write-once adapter is a different lower-layer
++     * policy. See vn135_uart_write_legacy and Stage 5 composition tests. */
+     int32_t (*write)(void *context, void *uart, const uint8_t *bytes, uint32_t size);
+ } vn135_aml_transport;
+ 
+@@ -28,8 +31,10 @@
+     uint8_t *out, size_t capacity);
+ /* Reconstructed observable flow of 0x117f7c with external operations injected.
+  * 0 on exact-length write; -1 on missing uart, allocation failure, short/error
+- * write; -2 on invalid API inputs. One write, always unlock/free afterward.
++ * write; -2 on invalid API inputs. One helper invocation, always unlock/free afterward.
+  * Original diagnostic logging is outside this API.
++ * If write calls a locking UART helper, do not reuse its nonrecursive mutex
++ * as this outer layer's lock; the original uses two distinct mutexes.
+  */
+ int vn135_aml_send_command(void *uart, const vn135_aml_transport *transport,
+     const uint8_t *payload, size_t length);
+--- /dev/null
++++ b/include/xminer/recovery/uart.h
+@@ -0,0 +1,73 @@
++/* SPDX-License-Identifier: GPL-3.0-only
++ * New integration API for the recovered libbitmain/src/uart.c routines.
++ * This is NOT the original vendor ABI. No operations run without callbacks.
++ */
++#ifndef VN135_RECOVERY_UART_H
++#define VN135_RECOVERY_UART_H
++#include <stdint.h>
++#include <stddef.h>
++#include <stdbool.h>
++
++#define VN135_UART_TCGETS2 UINT32_C(0x802c542a)
++#define VN135_UART_TCSETS2 UINT32_C(0x402c542b)
++#define VN135_UART_FIONREAD UINT32_C(0x541b)
++#define VN135_UART_OPEN_FLAGS UINT32_C(0x902)
++#define VN135_UART_EAGAIN 11
++
++/* The 44-byte ARM Linux kernel termios2 record observed in this binary.
++ * Not libc struct termios. OS adapters must verify layout and ioctl constants.
++ */
++typedef struct {
++    uint32_t input_flags, output_flags, control_flags, local_flags;
++    uint8_t line, control_chars[19];
++    uint32_t input_speed, output_speed;
++} vn135_uart_attributes;
++_Static_assert(sizeof(vn135_uart_attributes) == 44, "termios2 size");
++_Static_assert(offsetof(vn135_uart_attributes, input_speed) == 36, "termios2 speeds");
++_Static_assert(offsetof(vn135_uart_attributes, control_chars) == 17, "termios2 cc");
++
++typedef struct {
++    char *path;
++    int32_t fd;
++    uint32_t baud;
++    bool mutex_ready; /* New lifecycle guard, not an original field. */
++} vn135_uart;
++#define VN135_UART_INITIALIZER { NULL, -1, 0, false }
++
++typedef struct {
++    void *context;
++    int32_t (*open)(void *, const char *, uint32_t);
++    char *(*duplicate)(void *, const char *);
++    void (*release)(void *, void *);
++    int32_t (*ioctl)(void *, int32_t, uint32_t, void *);
++    int32_t (*read)(void *, int32_t, uint8_t *, uint32_t);
++    int32_t (*write)(void *, int32_t, const uint8_t *, uint32_t);
++    int32_t *(*error_number)(void *);
++    int32_t (*close)(void *, int32_t);
++    int32_t (*flush)(void *, int32_t, int32_t);
++    int32_t (*mutex_init)(void *);
++    void (*lock)(void *);
++    void (*unlock)(void *);
++    void (*mutex_destroy)(void *);
++    void (*sleep_ms)(void *, uint32_t);
++} vn135_uart_ops;
++
++/* 0x10e0c8. Start with VN135_UART_INITIALIZER; a partial failure after open
++ * deliberately retains fd/path until destroy, as in the inspected original.
++ * New API rejects occupied contexts and missing callbacks with -2. */
++int vn135_uart_open(vn135_uart *, const vn135_uart_ops *, const char *);
++/* 0x10e518; does not program ASIC chip baud, only the host UART. */
++int vn135_uart_set_baud(vn135_uart *, const vn135_uart_ops *, uint32_t);
++/* 0x10e938: ioctl failure and an empty input queue both return zero. */
++int32_t vn135_uart_read(vn135_uart *, const vn135_uart_ops *, uint8_t *, size_t);
++/* 0x10e6c0: fidelity-only legacy behavior. Five whole-buffer write attempts
++ * at most, with sleep(20) after each non-full result while errno == 11,
++ * INCLUDING a final sleep when attempts are exhausted. Positive short writes
++ * with stale errno==11 can replay the prefix. Not a safe write-all primitive.
++ * Do not wire into live command delivery without reviewing this contract. */
++int32_t vn135_uart_write_legacy(vn135_uart *, const vn135_uart_ops *, const uint8_t *, size_t);
++/* 0x10e994. Flush direction 2 = both queues for the inspected Linux ABI. */
++int32_t vn135_uart_flush(vn135_uart *, const vn135_uart_ops *);
++/* 0x10e9a0. Call only after all concurrent users have stopped. */
++int vn135_uart_destroy(vn135_uart *, const vn135_uart_ops *);
++#endif
+--- a/libbitmain/src/aml/chip.c
++++ b/libbitmain/src/aml/chip.c
+@@ -1,8 +1,9 @@
+ /* SPDX-License-Identifier: GPL-3.0-only
+  * Partial reconstruction from /tmp/build/libbitmain/src/aml/chip.c.
+- * 0x117f7c: framed command allocation, serialization, one write, cleanup.
++ * 0x117f7c: framed command allocation, serialization, one UART-helper call, cleanup.
+  * 0x118180: mask calculation with the chip lookup factored into an input.
+- * Diagnostics, concrete UART implementation, and GPIO effects not restored.
++ * Diagnostics and GPIO effects not restored here. The helper at 0x10e6c0
++ * is recovered separately in uart.c; it may issue multiple OS writes.
+  */
+ #include "xminer/recovery/aml_chip.h"
+ #include <limits.h>
+--- /dev/null
++++ b/libbitmain/src/uart.c
+@@ -0,0 +1,96 @@
++/* SPDX-License-Identifier: GPL-3.0-only
++ * Partial source reconstruction: /tmp/build/libbitmain/src/uart.c.
++ * Source path verified by decoding 33 bytes at 0x5edbbf with XOR 0xaa.
++ * The Stage 1 heuristic truncated that path at 11 bytes; it is not a new
++ * invented vendor filename. Original syscall/mutex/logging implementations
++ * are replaced by explicit integration callbacks. Diagnostics are omitted.
++ */
++#include "xminer/recovery/uart.h"
++#include <limits.h>
++
++int vn135_uart_set_baud(vn135_uart *u, const vn135_uart_ops *o, uint32_t baud)
++{
++    if (!u || !o || !o->ioctl) return -2;
++    vn135_uart_attributes a;
++    if (o->ioctl(o->context, u->fd, VN135_UART_TCGETS2, &a) != 0) return -1;
++    a.control_flags = (a.control_flags & UINT32_C(0xeff0eff0)) | UINT32_C(0x10001000);
++    a.input_speed = baud;
++    a.output_speed = baud;
++    if (o->ioctl(o->context, u->fd, VN135_UART_TCSETS2, &a) != 0) return -1;
++    u->baud = baud;
++    return 0;
++}
++
++int vn135_uart_open(vn135_uart *u, const vn135_uart_ops *o, const char *path)
++{
++    if (!u || !o || !path || !o->open || !o->duplicate || !o->release ||
++        !o->ioctl || !o->close || !o->mutex_init || !o->mutex_destroy) return -2;
++    if (u->fd != -1 || u->path || u->mutex_ready) return -2;
++    int32_t fd = o->open(o->context, path, VN135_UART_OPEN_FLAGS);
++    if (fd < 0) return -1;
++    /* Original ignores mutex_init and strdup failure. Preserve that here;
++     * a production wrapper may add fail-closed admission before use. */
++    (void)o->mutex_init(o->context);
++    u->mutex_ready = true;
++    u->path = o->duplicate(o->context, path);
++    u->fd = fd;
++    u->baud = 0;
++    vn135_uart_attributes a;
++    if (o->ioctl(o->context, fd, VN135_UART_TCGETS2, &a) != 0) return -1;
++    a.input_flags &= UINT32_C(0xfffffa14);
++    a.output_flags &= UINT32_C(0xfffffffe);
++    a.control_flags = (a.control_flags & ~UINT32_C(0x9b0)) | UINT32_C(0x8b0);
++    a.local_flags &= UINT32_C(0xffff7fb4);
++    a.control_chars[5] = 0;
++    a.control_chars[6] = 7;
++    if (o->ioctl(o->context, fd, VN135_UART_TCSETS2, &a) != 0) return -1;
++    return vn135_uart_set_baud(u, o, 115200);
++}
++
++int32_t vn135_uart_read(vn135_uart *u, const vn135_uart_ops *o, uint8_t *out, size_t n)
++{
++    if (!u || !o || !o->ioctl || !o->read || (!out && n) || n > (size_t)INT32_MAX) return -2;
++    int32_t available = 0;
++    if (o->ioctl(o->context, u->fd, VN135_UART_FIONREAD, &available) != 0 || available == 0) return 0;
++    /* No clamp to 'available' in the original; callback receives requested n. */
++    return o->read(o->context, u->fd, out, (uint32_t)n);
++}
++
++int32_t vn135_uart_write_legacy(vn135_uart *u, const vn135_uart_ops *o, const uint8_t *data, size_t n)
++{
++    if (!u || !o || !o->write || !o->lock || !o->unlock || !o->error_number ||
++        !o->sleep_ms || (!data && n) || n > (size_t)INT32_MAX) return -2;
++    int32_t result = -1;
++    int32_t *error = NULL;
++    for (unsigned attempt = 0; attempt < 5; ++attempt) {
++        o->lock(o->context);
++        result = o->write(o->context, u->fd, data, (uint32_t)n);
++        o->unlock(o->context);
++        if (result == (int32_t)n) return (int32_t)n;
++        if (!error) {
++            error = o->error_number(o->context);
++            if (!error) return -2; /* New API guard. */
++        }
++        if (*error != VN135_UART_EAGAIN) return result;
++        o->sleep_ms(o->context, 20);
++    }
++    return result;
++}
++
++int32_t vn135_uart_flush(vn135_uart *u, const vn135_uart_ops *o)
++{
++    if (!u || !o || !o->flush) return -2;
++    return o->flush(o->context, u->fd, 2);
++}
++
++int vn135_uart_destroy(vn135_uart *u, const vn135_uart_ops *o)
++{
++    if (!u || !o || !o->release || !o->close || !o->mutex_destroy) return -2;
++    if (u->path) { o->release(o->context, u->path); u->path = NULL; }
++    if (u->fd >= 0) { (void)o->close(o->context, u->fd); u->fd = -1; }
++    /* Guard repeated destruction in the new API, unlike unconditional call
++     * in the original. First destruction of an initialized context matches. */
++    if (u->mutex_ready) { o->mutex_destroy(o->context); u->mutex_ready = false; }
++    u->baud = 0;
++    return 0;
++}
+--- a/reconstruction/cgminer-overlay.am
++++ b/reconstruction/cgminer-overlay.am
+@@ -2,7 +2,9 @@
+ # Only offline-verified modules are linked. This DOES NOT register a T21 driver.
+ cgminer_CFLAGS = $(AM_CFLAGS) -ffp-contract=off
+ cgminer_CPPFLAGS += -I$(top_srcdir)/include
+-cgminer_SOURCES += libbitmain/src/chip/chip1398.c \
++cgminer_SOURCES += libbitmain/src/uart.c \
++                   include/xminer/recovery/uart.h \
++                   libbitmain/src/chip/chip1398.c \
+                    libbitmain/src/pll.c \
+                    libbitmain/src/reg_cache.c \
+                    libbitmain/src/aml/chip.c \
+--- /dev/null
++++ b/tests/test_stage5_aml_uart_differential.py
+@@ -0,0 +1,116 @@
++#!/usr/bin/env python3
++"""Original AML TX + UART TX together, versus recovered C composition.
++Original 0x10e6c0 is NOT intercepted: nested retries, sleeps and mutex calls
++execute in the local instruction interpreter. Actual libc/syscalls are hooks.
++"""
++from pathlib import Path
++import ctypes as C
++import hashlib,json,random,sys,time,collections
++ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'tools'))
++from elf32 import ELF32
++from arm32_subset import ARM32,signed
++callback_failures=[]
++sys.unraisablehook=lambda e: callback_failures.append(repr(e.exc_value))
++elf=ELF32(ROOT/'reference/cgminer.vendor.elf')
++SHA='b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9'
++assert hashlib.sha256(elf.data).hexdigest()==SHA
++lib=C.CDLL(str(ROOT/'build/libvn135_recovered.so'))
++P=C.c_void_p;I=C.c_int32;U=C.c_uint32;Z=C.c_size_t
++class Uart(C.Structure):_fields_=[('path',P),('fd',I),('baud',U),('ready',C.c_bool)]
++OPEN=C.CFUNCTYPE(I,P,P,U);DUP=C.CFUNCTYPE(P,P,P);FREE=C.CFUNCTYPE(None,P,P)
++IOCTL=C.CFUNCTYPE(I,P,I,U,P);RW=C.CFUNCTYPE(I,P,I,P,U);ERR=C.CFUNCTYPE(P,P)
++CLOSE=C.CFUNCTYPE(I,P,I);FLUSH=C.CFUNCTYPE(I,P,I,I);INIT=C.CFUNCTYPE(I,P)
++VOID=C.CFUNCTYPE(None,P);SLEEP=C.CFUNCTYPE(None,P,U)
++class Ops(C.Structure):
++    _fields_=[('context',P),('open',OPEN),('duplicate',DUP),('release',FREE),('ioctl',IOCTL),('read',RW),('write',RW),('error_number',ERR),('close',CLOSE),('flush',FLUSH),('mutex_init',INIT),('lock',VOID),('unlock',VOID),('mutex_destroy',VOID),('sleep_ms',SLEEP)]
++ALLOC=C.CFUNCTYPE(P,P,Z);AMLWRITE=C.CFUNCTYPE(I,P,P,P,U)
++class Aml(C.Structure):_fields_=[('context',P),('allocate',ALLOC),('release',FREE),('lock',VOID),('unlock',VOID),('write',AMLWRITE)]
++lib.vn135_aml_send_command.argtypes=[P,C.POINTER(Aml),P,Z];lib.vn135_aml_send_command.restype=I
++lib.vn135_uart_write_legacy.argtypes=[C.POINTER(Uart),C.POINTER(Ops),P,Z];lib.vn135_uart_write_legacy.restype=I
++m=ARM32(elf);OBJ=m.DATA_BASE;BUF=OBJ+0x1000;HEAP=OBJ+0x3000;ERRPTR=OBJ+0x5000
++outer=(0x1180c8+8+int.from_bytes(elf.read(0x11817c,4),'little'))&0xffffffff
++assert outer!=OBJ
++rng=random.Random(0x1350506);cases=collections.Counter();examples=[];beg=time.monotonic()
++def original(payload,scenario):
++    trace=[];index=0;n=len(payload)+2
++    m.reset((0 if scenario=='no_uart' else OBJ,BUF,len(payload)))
++    m.mem[OBJ:OBJ+40]=b'\0'*40;m.write(OBJ+32,17)
++    m.mem[BUF:BUF+len(payload)]=payload;m.write(ERRPTR,11)
++    def malloc(mm):
++        assert mm.r[0]==n;trace.append(['allocate',n]);mm.r[0]=0 if scenario=='no_memory' else HEAP
++    def copy(mm):
++        dst,src,size=mm.r[:3];assert(dst,src,size)==(HEAP+2,BUF,len(payload))
++        mm.mem[dst:dst+size]=mm.mem[src:src+size];mm.r[0]=dst
++    def lock(mm):
++        assert mm.r[0] in (OBJ,outer);trace.append(['lock','inner' if mm.r[0]==OBJ else 'outer']);mm.r[0]=0
++    def unlock(mm):
++        assert mm.r[0] in (OBJ,outer);trace.append(['unlock','inner' if mm.r[0]==OBJ else 'outer']);mm.r[0]=0
++    def write(mm):
++        nonlocal index
++        assert(mm.r[0],mm.r[1],mm.r[2])==(17,HEAP,n)
++        trace.append(['write',bytes(mm.mem[HEAP:HEAP+n]).hex()])
++        rc,e=outcomes(scenario,n)[index];index+=1
++        if e is not None:mm.write(ERRPTR,e)
++        mm.r[0]=rc&0xffffffff
++    def err(mm):trace.append(['errno_pointer']);mm.r[0]=ERRPTR
++    def sleep(mm):assert mm.r[0]==20;trace.append(['sleep_ms',20]);mm.r[0]=0
++    def free(mm):assert mm.r[0]==HEAP;trace.append(['release']);mm.r[0]=0
++    rc=signed(m.run(0x117f7c,hooks={0x5940ec:malloc,0x5a2ee8:copy,0x5a6108:lock,0x5a66c4:unlock,0x5a8684:write,0x5931e4:err,0x10ef3c:sleep,0x593c8c:free,0xfa0c4:lambda _:None},max_steps=10000))
++    return rc,trace
++
++def outcomes(s,n):
++    return {'exact':[(n,None)],'eagain_then_success':[(-1,11),(n,None)],
++      'exhausted':[(-1,11)]*5,'positive_short_stale_errno':[(1,None),(n,None)],
++      'short_nonretry':[(1,5)],'hard_error':[(-1,5)],'zero_exhausted':[(0,11)]*5,
++      'interrupted':[(-1,4)],'overreport':[(n+1,0)],'late_success':[(-1,11)]*4+[(n,None)],
++      'changed_error':[(-1,11),(-1,9)],'no_uart':[],'no_memory':[]}[s]
++
++def recovered(payload,scenario):
++    trace=[];index=0;error=I(11);n=len(payload)+2
++    storage=C.create_string_buffer(n);src=C.create_string_buffer(payload);u=Uart(None,17,115200,True)
++    @RW
++    def write(_,fd,buf,count):
++        nonlocal index
++        assert fd==17 and count==n;trace.append(['write',C.string_at(buf,count).hex()])
++        rc,e=outcomes(scenario,n)[index];index+=1
++        if e is not None:error.value=e
++        return rc
++    @ERR
++    def err(_):trace.append(['errno_pointer']);return C.addressof(error)
++    @VOID
++    def innerlock(_):trace.append(['lock','inner'])
++    @VOID
++    def innerunlock(_):trace.append(['unlock','inner'])
++    @SLEEP
++    def sleep(_,ms):trace.append(['sleep_ms',ms])
++    o=Ops();o.write=write;o.error_number=err;o.lock=innerlock;o.unlock=innerunlock;o.sleep_ms=sleep
++    @ALLOC
++    def alloc(_,size):assert size==n;trace.append(['allocate',size]);return None if scenario=='no_memory' else C.addressof(storage)
++    @FREE
++    def free(_,address):assert address==C.addressof(storage);trace.append(['release'])
++    @VOID
++    def outerlock(_):trace.append(['lock','outer'])
++    @VOID
++    def outerunlock(_):trace.append(['unlock','outer'])
++    @AMLWRITE
++    def uartwrite(_,uart,buf,count):
++        assert uart==C.addressof(u)
++        return lib.vn135_uart_write_legacy(C.byref(u),C.byref(o),buf,count)
++    a=Aml(None,alloc,free,outerlock,outerunlock,uartwrite)
++    rc=lib.vn135_aml_send_command(None if scenario=='no_uart' else C.byref(u),C.byref(a),src,len(payload))
++    return rc,trace
++
++for scenario in ['exact','eagain_then_success','exhausted','positive_short_stale_errno','short_nonretry','hard_error','zero_exhausted','interrupted','overreport','late_success','changed_error','no_uart','no_memory']:
++    for length in [0,1,2,7,9,10,11,16,64,128,255,256,1024]+[rng.randrange(1025) for _ in range(40)]:
++        payload=rng.randbytes(length)
++        old=original(payload,scenario);new=recovered(payload,scenario)
++        assert old==new,(scenario,length,old,new);cases[scenario]+=1
++        if length==9:examples.append({'scenario':scenario,'payload':payload.hex(),'return':new[0],'trace':new[1]})
++result={'passed':True,'total_cases':sum(cases.values()),'cases':dict(cases),'reference_sha256':SHA,'elapsed_seconds':round(time.monotonic()-beg,3),
++ 'examples':examples,'executed_original_routines':['0x117f7c','0x10e6c0'],
++ 'method':'Original AML send executes original UART write; C AML callback composes recovered UART. Final OS write, allocation, locks, delay and logging intercepted.',
++ 'correction_to_stage3':'AML invokes its UART helper once, not necessarily the OS write once. The helper can retry the entire frame up to five times.',
++ 'hardware_tested':False,'mutex_concurrency_tested':False,'physical_uart_tested':False}
++assert not callback_failures, callback_failures
++(ROOT/'build/stage5-aml-uart-differential-results.json').write_text(json.dumps(result,indent=2)+'\n')
++print(json.dumps({k:result[k] for k in ['passed','total_cases','cases','elapsed_seconds']},indent=2))
+--- /dev/null
++++ b/tests/test_stage5_uart_differential.py
+@@ -0,0 +1,224 @@
++#!/usr/bin/env python3
++"""Stage 5: compare UART C against original ARM bytes with traced syscall hooks.
++Not a UART device test. No target ELF is executed as a host/Linux process.
++"""
++from pathlib import Path
++import ctypes as C
++import hashlib, json, random, struct, sys, time
++ROOT = Path(__file__).resolve().parents[1]
++sys.path.insert(0, str(ROOT/'tools'))
++from elf32 import ELF32
++from arm32_subset import ARM32, signed
++SHA = 'b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9'
++callback_failures=[]
++sys.unraisablehook=lambda e: callback_failures.append(repr(e.exc_value))
++elf = ELF32(ROOT/'reference/cgminer.vendor.elf')
++assert hashlib.sha256(elf.data).hexdigest() == SHA
++lib = C.CDLL(str(ROOT/'build/libvn135_recovered.so'))
++P = C.c_void_p; I = C.c_int32; U = C.c_uint32; Z = C.c_size_t
++class Uart(C.Structure):
++    _fields_=[('path',P),('fd',I),('baud',U),('ready',C.c_bool)]
++OPEN=C.CFUNCTYPE(I,P,P,U); DUP=C.CFUNCTYPE(P,P,P); FREE=C.CFUNCTYPE(None,P,P)
++IOCTL=C.CFUNCTYPE(I,P,I,U,P); RW=C.CFUNCTYPE(I,P,I,P,U)
++ERR=C.CFUNCTYPE(P,P); CLOSE=C.CFUNCTYPE(I,P,I); FLUSH=C.CFUNCTYPE(I,P,I,I)
++INIT=C.CFUNCTYPE(I,P); VOID=C.CFUNCTYPE(None,P); SLEEP=C.CFUNCTYPE(None,P,U)
++class Ops(C.Structure):
++    _fields_=[('context',P),('open',OPEN),('duplicate',DUP),('release',FREE),('ioctl',IOCTL),
++        ('read',RW),('write',RW),('error_number',ERR),('close',CLOSE),('flush',FLUSH),
++        ('mutex_init',INIT),('lock',VOID),('unlock',VOID),('mutex_destroy',VOID),('sleep_ms',SLEEP)]
++for name,args in {
++ 'open':[C.POINTER(Uart),C.POINTER(Ops),C.c_char_p],
++ 'set_baud':[C.POINTER(Uart),C.POINTER(Ops),U],
++ 'read':[C.POINTER(Uart),C.POINTER(Ops),P,Z],
++ 'write_legacy':[C.POINTER(Uart),C.POINTER(Ops),P,Z],
++ 'flush':[C.POINTER(Uart),C.POINTER(Ops)],
++ 'destroy':[C.POINTER(Uart),C.POINTER(Ops)]}.items():
++ fn=getattr(lib,'vn135_uart_'+name);fn.argtypes=args;fn.restype=I
++m=ARM32(elf); BASE=m.DATA_BASE; OBJ=BASE; BUF=BASE+0x1000; PATH=BASE+0x3000; HEAP=BASE+0x4000; ERRADDR=BASE+0x5000
++PATH_BYTES=b'/dev/ttyTEST\x00'
++GET=0x802c542a;SET=0x402c542b;AVAIL=0x541b
++rng=random.Random(0x1350505);counts={};samples=[];start=time.monotonic()
++def record(k):counts[k]=counts.get(k,0)+1
++
++def old_run(op,sc):
++    trace=[];attrs=bytearray(sc['attrs']);ioindex=0;windex=0
++    m.reset();m.mem[OBJ:OBJ+64]=b'\0'*64
++    m.write(OBJ+28,HEAP if sc.get('owned') else 0);m.write(OBJ+32,sc.get('fd',42));m.write(OBJ+36,sc.get('baud',921600))
++    m.mem[PATH:PATH+len(PATH_BYTES)]=PATH_BYTES
++    m.mem[HEAP:HEAP+len(PATH_BYTES)]=PATH_BYTES
++    payload=sc.get('payload',b'');m.mem[BUF:BUF+max(64,len(payload))]=b'\xa5'*max(64,len(payload))
++    if op=='write_legacy':m.mem[BUF:BUF+len(payload)]=payload
++    m.write(ERRADDR,sc.get('errno',0))
++    def open_(mm):
++        assert mm.r[0]==PATH;trace.append(['open',PATH_BYTES[:-1].decode(),mm.r[1]])
++        mm.r[0]=sc.get('open_rc',42)&0xffffffff
++    def dup(mm):
++        assert mm.r[0]==PATH;trace.append(['duplicate']);mm.r[0]=0 if sc.get('duplicate_fail') else HEAP
++    def init(mm):
++        assert mm.r[0]==OBJ and mm.r[1]==0;trace.append(['mutex_init']);mm.r[0]=sc.get('mutex_init_rc',0)&0xffffffff
++    def ioctl(mm):
++        nonlocal ioindex
++        fd,req,p=mm.r[:3];rc=sc.get('ioctl_results',[0]*8)[ioindex];ioindex+=1
++        if req==GET:
++            trace.append(['get_attributes',signed(fd)])
++            if rc==0:mm.mem[p:p+44]=attrs
++        elif req==SET:
++            value=bytes(mm.mem[p:p+44]);trace.append(['set_attributes',signed(fd),value.hex()])
++            if rc==0:attrs[:]=value
++        elif req==AVAIL:
++            trace.append(['available',signed(fd)]);mm.write(p,sc.get('available',0))
++        else:raise AssertionError(hex(req))
++        mm.r[0]=rc&0xffffffff
++    def read_(mm):
++        fd,p,n=mm.r[:3];trace.append(['read',signed(fd),n]);rc=sc['read_rc']
++        if rc>0:mm.mem[p:p+rc]=payload[:rc]
++        mm.r[0]=rc&0xffffffff
++    def lock(mm):assert mm.r[0]==OBJ;trace.append(['lock']);mm.r[0]=0
++    def unlock(mm):assert mm.r[0]==OBJ;trace.append(['unlock']);mm.r[0]=0
++    def write(mm):
++        nonlocal windex
++        fd,p,n=mm.r[:3];assert p==BUF
++        trace.append(['write',signed(fd),n,bytes(mm.mem[p:p+n]).hex()])
++        rc,err=sc['writes'][windex];windex+=1
++        if err is not None:mm.write(ERRADDR,err)
++        mm.r[0]=rc&0xffffffff
++    def err(mm):trace.append(['errno_pointer']);mm.r[0]=ERRADDR
++    def sleep(mm):
++        trace.append(['sleep_ms',mm.r[0]])
++        if sc.get('sleep_errno') is not None:mm.write(ERRADDR,sc['sleep_errno'])
++        mm.r[0]=0
++    def free(mm):assert mm.r[0]==HEAP;trace.append(['release']);mm.r[0]=0
++    def close(mm):trace.append(['close',signed(mm.r[0])]);mm.r[0]=sc.get('close_rc',0)&0xffffffff
++    def destroy(mm):assert mm.r[0]==OBJ;trace.append(['mutex_destroy']);mm.r[0]=0
++    def flush(mm):trace.append(['flush',signed(mm.r[0]),signed(mm.r[1])]);mm.r[0]=sc.get('flush_rc',0)&0xffffffff
++    hooks={0x5936dc:open_,0x5a38a0:dup,0x5a60dc:init,0x597550:ioctl,
++      0x5a8498:read_,0x5a8684:write,0x5931e4:err,0x5a6108:lock,0x5a66c4:unlock,
++      0x10ef3c:sleep,0x593c8c:free,0x5a811c:close,0x5a60b8:destroy,0x5a4334:flush,
++      0xfa0c4:lambda mm:None}
++    entry={'open':0x10e0c8,'set_baud':0x10e518,'read':0x10e938,'write_legacy':0x10e6c0,'flush':0x10e994,'destroy':0x10e9a0}[op]
++    args={'open':(OBJ,PATH),'set_baud':(OBJ,sc.get('new_baud',115200)),
++       'read':(OBJ,BUF,sc['length']),'write_legacy':(OBJ,BUF,sc['length']),
++       'flush':(OBJ,),'destroy':(OBJ,)}[op]
++    for i,a in enumerate(args):m.r[i]=a&0xffffffff
++    result=signed(m.run(entry,hooks=hooks,max_steps=10000))
++    return dict(result=None if op=='destroy' else result,trace=trace,
++       state=[bool(m.read(OBJ+28)),signed(m.read(OBJ+32)),m.read(OBJ+36)],
++       attrs=bytes(attrs).hex(),buffer=bytes(m.mem[BUF:BUF+sc['length']]).hex() if op=='read' else None)
++
++def new_run(op,sc):
++    trace=[];attrs=bytearray(sc['attrs']);ioindex=0;windex=0;errors=[];errnum=I(sc.get('errno',0))
++    owned=C.create_string_buffer(PATH_BYTES);payload=sc.get('payload',b'');buf=C.create_string_buffer(max(64,len(payload),sc['length']))
++    C.memset(buf,0xa5,C.sizeof(buf))
++    if op=='write_legacy' and payload:C.memmove(buf,payload,len(payload))
++    u=Uart(C.addressof(owned) if sc.get('owned') else None,sc.get('fd',42),sc.get('baud',921600),sc.get('ready',True))
++    @OPEN
++    def open_(_,p,flags):
++        if C.string_at(p)!=PATH_BYTES[:-1]:errors.append('bad path')
++        trace.append(['open',C.string_at(p).decode(),flags]);return sc.get('open_rc',42)
++    @DUP
++    def dup(_,p):trace.append(['duplicate']);return None if sc.get('duplicate_fail') else C.addressof(owned)
++    @INIT
++    def init(_):trace.append(['mutex_init']);return sc.get('mutex_init_rc',0)
++    @IOCTL
++    def ioctl(_,fd,req,p):
++        nonlocal ioindex
++        rc=sc.get('ioctl_results',[0]*8)[ioindex];ioindex+=1
++        if req==GET:
++            trace.append(['get_attributes',fd])
++            if rc==0:C.memmove(p,bytes(attrs),44)
++        elif req==SET:
++            value=C.string_at(p,44);trace.append(['set_attributes',fd,value.hex()])
++            if rc==0:attrs[:]=value
++        elif req==AVAIL:
++            trace.append(['available',fd]);C.cast(p,C.POINTER(I))[0]=sc.get('available',0)
++        else:errors.append('ioctl request')
++        return rc
++    @RW
++    def read_(_,fd,p,n):
++        trace.append(['read',fd,n]);rc=sc['read_rc']
++        if rc>0:C.memmove(p,payload,rc)
++        return rc
++    @RW
++    def write(_,fd,p,n):
++        nonlocal windex
++        trace.append(['write',fd,n,C.string_at(p,n).hex()]);rc,err=sc['writes'][windex];windex+=1
++        if err is not None:errnum.value=err
++        return rc
++    @ERR
++    def err(_):trace.append(['errno_pointer']);return C.addressof(errnum)
++    @SLEEP
++    def sleep(_,ms):
++        trace.append(['sleep_ms',ms])
++        if sc.get('sleep_errno') is not None:errnum.value=sc['sleep_errno']
++    @VOID
++    def lock(_):trace.append(['lock'])
++    @VOID
++    def unlock(_):trace.append(['unlock'])
++    @VOID
++    def destroy(_):trace.append(['mutex_destroy'])
++    @FREE
++    def free(_,p):
++        if p!=C.addressof(owned):errors.append('bad release')
++        trace.append(['release'])
++    @CLOSE
++    def close(_,fd):trace.append(['close',fd]);return sc.get('close_rc',0)
++    @FLUSH
++    def flush(_,fd,direction):trace.append(['flush',fd,direction]);return sc.get('flush_rc',0)
++    ops=Ops(None,open_,dup,free,ioctl,read_,write,err,close,flush,init,lock,unlock,destroy,sleep)
++    extra={'open':[PATH_BYTES],'set_baud':[sc.get('new_baud',115200)],'read':[buf,sc['length']],
++       'write_legacy':[buf,sc['length']],'flush':[],'destroy':[]}[op]
++    result=getattr(lib,'vn135_uart_'+op)(C.byref(u),C.byref(ops),*extra)
++    assert not errors,errors
++    return dict(result=None if op=='destroy' else result,trace=trace,state=[bool(u.path),u.fd,u.baud],
++       attrs=bytes(attrs).hex(),buffer=C.string_at(buf,sc['length']).hex() if op=='read' else None)
++
++def check(op,**kwargs):
++    sc=dict(attrs=rng.randbytes(44),length=0);sc.update(kwargs)
++    a=old_run(op,sc);b=new_run(op,sc)
++    assert a==b,(op,sc,a,b)
++    record(op)
++    return b
++
++for _ in range(256):
++    baud=rng.getrandbits(32)
++    for results in [[0,0],[-1,0],[0,-1]]:check('set_baud',new_baud=baud,ioctl_results=results)
++for n in [0,1,7,9,11,32,64,256,4096]:
++    payload=rng.randbytes(n)
++    for avail in [0,1,n,4096,-1]:
++        for io in [0,-1,7]:
++            for rd in sorted(set([-1,0,n//2,n])):
++                check('read',length=n,payload=payload,available=avail,ioctl_results=[io],read_rc=rd)
++for n in [0,1,9,11,32,256]:
++    payload=rng.randbytes(n)
++    choices=[(n,0),(n,11),(-1,11),(-1,4),(-1,5),(max(n-1,0),None),(0,None)]
++    for _ in range(256):
++        writes=[rng.choice(choices) for _ in range(5)]
++        check('write_legacy',length=n,payload=payload,writes=writes,errno=rng.choice([0,4,11]),sleep_errno=rng.choice([None,None,0,11]))
++# Explicit critical traces: transient errors and short-write stale errno.
++for name,writes in [('five_eagain',[(-1,11)]*5),('partial_stale_errno',[(4,None),(9,None)]+[(-1,5)]*3),('interrupted',[(-1,4)]*5)]:
++    result=check('write_legacy',length=9,payload=b'123456789',errno=11,writes=writes)
++    samples.append({'name':name,**result})
++for _ in range(40):
++    for fail in [-1,0,1,2,3]:
++        results=[0]*4
++        if fail>=0:results[fail]=-1
++        for dupfail in [False,True]:
++            check('open',fd=-1,baud=0,owned=False,ready=False,open_rc=42,ioctl_results=results,duplicate_fail=dupfail)
++for open_rc in [-1,-2,-2147483648,0,1,2147483647]:
++    check('open',fd=-1,baud=0,ready=False,open_rc=open_rc)
++for fd in [-1,0,1,42,2147483647]:
++    for owned in [False,True]:
++        for close_rc in [0,-1]:check('destroy',fd=fd,owned=owned,close_rc=close_rc)
++    for result in [-1,0,1,100]:check('flush',fd=fd,flush_rc=result)
++result=dict(passed=True,reference_sha256=SHA,cases=counts,total_cases=sum(counts.values()),
++ elapsed_seconds=round(time.monotonic()-start,3),examples=samples,
++ method='C compared to complete unchanged A32 UART routines with explicitly traced Linux/POSIX boundary hooks',
++ hardware_tested=False,full_miner_tested=False,
++ limits=['Local subset interpreter, not an independent emulator or proof for all inputs.',
++ 'read/write/ioctl/open/memory/mutex/sleep/errno are deterministic boundary hooks; diagnostics omitted.',
++ 'New callback API uses an explicit fd/path context, not the vendor ARM mutex ABI.',
++ 'Occupied-context, null callback, pointer/capacity and repeated-destroy guards are new API behavior.',
++ 'Legacy write retries preserve even the stale-errno short-write behavior. No safety endorsement.'])
++assert not callback_failures, callback_failures
++(ROOT/'build/stage5-uart-differential-results.json').write_text(json.dumps(result,indent=2)+'\n')
++print(json.dumps({k:result[k] for k in ['passed','total_cases','cases','elapsed_seconds']},indent=2))
+--- a/tests/test_tree.py
++++ b/tests/test_tree.py
+@@ -5,9 +5,9 @@
+ sys.path.insert(0,str(ROOT/'tools'))
+ manifest=json.loads((ROOT/'evidence/source-tree.json').read_text())
+ assert manifest['complete_vendor_file_list'] is False
+-assert len(manifest['modules'])==45
++assert len(manifest['modules'])==46
+ assert manifest['pending_modules']==41
+-assert manifest['partial_modules']==4
++assert manifest['partial_modules']==5
+ for module in manifest['modules']:
+     text=(ROOT/module['path']).read_text()
+     if module['status']=='pending-not-implemented':
+@@ -17,6 +17,6 @@
+ assert (ROOT/'src/backend/work-gen/work-gen.c').is_file()
+ assert not list(ROOT.rglob('recovered_stubs.c'))
+ assert not list(ROOT.rglob('cgminer_reconstructed_full.c'))
+-for name in ('libbitmain/src/reg_cache.c','libbitmain/src/pll.c','libbitmain/src/aml/chip.c','libbitmain/src/chip/chip1398.c'):
++for name in ('libbitmain/src/uart.c','libbitmain/src/reg_cache.c','libbitmain/src/pll.c','libbitmain/src/aml/chip.c','libbitmain/src/chip/chip1398.c'):
+     assert 'VN135 pending module:' not in (ROOT/name).read_text()
+ print('module tree and no fake stubs: PASS')
+--- /dev/null
++++ b/tests/test_uart.c
+@@ -0,0 +1,44 @@
++/* New host-only API tests. No physical devices or original code executed. */
++#include "xminer/recovery/uart.h"
++#include <assert.h>
++#include <limits.h>
++#include <stdio.h>
++#include <string.h>
++
++typedef struct { unsigned writes,locks,unlocks,sleeps,frees,closes,destroys; int32_t err; } model;
++static int32_t write_short(void *p,int32_t fd,const uint8_t *b,uint32_t n) {
++    model *m=p;(void)fd;assert(b && n==4);m->writes++;return 2;
++}
++static void lock_cb(void *p){((model*)p)->locks++;}
++static void unlock_cb(void *p){((model*)p)->unlocks++;}
++static int32_t *error_cb(void *p){return &((model*)p)->err;}
++static void sleep_cb(void *p,uint32_t n){assert(n==20);((model*)p)->sleeps++;}
++static void free_cb(void *p,void *b){assert(b);((model*)p)->frees++;}
++static int32_t close_cb(void *p,int32_t fd){assert(fd==7);((model*)p)->closes++;return -1;}
++static void destroy_cb(void *p){((model*)p)->destroys++;}
++static int32_t ioctl_fail(void *p,int32_t fd,uint32_t req,void *arg){(void)p;(void)fd;(void)req;(void)arg;return -1;}
++static int32_t read_never(void *p,int32_t fd,uint8_t*b,uint32_t n){(void)p;(void)fd;(void)b;(void)n;assert(0);return -1;}
++int main(void){
++    model m={0};m.err=11;
++    vn135_uart u=VN135_UART_INITIALIZER;
++    vn135_uart_ops o={0};o.context=&m;o.write=write_short;o.lock=lock_cb;o.unlock=unlock_cb;o.error_number=error_cb;o.sleep_ms=sleep_cb;
++    o.release=free_cb;o.close=close_cb;o.mutex_destroy=destroy_cb;o.ioctl=ioctl_fail;o.read=read_never;
++    const uint8_t b[]={1,2,3,4};uint8_t out[4]={0x17,0x17,0x17,0x17};
++    assert(vn135_uart_write_legacy(&u,&o,b,4)==2);
++    assert(m.writes==5 && m.locks==5 && m.unlocks==5 && m.sleeps==5);
++    m.err=5;assert(vn135_uart_write_legacy(&u,&o,b,4)==2);assert(m.writes==6 && m.sleeps==5);
++    assert(vn135_uart_read(&u,&o,out,sizeof out)==0);assert(out[0]==0x17);
++    assert(vn135_uart_read(&u,&o,NULL,1)==-2);
++    assert(vn135_uart_read(&u,&o,out,(size_t)INT32_MAX+1)==-2);
++    assert(vn135_uart_write_legacy(&u,&o,NULL,4)==-2);
++    assert(vn135_uart_write_legacy(&u,&o,b,(size_t)INT32_MAX+1)==-2);
++    assert(vn135_uart_open(&u,&o,"not-opened")==-2);
++    assert(vn135_uart_set_baud(NULL,&o,100)==-2);
++    assert(vn135_uart_flush(&u,&o)==-2);
++    u.path=(char*)b;u.fd=7;u.baud=115200;u.mutex_ready=true;
++    assert(vn135_uart_destroy(&u,&o)==0);
++    assert(!u.path && u.fd==-1 && u.baud==0 && !u.mutex_ready);
++    assert(vn135_uart_destroy(&u,&o)==0); /* New API guard. */
++    assert(m.frees==1 && m.closes==1 && m.destroys==1);
++    puts("UART native API guards, legacy retry and lifecycle: PASS");return 0;
++}
+--- /dev/null
++++ b/tests/test_uart_linux_pty.c
+@@ -0,0 +1,81 @@
++/* Linux integration test for the reconstructed host UART layer.
++ * NEW test adapter, not recovered vendor source or a production driver.
++ * Opens a pseudoterminal allocated by THIS test only. No real UART/ASIC.
++ */
++#define _GNU_SOURCE
++#include "xminer/recovery/uart.h"
++#include "xminer/recovery/aml_chip.h"
++#include <asm/termbits.h>
++#include <asm/ioctls.h>
++#include <assert.h>
++#include <errno.h>
++#include <fcntl.h>
++#include <pthread.h>
++#include <stdint.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/ioctl.h>
++#include <time.h>
++#include <unistd.h>
++
++_Static_assert(sizeof(struct termios2)==sizeof(vn135_uart_attributes),"termios2 Linux size");
++_Static_assert(offsetof(struct termios2,c_cc)==offsetof(vn135_uart_attributes,control_chars),"termios2 cc layout");
++_Static_assert(offsetof(struct termios2,c_ispeed)==offsetof(vn135_uart_attributes,input_speed),"termios2 speed layout");
++_Static_assert(TCGETS2==VN135_UART_TCGETS2 && TCSETS2==VN135_UART_TCSETS2,"ioctl ABI");
++_Static_assert(FIONREAD==VN135_UART_FIONREAD,"FIONREAD ABI");
++_Static_assert((O_RDWR|O_NOCTTY|O_NONBLOCK)==VN135_UART_OPEN_FLAGS,"open ABI");
++_Static_assert(EAGAIN==VN135_UART_EAGAIN,"errno ABI");
++_Static_assert(sizeof(int)==sizeof(int32_t),"errno size");
++
++typedef struct { pthread_mutex_t mutex; const char *allowed_path; unsigned write_calls; } adapter;
++static int32_t op_open(void *p,const char *path,uint32_t f){adapter*a=p;assert(strcmp(path,a->allowed_path)==0);return open(path,(int)f);}
++static char *op_dup(void*p,const char*s){(void)p;char*r=strdup(s);assert(r);return r;}
++static void op_free(void*p,void*b){(void)p;free(b);}
++static int32_t op_ioctl(void*p,int32_t fd,uint32_t req,void*b){(void)p;return ioctl(fd,(unsigned long)req,b);}
++static int32_t op_read(void*p,int32_t fd,uint8_t*b,uint32_t n){(void)p;return (int32_t)read(fd,b,n);}
++static int32_t op_write(void*p,int32_t fd,const uint8_t*b,uint32_t n){adapter*a=p;a->write_calls++;return (int32_t)write(fd,b,n);}
++static int32_t *op_errno(void*p){(void)p;return &errno;}
++static int32_t op_close(void*p,int32_t fd){(void)p;return close(fd);}
++static int32_t op_flush(void*p,int32_t fd,int32_t q){(void)p;return ioctl(fd,TCFLSH,q);}
++static int32_t op_init(void*p){adapter*a=p;int r=pthread_mutex_init(&a->mutex,NULL);assert(r==0);return r;}
++static void op_lock(void*p){adapter*a=p;assert(pthread_mutex_lock(&a->mutex)==0);}
++static void op_unlock(void*p){adapter*a=p;assert(pthread_mutex_unlock(&a->mutex)==0);}
++static void op_destroy(void*p){adapter*a=p;assert(pthread_mutex_destroy(&a->mutex)==0);}
++static void op_sleep(void*p,uint32_t ms){(void)p;struct timespec t={(time_t)(ms/1000),(long)(ms%1000)*1000000L};while(nanosleep(&t,&t)!=0)assert(errno==EINTR);}
++static void wait_input(int fd){
++    for(unsigned i=0;i<200;i++) { int n=0;assert(ioctl(fd,FIONREAD,&n)==0);if(n>0)return;op_sleep(NULL,1); }
++    assert(!"pseudoterminal input timed out");
++}
++int main(void){
++    int master=posix_openpt(O_RDWR|O_NOCTTY|O_NONBLOCK);assert(master>=0);
++    assert(grantpt(master)==0 && unlockpt(master)==0);
++    char *path=ptsname(master);assert(path);
++    adapter a={0};a.allowed_path=path;
++    vn135_uart_ops o={&a,op_open,op_dup,op_free,op_ioctl,op_read,op_write,op_errno,op_close,op_flush,op_init,op_lock,op_unlock,op_destroy,op_sleep};
++    vn135_uart u=VN135_UART_INITIALIZER;
++    assert(vn135_uart_open(&u,&o,path)==0);assert(u.baud==115200 && u.fd>=0);
++    struct termios2 actual;assert(ioctl(u.fd,TCGETS2,&actual)==0);
++    assert(actual.c_ispeed==115200 && actual.c_ospeed==115200);
++    assert(actual.c_cc[VMIN]==7 && actual.c_cc[VTIME]==0);
++    assert(!(actual.c_lflag&(ICANON|ECHO|ISIG)));
++    assert(vn135_uart_set_baud(&u,&o,250000)==0);
++    assert(ioctl(u.fd,TCGETS2,&actual)==0 && actual.c_ospeed==250000 && actual.c_ispeed==250000);
++    uint8_t got[128]={0};assert(vn135_uart_read(&u,&o,got,sizeof got)==0);
++    const uint8_t raw[]={0xaa,0x55,0x00,0x0a,0x0d,0xff,0x11,0x13,0x80};
++    assert(write(master,raw,2)==2);wait_input(u.fd);
++    assert(vn135_uart_read(&u,&o,got,sizeof got)==2 && memcmp(got,raw,2)==0);
++    assert(write(master,raw+2,sizeof raw-2)==(ssize_t)sizeof raw-2);wait_input(u.fd);
++    assert(vn135_uart_read(&u,&o,got+2,sizeof got-2)==(int32_t)sizeof raw-2 && memcmp(got,raw,sizeof raw)==0);
++    assert(vn135_uart_read(&u,&o,got,sizeof got)==0);
++    uint8_t frame[sizeof raw+2];assert(vn135_aml_frame_command(raw,sizeof raw,frame,sizeof frame)==0);
++    assert(vn135_uart_write_legacy(&u,&o,frame,sizeof frame)==(int32_t)sizeof frame);
++    assert(a.write_calls==1);wait_input(master);
++    assert(read(master,got,sizeof got)==(ssize_t)sizeof frame && memcmp(got,frame,sizeof frame)==0);
++    assert(vn135_uart_flush(&u,&o)==0);
++    int old=u.fd;assert(vn135_uart_destroy(&u,&o)==0);assert(fcntl(old,F_GETFD)==-1 && errno==EBADF);
++    assert(vn135_uart_read(&u,&o,got,sizeof got)==0); /* Original hides ioctl EBADF as no data. */
++    assert(vn135_uart_destroy(&u,&o)==0 && close(master)==0);
++    puts("Linux PTY: open/termios2/arbitrary baud/fragmented RX/TX frame/flush/destroy: PASS");
++    puts("No physical UART, chip protocol, timings, init, mining or autotune tested.");return 0;
++}
+--- a/tools/build_source_tree.py
++++ b/tools/build_source_tree.py
+@@ -14,6 +14,17 @@
+     elf=ELF32(binary)
+     strings=json.loads((ROOT/'evidence/stage1/cgminer_xor_strings.json').read_text())
+     xrefs=json.loads((ROOT/'evidence/stage1/cgminer_string_xrefs.json').read_text())
++    # Preserve the historical Stage 1 files. Apply independently verified
++    # constructor-length corrections only in this regenerated view.
++    correction_file=ROOT/'evidence/stage5/source-string-corrections.json'
++    corrections=json.loads(correction_file.read_text()) if correction_file.exists() else []
++    by_address={c['base']:c for c in corrections}
++    strings=[by_address.get(item['base'],item) for item in strings]
++    for refs in xrefs.values():
++        for ref in refs:
++            if ref.get('string') in by_address:
++                ref['text']=by_address[ref['string']]['text']
++                ref['text_corrected_from_constructor']=True
+     paths={};verified=0;different=0
+     for item in strings:
+         raw=bytes(v^item['xor'] for v in elf.read(int(item['base'],16),item['length']))
+@@ -45,7 +56,7 @@
+                 entry['candidate_intervals'].append(dict(start=f"0x{interval['start']:08x}",
+                     end_exclusive=(f"0x{interval['end_exclusive']:08x}" if interval['end_exclusive'] else None),
+                     path_references=matched,association='Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven'))
+-    partial_paths=['libbitmain/src/chip/chip1398.c','libbitmain/src/pll.c','libbitmain/src/aml/chip.c','libbitmain/src/reg_cache.c']
++    partial_paths=['libbitmain/src/chip/chip1398.c','libbitmain/src/pll.c','libbitmain/src/aml/chip.c','libbitmain/src/reg_cache.c','libbitmain/src/uart.c']
+     for partial in partial_paths:
+         paths[partial]['status']='partial-verified-slices'
+         paths[partial]['implementation_files']=[partial]
+@@ -67,7 +78,7 @@
+         partial_modules=len(partial_paths),pending_modules=len(paths)-len(partial_paths),complete_vendor_file_list=False,
+         strings_checked=len(strings),string_text_equal_after_trailing_nul_strip=verified,
+         string_text_different=different,
+-        source_path_method='XOR raw original bytes using Stage 1 metadata, then extract exact /tmp/build/...c or ...h prefix',
++        source_path_method='XOR raw original bytes using Stage 1 metadata plus constructor-verified length corrections, then extract exact /tmp/build/...c or ...h prefix',
+         limits=['File path evidence is not recovered file content.',
+                 'Paths absent from the binary cannot be enumerated from this evidence.',
+                 'A source-path reference inside an EHABI range does not prove all functions in that range belong to it.',
+--- /dev/null
++++ b/tools/check_stage5_evidence.py
+@@ -0,0 +1,30 @@
++#!/usr/bin/env python3
++"""Reproduce the new source-path length directly through original XOR loop.
++No program/Linux/hardware execution; finite A32 instructions in test memory.
++"""
++from pathlib import Path
++import hashlib,json
++from elf32 import ELF32
++from arm32_subset import ARM32
++ROOT=Path(__file__).resolve().parents[1]
++elf=ELF32(ROOT/'reference/cgminer.vendor.elf')
++assert hashlib.sha256(elf.data).hexdigest()=='b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9'
++rows=json.loads((ROOT/'evidence/stage5/source-string-corrections.json').read_text())
++for row in rows:
++    base=int(row['base'],16);length=row['length'];start=int(row['constructor_slice_start'],16);end=int(row['constructor_slice_end_exclusive'],16)
++    raw=elf.read(base,length)
++    assert hashlib.sha256(raw).hexdigest()==row['original_bytes_sha256']
++    assert hashlib.sha256(elf.read(start,end-start)).hexdigest()==row['constructor_slice_sha256']
++    assert (int.from_bytes(elf.read(0x10ed14,4),'little')+0x10eadc+8)&0xffffffff==base
++    m=ARM32(elf);m.r[2]=0;m.r[12]=m.DATA_BASE;m.r[14]=m.DATA_BASE+4
++    m.write(m.DATA_BASE,0);m.write(m.DATA_BASE+4,0)
++    before=bytes(m.mem[base-1:base+length+1]);m.run(start,stop=end,max_steps=10000)
++    decoded=bytes(m.mem[base:base+length]);assert decoded==row['text'].encode()+b'\0'
++    assert decoded==bytes(x^row['xor'] for x in raw)
++    assert m.mem[base-1]==before[0] and m.mem[base+length]==before[-1]
++# AML target is the UART helper (not directly libc write): decode actual BL.
++pc=0x1180e0;word=int.from_bytes(elf.read(pc,4),'little');assert word>>24==0xeb
++imm=word&0xffffff
++if imm&0x800000:imm-=1<<24
++assert (pc+8+4*imm)&0xffffffff==0x10e6c0
++print('Stage 5 evidence: constructor length/path and AML -> UART call: PASS')

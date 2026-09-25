@@ -1,0 +1,19 @@
+{
+  "group": "difficulty-target",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage10_differential.py",
+        "target"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "difficulty-target-00.log",
+      "seconds": 2.788,
+      "sha256": "a7a2833b255361ab06d46b32a42fe04dd5870aaf3b6ef03fff5a65f897aef12c"
+    }
+  ]
+}

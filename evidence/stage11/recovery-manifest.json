@@ -1,0 +1,309 @@
+{
+  "stage": 11,
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "reference_bytes": 6228004,
+  "slices": [
+    {
+      "name": "metadata_copy",
+      "start": "0x30a6c",
+      "end_exclusive": "0x30a9c",
+      "bytes": 48,
+      "sha256": "5f8ab4e2eb3e1df5bd9ba6af7d049a8de0227ab3af1f4ff98c4cb110ba8b30ba",
+      "disassembly": "evidence/stage11/disasm/metadata_copy.S",
+      "disassembly_sha256": "be91eeeda7600f77fdafeb4a789a03e9aadf4b5193466c6060d29c1954fc7149",
+      "scope": "Bounded three strdup calls and raw binary64 copy; no subsequent builder tail."
+    },
+    {
+      "name": "work_clone",
+      "start": "0x2ce84",
+      "end_exclusive": "0x2d108",
+      "bytes": 644,
+      "sha256": "ce93b4868dfadf7f72cef35ad99a93f9ed203b939f745eda342d509c39c6f579",
+      "disassembly": "evidence/stage11/disasm/work_clone.S",
+      "disassembly_sha256": "81908ac8c92679560013fc2645d391cd9b15b5c6c14236ec506bee972b526dfe",
+      "scope": "Only original r1=0 time-roll branch is reconstructed and compared; other branches are context only."
+    },
+    {
+      "name": "work_clear",
+      "start": "0x2a1bc",
+      "end_exclusive": "0x2a328",
+      "bytes": 364,
+      "sha256": "6c98c89666bc496b7dd14e750ad9aa31d42eaf838b34a11de9afe0a65883bad0",
+      "disassembly": "evidence/stage11/disasm/work_clear.S",
+      "disassembly_sha256": "f8fae047b6eb8b89c24323d4b1453394e69daaee0b7f2d9579452a9f877b88b8",
+      "scope": "Owned string releases and zeroing 632 image bytes; diagnostics/obfuscation omitted in C."
+    },
+    {
+      "name": "work_delete",
+      "start": "0x2a330",
+      "end_exclusive": "0x2a4a0",
+      "bytes": 368,
+      "sha256": "8c34255816a200e86dbb7aa61bd771a5e822443387bc21e7a81481a8894a0b37",
+      "disassembly": "evidence/stage11/disasm/work_delete.S",
+      "disassembly_sha256": "928a578dc8c3acca69883f8a92baae6c9dcc5f23106fc1b447428a64b45563f6",
+      "scope": "Owned strings then outer object free and caller pointer NULL. Null diagnostic omitted in C."
+    },
+    {
+      "name": "builder_fields",
+      "start": "0x30d90",
+      "end_exclusive": "0x30db8",
+      "bytes": 40,
+      "sha256": "e483a8a0e8c29a9ab31ddd19a003c8363cf1da13fc360e792e72fd337f8cc565",
+      "disassembly": "evidence/stage11/disasm/builder_fields.S",
+      "disassembly_sha256": "f2d284c5ad8b47b35801f1d7e23ebd80136d6d961dde6c69547bea137d00e9a9",
+      "scope": "Bounded scalar assignments; meanings remain offsets/cookies."
+    },
+    {
+      "name": "wrapper_fields",
+      "start": "0x303e8",
+      "end_exclusive": "0x3043c",
+      "bytes": 84,
+      "sha256": "620a22b8b434b5dc2cfdc89ec9a8a567815f40315f4bba99dd22ec55f53f4f74",
+      "disassembly": "evidence/stage11/disasm/wrapper_fields.S",
+      "disassembly_sha256": "ef97a94fe4445d30d7ae3bf3dbf151475d48eb860f56f87276cafb2b83491467",
+      "scope": "Bounded scalar assignments and raw reference+0x98 increment; not full wrapper."
+    },
+    {
+      "name": "strdup",
+      "start": "0x5a38a0",
+      "end_exclusive": "0x5a38e0",
+      "bytes": 64,
+      "sha256": "479ea17d39a1750e431e11b82f457d2c40b4b3b9c502f0e062919cfc5121358f",
+      "disassembly": "evidence/stage11/disasm/strdup.S",
+      "disassembly_sha256": "dfe5d456d5f446c90fd93c6c8fa48c1fb70f5a4c62a69bbb356e4c0bfc0817b0",
+      "scope": "Original instructions execute in oracle. strlen/malloc/memcpy are injected."
+    }
+  ],
+  "literals": [
+    {
+      "name": "clone_literals",
+      "address": "0x2d108",
+      "bytes": 48,
+      "bytes_hex": "b02b5b0040395e003c395e0094525b00b2525b00dc2d5b00542d5b00682d5b00e82c5b00702c5b00882c5b00002c5b00",
+      "sha256": "cfc078449170b87554d453e2ab513f87f6f7fd8ffbded5b8352b23fed6458725"
+    },
+    {
+      "name": "clear_literals",
+      "address": "0x2a328",
+      "bytes": 8,
+      "bytes_hex": "f05a5b00c84a5b00",
+      "sha256": "c101b01ceac8578c3498c042f0d36727b2086998e585e9bea27790ff0179686f"
+    },
+    {
+      "name": "delete_literals",
+      "address": "0x2a4a0",
+      "bytes": 24,
+      "bytes_hex": "884d5b0074565b00b77d5b00847d5b00b17d5b00b87d5b00",
+      "sha256": "31f6f78c72252a0ceee5ae94e98bd5004c1f26dd8a23269006aca599717fec39"
+    },
+    {
+      "name": "builder_global_literal",
+      "address": "0x312ac",
+      "bytes": 4,
+      "bytes_hex": "d8f95d00",
+      "sha256": "1e017c80cd754f52685f6b9996712ffe70fa9fc8924bb61591ca2fc1c2f05a47"
+    },
+    {
+      "name": "wrapper_global_literal",
+      "address": "0x30534",
+      "bytes": 4,
+      "bytes_hex": "80035e00",
+      "sha256": "ef8fded867ab91cccdb0cec0a6d61628838aa7df6deb599830c3f42c0fa0af2e"
+    }
+  ],
+  "branch_edges": [
+    {
+      "pc": "0x30a78",
+      "instruction_hex": "eb15cb88",
+      "target": "0x5a38a0",
+      "link": true,
+      "scope": "observed-boundary"
+    },
+    {
+      "pc": "0x30a84",
+      "instruction_hex": "eb15cb85",
+      "target": "0x5a38a0",
+      "link": true,
+      "scope": "observed-boundary"
+    },
+    {
+      "pc": "0x30a94",
+      "instruction_hex": "eb15cb81",
+      "target": "0x5a38a0",
+      "link": true,
+      "scope": "observed-boundary"
+    },
+    {
+      "pc": "0x2cea0",
+      "instruction_hex": "eb159b43",
+      "target": "0x593bb4",
+      "link": true,
+      "scope": "observed-boundary"
+    },
+    {
+      "pc": "0x2ceb4",
+      "instruction_hex": "eb15e493",
+      "target": "0x5a6108",
+      "link": true,
+      "scope": "observed-boundary"
+    },
+    {
+      "pc": "0x2ced4",
+      "instruction_hex": "eb15e5fa",
+      "target": "0x5a66c4",
+      "link": true,
+      "scope": "observed-boundary"
+    },
+    {
+      "pc": "0x2cee4",
+      "instruction_hex": "eb15d968",
+      "target": "0x5a348c",
+      "link": true,
+      "scope": "observed-boundary"
+    },
+    {
+      "pc": "0x2cf0c",
+      "instruction_hex": "ebff939a",
+      "target": "0x11d7c",
+      "link": true,
+      "scope": "observed-boundary"
+    },
+    {
+      "pc": "0x2cf20",
+      "instruction_hex": "eb15da5e",
+      "target": "0x5a38a0",
+      "link": true,
+      "scope": "observed-boundary"
+    },
+    {
+      "pc": "0x2cf68",
+      "instruction_hex": "eb15da4c",
+      "target": "0x5a38a0",
+      "link": true,
+      "scope": "observed-boundary"
+    },
+    {
+      "pc": "0x2d074",
+      "instruction_hex": "eb15da09",
+      "target": "0x5a38a0",
+      "link": true,
+      "scope": "observed-boundary"
+    },
+    {
+      "pc": "0x2d0bc",
+      "instruction_hex": "eb15d9f7",
+      "target": "0x5a38a0",
+      "link": true,
+      "scope": "observed-boundary"
+    },
+    {
+      "pc": "0x2a2ec",
+      "instruction_hex": "eb15e466",
+      "target": "0x5a348c",
+      "link": true,
+      "scope": "observed-boundary"
+    },
+    {
+      "pc": "0x2a428",
+      "instruction_hex": "eb033f25",
+      "target": "0xfa0c4",
+      "link": true,
+      "scope": "observed-boundary"
+    },
+    {
+      "pc": "0x2a438",
+      "instruction_hex": "eb15a613",
+      "target": "0x593c8c",
+      "link": true,
+      "scope": "observed-boundary"
+    },
+    {
+      "pc": "0x2a484",
+      "instruction_hex": "eb15a600",
+      "target": "0x593c8c",
+      "link": true,
+      "scope": "observed-boundary"
+    },
+    {
+      "pc": "0x2a48c",
+      "instruction_hex": "eb15a5fe",
+      "target": "0x593c8c",
+      "link": true,
+      "scope": "observed-boundary"
+    },
+    {
+      "pc": "0x5a38a8",
+      "instruction_hex": "eb000066",
+      "target": "0x5a3a48",
+      "link": true,
+      "scope": "observed-boundary"
+    },
+    {
+      "pc": "0x5a38b8",
+      "instruction_hex": "ebffc20b",
+      "target": "0x5940ec",
+      "link": true,
+      "scope": "observed-boundary"
+    },
+    {
+      "pc": "0x5a38d4",
+      "instruction_hex": "eafffd83",
+      "target": "0x5a2ee8",
+      "link": false,
+      "scope": "observed-boundary"
+    }
+  ],
+  "modified_observed_source": "src/frontend/cgminer.c",
+  "source_placement": "Integration within observed frontend cluster; individual original source paths not independently proven.",
+  "new_api": "include/xminer/recovery/work_storage.h",
+  "new_helper": "reconstruction/support/work_storage_pipeline.c",
+  "original_image_bytes": 632,
+  "normalized_pointer_slots": [
+    "0x18c",
+    "0x19c",
+    "0x1a8",
+    "0x1b0"
+  ],
+  "copy_order": [
+    "0x18c",
+    "0x1a8",
+    "0x19c",
+    "0x1b0"
+  ],
+  "release_order": [
+    "0x18c",
+    "0x19c",
+    "0x1b0",
+    "0x1a8"
+  ],
+  "original_allocations_injected": true,
+  "original_strdup_body_executed": true,
+  "outer_clone_allocation_failure_is_new_guard": true,
+  "new_atomic_rollback_is_not_vendor_behavior": true,
+  "full_work_semantics_recovered": false,
+  "vendor_binary_abi_compatible": false,
+  "time_roll_branch_recovered": false,
+  "live_reference_ownership_recovered": false,
+  "physical_hardware_tested": false,
+  "comparison_counts": {
+    "metadata": 576,
+    "clone": 486,
+    "cleanup": 384,
+    "fields": 640
+  },
+  "oracle": "tests/work_storage_oracle.py",
+  "differential_tests": "tests/test_stage11_differential.py",
+  "native_tests": "tests/test_work_storage.c",
+  "oracle_injected_calls": {
+    "0x5a3a48": "strlen",
+    "0x5940ec": "malloc",
+    "0x593bb4": "calloc (success condition)",
+    "0x593c8c": "free",
+    "0x5a2ee8": "memcpy",
+    "0x11d7c": "debug memcpy boundary",
+    "0x5a348c": "memset",
+    "0x5a6108": "mutex lock",
+    "0x5a66c4": "mutex unlock",
+    "0xfa0c4": "logging"
+  }
+}

@@ -1,0 +1,181 @@
+clang version 17.0.0 (https://github.com/swiftlang/llvm-project.git 10999b6d034fe318f3d56c83bddb6572593a8bb0)
+mkdir -p build
+clang -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -shared -fPIC src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c -o build/libvn135_recovered.so
+mkdir -p build
+clang -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c tests/test_work_rx.c -o build/test-work-rx
+mkdir -p build
+clang -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror libbitmain/src/uart.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c tests/test_work_rx_linux_pty.c -pthread -o build/test-work-rx-pty
+./build/test-work-rx-pty
+Stage 6 real Linux PTY -> UART -> RX: PASS (88 decoded messages)
+Stage 6 C safety and stream chunk-invariance: PASS (3600 stream replays)
+{
+  "status": "PASS",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "cases": {
+    "layout_selection": 364,
+    "register_filter_dispatch": 141,
+    "nonce_job_slot_bits": 1248,
+    "frame_incomplete": 351,
+    "register_filtered": 454,
+    "register_enqueued": 2110,
+    "nonce_raw": 1276,
+    "frame_noise": 144
+  },
+  "new_differential_cases": 6088,
+  "wall_seconds": 5.82,
+  "sample_cases": [
+    {
+      "config": [
+        0,
+        0,
+        0
+      ],
+      "bytes": "",
+      "kind": 0,
+      "consumed": 0
+    },
+    {
+      "config": [
+        0,
+        0,
+        0
+      ],
+      "bytes": "",
+      "kind": 0,
+      "consumed": 0
+    },
+    {
+      "config": [
+        0,
+        0,
+        0
+      ],
+      "bytes": "",
+      "kind": 0,
+      "consumed": 0
+    },
+    {
+      "config": [
+        0,
+        0,
+        0
+      ],
+      "bytes": "aa",
+      "kind": 0,
+      "consumed": 0
+    },
+    {
+      "config": [
+        0,
+        0,
+        0
+      ],
+      "bytes": "aa",
+      "kind": 0,
+      "consumed": 0
+    },
+    {
+      "config": [
+        0,
+        0,
+        0
+      ],
+      "bytes": "00",
+      "kind": 0,
+      "consumed": 0
+    },
+    {
+      "config": [
+        0,
+        0,
+        0
+      ],
+      "bytes": "aa55",
+      "kind": 0,
+      "consumed": 0
+    },
+    {
+      "config": [
+        0,
+        0,
+        0
+      ],
+      "bytes": "aaaa",
+      "kind": 0,
+      "consumed": 0
+    },
+    {
+      "config": [
+        0,
+        0,
+        0
+      ],
+      "bytes": "0055",
+      "kind": 0,
+      "consumed": 0
+    },
+    {
+      "config": [
+        0,
+        0,
+        0
+      ],
+      "bytes": "aa557c",
+      "kind": 0,
+      "consumed": 0
+    },
+    {
+      "config": [
+        0,
+        0,
+        0
+      ],
+      "bytes": "aaaa2c",
+      "kind": 0,
+      "consumed": 0
+    },
+    {
+      "config": [
+        0,
+        0,
+        0
+      ],
+      "bytes": "0055f8",
+      "kind": 0,
+      "consumed": 0
+    }
+  ],
+  "scope": "Stable-selector RX layout; original prefix/pop/normal+special register paths, filter dispatcher/callees and job-slot bit extraction. Actual original ring pops execute.",
+  "injected": [
+    "board/chip/special getter values",
+    "memcpy",
+    "mutex unlock",
+    "register enqueue"
+  ],
+  "not_verified": [
+    "model name mapping",
+    "CRC verification",
+    "actual job lookup",
+    "nonce validation",
+    "threading",
+    "UART device",
+    "accepted shares"
+  ]
+}
+{
+  "status": "PASS",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "distinct_byte_streams": 96,
+  "original_parser_events": 2994,
+  "chunking_replays": 672,
+  "new_adapter_not_vendor_function": true,
+  "wall_seconds": 2.209
+}
+mkdir -p build
+clang -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c tests/test_work_rx.c -o build/test-work-rx-sanitized
+ASAN_OPTIONS=detect_leaks=1 ./build/test-work-rx-sanitized
+Stage 6 C safety and stream chunk-invariance: PASS (3600 stream replays)
+mkdir -p build
+clang -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer libbitmain/src/uart.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c tests/test_work_rx_linux_pty.c -pthread -o build/test-work-rx-pty-sanitized
+ASAN_OPTIONS=detect_leaks=1 ./build/test-work-rx-pty-sanitized
+Stage 6 real Linux PTY -> UART -> RX: PASS (88 decoded messages)

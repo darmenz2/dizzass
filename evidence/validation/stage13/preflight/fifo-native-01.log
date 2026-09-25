@@ -1,0 +1,2 @@
+COMMAND: ['/opt/pyvenv/bin/python3', 'tests/test_stage13_differential.py', 'composition']
+composition {"compositions": 72, "original_producer_push_and_queue_pop": true, "separate_from_main_comparison_total": true, "opaque_tail_interpretation_recovered": false}

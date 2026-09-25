@@ -1,0 +1,21 @@
+COMMAND: ['/opt/pyvenv/bin/python3', 'tests/test_stage5_aml_uart_differential.py']
+{
+  "passed": true,
+  "total_cases": 689,
+  "cases": {
+    "exact": 53,
+    "eagain_then_success": 53,
+    "exhausted": 53,
+    "positive_short_stale_errno": 53,
+    "short_nonretry": 53,
+    "hard_error": 53,
+    "zero_exhausted": 53,
+    "interrupted": 53,
+    "overreport": 53,
+    "late_success": 53,
+    "changed_error": 53,
+    "no_uart": 53,
+    "no_memory": 53
+  },
+  "elapsed_seconds": 0.29
+}

@@ -1,0 +1,2 @@
+COMMAND: ['./build/test-reg-cache']
+Stage 4 cache/transaction native assertions: PASS

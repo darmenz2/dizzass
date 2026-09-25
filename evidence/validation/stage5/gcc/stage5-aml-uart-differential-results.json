@@ -1,0 +1,738 @@
+{
+  "passed": true,
+  "total_cases": 689,
+  "cases": {
+    "exact": 53,
+    "eagain_then_success": 53,
+    "exhausted": 53,
+    "positive_short_stale_errno": 53,
+    "short_nonretry": 53,
+    "hard_error": 53,
+    "zero_exhausted": 53,
+    "interrupted": 53,
+    "overreport": 53,
+    "late_success": 53,
+    "changed_error": 53,
+    "no_uart": 53,
+    "no_memory": 53
+  },
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "elapsed_seconds": 0.326,
+  "examples": [
+    {
+      "scenario": "exact",
+      "payload": "3bfb37310325beb059",
+      "return": 0,
+      "trace": [
+        [
+          "allocate",
+          11
+        ],
+        [
+          "lock",
+          "outer"
+        ],
+        [
+          "lock",
+          "inner"
+        ],
+        [
+          "write",
+          "55aa3bfb37310325beb059"
+        ],
+        [
+          "unlock",
+          "inner"
+        ],
+        [
+          "unlock",
+          "outer"
+        ],
+        [
+          "release"
+        ]
+      ]
+    },
+    {
+      "scenario": "eagain_then_success",
+      "payload": "fce044f6ddcf28c8af",
+      "return": 0,
+      "trace": [
+        [
+          "allocate",
+          11
+        ],
+        [
+          "lock",
+          "outer"
+        ],
+        [
+          "lock",
+          "inner"
+        ],
+        [
+          "write",
+          "55aafce044f6ddcf28c8af"
+        ],
+        [
+          "unlock",
+          "inner"
+        ],
+        [
+          "errno_pointer"
+        ],
+        [
+          "sleep_ms",
+          20
+        ],
+        [
+          "lock",
+          "inner"
+        ],
+        [
+          "write",
+          "55aafce044f6ddcf28c8af"
+        ],
+        [
+          "unlock",
+          "inner"
+        ],
+        [
+          "unlock",
+          "outer"
+        ],
+        [
+          "release"
+        ]
+      ]
+    },
+    {
+      "scenario": "exhausted",
+      "payload": "ec80e0662e3b1ff101",
+      "return": -1,
+      "trace": [
+        [
+          "allocate",
+          11
+        ],
+        [
+          "lock",
+          "outer"
+        ],
+        [
+          "lock",
+          "inner"
+        ],
+        [
+          "write",
+          "55aaec80e0662e3b1ff101"
+        ],
+        [
+          "unlock",
+          "inner"
+        ],
+        [
+          "errno_pointer"
+        ],
+        [
+          "sleep_ms",
+          20
+        ],
+        [
+          "lock",
+          "inner"
+        ],
+        [
+          "write",
+          "55aaec80e0662e3b1ff101"
+        ],
+        [
+          "unlock",
+          "inner"
+        ],
+        [
+          "sleep_ms",
+          20
+        ],
+        [
+          "lock",
+          "inner"
+        ],
+        [
+          "write",
+          "55aaec80e0662e3b1ff101"
+        ],
+        [
+          "unlock",
+          "inner"
+        ],
+        [
+          "sleep_ms",
+          20
+        ],
+        [
+          "lock",
+          "inner"
+        ],
+        [
+          "write",
+          "55aaec80e0662e3b1ff101"
+        ],
+        [
+          "unlock",
+          "inner"
+        ],
+        [
+          "sleep_ms",
+          20
+        ],
+        [
+          "lock",
+          "inner"
+        ],
+        [
+          "write",
+          "55aaec80e0662e3b1ff101"
+        ],
+        [
+          "unlock",
+          "inner"
+        ],
+        [
+          "sleep_ms",
+          20
+        ],
+        [
+          "unlock",
+          "outer"
+        ],
+        [
+          "release"
+        ]
+      ]
+    },
+    {
+      "scenario": "positive_short_stale_errno",
+      "payload": "8449c5dac984208b25",
+      "return": 0,
+      "trace": [
+        [
+          "allocate",
+          11
+        ],
+        [
+          "lock",
+          "outer"
+        ],
+        [
+          "lock",
+          "inner"
+        ],
+        [
+          "write",
+          "55aa8449c5dac984208b25"
+        ],
+        [
+          "unlock",
+          "inner"
+        ],
+        [
+          "errno_pointer"
+        ],
+        [
+          "sleep_ms",
+          20
+        ],
+        [
+          "lock",
+          "inner"
+        ],
+        [
+          "write",
+          "55aa8449c5dac984208b25"
+        ],
+        [
+          "unlock",
+          "inner"
+        ],
+        [
+          "unlock",
+          "outer"
+        ],
+        [
+          "release"
+        ]
+      ]
+    },
+    {
+      "scenario": "short_nonretry",
+      "payload": "f3ef4739165493135d",
+      "return": -1,
+      "trace": [
+        [
+          "allocate",
+          11
+        ],
+        [
+          "lock",
+          "outer"
+        ],
+        [
+          "lock",
+          "inner"
+        ],
+        [
+          "write",
+          "55aaf3ef4739165493135d"
+        ],
+        [
+          "unlock",
+          "inner"
+        ],
+        [
+          "errno_pointer"
+        ],
+        [
+          "unlock",
+          "outer"
+        ],
+        [
+          "release"
+        ]
+      ]
+    },
+    {
+      "scenario": "hard_error",
+      "payload": "2b8a0273a14feba5e5",
+      "return": -1,
+      "trace": [
+        [
+          "allocate",
+          11
+        ],
+        [
+          "lock",
+          "outer"
+        ],
+        [
+          "lock",
+          "inner"
+        ],
+        [
+          "write",
+          "55aa2b8a0273a14feba5e5"
+        ],
+        [
+          "unlock",
+          "inner"
+        ],
+        [
+          "errno_pointer"
+        ],
+        [
+          "unlock",
+          "outer"
+        ],
+        [
+          "release"
+        ]
+      ]
+    },
+    {
+      "scenario": "hard_error",
+      "payload": "629da0737e70a77f1d",
+      "return": -1,
+      "trace": [
+        [
+          "allocate",
+          11
+        ],
+        [
+          "lock",
+          "outer"
+        ],
+        [
+          "lock",
+          "inner"
+        ],
+        [
+          "write",
+          "55aa629da0737e70a77f1d"
+        ],
+        [
+          "unlock",
+          "inner"
+        ],
+        [
+          "errno_pointer"
+        ],
+        [
+          "unlock",
+          "outer"
+        ],
+        [
+          "release"
+        ]
+      ]
+    },
+    {
+      "scenario": "zero_exhausted",
+      "payload": "ff835e44239b2e1ebc",
+      "return": -1,
+      "trace": [
+        [
+          "allocate",
+          11
+        ],
+        [
+          "lock",
+          "outer"
+        ],
+        [
+          "lock",
+          "inner"
+        ],
+        [
+          "write",
+          "55aaff835e44239b2e1ebc"
+        ],
+        [
+          "unlock",
+          "inner"
+        ],
+        [
+          "errno_pointer"
+        ],
+        [
+          "sleep_ms",
+          20
+        ],
+        [
+          "lock",
+          "inner"
+        ],
+        [
+          "write",
+          "55aaff835e44239b2e1ebc"
+        ],
+        [
+          "unlock",
+          "inner"
+        ],
+        [
+          "sleep_ms",
+          20
+        ],
+        [
+          "lock",
+          "inner"
+        ],
+        [
+          "write",
+          "55aaff835e44239b2e1ebc"
+        ],
+        [
+          "unlock",
+          "inner"
+        ],
+        [
+          "sleep_ms",
+          20
+        ],
+        [
+          "lock",
+          "inner"
+        ],
+        [
+          "write",
+          "55aaff835e44239b2e1ebc"
+        ],
+        [
+          "unlock",
+          "inner"
+        ],
+        [
+          "sleep_ms",
+          20
+        ],
+        [
+          "lock",
+          "inner"
+        ],
+        [
+          "write",
+          "55aaff835e44239b2e1ebc"
+        ],
+        [
+          "unlock",
+          "inner"
+        ],
+        [
+          "sleep_ms",
+          20
+        ],
+        [
+          "unlock",
+          "outer"
+        ],
+        [
+          "release"
+        ]
+      ]
+    },
+    {
+      "scenario": "interrupted",
+      "payload": "46d6b4bde5abc8f4b3",
+      "return": -1,
+      "trace": [
+        [
+          "allocate",
+          11
+        ],
+        [
+          "lock",
+          "outer"
+        ],
+        [
+          "lock",
+          "inner"
+        ],
+        [
+          "write",
+          "55aa46d6b4bde5abc8f4b3"
+        ],
+        [
+          "unlock",
+          "inner"
+        ],
+        [
+          "errno_pointer"
+        ],
+        [
+          "unlock",
+          "outer"
+        ],
+        [
+          "release"
+        ]
+      ]
+    },
+    {
+      "scenario": "overreport",
+      "payload": "6c0533ebce664b9347",
+      "return": -1,
+      "trace": [
+        [
+          "allocate",
+          11
+        ],
+        [
+          "lock",
+          "outer"
+        ],
+        [
+          "lock",
+          "inner"
+        ],
+        [
+          "write",
+          "55aa6c0533ebce664b9347"
+        ],
+        [
+          "unlock",
+          "inner"
+        ],
+        [
+          "errno_pointer"
+        ],
+        [
+          "unlock",
+          "outer"
+        ],
+        [
+          "release"
+        ]
+      ]
+    },
+    {
+      "scenario": "late_success",
+      "payload": "a9a7acd33d1c1937dc",
+      "return": 0,
+      "trace": [
+        [
+          "allocate",
+          11
+        ],
+        [
+          "lock",
+          "outer"
+        ],
+        [
+          "lock",
+          "inner"
+        ],
+        [
+          "write",
+          "55aaa9a7acd33d1c1937dc"
+        ],
+        [
+          "unlock",
+          "inner"
+        ],
+        [
+          "errno_pointer"
+        ],
+        [
+          "sleep_ms",
+          20
+        ],
+        [
+          "lock",
+          "inner"
+        ],
+        [
+          "write",
+          "55aaa9a7acd33d1c1937dc"
+        ],
+        [
+          "unlock",
+          "inner"
+        ],
+        [
+          "sleep_ms",
+          20
+        ],
+        [
+          "lock",
+          "inner"
+        ],
+        [
+          "write",
+          "55aaa9a7acd33d1c1937dc"
+        ],
+        [
+          "unlock",
+          "inner"
+        ],
+        [
+          "sleep_ms",
+          20
+        ],
+        [
+          "lock",
+          "inner"
+        ],
+        [
+          "write",
+          "55aaa9a7acd33d1c1937dc"
+        ],
+        [
+          "unlock",
+          "inner"
+        ],
+        [
+          "sleep_ms",
+          20
+        ],
+        [
+          "lock",
+          "inner"
+        ],
+        [
+          "write",
+          "55aaa9a7acd33d1c1937dc"
+        ],
+        [
+          "unlock",
+          "inner"
+        ],
+        [
+          "unlock",
+          "outer"
+        ],
+        [
+          "release"
+        ]
+      ]
+    },
+    {
+      "scenario": "changed_error",
+      "payload": "b4d70d1d4e484315fe",
+      "return": -1,
+      "trace": [
+        [
+          "allocate",
+          11
+        ],
+        [
+          "lock",
+          "outer"
+        ],
+        [
+          "lock",
+          "inner"
+        ],
+        [
+          "write",
+          "55aab4d70d1d4e484315fe"
+        ],
+        [
+          "unlock",
+          "inner"
+        ],
+        [
+          "errno_pointer"
+        ],
+        [
+          "sleep_ms",
+          20
+        ],
+        [
+          "lock",
+          "inner"
+        ],
+        [
+          "write",
+          "55aab4d70d1d4e484315fe"
+        ],
+        [
+          "unlock",
+          "inner"
+        ],
+        [
+          "unlock",
+          "outer"
+        ],
+        [
+          "release"
+        ]
+      ]
+    },
+    {
+      "scenario": "no_uart",
+      "payload": "12319fde47daeb3bdb",
+      "return": -1,
+      "trace": []
+    },
+    {
+      "scenario": "no_memory",
+      "payload": "179222999ab6058c58",
+      "return": -1,
+      "trace": [
+        [
+          "allocate",
+          11
+        ]
+      ]
+    }
+  ],
+  "executed_original_routines": [
+    "0x117f7c",
+    "0x10e6c0"
+  ],
+  "method": "Original AML send executes original UART write; C AML callback composes recovered UART. Final OS write, allocation, locks, delay and logging intercepted.",
+  "correction_to_stage3": "AML invokes its UART helper once, not necessarily the OS write once. The helper can retry the entire frame up to five times.",
+  "hardware_tested": false,
+  "mutex_concurrency_tested": false,
+  "physical_uart_tested": false
+}

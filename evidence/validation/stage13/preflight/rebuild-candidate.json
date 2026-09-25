@@ -1,0 +1,19 @@
+{
+  "group": "rebuild-candidate",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage9_differential.py",
+        "candidate"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "rebuild-candidate-00.log",
+      "seconds": 91.055,
+      "sha256": "aaa659e775c55863fbda61acd8862d0b08de4ffb693b7f6433642a12b793b03f"
+    }
+  ]
+}

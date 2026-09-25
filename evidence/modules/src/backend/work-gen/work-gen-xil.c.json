@@ -1,0 +1,87 @@
+{
+  "path": "src/backend/work-gen/work-gen-xil.c",
+  "observed_as": "/tmp/build/src/backend/work-gen/work-gen-xil.c",
+  "status": "pending-not-implemented",
+  "evidence": [
+    {
+      "address": "0x5e944b",
+      "xor": 175,
+      "decoded_length": 47,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x000bf440",
+      "end_exclusive": "0x000bf8f0",
+      "path_references": [
+        {
+          "insn": "0xbf4f4",
+          "string": "0x5e944b",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/work-gen/work-gen-xil.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000bf8f0",
+      "end_exclusive": "0x000bfb94",
+      "path_references": [
+        {
+          "insn": "0xbf9c8",
+          "string": "0x5e944b",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/work-gen/work-gen-xil.c"
+        },
+        {
+          "insn": "0xbfa20",
+          "string": "0x5e944b",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/work-gen/work-gen-xil.c"
+        },
+        {
+          "insn": "0xbfae4",
+          "string": "0x5e944b",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/work-gen/work-gen-xil.c"
+        },
+        {
+          "insn": "0xbfb30",
+          "string": "0x5e944b",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/work-gen/work-gen-xil.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000bfb94",
+      "end_exclusive": "0x000bfce8",
+      "path_references": [
+        {
+          "insn": "0xbfc3c",
+          "string": "0x5e944b",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/work-gen/work-gen-xil.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000bfe5c",
+      "end_exclusive": "0x000c0018",
+      "path_references": [
+        {
+          "insn": "0xbfe98",
+          "string": "0x5e944b",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/work-gen/work-gen-xil.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": []
+}

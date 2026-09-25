@@ -1,0 +1,2 @@
+COMMAND: ['/opt/pyvenv/bin/python3', 'tests/test_stage7_interpreter.py']
+{"status": "PASS", "synthetic_instruction_cases": 3536, "opcodes": ["UXTH", "SMLABB"], "Q_modeled": true, "independent_emulator_certification": false}

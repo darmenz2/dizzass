@@ -1,0 +1,2 @@
+COMMAND: ['/opt/pyvenv/bin/python3', 'tests/test_stage13_differential.py', 'ring']
+ring {"comparisons": 8748, "operations": {"init": 36, "push": 3474, "pop": 2913, "count": 576, "empty": 576, "full": 538, "reset": 563, "destroy": 72}, "write_wraps": 337, "full_pushes": 607, "original_primitives_executed": 8}

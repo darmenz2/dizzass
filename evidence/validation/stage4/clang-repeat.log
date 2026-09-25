@@ -1,0 +1,98 @@
+{
+  "passed": true,
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "total_cases": 10346,
+  "cases": {
+    "init: return, all tables and allocation ownership": 519,
+    "destroy: release order, globals and no retained allocations": 999,
+    "default table: all 512 bytes against original init": 8,
+    "get_chain: return, output and whole cache state": 3049,
+    "get_chip: return, output and whole cache state": 3648,
+    "set_chain: return, output and whole cache state": 1021,
+    "set_chip: return, output and whole cache state": 1042,
+    "reset: return, all tables and preserved counts/flag": 60
+  },
+  "seconds": 11.038,
+  "host_chain_size": 528,
+  "original_chain_size": 520,
+  "original_global_addresses": {
+    "pointer": "0x654d68",
+    "chain_count": "0x654d6c",
+    "enabled": "0x654d70"
+  },
+  "hardware_tested": false,
+  "full_miner_tested": false,
+  "method": "Native compiled C state and return compared to complete original A32 cache routines",
+  "limits": [
+    "Local bounded A32 interpreter; not an independent certified emulator.",
+    "calloc/free/memcpy are intercepted; diagnostics are suppressed.",
+    "Explicit C context/native pointers replace vendor singleton and ARM32 pointers.",
+    "Allocation sizes normalized for native pointer width; table contents and ownership compared.",
+    "New integration guards for negative/oversized counts, live reinit and corrupt context tested separately.",
+    "No hardware/cache coherency, multithreading, timing, actual model selection or miner acceptance."
+  ]
+}
+{
+  "passed": true,
+  "total_cases": 2048,
+  "cases": {
+    "dispatch success, cache success": 219,
+    "dispatch success, cache failure": 666,
+    "transport failure: one dispatch, no cache mutation": 1163
+  },
+  "seconds": 7.167,
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "examples": [
+    {
+      "mode": 0,
+      "register": "0x0",
+      "transport_result": 0,
+      "return": 0,
+      "packet": "41090300d663bec60b"
+    },
+    {
+      "mode": 0,
+      "register": "0x8",
+      "transport_result": 0,
+      "return": 0,
+      "packet": "4109030839bf4ea407"
+    },
+    {
+      "mode": 0,
+      "register": "0x18",
+      "transport_result": 0,
+      "return": 0,
+      "packet": "41090318bacfa6971b"
+    },
+    {
+      "mode": 0,
+      "register": "0x25",
+      "transport_result": 0,
+      "return": -1,
+      "packet": "41090325a4e190ef05"
+    },
+    {
+      "mode": 0,
+      "register": "0xfc",
+      "transport_result": 0,
+      "return": 0,
+      "packet": "410903fc39cfe11b12"
+    },
+    {
+      "mode": 0,
+      "register": "0xff",
+      "transport_result": 0,
+      "return": -1,
+      "packet": "410903ff31b59a9414"
+    }
+  ],
+  "method": "Complete original 0xee8e4, CRC5 and cache functions run together; only send boundary and diagnostics intercepted",
+  "hardware_tested": false,
+  "full_miner_tested": false,
+  "limits": [
+    "Local A32 interpreter; no independent CPU certification.",
+    "The 0xd26ac transport boundary is injected; no UART or chip acknowledgement.",
+    "Pointer/context layout adapted. Added invalid API guards are not vendor behavior.",
+    "All original cache memory changes and return codes are compared; timing/log text omitted."
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "scope": "Selected code/build changes; data arrays and bulk evidence excluded, use ZIP for complete project",
+  "files": [
+    {
+      "path": "Makefile.recovery",
+      "change": "modified",
+      "old_sha256": "f3b9143c5d5e2823ab83e99de1c12dcff572473b0d2c50602d14498cf36f75fc",
+      "new_sha256": "54f713d46ab7a1ec00c93fa5b0ca467f59696355432560620bb61189e35b0b77"
+    },
+    {
+      "path": "include/xminer/recovery/chip1398.h",
+      "change": "modified",
+      "old_sha256": "c7a8cb6be05346b938991947efae09716348aeec4ad98699557e45c5a2eb185b",
+      "new_sha256": "3091cf8b44d0483d0f2a632a49535532bdbac842cee86ccbb212e10fc7cfd505"
+    },
+    {
+      "path": "include/xminer/recovery/reg_cache.h",
+      "change": "added",
+      "old_sha256": null,
+      "new_sha256": "37aae34cab018e6c6f2282a8083aa01d6fd04da10e37f46d39b6162766a37ba6"
+    },
+    {
+      "path": "libbitmain/src/chip/chip1398.c",
+      "change": "modified",
+      "old_sha256": "40acfc0cc4e9251d4e96c89b82b460d086c811a9455804394d327778c6effa33",
+      "new_sha256": "77f4d4a2704319c985419cfb7bf08887de1a3b0afdbe34d257cdfbdf24863fd7"
+    },
+    {
+      "path": "libbitmain/src/reg_cache.c",
+      "change": "modified",
+      "old_sha256": "e78e251ebe836d4b8bcd0d0a1183da8a454cb7bae0d865dfb69e4feae588f08e",
+      "new_sha256": "e504e6e2bd0f568761567551586aa57db174cd3849ca11c22c9c0753ca28d339"
+    },
+    {
+      "path": "reconstruction/cgminer-overlay.am",
+      "change": "modified",
+      "old_sha256": "2d96836d452634826cb8c09c439cd6186350ceb7f5fde4354221b174e815d141",
+      "new_sha256": "655f66a5af5c26bd842ce7b6e49c9ad5ed32a39f93f6bef1c0818b2f9ab97fa8"
+    },
+    {
+      "path": "tests/cache_oracle.py",
+      "change": "added",
+      "old_sha256": null,
+      "new_sha256": "d707c939ec738e098112e75fb5eb0c4bbb371b3f1c051ee200d65ba5e7f6a5f7"
+    },
+    {
+      "path": "tests/test_reg_cache.c",
+      "change": "added",
+      "old_sha256": null,
+      "new_sha256": "3d3c435f7f63b8cd89b84dc41d6f00622b7e63e4e3311f3a1b7376d7dd2fcc77"
+    },
+    {
+      "path": "tests/test_stage4_cache_differential.py",
+      "change": "added",
+      "old_sha256": null,
+      "new_sha256": "93269c8dd7c8ff936db6542d245a1123fe0be713f54f29d51745d6e9b3447fe4"
+    },
+    {
+      "path": "tests/test_stage4_config_differential.py",
+      "change": "added",
+      "old_sha256": null,
+      "new_sha256": "a4f6e7748a816e604d1793032ea40575285adf15dc02788bb3fc6acee30315c3"
+    },
+    {
+      "path": "tests/test_tree.py",
+      "change": "modified",
+      "old_sha256": "a4b98e4006dbcdf62b95d07a155d3aed42d00a6fc4a6cd9b4ca2f5d6b6d6d197",
+      "new_sha256": "d7511c324862402d02b3a943205472a97d215696bfea3362d0403a98be363eb4"
+    },
+    {
+      "path": "tools/build_source_tree.py",
+      "change": "modified",
+      "old_sha256": "00a97f3e6130ddd2f0530190ec77a7a85526af5ec77be1001a72135bc939aa0c",
+      "new_sha256": "14d8fa78f3f27c3064d8dcce9d0b228e805bbe4bb15bbacce3bfd8560319a598"
+    },
+    {
+      "path": "tools/extract_reg_cache_defaults.py",
+      "change": "added",
+      "old_sha256": null,
+      "new_sha256": "b775622b2dbbc719281e37ae15d09eac6b39218fbf05bc587f8893d9c635ebaf"
+    }
+  ]
+}

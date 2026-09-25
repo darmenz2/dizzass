@@ -1,0 +1,92 @@
+{
+  "path": "libbitmain/src/xil/platform.c",
+  "observed_as": "/tmp/build/libbitmain/src/xil/platform.c",
+  "status": "pending-not-implemented",
+  "evidence": [
+    {
+      "address": "0x5ee030",
+      "xor": 94,
+      "decoded_length": 41,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x001154d8",
+      "end_exclusive": "0x001157c8",
+      "path_references": [
+        {
+          "insn": "0x115584",
+          "string": "0x5ee030",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/platform.c"
+        },
+        {
+          "insn": "0x1155c4",
+          "string": "0x5ee030",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/platform.c"
+        },
+        {
+          "insn": "0x11562c",
+          "string": "0x5ee030",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/platform.c"
+        },
+        {
+          "insn": "0x115664",
+          "string": "0x5ee030",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/platform.c"
+        },
+        {
+          "insn": "0x1156b0",
+          "string": "0x5ee030",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/platform.c"
+        },
+        {
+          "insn": "0x115728",
+          "string": "0x5ee030",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/platform.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x001157ec",
+      "end_exclusive": "0x00115950",
+      "path_references": [
+        {
+          "insn": "0x115880",
+          "string": "0x5ee030",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/platform.c"
+        },
+        {
+          "insn": "0x1158d0",
+          "string": "0x5ee030",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/platform.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00115fcc",
+      "end_exclusive": "0x001165ac",
+      "path_references": [
+        {
+          "insn": "0x11604c",
+          "string": "0x5ee030",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/platform.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": []
+}

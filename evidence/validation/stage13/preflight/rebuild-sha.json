@@ -1,0 +1,19 @@
+{
+  "group": "rebuild-sha",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage9_differential.py",
+        "sha"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "rebuild-sha-00.log",
+      "seconds": 18.836,
+      "sha256": "d5be3f12c57856b5e454664bbcbf7d8e2e8b6cebf1ffdc1aebe6f15de95cf747"
+    }
+  ]
+}

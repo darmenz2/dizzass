@@ -1,0 +1,54 @@
+{
+  "group": "evidence",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "make",
+        "-f",
+        "Makefile.recovery",
+        "evidence-check"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "evidence-00.log",
+      "seconds": 3.057,
+      "sha256": "dc108e9fb759411b86e1dbc8447747b6fe57ff7cae8b87f9f1b700e2d0f79a67"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_tree.py"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "evidence-01.log",
+      "seconds": 0.622,
+      "sha256": "e9db9bd52a9c06ec4fc678dcf8f6f6a9926f7419005dc2e48ab40b85351fa4a0"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_assembler.py"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "evidence-02.log",
+      "seconds": 0.782,
+      "sha256": "7bdd7c018382e60c3e2409b64f7e6182aea88a63c1b94dfba9a6f83b1cd2cba2"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tools/update_overlay_inventory.py",
+        "--check"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "evidence-03.log",
+      "seconds": 0.665,
+      "sha256": "bf612857fcdb9365269a3cfc50566dbabed672c79f0a3ed8377b833a560c0cc3"
+    }
+  ]
+}

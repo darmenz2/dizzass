@@ -1,0 +1,2 @@
+COMMAND: ['/opt/pyvenv/bin/python3', 'tools/generate_time_fixture.py']
+Stage12 hashlib vectors: 6 PASS

@@ -1,0 +1,22 @@
+{
+  "group": "sanitizers",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "make",
+        "-f",
+        "Makefile.recovery",
+        "sanitize",
+        "sanitize-linux-pty",
+        "sanitize-linux-pty-rx"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "sanitizers-00.log",
+      "seconds": 30.084,
+      "sha256": "267b9c50b15de60ae595b8c18ce384707ffefb5115f9b11b9caf59910723ef50"
+    }
+  ]
+}

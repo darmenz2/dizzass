@@ -1,0 +1,2 @@
+NOT IMPLEMENTED: T21 runtime/model dispatch/live transport/PLL programming/PSU/autotune are incomplete.
+make: *** [Makefile.recovery:62: full-runtime] Error 2

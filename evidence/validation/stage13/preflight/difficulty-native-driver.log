@@ -1,0 +1,4 @@
+difficulty-native 1/4: return=0 expected=0 (0.002s)
+difficulty-native 2/4: return=0 expected=0 (0.002s)
+difficulty-native 3/4: return=0 expected=0 (1.079s)
+difficulty-native 4/4: return=0 expected=0 (0.963s)

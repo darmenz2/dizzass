@@ -1,0 +1,113 @@
+{
+  "path": "libbitmain/src/gpio.c",
+  "observed_as": "/tmp/build/libbitmain/src/gpio.c",
+  "status": "pending-not-implemented",
+  "evidence": [
+    {
+      "address": "0x5ef20f",
+      "xor": 130,
+      "decoded_length": 33,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x001248e4",
+      "end_exclusive": "0x00124b5c",
+      "path_references": [
+        {
+          "insn": "0x124a0c",
+          "string": "0x5ef20f",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/gpio.c"
+        },
+        {
+          "insn": "0x124a4c",
+          "string": "0x5ef20f",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/gpio.c"
+        },
+        {
+          "insn": "0x124ab8",
+          "string": "0x5ef20f",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/gpio.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00124ba4",
+      "end_exclusive": "0x00124d64",
+      "path_references": [
+        {
+          "insn": "0x124c8c",
+          "string": "0x5ef20f",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/gpio.c"
+        },
+        {
+          "insn": "0x124cd0",
+          "string": "0x5ef20f",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/gpio.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00124d64",
+      "end_exclusive": "0x00124f70",
+      "path_references": [
+        {
+          "insn": "0x124ef0",
+          "string": "0x5ef20f",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/gpio.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00124f70",
+      "end_exclusive": "0x001251b8",
+      "path_references": [
+        {
+          "insn": "0x1250b0",
+          "string": "0x5ef20f",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/gpio.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x001251b8",
+      "end_exclusive": "0x00125338",
+      "path_references": [
+        {
+          "insn": "0x12524c",
+          "string": "0x5ef20f",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/gpio.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00125338",
+      "end_exclusive": "0x00125a28",
+      "path_references": [
+        {
+          "insn": "0x12534c",
+          "string": "0x5ef20f",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/gpio.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": []
+}

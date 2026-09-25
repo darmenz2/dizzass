@@ -1,0 +1,64 @@
+{
+  "passed": true,
+  "total_cases": 2048,
+  "cases": {
+    "dispatch success, cache success": 219,
+    "dispatch success, cache failure": 666,
+    "transport failure: one dispatch, no cache mutation": 1163
+  },
+  "seconds": 7.238,
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "examples": [
+    {
+      "mode": 0,
+      "register": "0x0",
+      "transport_result": 0,
+      "return": 0,
+      "packet": "41090300d663bec60b"
+    },
+    {
+      "mode": 0,
+      "register": "0x8",
+      "transport_result": 0,
+      "return": 0,
+      "packet": "4109030839bf4ea407"
+    },
+    {
+      "mode": 0,
+      "register": "0x18",
+      "transport_result": 0,
+      "return": 0,
+      "packet": "41090318bacfa6971b"
+    },
+    {
+      "mode": 0,
+      "register": "0x25",
+      "transport_result": 0,
+      "return": -1,
+      "packet": "41090325a4e190ef05"
+    },
+    {
+      "mode": 0,
+      "register": "0xfc",
+      "transport_result": 0,
+      "return": 0,
+      "packet": "410903fc39cfe11b12"
+    },
+    {
+      "mode": 0,
+      "register": "0xff",
+      "transport_result": 0,
+      "return": -1,
+      "packet": "410903ff31b59a9414"
+    }
+  ],
+  "method": "Complete original 0xee8e4, CRC5 and cache functions run together; only send boundary and diagnostics intercepted",
+  "hardware_tested": false,
+  "full_miner_tested": false,
+  "limits": [
+    "Local A32 interpreter; no independent CPU certification.",
+    "The 0xd26ac transport boundary is injected; no UART or chip acknowledgement.",
+    "Pointer/context layout adapted. Added invalid API guards are not vendor behavior.",
+    "All original cache memory changes and return codes are compared; timing/log text omitted."
+  ]
+}

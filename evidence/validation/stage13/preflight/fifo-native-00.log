@@ -1,0 +1,2 @@
+COMMAND: ['./build/test-nonce-fifo']
+{"status":"PASS","native_scenarios":28732,"assertions":129319,"rx_queue_genesis_fragments":11,"hardware_tested":false,"submitted":false}

@@ -1,0 +1,16 @@
+COMMAND: ['/opt/pyvenv/bin/python3', 'tests/test_arm_differential.py']
+{
+  "passed": true,
+  "total_cases": 2546,
+  "cases": {
+    "ticket-mask argument slice": 384,
+    "sweep-clock argument slice": 256,
+    "clock-delay argument slice, null context": 384,
+    "clock-delay argument slice, chip context": 384,
+    "analog-mux argument slice": 160,
+    "misc-control transform after injected successful cache read": 528,
+    "CRC5 complete function": 194,
+    "SET_CONFIG packet through original CRC, before transport": 256
+  },
+  "seconds": 2.296
+}

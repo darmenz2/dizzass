@@ -1,0 +1,2 @@
+COMMAND: ['./build/test-work-difficulty']
+{"status":"PASS","native_checks":408,"fragmented_genesis_replays":11,"target_derived_from_difficulty":true,"hardware_tested":false,"submitted":false}

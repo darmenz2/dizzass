@@ -1,0 +1,20 @@
+{
+  "group": "clang-rebuild",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "make",
+        "-f",
+        "Makefile.recovery",
+        "stage9-clang"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "clang-rebuild-00.log",
+      "seconds": 208.577,
+      "sha256": "ed2824fe1c48ad147478b2730465a55b4070a8a200934d77342e3b91d8c2e2c8"
+    }
+  ]
+}

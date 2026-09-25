@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "group": "core",
+  "build_tag": "clang",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "cases": {
+    "chip1398_core_bit_helper": 1305
+  },
+  "total_cases": 1305,
+  "seconds": 0.057,
+  "samples": [],
+  "injected": [
+    "chip/core attribution in preparation only",
+    "memcpy",
+    "numeric model getter for core helper"
+  ],
+  "original_sha_replaced_by_hook": false,
+  "valid_share_or_hardware_test": false
+}

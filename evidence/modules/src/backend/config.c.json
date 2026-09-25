@@ -1,0 +1,411 @@
+{
+  "path": "src/backend/config.c",
+  "observed_as": "/tmp/build/src/backend/config.c",
+  "status": "pending-not-implemented",
+  "evidence": [
+    {
+      "address": "0x5e3919",
+      "xor": 59,
+      "decoded_length": 32,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x0004d480",
+      "end_exclusive": "0x0004d590",
+      "path_references": [
+        {
+          "insn": "0x4d538",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0004d618",
+      "end_exclusive": "0x0004dc48",
+      "path_references": [
+        {
+          "insn": "0x4d760",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x4d9c4",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x4db44",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0004dc48",
+      "end_exclusive": "0x0004dedc",
+      "path_references": [
+        {
+          "insn": "0x4dcf4",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x4dd70",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0004dedc",
+      "end_exclusive": "0x0004e430",
+      "path_references": [
+        {
+          "insn": "0x4dff4",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x4e068",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x4e1e8",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x4e23c",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x4e270",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x4e2cc",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0004e430",
+      "end_exclusive": "0x0004e5f4",
+      "path_references": [
+        {
+          "insn": "0x4e528",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x4e570",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0004e5f4",
+      "end_exclusive": "0x0004f0a0",
+      "path_references": [
+        {
+          "insn": "0x4e6c0",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x4eb44",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x4ec98",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x4ed1c",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x4ee1c",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x4ee5c",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x4eea4",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0004f0a0",
+      "end_exclusive": "0x0004f2d0",
+      "path_references": [
+        {
+          "insn": "0x4f118",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x4f14c",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x4f184",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0004f2d0",
+      "end_exclusive": "0x000504d4",
+      "path_references": [
+        {
+          "insn": "0x4f548",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x4f580",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x4f930",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x4f96c",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x4f9f8",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x4fa78",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x4fae8",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x4ff04",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x4ffd4",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x50064",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x500f0",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x50128",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x50218",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x5027c",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00050630",
+      "end_exclusive": "0x00051540",
+      "path_references": [
+        {
+          "insn": "0x50804",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x50acc",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x50b70",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x50cc0",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x50d38",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x50e44",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x5112c",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x511d8",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x51214",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x51234",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x51280",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x512b0",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x5131c",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x513d4",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        },
+        {
+          "insn": "0x51428",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00051d30",
+      "end_exclusive": "0x00053d98",
+      "path_references": [
+        {
+          "insn": "0x51e08",
+          "string": "0x5e3919",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/config.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": []
+}

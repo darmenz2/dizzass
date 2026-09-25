@@ -1,0 +1,29 @@
+{
+  "group": "fifo-native",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "./build/test-nonce-fifo"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "fifo-native-00.log",
+      "seconds": 0.004,
+      "sha256": "b643ea3e8dba7dac38c3294a01f46ecc8738e3e19a8211cdb8468d9dad267e16"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage13_differential.py",
+        "composition"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "fifo-native-01.log",
+      "seconds": 2.35,
+      "sha256": "0ebff48298e86dc3ece5b7c14eec20ca8948297be912ed67037d2422a50f4e42"
+    }
+  ]
+}

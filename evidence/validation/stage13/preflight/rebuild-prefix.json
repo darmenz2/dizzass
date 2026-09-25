@@ -1,0 +1,19 @@
+{
+  "group": "rebuild-prefix",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage9_differential.py",
+        "prefix"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "rebuild-prefix-00.log",
+      "seconds": 110.049,
+      "sha256": "d2302933c32017dee9e5c3dcc982113e8db899eac544ea7c481a8e1155c10d4f"
+    }
+  ]
+}

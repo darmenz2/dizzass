@@ -1,0 +1,2 @@
+COMMAND: ['./build/test-work-storage']
+{"stage":11,"native_scenarios":1200,"assertions":12220,"real_malloc_free":true,"hardware_tested":false}

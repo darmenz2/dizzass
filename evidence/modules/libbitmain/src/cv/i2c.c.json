@@ -1,0 +1,149 @@
+{
+  "path": "libbitmain/src/cv/i2c.c",
+  "observed_as": "/tmp/build/libbitmain/src/cv/i2c.c",
+  "status": "pending-not-implemented",
+  "evidence": [
+    {
+      "address": "0x5eef35",
+      "xor": 58,
+      "decoded_length": 35,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x001222ac",
+      "end_exclusive": "0x00122414",
+      "path_references": [
+        {
+          "insn": "0x1222f8",
+          "string": "0x5eef35",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/i2c.c"
+        },
+        {
+          "insn": "0x1223a8",
+          "string": "0x5eef35",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/i2c.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x001224ac",
+      "end_exclusive": "0x00122604",
+      "path_references": [
+        {
+          "insn": "0x122534",
+          "string": "0x5eef35",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/i2c.c"
+        },
+        {
+          "insn": "0x12256c",
+          "string": "0x5eef35",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/i2c.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00122604",
+      "end_exclusive": "0x0012283c",
+      "path_references": [
+        {
+          "insn": "0x122698",
+          "string": "0x5eef35",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/i2c.c"
+        },
+        {
+          "insn": "0x122770",
+          "string": "0x5eef35",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/i2c.c"
+        },
+        {
+          "insn": "0x1227d8",
+          "string": "0x5eef35",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/i2c.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0012283c",
+      "end_exclusive": "0x00122a60",
+      "path_references": [
+        {
+          "insn": "0x122974",
+          "string": "0x5eef35",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/i2c.c"
+        },
+        {
+          "insn": "0x1229b4",
+          "string": "0x5eef35",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/i2c.c"
+        },
+        {
+          "insn": "0x1229e8",
+          "string": "0x5eef35",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/i2c.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00122a60",
+      "end_exclusive": "0x00122c78",
+      "path_references": [
+        {
+          "insn": "0x122b48",
+          "string": "0x5eef35",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/i2c.c"
+        },
+        {
+          "insn": "0x122b7c",
+          "string": "0x5eef35",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/i2c.c"
+        },
+        {
+          "insn": "0x122bb4",
+          "string": "0x5eef35",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/i2c.c"
+        },
+        {
+          "insn": "0x122c04",
+          "string": "0x5eef35",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/i2c.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00122c78",
+      "end_exclusive": "0x001230a8",
+      "path_references": [
+        {
+          "insn": "0x122d8c",
+          "string": "0x5eef35",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/i2c.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": []
+}

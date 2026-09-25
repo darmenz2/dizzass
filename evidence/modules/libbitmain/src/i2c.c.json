@@ -1,0 +1,56 @@
+{
+  "path": "libbitmain/src/i2c.c",
+  "observed_as": "/tmp/build/libbitmain/src/i2c.c",
+  "status": "pending-not-implemented",
+  "evidence": [
+    {
+      "address": "0x5ef374",
+      "xor": 23,
+      "decoded_length": 32,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x00125a28",
+      "end_exclusive": "0x00125bf4",
+      "path_references": [
+        {
+          "insn": "0x125b0c",
+          "string": "0x5ef374",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00125cf4",
+      "end_exclusive": "0x00125e74",
+      "path_references": [
+        {
+          "insn": "0x125e10",
+          "string": "0x5ef374",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00125e74",
+      "end_exclusive": "0x00126084",
+      "path_references": [
+        {
+          "insn": "0x125eb4",
+          "string": "0x5ef374",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": []
+}

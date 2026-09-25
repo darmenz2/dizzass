@@ -1,0 +1,57 @@
+{
+  "path": "libbitmain/src/aml/chip.c",
+  "observed_as": "/tmp/build/libbitmain/src/aml/chip.c",
+  "status": "partial-verified-slices",
+  "evidence": [
+    {
+      "address": "0x5ee26b",
+      "xor": 156,
+      "decoded_length": 37,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x00117f7c",
+      "end_exclusive": "0x00118180",
+      "path_references": [
+        {
+          "insn": "0x118004",
+          "string": "0x5ee26b",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/aml/chip.c"
+        },
+        {
+          "insn": "0x118050",
+          "string": "0x5ee26b",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/aml/chip.c"
+        },
+        {
+          "insn": "0x118120",
+          "string": "0x5ee26b",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/aml/chip.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0011827c",
+      "end_exclusive": "0x00118444",
+      "path_references": [
+        {
+          "insn": "0x1182bc",
+          "string": "0x5ee26b",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/aml/chip.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": [
+    "libbitmain/src/aml/chip.c"
+  ]
+}

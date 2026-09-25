@@ -1,0 +1,6 @@
+nonce 1/6: return=0 expected=0 (0.002s)
+nonce 2/6: return=0 expected=0 (0.936s)
+nonce 3/6: return=0 expected=0 (7.276s)
+nonce 4/6: return=0 expected=0 (16.676s)
+nonce 5/6: return=0 expected=0 (11.991s)
+nonce 6/6: return=0 expected=0 (1.378s)

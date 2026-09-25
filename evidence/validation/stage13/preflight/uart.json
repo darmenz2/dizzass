@@ -1,0 +1,42 @@
+{
+  "group": "uart",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage5_uart_differential.py"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "uart-00.log",
+      "seconds": 1.546,
+      "sha256": "0d5a8ea6662b79fba834ec12ab06a1f38b2dff934064eeaa309a7d15827044ac"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage5_aml_uart_differential.py"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "uart-01.log",
+      "seconds": 1.1,
+      "sha256": "106ec35f74a11e9748e446cc5e2cbe2d0e25e3b6fdff824032ba26c88fabd2b9"
+    },
+    {
+      "command": [
+        "make",
+        "-f",
+        "Makefile.recovery",
+        "linux-pty"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "uart-02.log",
+      "seconds": 0.252,
+      "sha256": "e66279f1ff213f37836817e9a2f45e7876f8a4230c60f2f460cd2d92788bd0c3"
+    }
+  ]
+}

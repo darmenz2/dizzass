@@ -1,0 +1,14 @@
+COMMAND: ['/opt/pyvenv/bin/python3', 'tests/test_stage3_differential.py']
+{
+  "passed": true,
+  "total_cases": 3219,
+  "cases": {
+    "PLL legacy: return and all 32 result bytes": 619,
+    "PLL round4: return and all 32 result bytes": 619,
+    "PLL register 0x08 word at SET_CONFIG boundary": 517,
+    "AML chain mask with injected model lookup": 1040,
+    "AML send: return, allocation, lock, write bytes, unlock, release": 371,
+    "AML pure framing versus original write buffer": 53
+  },
+  "seconds": 8.158
+}

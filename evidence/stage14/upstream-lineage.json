@@ -1,0 +1,85 @@
+{
+  "decision": "retain pinned ckolivas/cgminer as integration base; exact VNish fork/commit unresolved",
+  "exact_vendor_ancestor_proven": false,
+  "remote_fork_created": false,
+  "full_source_downloaded": false,
+  "candidates": [
+    {
+      "repo": "ckolivas/cgminer",
+      "commit": "b8491c66e7e22f23a9edf095dd1337ee581e88bd",
+      "cgminer_c_blob": "54739e4139294c526af0c73aa9a02ba9762ca4f2",
+      "miner_h_blob": "6e0ce27844029a28b3dc031fcd0d6c82e9c7d5b5",
+      "role": "current reproducibly pinned integration base, not proven exact ancestor"
+    },
+    {
+      "repo": "jameshilliard/cgminer",
+      "branch": "s9",
+      "observed_pr_head": "00869e55139c4834d48da5e8999d6417b9f7f519",
+      "merge_commit": "5e676a72133066964fbd198eee95f29205e9e711",
+      "merge_date": "2018-09-29T06:47:32Z",
+      "pr_url": "https://github.com/ckolivas/cgminer/pull/730",
+      "role": "confirmed public S9 integration path into current base, not proof VNish forked it"
+    },
+    {
+      "repo": "bitmaintech/bmminer-mix",
+      "commit": "7aebcf2c2cb7bd8cafca7f920d30011d0547d16a",
+      "role": "primary public Bitmain comparator; get_work_by_nonce2 and copy_work family observed"
+    },
+    {
+      "repo": "bitmaintech/cgminer",
+      "branch": "master",
+      "commit": "93db9b54e3af79b7bac4376545ada185b4973b5e",
+      "role": "branch metadata read; no exact VNish ancestry established"
+    }
+  ],
+  "confirmed_public_graph": {
+    "base": "5e676a72133066964fbd198eee95f29205e9e711",
+    "head": "b8491c66e7e22f23a9edf095dd1337ee581e88bd",
+    "merge_base": "5e676a72133066964fbd198eee95f29205e9e711",
+    "status": "ahead",
+    "ahead_by": 93,
+    "behind_by": 0
+  },
+  "semantic_correspondences": [
+    {
+      "vendor": "0x300ac wrapper",
+      "public": "get_work_by_nonce2",
+      "evidence": "nonce2 assigned to pool, byte-swapped version copied, gen_stratum_work called, real-pool assignment and works increment; related structure, not byte identity"
+    },
+    {
+      "vendor": "0x30550 builder / 0x30a6c metadata",
+      "public": "gen_stratum_work",
+      "evidence": "coinbase LE nonce2 increment; merkle reduction; 112-byte template copy and 32-byte root at +36; sdiff, job_id, nonce1, ntime copies"
+    },
+    {
+      "vendor": "0x2fe60",
+      "public": "set_target",
+      "evidence": "binary64 division and four uint64 limb extraction; vendor adds distinct numeric selector path"
+    },
+    {
+      "vendor": "0x31070 prefix",
+      "public": "diff_from_target",
+      "evidence": "base divided by little-endian target conversion; zero denominator fallback"
+    },
+    {
+      "vendor": "0x32f74 prefix",
+      "public": "new_nonce / test_nonce / submit_nonce",
+      "evidence": "last_nonce mutation before hash validity test; vendor also has alternate selector behavior"
+    }
+  ],
+  "limits": [
+    "Common code establishes family relationships, not a unique commit or fork.",
+    "No complete source-to-binary build or whole-function byte comparison was performed.",
+    "Private libbitmain hardware/autotune tree has not been found as a verified public source.",
+    "No existing user repository was modified."
+  ],
+  "sources": [
+    "https://github.com/ckolivas/cgminer/blob/b8491c66e7e22f23a9edf095dd1337ee581e88bd/cgminer.c",
+    "https://github.com/ckolivas/cgminer/blob/b8491c66e7e22f23a9edf095dd1337ee581e88bd/miner.h",
+    "https://github.com/ckolivas/cgminer/pull/730",
+    "https://api.github.com/repos/ckolivas/cgminer/compare/5e676a72133066964fbd198eee95f29205e9e711...b8491c66e7e22f23a9edf095dd1337ee581e88bd",
+    "https://github.com/bitmaintech/bmminer-mix/blob/7aebcf2c2cb7bd8cafca7f920d30011d0547d16a/cgminer.c",
+    "https://api.github.com/repos/bitmaintech/cgminer/branches?per_page=100",
+    "https://cli.github.com/manual/gh_repo_fork"
+  ]
+}

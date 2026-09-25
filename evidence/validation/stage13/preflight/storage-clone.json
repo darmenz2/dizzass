@@ -1,0 +1,19 @@
+{
+  "group": "storage-clone",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage11_differential.py",
+        "clone"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "storage-clone-00.log",
+      "seconds": 1.661,
+      "sha256": "34bce4bd9272bfde2e5c6b41474b4de4104b47dc6705129273475587f11a22a4"
+    }
+  ]
+}

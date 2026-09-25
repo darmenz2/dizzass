@@ -1,0 +1,15 @@
+{
+  "base_zip_sha256": "853a60107f192fbb148b998fd250630e12a271edc4abf575bd0eb626f0637ead",
+  "excluded": [
+    "binary fixtures",
+    "validation logs",
+    "generated overlay inventory",
+    "this patch itself"
+  ],
+  "binary_changes_excluded": [
+    "tests/fixtures/arm32_stage7_instructions.o"
+  ],
+  "rebuild_new_fixture": "make -f Makefile.recovery fixtures-stage7",
+  "regenerate_inventory_after_patch": "python3 tools/update_overlay_inventory.py --write",
+  "full_zip_is_primary_delivery": true
+}

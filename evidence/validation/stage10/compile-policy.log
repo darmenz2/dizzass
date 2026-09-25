@@ -1,0 +1,1 @@
+{"stage": 10, "status": "PASS", "compile_policy_checks": [{"compiler": "gcc", "flag": "-ffast-math", "rejected": true}, {"compiler": "gcc", "flag": "-ffinite-math-only", "rejected": true}, {"compiler": "clang", "flag": "-ffast-math", "rejected": true}, {"compiler": "clang", "flag": "-ffinite-math-only", "rejected": true}]}

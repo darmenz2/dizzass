@@ -1,0 +1,8 @@
+{
+  "stage": 9,
+  "group": "sha",
+  "status": "PASS",
+  "comparisons": 212,
+  "alias_api_checks": 212,
+  "original_sha_executed": true
+}

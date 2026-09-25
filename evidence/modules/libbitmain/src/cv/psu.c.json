@@ -1,0 +1,105 @@
+{
+  "path": "libbitmain/src/cv/psu.c",
+  "observed_as": "/tmp/build/libbitmain/src/cv/psu.c",
+  "status": "pending-not-implemented",
+  "evidence": [
+    {
+      "address": "0x5ef133",
+      "xor": 184,
+      "decoded_length": 35,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x00123f80",
+      "end_exclusive": "0x00124354",
+      "path_references": [
+        {
+          "insn": "0x124140",
+          "string": "0x5ef133",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/psu.c"
+        },
+        {
+          "insn": "0x12418c",
+          "string": "0x5ef133",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/psu.c"
+        },
+        {
+          "insn": "0x1241b8",
+          "string": "0x5ef133",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/psu.c"
+        },
+        {
+          "insn": "0x124204",
+          "string": "0x5ef133",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/psu.c"
+        },
+        {
+          "insn": "0x124230",
+          "string": "0x5ef133",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/psu.c"
+        },
+        {
+          "insn": "0x12427c",
+          "string": "0x5ef133",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/psu.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0012439c",
+      "end_exclusive": "0x00124430",
+      "path_references": [
+        {
+          "insn": "0x1243ec",
+          "string": "0x5ef133",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/psu.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00124430",
+      "end_exclusive": "0x00124550",
+      "path_references": [
+        {
+          "insn": "0x1244b8",
+          "string": "0x5ef133",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/psu.c"
+        },
+        {
+          "insn": "0x124504",
+          "string": "0x5ef133",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/psu.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0012460c",
+      "end_exclusive": "0x001248e4",
+      "path_references": [
+        {
+          "insn": "0x12468c",
+          "string": "0x5ef133",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/psu.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": []
+}

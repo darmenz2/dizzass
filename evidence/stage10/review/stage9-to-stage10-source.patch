@@ -1,0 +1,2287 @@
+diff --git a/Makefile.recovery b/Makefile.recovery
+index 0a61997..030a91d 100644
+--- a/Makefile.recovery
++++ b/Makefile.recovery
+@@ -7,8 +7,8 @@ PYTHON ?= python3
+ CPPFLAGS += -Iinclude
+ CFLAGS ?= -O2 -g
+ STRICT = -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror
+-SOURCES = reconstruction/support/sha256_bytes.c reconstruction/support/work_rebuild_pipeline.c src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c
+-HEADERS = include/xminer/recovery/work_rebuild.h include/xminer/recovery/nonce_verify.h include/xminer/recovery/work_nonce.h include/xminer/recovery/sha256_midstate.h include/xminer/recovery/work_rx.h include/xminer/recovery/uart.h include/xminer/recovery/chip1398.h include/xminer/recovery/pll.h include/xminer/recovery/aml_chip.h include/xminer/recovery/reg_cache.h reconstruction/data/reg_cache_defaults.inc
++SOURCES = reconstruction/support/work_difficulty_pipeline.c reconstruction/support/sha256_bytes.c reconstruction/support/work_rebuild_pipeline.c src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c
++HEADERS = include/xminer/recovery/difficulty.h include/xminer/recovery/work_rebuild.h include/xminer/recovery/nonce_verify.h include/xminer/recovery/work_nonce.h include/xminer/recovery/sha256_midstate.h include/xminer/recovery/work_rx.h include/xminer/recovery/uart.h include/xminer/recovery/chip1398.h include/xminer/recovery/pll.h include/xminer/recovery/aml_chip.h include/xminer/recovery/reg_cache.h reconstruction/data/reg_cache_defaults.inc
+ OBJECTS = $(patsubst %.c,build/host/%.o,$(SOURCES))
+ ARM_OBJECTS = $(patsubst %.c,build/arm/%.o,$(SOURCES))
+ .PHONY: all test linux-pty arm sanitize sanitize-linux-pty evidence-check clean full-runtime
+@@ -235,3 +235,40 @@ evidence-stage9:
+ 	$(PYTHON) tools/generate_genesis_fixture.py
+ evidence-check: evidence-stage9
+ stage9: evidence-stage9
++
++# Stage10: original difficulty arithmetic, work math and a new offline adapter.
++.PHONY: stage10 stage10-clang sanitize-stage10 evidence-stage10 fixtures-stage10
++build/test-work-difficulty: $(SOURCES) tests/test_work_difficulty.c tests/fixtures/genesis_work.h $(HEADERS)
++	mkdir -p build
++	$(CC) $(CPPFLAGS) $(CFLAGS) $(STRICT) $(SOURCES) tests/test_work_difficulty.c -o $@
++build/vn135-rebuild-genesis-difficulty: $(SOURCES) examples/rebuild_genesis_difficulty.c tests/fixtures/genesis_work.h $(HEADERS)
++	mkdir -p build
++	$(CC) $(CPPFLAGS) $(CFLAGS) $(STRICT) $(SOURCES) examples/rebuild_genesis_difficulty.c -o $@
++fixtures-stage10:
++	$(CLANG) --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -c tests/arm32_stage10_instructions.S -o tests/fixtures/arm32_stage10_instructions.o
++stage10: build/libvn135_recovered.so build/test-work-difficulty build/vn135-rebuild-genesis-difficulty
++	./build/test-work-difficulty
++	./build/vn135-rebuild-genesis-difficulty
++	$(PYTHON) tests/test_stage10_interpreter.py
++	$(PYTHON) tests/test_stage10_differential.py target
++	$(PYTHON) tests/test_stage10_differential.py inverse
++	$(PYTHON) tests/test_stage10_differential.py math
++	$(PYTHON) tests/test_stage10_differential.py pipeline
++sanitize-stage10:
++	mkdir -p build
++	$(CC) $(CPPFLAGS) -O1 -g $(STRICT) -fsanitize=address,undefined -fno-omit-frame-pointer $(SOURCES) tests/test_work_difficulty.c -o build/test-work-difficulty-sanitized
++	ASAN_OPTIONS=detect_leaks=1 ./build/test-work-difficulty-sanitized
++stage10-clang: build/libvn135_recovered-clang.so
++	$(CLANG) $(CPPFLAGS) $(CFLAGS) $(STRICT) $(SOURCES) tests/test_work_difficulty.c -o build/test-work-difficulty-clang
++	./build/test-work-difficulty-clang
++	VN135_TEST_LIBRARY=./build/libvn135_recovered-clang.so $(PYTHON) tests/test_stage10_differential.py target
++	VN135_TEST_LIBRARY=./build/libvn135_recovered-clang.so $(PYTHON) tests/test_stage10_differential.py inverse
++	VN135_TEST_LIBRARY=./build/libvn135_recovered-clang.so $(PYTHON) tests/test_stage10_differential.py math
++	VN135_TEST_LIBRARY=./build/libvn135_recovered-clang.so $(PYTHON) tests/test_stage10_differential.py pipeline
++	$(CLANG) $(CPPFLAGS) -O1 -g $(STRICT) -fsanitize=address,undefined -fno-omit-frame-pointer $(SOURCES) tests/test_work_difficulty.c -o build/test-work-difficulty-clang-sanitized
++	ASAN_OPTIONS=detect_leaks=1 ./build/test-work-difficulty-clang-sanitized
++evidence-stage10:
++	$(PYTHON) tools/check_stage10_evidence.py
++test: stage10
++sanitize: sanitize-stage10
++evidence-check: evidence-stage10
+diff --git a/RECONSTRUCTION_README_RU.md b/RECONSTRUCTION_README_RU.md
+index 677878a..8bec743 100644
+--- a/RECONSTRUCTION_README_RU.md
++++ b/RECONSTRUCTION_README_RU.md
+@@ -1,117 +1,109 @@
+-# VNishNet T21 AML 1.3.5 — Stage 9, модульная реконструкция
++# VNishNet T21 AML 1.3.5 — Stage 10, модульная реконструкция
+ 
+-**Исходники и проверочные библиотеки, не установочная прошивка.**
++**Исходники и проверочные библиотеки. Не готовый cgminer и не установочная прошивка.**
+ 
+ ## Текущее состояние
+ 
+-| Показатель | Stage 9 |
++| Показатель | Stage 10 |
+ |---|---:|
+-| Наблюдаемых оригинальных исходных путей | 46 |
++| Наблюдаемые оригинальные исходные пути | 46 |
+ | Частично восстановлено / исключено из сборки | 7 / 39 |
+-| C-единиц трансляции: 7 наблюдаемых + 9 новых helper/adapter | 16 |
+-| Сравнительных случаев, старые и новые | 102 406 |
+-| Работа реального T21 / аппаратный стенд / полный автотюн | Не подтверждены |
++| C-модули: 7 наблюдаемых + 10 новых helper/adapter | 17 |
++| Основные сравнительные случаи в текущем наборе | 104 777 |
++| Реальный T21, аппаратный запуск и полный автотюн | Не подтверждены |
+ 
+-Подробный текущий отчёт: **[STAGE9_CHANGELOG_RU.md](STAGE9_CHANGELOG_RU.md)**.
+-Исторические отчёты Stage 3–8 сохранены без перезаписи.
++Подробный текущий отчёт — [STAGE10_CHANGELOG_RU.md](STAGE10_CHANGELOG_RU.md).
++Исторические отчёты предыдущих этапов сохранены; их ограничения относятся к указанному этапу.
++Числа файлов и тестов не являются процентом восстановления всей прошивки.
+ 
+-## Основные модули
++## Новое на этом этапе
+ 
+-`chip1398.c`, `pll.c`, `aml/chip.c`, `reg_cache.c`, `uart.c`,
+-`src/backend/work-gen/work-gen.c` и теперь `src/frontend/cgminer.c` содержат
+-проверенные части логики, а не полное содержимое оригинальных файлов.
+-`reconstruction/support/` содержит явно новые файлы и интеграционные API.
+-Остальные 39 путей имеют `#error` и не включены в сборку. Монолита и фиктивных
+-успешных заглушек нет. Количество файлов/тестов не означает процент готовности.
++В `src/frontend/cgminer.c` восстановлены difficulty → target, обратный числовой участок
++и расчёт midstate/target при сборке work. Новый отдельный адаптер
++`reconstruction/support/work_difficulty_pipeline.c` подключает расчёт target из сложности
++к уже проверенной связке кандидата и сохранённого задания.
+ 
+-Новый этап: сборка 112-байтного префикса work из сохранённого шаблона,
+-coinbase, 64-битного счётчика и Merkle-ветвей; подтверждённая связь полей
+-68-байтного nonce-кандидата с оригинальным caller/wrapper. Новый адаптер
+-соединяет её с уже восстановленными SHA256d/префильтром/target.
++```
++синтетический RX → кандидат + снимок задания → coinbase/Merkle → заголовок
++     → target из difficulty → SHA256d / пороговое сравнение
++```
++
++Это офлайн-связка с явно переданными входами. Она не подтверждает свежесть задания,
++аппаратную исправность, правильность difficulty от пула или сетевое принятие шары.
++Снимок и сложность должны принадлежать одному удерживаемому заданию.
++
++Сохранены оригинальные округления binary64, нулевая difficulty заменяется на 1.
++Селектор `1` выбирает базовую константу в 65 536 раз больше обычной; привязка селектора
++к T21 или имени алгоритма не установлена. Новый API отклоняет NaN/Inf/отрицательные
++входы и выход за 256-битный диапазон. Эти ограничения не приписываются оригиналу.
++Обычный round-to-nearest-even — предусловие API, не переключаемый им режим.
+ 
+-**Кандидат без соответствующего сохранённого шаблона всё ещё недостаточен.**
+-Шаблон/target должны быть согласованы и удерживаться вызывающим кодом.
+-Адаптер не угадывает пропущенные поля и не подтверждает свежесть задания.
+-112 байт не являются всем 632-байтным оригинальным work. Сетевая отправка,
+-полный consumer и менеджер заданий пока отсутствуют.
++## Файлы
++
++Наблюдаемые пути с частично восстановленным содержимым:
++
++- `libbitmain/src/chip/chip1398.c`, `libbitmain/src/pll.c`, `libbitmain/src/aml/chip.c`;
++- `libbitmain/src/reg_cache.c`, `libbitmain/src/uart.c`;
++- `src/backend/work-gen/work-gen.c`, `src/frontend/cgminer.c`.
++
++`reconstruction/support/` и `include/xminer/recovery/` — явно новые интеграционные
++файлы, их имена не выдаются за исходные имена VNish. Остальные 39 наблюдаемых путей
++содержат `#error` и не включены в сборку. Нет симулятора, выдаваемого за майнер,
++монолитного исходника или заглушек с фиктивным успехом.
+ 
+ ## Сборка
+ 
+ ```sh
+-make -f Makefile.recovery all arm stage9
+-make -f Makefile.recovery test evidence-check sanitize
+-make -f Makefile.recovery stage9-clang
+-make -f Makefile.recovery linux-pty sanitize-linux-pty
+-make -f Makefile.recovery linux-pty-rx sanitize-linux-pty-rx
+-python3 tests/test_assembler.py
+-python3 tests/test_overlay_automake.py
++make -f Makefile.recovery all arm stage10
++make -f Makefile.recovery stage10-clang sanitize-stage10
++./build/vn135-rebuild-genesis-difficulty
+ ```
+ 
+-Результат: host `.a`/`.so`, ARMv7 freestanding `.a`, native тесты и отдельная
+-офлайн-утилита `build/vn135-verify-header`. Последняя не майнит, не передаёт шары
+-и не проверяет актуальность задания. `build/vn135-rebuild-genesis` отдельно
+-демонстрирует полную офлайн-цепочку на историческом тестовом векторе, не майнит. Target передаётся 32 байтами little-endian,
+-заголовок — 80 сериализованными байтами, оба аргумента в hex.
++Результаты — host `.a`/`.so`, ARMv7-A/A32 hard-float freestanding `.a`, нативные тесты и
++офлайн-примеры. ARM-библиотека без Linux sysroot, не ELF исполняемого T21 майнера.
++Требуются Python 3.10+, GCC/Clang, llvm-ar/llvm-objdump, Git; для полной проверки
++Automake/Autoconf и Linux для PTY-тестов. Устанавливать сторонние Python-пакеты не нужно.
+ 
+-## Наложение на неизменённую публичную основу
++Полный прогон именно из чистой распаковки, логи вне исходного дерева:
+ 
+ ```sh
++python3 tools/verify_stage10_all.py --logs /absolute/path/stage10-logs --workers 2
++```
++
++Набор содержит 28 групп и 61 команду верхнего уровня. Протокол фактического прогона
++архива передаётся отдельно; дизайн тестов не заменяет его. `full-runtime` намеренно
++возвращает 2. Ограниченный локальный ARM-интерпретатор не моделирует физическую периферию,
++потоки, полную прошивку или все режимы VFP. ASan/UBSan относятся к нативным C-наборам.
++
++## Поверх настоящего public cgminer
++
++Зафиксирована выбранная база `ckolivas/cgminer`, commit
++`b8491c66e7e22f23a9edf095dd1337ee581e88bd`, **не доказанный точный предок VNish**.
++Полное дерево upstream не входит в ZIP, полная совместная сборка не заявляется.
++
++```sh
++python3 tools/assemble_on_cgminer.py \
++  --source /path/to/clean-pinned-cgminer --output ../cgminer-vn135
++# Или отдельно получить выбранную базу при наличии сети:
+ python3 tools/assemble_on_cgminer.py --fetch --output ../cgminer-vnish135
+-# или собственный чистый checkout зафиксированного commit:
+-python3 tools/assemble_on_cgminer.py --source /path/to/cgminer --output ../cgminer-vnish135
+ ```
+ 
+-Пин: `ckolivas/cgminer`, `b8491c66e7e22f23a9edf095dd1337ee581e88bd`.
+-Он выбран как интеграционная база, не доказан как точный предок VNish. Полная
+-база не включена; совместная сборка настоящего upstream не выполнена. Сборщик
+-создаёт новую папку, проверяет commit/tree/инвентарь и отказывается перезаписывать
+-совпадающие исходные файлы. Root `cgminer.c` не заменяется.
+-
+-Исправлен воспроизведённый конфликт имён объектов root/frontend `cgminer.c`:
+-в overlay включён `subdir-objects`. Локальная Automake-фикстура собирает все
+-восстановленные модули с отдельным тестовым main, но это не сборка самого upstream.
+-
+-## Проверки и границы
+-
+-Новый основной набор содержит 554 сравнения с исходными инструкциями:
+-212 SHA, 198 префикса и 144 caller/wrapper/prefix; повторяется GCC/Clang.
+-Отдельно проверяются 144 композиции с префильтром, 12 genesis-композиций,
+-338 нативных условий и 11 фрагментированных RX-прогонов. Протоколы реально
+-выполненной окончательной проверки идут отдельным логом/JSON. Совокупный
+-набор — 102 406 случаев; 65 536 из прежних случаев относятся к небольшой
+-двухбайтной перестановке, а не к десяткам тысяч восстановленных функций.
+-Native ASan/UBSan не означает, что все ctypes-сравнения покрыты санитайзером.
+-
+-Сравнение использует ограниченный локальный ARM-интерпретатор и явные внешние
+-обработчики. Оригинальный ELF как Linux-процесс не запускается. PTY — виртуальная
+-пара, не электрический UART. Точные границы и источники доступны в
+-`evidence/stage9/recovery-manifest.json` и прошлых картах. Реальный SHA и поиск
+-по исходному массиву указателей исполняются в соответствующих тестах, не
+-подменяются ожидаемыми ответами.
+-
+-Сохраняются важные ограничения: UART legacy может повторять весь буфер, Stage 6
+-извлекает CRC без полной проверки, producer Stage 7 заполняет 68 из 72 байт
+-очереди, слот 0–31 не доказывает свежесть. Новый prefilter помнит nonce даже при
+-последующем отказе и не заменяет полный target/submit path.
+-
+-## Эталон и готовый архив
+-
+-`reference/cgminer.vendor.elf`: 6 228 004 байта, SHA-256
+-`b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9`.
+-`evidence/source-tree.json` связывает 46 путей с исходными байтами. Статусы
+-частичного восстановления не утверждают восстановление оригинальных имён/API.
+-Полные функции нельзя считать по EHABI: 1 570 записей не являются таблицей всех функций.
++Создаётся новое дерево, проверяются pin/Makefile, совпадение файлов вызывает отказ.
++Исходные root `cgminer.c`, `miner.h`, `api.c`, драйверы, лицензии и авторство сохраняются.
++Overlay подключает модули через Makefile.am с `subdir-objects` и строгой FP-семантикой.
++Это подключение библиотеки, не регистрация работающего T21 драйвера. Проверка локальной
++Automake-фикстуры не равна полной сборке настоящего public cgminer.
+ 
+-Все группы можно запустить `python3 tools/verify_stage9_all.py --logs /outside/path`.
+-Группы чистой проверки: `python3 tools/verify_stage9.py GROUP --logs /outside/path`.
+-Начать с `build`, остальные перечислены в текущем отчёте. Логи вне дерева, чтобы
+-не изменять инвентарь. Финальные лог и JSON распакованного ZIP поставляются отдельно.
++## Доказательства и ограничения
+ 
+-## Не выполнено
++`reference/cgminer.vendor.elf` сохранён неизменным, SHA-256:
++`b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9`.
++Новые адреса/байты/связи — `evidence/stage10/recovery-manifest.json`;
++листинги — `evidence/stage10/disasm/`. Исторические карты и тесты не удалены.
++`tools/update_overlay_inventory.py --check` проверяет файлы архива, кроме build.
+ 
+-T21→driver binding, запуск хешплат, аппаратные PLL/baud/PSU/защиты, полный work
+-lifecycle и очередь, принятие шар, upstream-драйвер и автотюн. `dashd`, `hwscan`,
+-`updater`, WebUI и ядро не реконструируются этим overlay целиком.
++112-байтный префикс и математические поля — не весь 632-байтный work. Остаются
++метаданные, владение/жизненный цикл заданий, полный consumer и очередь, CRC ответов,
++выбор драйвера T21, запуск цепей, PSU/датчики/защиты, runtime-интеграция и автотюн.
+ 
+-**Не устанавливать библиотеки вместо `/usr/bin/cgminer`. `full-runtime` специально
+-возвращает ошибку; готовый майнер не выдаётся.**
++**Не устанавливать эту библиотеку вместо штатного `/usr/bin/cgminer`.**
+diff --git a/RECONSTRUCTION_STATUS.json b/RECONSTRUCTION_STATUS.json
+index 533cb74..fbb6bb2 100644
+--- a/RECONSTRUCTION_STATUS.json
++++ b/RECONSTRUCTION_STATUS.json
+@@ -1,16 +1,16 @@
+ {
+-  "artifact": "modular-source-overlay-stage9",
++  "artifact": "modular-source-overlay-stage10",
+   "reference": "VNishNet T21 AML 1.3.5 cgminer",
+   "observed_source_paths": 46,
+   "partially_reconstructed_observed_files": 7,
+   "pending_observed_files": 39,
+-  "compiled_c_translation_units": 16,
+-  "public_reconstruction_c_functions": 53,
++  "compiled_c_translation_units": 17,
++  "public_reconstruction_c_functions": 57,
+   "public_functions_are_not_a_count_of_recovered_original_functions": true,
+   "original_data_records_verified": 9,
+   "stage2_differential_cases_repeated": 2546,
+   "stage3_differential_cases_passed": 3219,
+-  "cumulative_distinct_test_cases": 102406,
++  "cumulative_distinct_test_cases": 104777,
+   "stage3_cases_repeated_with_clang": 3219,
+   "separate_synthetic_interpreter_checks": 1318,
+   "full_vendor_tree_recovered": false,
+@@ -45,7 +45,7 @@
+   "source_path_count_increased_by_correcting_truncated_string": true,
+   "stage5_scope": "Common UART routines and combined original AML/UART TX with injected external calls, plus separate Linux PTY test",
+   "stage3_one_write_claim_corrected": "One UART helper invocation in AML, up to five OS write attempts inside UART helper",
+-  "archive_verification_record": "Delivered separately: VNish135_Stage9_Final_Verification.json",
++  "archive_verification_record": "Delivered separately: VNish135_Stage10_Final_Verification.json",
+   "stage6_rx_differential_cases_passed": 6088,
+   "stage6_cases_repeated_with_clang": 6088,
+   "stage6_distinct_streams_compared": 96,
+@@ -140,5 +140,30 @@
+   "stage9_pool_share_acceptance_tested": false,
+   "stage9_original_instruction_scope": "Original core prefix 0x30550..0x30a6c; original caller 0x74f14 and wrapper 0x300ac executed to that boundary with successful external calls. New APIs use explicit arrays and scratch storage.",
+   "stage9_historical_genesis_vector_provenance": "Bitcoin Core v29.0 src/kernel/chainparams.cpp",
+-  "stage9_remaining": "Full work metadata and difficulty-to-target, reference lifetime/queue, T21 dispatch/initialization, hardware safeguards, upstream runtime driver and autotune"
++  "stage9_remaining": "Historical Stage9 outstanding list; difficulty math added separately in Stage10, not full work or consumer.",
++  "stage10_original_instruction_comparisons": 2371,
++  "stage10_counts": {
++    "difficulty_to_target": 1165,
++    "target_to_difficulty_numeric_slice": 950,
++    "midstate_and_target_work_slice": 256
++  },
++  "stage10_separate_pipeline_compositions": 60,
++  "stage10_synthetic_interpreter_checks": 1302,
++  "stage10_separate_original_conversion_helper_checks": 660,
++  "stage10_native_checks": 408,
++  "stage10_fragmented_genesis_replays": 11,
++  "stage10_comparisons_repeated_with_clang": 2371,
++  "stage10_native_gcc_clang_sanitizers_passed": true,
++  "stage10_difficulty_to_target_implemented": true,
++  "stage10_inverse_target_numeric_slice_implemented": true,
++  "stage10_default_round_nearest_even_precondition": true,
++  "stage10_added_input_guards_not_original_firmware_guards": true,
++  "stage10_finite_domain_only": true,
++  "stage10_numeric_selector_model_mapping_proven": false,
++  "stage10_midstate_target_work_math_slice": true,
++  "stage10_original_work_fields": "midstate +0x80, target +0x100, input double difficulty +0x1a0",
++  "stage10_full632byte_work_implemented": false,
++  "stage10_full_nonce_consumer_implemented": false,
++  "stage10_scope": "Original finite-domain difficulty/target math, original numeric inverse slice and work midstate/target slice; new explicit candidate integration adapter with saved snapshot; no full producer/consumer.",
++  "stage10_remaining": "Full work metadata, ownership/lifecycle and complete consumer/queue, CRC validation, T21 model dispatch/startup, hardware safeguards, runtime upstream driver and autotune"
+ }
+diff --git a/STAGE10_CHANGELOG_RU.md b/STAGE10_CHANGELOG_RU.md
+new file mode 100644
+index 0000000..d7fff90
+--- /dev/null
++++ b/STAGE10_CHANGELOG_RU.md
+@@ -0,0 +1,185 @@
++# Stage 10 — difficulty, target и математические поля work
++
++**Модульные исходники и библиотеки, не готовый майнер. Физический T21 не подключался.**
++
++Продолжение точного Stage 9: ZIP SHA-256
++`1f590116a6aa8ed573b08495fe0aa3da412a36f65341010345356845fa650bba`.
++Неизменённый `reference/cgminer.vendor.elf`: 6 228 004 байта, SHA-256
++`b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9`.
++
++## 1. Перенесённые вычисления
++
++В `src/frontend/cgminer.c` добавлены три процедуры с новым явным API:
++
++| Участок оригинала | Восстановленная часть |
++|---|---|
++| `0x2fe60..0x300ac` | Difficulty → 256-битный target, включая нулевой вход, выбор константы и разложение на четыре uint64 |
++| `0x31070..0x31100` | Числовой участок target → difficulty, без последующего учёта результата |
++| `0x30c9c..0x30d90` | Первый блок SHA-256, midstate и расчёт target при сборке work |
++
++Размещение этих процедур во frontend — интеграционный выбор внутри ранее исследованного
++кластера, не отдельное доказательство исходного имени каждой функции. Остальное содержимое
++632-байтного work, владение указателями, строки и полный consumer не восстановлены.
++Новый заголовок `include/xminer/recovery/difficulty.h` не является оригинальным ABI VNish.
++
++### Difficulty → target
++
++Оригинал вычисляет binary64-частное `base / difficulty`, затем последовательно выделяет
++четыре 64-битные части, от старшей к младшей. Сохранены порядок операций, преобразования
++между double/uint64 и округления промежуточных произведений и сумм. Это не замена на
++произвольную «математически более точную» формулу и не деление рациональных чисел с
++бесконечной точностью. Целочисленный target строится из уже округлённого частного double.
++
++Точные константы из ELF:
++
++- обычная ветвь: `0x1.fffep223` (binary64 `0x4defffe000000000`);
++- только числовой селектор `1`: `0x1.fffep239` (`0x4eefffe000000000`).
++
++Вторая базовая константа в 65 536 раз больше первой. Все остальные значения селектора
++выбирают первую. **Эти числа не названы моделями ASIC или алгоритмами:** получение
++селектора через оригинальный getter подменяется явным аргументом и не доказывает выбор T21.
++
++`+0.0` и `-0.0` заменяются сложностью 1. Эта ветвь оригинала проверена отдельно.
++
++### Обратный числовой участок
++
++Сохранён порядок накопления limb `2, 3, 1, 0` с соответствующими степенями двойки.
++Он важен для округлений double. При нулевом target оригинал подставляет знаменатель `1`,
++поэтому результат равен выбранной базовой константе, **не сложности 1**. Результат всех
++950 сравнений проверяется побитно как binary64.
++
++### Математические поля work
++
++Оригинальный участок:
++
++1. Меняет порядок байтов внутри слов первых 64 байт уже собранного work.
++2. Выполняет исходные SHA init/update/compression и пишет восемь слов midstate по `+0x80`.
++3. Читает double difficulty по `+0x1a0` и пишет 32 байта target по `+0x100`.
++
++В тестах исполняются SHA и target оригинала совместно. Все остальные байты 632-байтного
++тестового work проверяются на неизменность. Это **не** свидетельство восстановления этих
++остальных байтов. Новый API возвращает отдельную структуру midstate/target, не изображает
++полностью восстановленный объект work. Проверки аргументов нового API выполняются до
++записи результата; на отклонённых входах это не повторение побочных эффектов оригинала.
++
++## 2. Ограничения арифметики и нового интерфейса
++
++Контракт — IEEE binary64, обычный режим round-to-nearest, ties-to-even, без fast-math,
++без расширенной точности промежуточных выражений и без слияния произведения со сложением.
++Режим округления — **предусловие**, он не переключается и не проверяется этим API.
++Задействованные в оригинале VMLA/VCVT воспроизведены отдельными действиями; FPSCR-флаги,
++NaN-пэйлоады и нештатные режимы округления не моделируются.
++
++Явно добавленные защиты нового C-интерфейса:
++
++- NULL и нечисловая/бесконечная/отрицательная сложность → `VN135_VERIFY_INVALID` (`-2`);
++- округлённое частное >= 2^256 либо недопустимое промежуточное преобразование →
++  `VN135_DIFFICULTY_RANGE` (`-4`);
++- выходной буфер не меняется при этих ошибках; конечные преобразования в uint64 не
++  выполняются вне определённого диапазона C.
++
++Это **наши защитные границы**, не заявление о наличии таких проверок в закрытой прошивке.
++Очень большая положительная сложность может дать целочисленный target 0: это допускается
++числовым API и не интерпретируется как действительная настройка пула.
++`-ffast-math` и `-ffinite-math-only` отклоняются при компиляции на GCC и Clang; сохранён
++`-ffp-contract=off` в Makefile и overlay. Не использовать этот модуль в окружении, которое
++меняет FP-режим, без отдельного анализа.
++
++## 3. Новая интеграционная связка, не исходный consumer
++
++`reconstruction/support/work_difficulty_pipeline.c` добавляет отдельный адаптер:
++
++```
++nonce-кандидат + согласованный снимок задания + difficulty
++    → target из difficulty
++    → coinbase / Merkle / 112-байтный префикс (Stage 9)
++    → префильтр nonce / SHA256d / сравнение с target (Stage 8)
++```
++
++Низкоуровневые старые API с явно передаваемым target сохранены. Новая функция не получает
++задание из сети, не придумывает difficulty, не захватывает владение шаблоном и не гарантирует
++его свежесть. Снимок, difficulty и селектор должны относиться к одному удерживаемому заданию.
++`last_nonce` по-прежнему меняется до проверки хеша и не откатывается после отказа;
++полноценная дедупликация с жизненным циклом заданий этим не создаётся.
++
++При ошибке difficulty output/scratch/last_nonce остаются прежними. При дальнейшем отказе
++действует контракт Stage 9. Нет выделения памяти, скрытых повторов, аппаратных команд или
++передачи результата. Код возврата 0 означает завершённое вычисление, не accepted share.
++
++Офлайн-пример `build/vn135-rebuild-genesis-difficulty` использует исторический вектор из
++Stage 9, **теперь вычисляя target из difficulty=1**, а не беря готовый target из фикстуры.
++Получает ожидаемый хеш первого блока Bitcoin. Флаги `job_freshness_checked`, `submitted`
++и `hardware_tested` остаются false. Нативный тест воспроизводит синтетический RX с этим
++nonce при фрагментации от 1 до 11 байт. Это не живые аппаратные данные или новый блок.
++
++## 4. Проверяемые наборы
++
++| Основные новые сравнения с оригинальными инструкциями | Случаев |
++|---|---:|
++| Difficulty → target; выполняются и оригинальные uint64/double helpers | 1 165 |
++| Target → difficulty, сравниваются все биты double | 950 |
++| Совместные midstate и target в work | 256 |
++| **Основной новый набор** | **2 371** |
++| Предыдущие наборы Stage 2–9 | 102 406 |
++| **Совокупный основной набор** | **104 777** |
++
++Новые три набора прошли на GCC и Clang. Повтор не увеличивает число уникальных входных
++случаев. Отдельно, **без добавления к 2 371**:
++
++- 60 композиций восстановленных участков caller/wrapper/prefix, target и проверки nonce;
++  это несколько согласованных границ, не исполнение полного оригинального consumer;
++- 33 независимых точных проверки для степеней двойки;
++- 660 сравнений исходных процедур преобразования uint64/double с числовым эталоном;
++- 1 302 синтетические проверки новых ARM/VFP-инструкций;
++- 408 нативных C-проверок, в том числе 11 фрагментированных genesis-прогонов;
++- 4 ожидаемых отказа компиляции для запрещённых FP-флагов.
++
++Новый нативный набор прошёл GCC/Clang ASan/UBSan с проверкой утечек. Это не утверждение,
++что все Python/ctypes сравнительные случаи запускались под ASan. ARMv7 библиотека собрана
++freestanding, без Linux sysroot; это не исполняемый майнер.
++
++### Граница эталона
++
++Используется локальный ограниченный ARM-интерпретатор, не независимо сертифицированный
++процессор/эмулятор. Новые инструкции VMOV (пара регистров), VMLA/VMLS, VCVT.u32/f64 и
++VCMP #0 проверяются отдельно. Неизвестные инструкции/неподдержанные нечисловые операции
++вызывают отказ теста. Внешние getter, memcpy и диагностика внедрены, SHA и оригинальные
++числовые преобразования исполняются. Полный ELF как Linux-процесс не запускается.
++
++Manifest сохраняет 6 участков/helper-диапазонов, 9 точных f64-констант и 17 связей BL.
++`tools/check_stage10_evidence.py` проверяет эти байты, адреса, ссылки и ограничения API.
++Не проверены физический ARM, всё множество входов, гонки, FPSCR-исключения, жизненный
++цикл, аппаратная безопасность и принятие пулом. Число случаев не является покрытием
++всего бинарника или процентом готовности.
++
++## 5. Сборка и воспроизведение
++
++```
++make -f Makefile.recovery all arm stage10
++make -f Makefile.recovery stage10-clang sanitize-stage10
++./build/vn135-rebuild-genesis-difficulty
++python3 tests/test_stage10_compile_policy.py
++```
++
++Полная проверка на чистой распаковке:
++
++```
++python3 tools/verify_stage10_all.py --logs /absolute/path/outside-source --workers 2
++```
++
++28 групп, с отдельной начальной сборкой Clang; результаты каждого запуска, ожидаемые
++коды и SHA-256 логов записываются в `ALL_GROUPS.json`. Наличие runner не равно выполнению:
++результат финального прогона поставленного архива передаётся отдельными логом и JSON.
++`full-runtime` обязан вернуть 2 и не выдаёт «готовый майнер».
++
++46 наблюдаемых путей; 7 частично восстановлены, 39 исключены. Компилируются 17 C-модулей
++(7 наблюдаемых и 10 явно новых helper/adapter). 57 экспортируемых функций нового API —
++не количество восстановленных оригинальных функций. Монолита и успешных заглушек нет.
++
++**По-прежнему не восстановлены** полный 632-байтный work, строки/метаданные/владение,
++полный consumer, очередь 72/68, жизненный цикл заданий, CRC ответов, выбор драйвера T21,
++аппаратный запуск, PSU/датчики/охлаждение/защиты, драйвер upstream и автотюн. Полный public
++cgminer не включён и его совместная сборка не заявляется. Механизм overlay сохранён,
++старые исходники, авторство и объектные каталоги не заменены.
++
++**Не заменять штатный `/usr/bin/cgminer`: это исходники и библиотеки, не прошивка.**
+diff --git a/evidence/modules/src/frontend/cgminer.c.json b/evidence/modules/src/frontend/cgminer.c.json
+index b32dcb2..a8f5af0 100644
+--- a/evidence/modules/src/frontend/cgminer.c.json
++++ b/evidence/modules/src/frontend/cgminer.c.json
+@@ -1214,5 +1214,17 @@
+   ],
+   "implementation_files": [
+     "src/frontend/cgminer.c"
+-  ]
++  ],
++  "stage10_numeric_recovery": {
++    "stage": 10,
++    "state": "partially-reconstructed",
++    "integration_placement_not_independently_proven_original_filename": true,
++    "numeric_regions": [
++      "0x2fe60..0x300ac",
++      "0x31070..0x31100",
++      "0x30c9c..0x30d90"
++    ],
++    "manifest": "evidence/stage10/recovery-manifest.json",
++    "full_work_or_consumer_recovered": false
++  }
+ }
+diff --git a/evidence/source-tree.json b/evidence/source-tree.json
+index 5dfe2b2..615057e 100644
+--- a/evidence/source-tree.json
++++ b/evidence/source-tree.json
+@@ -12550,7 +12550,19 @@
+       ],
+       "implementation_files": [
+         "src/frontend/cgminer.c"
+-      ]
++      ],
++      "stage10_numeric_recovery": {
++        "stage": 10,
++        "state": "partially-reconstructed",
++        "integration_placement_not_independently_proven_original_filename": true,
++        "numeric_regions": [
++          "0x2fe60..0x300ac",
++          "0x31070..0x31100",
++          "0x30c9c..0x30d90"
++        ],
++        "manifest": "evidence/stage10/recovery-manifest.json",
++        "full_work_or_consumer_recovered": false
++      }
+     }
+   ]
+ }
+diff --git a/evidence/stage10/disasm/difficulty_target.S b/evidence/stage10/disasm/difficulty_target.S
+new file mode 100644
+index 0000000..ebf64de
+--- /dev/null
++++ b/evidence/stage10/disasm/difficulty_target.S
+@@ -0,0 +1,153 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   2fe60: e92d4ff0     	push	{r4, r5, r6, r7, r8, r9, r10, r11, lr}
++   2fe64: e28db01c     	add	r11, sp, #28
++   2fe68: e24dd004     	sub	sp, sp, #4
++   2fe6c: ed2d8b02     	vpush	{d8}
++   2fe70: e24dd030     	sub	sp, sp, #48
++   2fe74: e58d000c     	str	r0, [sp, #0xc]
++   2fe78: e3a00000     	mov	r0, #0
++   2fe7c: eeb08b40     	vmov.f64	d8, d0
++   2fe80: ebffe4ec     	bl	0x29238 <.text+0x19138> @ imm = #-0x6c50
++   2fe84: e5900014     	ldr	r0, [r0, #0x14]
++   2fe88: eeb58b40     	vcmp.f64	d8, #0
++   2fe8c: e5904018     	ldr	r4, [r0, #0x18]
++   2fe90: e28d0010     	add	r0, sp, #16
++   2fe94: e2808008     	add	r8, r0, #8
++   2fe98: eef1fa10     	vmrs	APSR_nzcv, fpscr
++   2fe9c: 0a000039     	beq	0x2ff88 <.text+0x1fe88> @ imm = #0xe4
++   2fea0: e5940034     	ldr	r0, [r4, #0x34]
++   2fea4: e28f1f65     	add	r1, pc, #404
++   2fea8: e3500001     	cmp	r0, #1
++   2feac: 02811008     	addeq	r1, r1, #8
++   2feb0: ed910b00     	vldr	d0, [r1]
++   2feb4: ee808b08     	vdiv.f64	d8, d0, d8
++   2feb8: ed9f0b64     	vldr	d0, [pc, #400]          @ 0x30050 <.text+0x1ff50>
++   2febc: ee280b00     	vmul.f64	d0, d8, d0
++   2fec0: ec510b10     	vmov	r0, r1, d0
++   2fec4: eb15858f     	bl	0x591508 <.text+0x581408> @ imm = #0x56163c
++   2fec8: e1a09000     	mov	r9, r0
++   2fecc: e1a0a001     	mov	r10, r1
++   2fed0: eb158518     	bl	0x591338 <.text+0x581238> @ imm = #0x561460
++   2fed4: ed9f0b5f     	vldr	d0, [pc, #380]          @ 0x30058 <.text+0x1ff58>
++   2fed8: ec410b11     	vmov	d1, r0, r1
++   2fedc: ee018b00     	vmla.f64	d8, d1, d0
++   2fee0: ed9f0b5e     	vldr	d0, [pc, #376]          @ 0x30060 <.text+0x1ff60>
++   2fee4: ee280b00     	vmul.f64	d0, d8, d0
++   2fee8: ec510b10     	vmov	r0, r1, d0
++   2feec: eb158585     	bl	0x591508 <.text+0x581408> @ imm = #0x561614
++   2fef0: e1a07000     	mov	r7, r0
++   2fef4: e1a04001     	mov	r4, r1
++   2fef8: eb15850e     	bl	0x591338 <.text+0x581238> @ imm = #0x561438
++   2fefc: ed9f0b59     	vldr	d0, [pc, #356]          @ 0x30068 <.text+0x1ff68>
++   2ff00: ec410b11     	vmov	d1, r0, r1
++   2ff04: ee018b00     	vmla.f64	d8, d1, d0
++   2ff08: ed9f0b58     	vldr	d0, [pc, #352]          @ 0x30070 <.text+0x1ff70>
++   2ff0c: ee280b00     	vmul.f64	d0, d8, d0
++   2ff10: ec510b10     	vmov	r0, r1, d0
++   2ff14: eb15857b     	bl	0x591508 <.text+0x581408> @ imm = #0x5615ec
++   2ff18: e1a05000     	mov	r5, r0
++   2ff1c: e1a06001     	mov	r6, r1
++   2ff20: eb158504     	bl	0x591338 <.text+0x581238> @ imm = #0x561410
++   2ff24: ed9f0b53     	vldr	d0, [pc, #332]          @ 0x30078 <.text+0x1ff78>
++   2ff28: ec410b11     	vmov	d1, r0, r1
++   2ff2c: ee018b00     	vmla.f64	d8, d1, d0
++   2ff30: ec510b18     	vmov	r0, r1, d8
++   2ff34: eb158573     	bl	0x591508 <.text+0x581408> @ imm = #0x5615cc
++   2ff38: e288c00c     	add	r12, r8, #12
++   2ff3c: e59f3154     	ldr	r3, [pc, #0x154]        @ 0x30098 <.text+0x1ff98>
++   2ff40: e59f2154     	ldr	r2, [pc, #0x154]        @ 0x3009c <.text+0x1ff9c>
++   2ff44: e88800e0     	stm	r8, {r5, r6, r7}
++   2ff48: e08f3003     	add	r3, pc, r3
++   2ff4c: e08f2002     	add	r2, pc, r2
++   2ff50: e88c0610     	stm	r12, {r4, r9, r10}
++   2ff54: e58d0010     	str	r0, [sp, #0x10]
++   2ff58: e3000bb4     	movw	r0, #0xbb4
++   2ff5c: e58d0004     	str	r0, [sp, #0x4]
++   2ff60: e59d000c     	ldr	r0, [sp, #0xc]
++   2ff64: e58d1014     	str	r1, [sp, #0x14]
++   2ff68: e28d1010     	add	r1, sp, #16
++   2ff6c: e58d2000     	str	r2, [sp]
++   2ff70: e3a02020     	mov	r2, #32
++   2ff74: ebff8780     	bl	0x11d7c <.text+0x1c7c>  @ imm = #-0x1e200
++   2ff78: e24bd028     	sub	sp, r11, #40
++   2ff7c: ecbd8b02     	vpop	{d8}
++   2ff80: e28dd004     	add	sp, sp, #4
++   2ff84: e8bd8ff0     	pop	{r4, r5, r6, r7, r8, r9, r10, r11, pc}
++   2ff88: e59f50f0     	ldr	r5, [pc, #0xf0]         @ 0x30080 <.text+0x1ff80>
++   2ff8c: e79f5005     	ldr	r5, [pc, r5]
++   2ff90: e5950000     	ldr	r0, [r5]
++   2ff94: e59f60e8     	ldr	r6, [pc, #0xe8]         @ 0x30084 <.text+0x1ff84>
++   2ff98: e2401001     	sub	r1, r0, #1
++   2ff9c: e0000190     	mul	r0, r0, r1
++   2ffa0: e79f6006     	ldr	r6, [pc, r6]
++   2ffa4: e59f70dc     	ldr	r7, [pc, #0xdc]         @ 0x30088 <.text+0x1ff88>
++   2ffa8: e08f7007     	add	r7, pc, r7
++   2ffac: e3100001     	tst	r0, #1
++   2ffb0: 0a000002     	beq	0x2ffc0 <.text+0x1fec0> @ imm = #0x8
++   2ffb4: e5960000     	ldr	r0, [r6]
++   2ffb8: e3500009     	cmp	r0, #9
++   2ffbc: ca000012     	bgt	0x3000c <.text+0x1ff0c> @ imm = #0x48
++   2ffc0: e59f00c4     	ldr	r0, [pc, #0xc4]         @ 0x3008c <.text+0x1ff8c>
++   2ffc4: e3a03001     	mov	r3, #1
++   2ffc8: e59f10c0     	ldr	r1, [pc, #0xc0]         @ 0x30090 <.text+0x1ff90>
++   2ffcc: e59f20c0     	ldr	r2, [pc, #0xc0]         @ 0x30094 <.text+0x1ff94>
++   2ffd0: e08f0000     	add	r0, pc, r0
++   2ffd4: e08f1001     	add	r1, pc, r1
++   2ffd8: e88d0088     	stm	sp, {r3, r7}
++   2ffdc: e08f2002     	add	r2, pc, r2
++   2ffe0: e3003b8d     	movw	r3, #0xb8d
++   2ffe4: eb032836     	bl	0xfa0c4 <.text+0xe9fc4> @ imm = #0xca0d8
++   2ffe8: e5950000     	ldr	r0, [r5]
++   2ffec: ed9f8b11     	vldr	d8, [pc, #68]           @ 0x30038 <.text+0x1ff38>
++   2fff0: e2401001     	sub	r1, r0, #1
++   2fff4: e0000190     	mul	r0, r0, r1
++   2fff8: e3100001     	tst	r0, #1
++   2fffc: 0affffa7     	beq	0x2fea0 <.text+0x1fda0> @ imm = #-0x164
++   30000: e5960000     	ldr	r0, [r6]
++   30004: e3500009     	cmp	r0, #9
++   30008: daffffa4     	ble	0x2fea0 <.text+0x1fda0> @ imm = #-0x170
++   3000c: e59f008c     	ldr	r0, [pc, #0x8c]         @ 0x300a0 <.text+0x1ffa0>
++   30010: e3a03001     	mov	r3, #1
++   30014: e59f1088     	ldr	r1, [pc, #0x88]         @ 0x300a4 <.text+0x1ffa4>
++   30018: e59f2088     	ldr	r2, [pc, #0x88]         @ 0x300a8 <.text+0x1ffa8>
++   3001c: e08f0000     	add	r0, pc, r0
++   30020: e08f1001     	add	r1, pc, r1
++   30024: e88d0088     	stm	sp, {r3, r7}
++   30028: e08f2002     	add	r2, pc, r2
++   3002c: e3003b8d     	movw	r3, #0xb8d
++   30030: eb032823     	bl	0xfa0c4 <.text+0xe9fc4> @ imm = #0xca08c
++   30034: eaffffe1     	b	0x2ffc0 <.text+0x1fec0> @ imm = #-0x7c
++   30038: 00000000     	andeq	r0, r0, r0
++   3003c: 3ff00000     	svclo	#0xf00000
++   30040: 00000000     	andeq	r0, r0, r0
++   30044: 4defffe0     	stclmi	p15, c15, [pc, #896]!
++   30048: 00000000     	andeq	r0, r0, r0
++   3004c: 4eefffe0     	cdpmi	p15, #0xe, c15, c15, c0, #0x7
++   30050: 00000000     	andeq	r0, r0, r0
++   30054: 33f00000     	mvnslo	r0, #0
++   30058: 00000000     	andeq	r0, r0, r0
++   3005c: cbf00000     	blgt	0xffc30064              @ imm = #-0x400000
++   30060: 00000000     	andeq	r0, r0, r0
++   30064: 37f00000     	ldrblo	r0, [r0, r0]!
++   30068: 00000000     	andeq	r0, r0, r0
++   3006c: c7f00000     	ldrbgt	r0, [r0, r0]!
++   30070: 00000000     	andeq	r0, r0, r0
++   30074: 3bf00000     	bllo	0xffc3007c              @ imm = #-0x400000
++   30078: 00000000     	andeq	r0, r0, r0
++   3007c: c3f00000     	mvnsgt	r0, #0
++   30080: 005af508     	subseq	pc, r10, r8, lsl #10
++   30084: 005aea78     	subseq	lr, r10, r8, ror r10
++   30088: 005b242f     	subseq	r2, r11, pc, lsr #8
++   3008c: 005b21e7     	subseq	r2, r11, r7, ror #3
++   30090: 005b21b8     	ldrheq	r2, [r11], #-24
++   30094: 005b21e1     	subseq	r2, r11, r1, ror #3
++   30098: 005b2244     	subseq	r2, r11, r4, asr #4
++   3009c: 005b2262     	subseq	r2, r11, r2, ror #4
++   300a0: 005b219b     	<unknown>
++   300a4: 005b216c     	subseq	r2, r11, r12, ror #2
++   300a8: 005b2195     	<unknown>
+diff --git a/evidence/stage10/disasm/double_uint64.S b/evidence/stage10/disasm/double_uint64.S
+new file mode 100644
+index 0000000..370600c
+--- /dev/null
++++ b/evidence/stage10/disasm/double_uint64.S
+@@ -0,0 +1,22 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++  591508: ed9f7b0a     	vldr	d7, [pc, #40]           @ 0x591538 <.text+0x581438>
++  59150c: ec410b16     	vmov	d6, r0, r1
++  591510: ed9f5b0a     	vldr	d5, [pc, #40]           @ 0x591540 <.text+0x581440>
++  591514: ee267b07     	vmul.f64	d7, d6, d7
++  591518: eebc7bc7     	vcvt.u32.f64	s14, d7
++  59151c: eeb84b47     	vcvt.f64.u32	d4, s14
++  591520: ee171a10     	vmov	r1, s14
++  591524: ee046b45     	vmls.f64	d6, d4, d5
++  591528: eefc7bc6     	vcvt.u32.f64	s15, d6
++  59152c: ee170a90     	vmov	r0, s15
++  591530: e12fff1e     	bx	lr
++  591534: e320f000     	nop
++  591538: 00000000     	andeq	r0, r0, r0
++  59153c: 3df00000     	ldcllo	p0, c0, [r0, #0]!
++  591540: 00000000     	andeq	r0, r0, r0
++  591544: 41f00000     	mvnsmi	r0, r0
+diff --git a/evidence/stage10/disasm/target_inverse.S b/evidence/stage10/disasm/target_inverse.S
+new file mode 100644
+index 0000000..bc7295f
+--- /dev/null
++++ b/evidence/stage10/disasm/target_inverse.S
+@@ -0,0 +1,42 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   31070: e1ca01d8     	ldrd	r0, r1, [r10, #24]
++   31074: eb1580af     	bl	0x591338 <.text+0x581238> @ imm = #0x5602bc
++   31078: e1a08000     	mov	r8, r0
++   3107c: e1a06001     	mov	r6, r1
++   31080: e1ca01d0     	ldrd	r0, r1, [r10, #16]
++   31084: eb1580ab     	bl	0x591338 <.text+0x581238> @ imm = #0x5602ac
++   31088: ec410b11     	vmov	d1, r0, r1
++   3108c: ed9f0b5d     	vldr	d0, [pc, #372]          @ 0x31208 <.text+0x21108>
++   31090: e59a0008     	ldr	r0, [r10, #0x8]
++   31094: ee218b00     	vmul.f64	d8, d1, d0
++   31098: e59a100c     	ldr	r1, [r10, #0xc]
++   3109c: ec468b11     	vmov	d1, r8, r6
++   310a0: ed9f0b5a     	vldr	d0, [pc, #360]          @ 0x31210 <.text+0x21110>
++   310a4: e89a0140     	ldm	r10, {r6, r8}
++   310a8: ee018b00     	vmla.f64	d8, d1, d0
++   310ac: eb1580a1     	bl	0x591338 <.text+0x581238> @ imm = #0x560284
++   310b0: ec410b11     	vmov	d1, r0, r1
++   310b4: ed9f0b57     	vldr	d0, [pc, #348]          @ 0x31218 <.text+0x21118>
++   310b8: e1a00006     	mov	r0, r6
++   310bc: e1a01008     	mov	r1, r8
++   310c0: ee018b00     	vmla.f64	d8, d1, d0
++   310c4: eb15809b     	bl	0x591338 <.text+0x581238> @ imm = #0x56026c
++   310c8: ec410b10     	vmov	d0, r0, r1
++   310cc: e5950034     	ldr	r0, [r5, #0x34]
++   310d0: ed9f1b4a     	vldr	d1, [pc, #296]          @ 0x31200 <.text+0x21100>
++   310d4: e28f1f51     	add	r1, pc, #324
++   310d8: ee380b00     	vadd.f64	d0, d8, d0
++   310dc: eeb50b40     	vcmp.f64	d0, #0
++   310e0: eef1fa10     	vmrs	APSR_nzcv, fpscr
++   310e4: 0eb00b41     	vmoveq.f64	d0, d1
++   310e8: e3500001     	cmp	r0, #1
++   310ec: 02811008     	addeq	r1, r1, #8
++   310f0: e59f01cc     	ldr	r0, [pc, #0x1cc]        @ 0x312c4 <.text+0x211c4>
++   310f4: ed911b00     	vldr	d1, [r1]
++   310f8: e79f0000     	ldr	r0, [pc, r0]
++   310fc: ee818b00     	vdiv.f64	d8, d1, d0
+diff --git a/evidence/stage10/disasm/uint64_double.S b/evidence/stage10/disasm/uint64_double.S
+new file mode 100644
+index 0000000..07a3a00
+--- /dev/null
++++ b/evidence/stage10/disasm/uint64_double.S
+@@ -0,0 +1,35 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++  591338: e1902001     	orrs	r2, r0, r1
++  59133c: 012fff1e     	bxeq	lr
++  591340: e92d4030     	push	{r4, r5, lr}
++  591344: e3a05000     	mov	r5, #0
++  591348: ea000006     	b	0x591368 <.text+0x581268> @ imm = #0x18
++  59134c: e1902001     	orrs	r2, r0, r1
++  591350: 012fff1e     	bxeq	lr
++  591354: e92d4030     	push	{r4, r5, lr}
++  591358: e2115102     	ands	r5, r1, #-2147483648
++  59135c: 5a000001     	bpl	0x591368 <.text+0x581268> @ imm = #0x4
++  591360: e2700000     	rsbs	r0, r0, #0
++  591364: e2e11000     	rsc	r1, r1, #0
++  591368: e3a04b01     	mov	r4, #1024
++  59136c: e2844032     	add	r4, r4, #50
++  591370: e1b0cb21     	lsrs	r12, r1, #22
++  591374: 0affff5a     	beq	0x5910e4 <.text+0x580fe4> @ imm = #-0x298
++  591378: e3a02003     	mov	r2, #3
++  59137c: e1b0c1ac     	lsrs	r12, r12, #3
++  591380: 12822003     	addne	r2, r2, #3
++  591384: e1b0c1ac     	lsrs	r12, r12, #3
++  591388: 12822003     	addne	r2, r2, #3
++  59138c: e08221ac     	add	r2, r2, r12, lsr #3
++  591390: e2623020     	rsb	r3, r2, #32
++  591394: e1a0c310     	lsl	r12, r0, r3
++  591398: e1a00230     	lsr	r0, r0, r2
++  59139c: e1800311     	orr	r0, r0, r1, lsl r3
++  5913a0: e1a01231     	lsr	r1, r1, r2
++  5913a4: e0844002     	add	r4, r4, r2
++  5913a8: eaffff4d     	b	0x5910e4 <.text+0x580fe4> @ imm = #-0x2cc
+diff --git a/evidence/stage10/disasm/uint64_double_normalize.S b/evidence/stage10/disasm/uint64_double_normalize.S
+new file mode 100644
+index 0000000..299fd21
+--- /dev/null
++++ b/evidence/stage10/disasm/uint64_double_normalize.S
+@@ -0,0 +1,73 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++  5910e4: e3510601     	cmp	r1, #1048576
++  5910e8: 3a00000e     	blo	0x591128 <.text+0x581028> @ imm = #0x38
++  5910ec: e3510602     	cmp	r1, #2097152
++  5910f0: 3a000006     	blo	0x591110 <.text+0x581010> @ imm = #0x18
++  5910f4: e1b010a1     	lsrs	r1, r1, #1
++  5910f8: e1b00060     	rrxs	r0, r0
++  5910fc: e1a0c06c     	rrx	r12, r12
++  591100: e2844001     	add	r4, r4, #1
++  591104: e1a02a84     	lsl	r2, r4, #21
++  591108: e3720501     	cmn	r2, #4194304
++  59110c: 2a000055     	bhs	0x591268 <.text+0x581168> @ imm = #0x154
++  591110: e35c0102     	cmp	r12, #-2147483648
++  591114: 01b0c0a0     	lsrseq	r12, r0, #1
++  591118: e2b00000     	adcs	r0, r0, #0
++  59111c: e0a11a04     	adc	r1, r1, r4, lsl #20
++  591120: e1811005     	orr	r1, r1, r5
++  591124: e8bd8030     	pop	{r4, r5, pc}
++  591128: e1b0c08c     	lsls	r12, r12, #1
++  59112c: e0b00000     	adcs	r0, r0, r0
++  591130: e0a11001     	adc	r1, r1, r1
++  591134: e2544001     	subs	r4, r4, #1
++  591138: 23510601     	cmphs	r1, #1048576
++  59113c: 2afffff3     	bhs	0x591110 <.text+0x581010> @ imm = #-0x34
++  591140: e3310000     	teq	r1, #0
++  591144: 01a01000     	moveq	r1, r0
++  591148: 03a00000     	moveq	r0, #0
++  59114c: e16f3f11     	clz	r3, r1
++  591150: 02833020     	addeq	r3, r3, #32
++  591154: e243300b     	sub	r3, r3, #11
++  591158: e2532020     	subs	r2, r3, #32
++  59115c: aa000007     	bge	0x591180 <.text+0x581080> @ imm = #0x1c
++  591160: e292200c     	adds	r2, r2, #12
++  591164: da000004     	ble	0x59117c <.text+0x58107c> @ imm = #0x10
++  591168: e282c014     	add	r12, r2, #20
++  59116c: e262200c     	rsb	r2, r2, #12
++  591170: e1a00c11     	lsl	r0, r1, r12
++  591174: e1a01231     	lsr	r1, r1, r2
++  591178: ea000004     	b	0x591190 <.text+0x581090> @ imm = #0x10
++  59117c: e2822014     	add	r2, r2, #20
++  591180: d262c020     	rsble	r12, r2, #32
++  591184: e1a01211     	lsl	r1, r1, r2
++  591188: d1811c30     	orrle	r1, r1, r0, lsr r12
++  59118c: d1a00210     	lslle	r0, r0, r2
++  591190: e0544003     	subs	r4, r4, r3
++  591194: a0811a04     	addge	r1, r1, r4, lsl #20
++  591198: a1811005     	orrge	r1, r1, r5
++  59119c: a8bd8030     	popge	{r4, r5, pc}
++  5911a0: e1e04004     	mvn	r4, r4
++  5911a4: e254401f     	subs	r4, r4, #31
++  5911a8: aa00000d     	bge	0x5911e4 <.text+0x5810e4> @ imm = #0x34
++  5911ac: e294400c     	adds	r4, r4, #12
++  5911b0: ca000005     	bgt	0x5911cc <.text+0x5810cc> @ imm = #0x14
++  5911b4: e2844014     	add	r4, r4, #20
++  5911b8: e2642020     	rsb	r2, r4, #32
++  5911bc: e1a00430     	lsr	r0, r0, r4
++  5911c0: e1800211     	orr	r0, r0, r1, lsl r2
++  5911c4: e1851431     	orr	r1, r5, r1, lsr r4
++  5911c8: e8bd8030     	pop	{r4, r5, pc}
++  5911cc: e264400c     	rsb	r4, r4, #12
++  5911d0: e2642020     	rsb	r2, r4, #32
++  5911d4: e1a00230     	lsr	r0, r0, r2
++  5911d8: e1800411     	orr	r0, r0, r1, lsl r4
++  5911dc: e1a01005     	mov	r1, r5
++  5911e0: e8bd8030     	pop	{r4, r5, pc}
++  5911e4: e1a00431     	lsr	r0, r1, r4
++  5911e8: e1a01005     	mov	r1, r5
++  5911ec: e8bd8030     	pop	{r4, r5, pc}
+diff --git a/evidence/stage10/disasm/work_math.S b/evidence/stage10/disasm/work_math.S
+new file mode 100644
+index 0000000..b35ce73
+--- /dev/null
++++ b/evidence/stage10/disasm/work_math.S
+@@ -0,0 +1,67 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   30c9c: e894004f     	ldm	r4, {r0, r1, r2, r3, r6}
++   30ca0: e284c014     	add	r12, r4, #20
++   30ca4: e6bf0f30     	rev	r0, r0
++   30ca8: e89c10a0     	ldm	r12, {r5, r7, r12}
++   30cac: e50b006c     	str	r0, [r11, #-0x6c]
++   30cb0: e6bf0f31     	rev	r0, r1
++   30cb4: e50b0068     	str	r0, [r11, #-0x68]
++   30cb8: e6bf0f32     	rev	r0, r2
++   30cbc: e50b0064     	str	r0, [r11, #-0x64]
++   30cc0: e6bf0f33     	rev	r0, r3
++   30cc4: e50b0060     	str	r0, [r11, #-0x60]
++   30cc8: e6bf0f36     	rev	r0, r6
++   30ccc: e50b005c     	str	r0, [r11, #-0x5c]
++   30cd0: e6bf0f35     	rev	r0, r5
++   30cd4: e50b0058     	str	r0, [r11, #-0x58]
++   30cd8: e6bf0f37     	rev	r0, r7
++   30cdc: e2847020     	add	r7, r4, #32
++   30ce0: e50b0054     	str	r0, [r11, #-0x54]
++   30ce4: e6bf0f3c     	rev	r0, r12
++   30ce8: e50b0050     	str	r0, [r11, #-0x50]
++   30cec: e897008f     	ldm	r7, {r0, r1, r2, r3, r7}
++   30cf0: e6bf0f30     	rev	r0, r0
++   30cf4: e5946034     	ldr	r6, [r4, #0x34]
++   30cf8: e5945038     	ldr	r5, [r4, #0x38]
++   30cfc: e594c03c     	ldr	r12, [r4, #0x3c]
++   30d00: e50b004c     	str	r0, [r11, #-0x4c]
++   30d04: e6bf0f31     	rev	r0, r1
++   30d08: e50b0048     	str	r0, [r11, #-0x48]
++   30d0c: e6bf0f32     	rev	r0, r2
++   30d10: e50b0044     	str	r0, [r11, #-0x44]
++   30d14: e6bf0f33     	rev	r0, r3
++   30d18: e50b0040     	str	r0, [r11, #-0x40]
++   30d1c: e6bf0f37     	rev	r0, r7
++   30d20: e50b003c     	str	r0, [r11, #-0x3c]
++   30d24: e6bf0f36     	rev	r0, r6
++   30d28: e50b0038     	str	r0, [r11, #-0x38]
++   30d2c: e6bf0f35     	rev	r0, r5
++   30d30: e28d507c     	add	r5, sp, #124
++   30d34: e50b0034     	str	r0, [r11, #-0x34]
++   30d38: e6bf0f3c     	rev	r0, r12
++   30d3c: e50b0030     	str	r0, [r11, #-0x30]
++   30d40: e1a00005     	mov	r0, r5
++   30d44: eb0360f5     	bl	0x109120 <.text+0xf9020> @ imm = #0xd83d4
++   30d48: e24b106c     	sub	r1, r11, #108
++   30d4c: e1a00005     	mov	r0, r5
++   30d50: e3a02040     	mov	r2, #64
++   30d54: eb036105     	bl	0x109170 <.text+0xf9070> @ imm = #0xd8414
++   30d58: e59f3544     	ldr	r3, [pc, #0x544]        @ 0x312a4 <.text+0x211a4>
++   30d5c: e3000151     	movw	r0, #0x151
++   30d60: e59f1540     	ldr	r1, [pc, #0x540]        @ 0x312a8 <.text+0x211a8>
++   30d64: e3a02020     	mov	r2, #32
++   30d68: e58d0004     	str	r0, [sp, #0x4]
++   30d6c: e08f3003     	add	r3, pc, r3
++   30d70: e08f1001     	add	r1, pc, r1
++   30d74: e58d1000     	str	r1, [sp]
++   30d78: e2840080     	add	r0, r4, #128
++   30d7c: e2851088     	add	r1, r5, #136
++   30d80: ebff83fd     	bl	0x11d7c <.text+0x1c7c>  @ imm = #-0x1f00c
++   30d84: ed940b68     	vldr	d0, [r4, #416]
++   30d88: e1a0000a     	mov	r0, r10
++   30d8c: ebfffc33     	bl	0x2fe60 <.text+0x1fd60> @ imm = #-0xf34
+diff --git a/evidence/stage10/recovery-manifest.json b/evidence/stage10/recovery-manifest.json
+new file mode 100644
+index 0000000..0cccbd9
+--- /dev/null
++++ b/evidence/stage10/recovery-manifest.json
+@@ -0,0 +1,234 @@
++{
++  "stage": 10,
++  "reference_bytes": 6228004,
++  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
++  "slices": [
++    {
++      "name": "difficulty_target",
++      "start": "0x2fe60",
++      "end_exclusive": "0x300ac",
++      "size": 588,
++      "role": "Original target routine plus literals; new API adds domain validation",
++      "original_bytes_sha256": "e5c96056a04a2f6a8f485e3d7ef11f9b8109c15d3081c157d84aef5095e5cb91",
++      "disassembly": "evidence/stage10/disasm/difficulty_target.S",
++      "disassembly_sha256": "6c412ceb6987dec85a7b62c8ba07e8ec365ff3fcff7e1f1d21743a620305a1f8"
++    },
++    {
++      "name": "target_inverse",
++      "start": "0x31070",
++      "end_exclusive": "0x31100",
++      "size": 144,
++      "role": "Original numeric slice; not full work accounting",
++      "original_bytes_sha256": "fc70328b846b6da0d092442f259ba32955021afdab30e32f30ee853cb905d4bc",
++      "disassembly": "evidence/stage10/disasm/target_inverse.S",
++      "disassembly_sha256": "214c18be37df7843e07b83c75391e8da1612ef03bb3697f8d857680529a453ad"
++    },
++    {
++      "name": "work_math",
++      "start": "0x30c9c",
++      "end_exclusive": "0x30d90",
++      "size": 244,
++      "role": "Original midstate/target slice, stop before later metadata",
++      "original_bytes_sha256": "5b99b0b338dfac59a8b061d720bd879fc168a6dbd05304e997e5bb456a90e834",
++      "disassembly": "evidence/stage10/disasm/work_math.S",
++      "disassembly_sha256": "03f9d7b001632b70eb93143f638d616a1a9015e0af742b0ef143829457e90d7f"
++    },
++    {
++      "name": "uint64_double",
++      "start": "0x591338",
++      "end_exclusive": "0x5913ac",
++      "size": 116,
++      "role": "Executed original conversion helper; not a new C module",
++      "original_bytes_sha256": "2b81af0d195e8043b0226b691dae401a546244af82e69545c268443465ede330",
++      "disassembly": "evidence/stage10/disasm/uint64_double.S",
++      "disassembly_sha256": "4b8f5e9273363b221696ccdc4e8427c57882b7ae5fb1a4ebc4552c1798f174b7"
++    },
++    {
++      "name": "uint64_double_normalize",
++      "start": "0x5910e4",
++      "end_exclusive": "0x5911f0",
++      "size": 268,
++      "role": "Executed original helper continuation",
++      "original_bytes_sha256": "47eb6b5a2f5cb1844096aac0aacc3db33fe791145ee77fc2066fa73e710e452e",
++      "disassembly": "evidence/stage10/disasm/uint64_double_normalize.S",
++      "disassembly_sha256": "06d99eb3542252daeab74ae2ca0aca82edcb9d81d6f5a36246689fa19fdb03bf"
++    },
++    {
++      "name": "double_uint64",
++      "start": "0x591508",
++      "end_exclusive": "0x591548",
++      "size": 64,
++      "role": "Executed original VFP conversion helper with literals",
++      "original_bytes_sha256": "fc527ff037623f7808d0f83970ab0e4f53d88a91ba08c7c2ad013a841d956adf",
++      "disassembly": "evidence/stage10/disasm/double_uint64.S",
++      "disassembly_sha256": "fba0eafea6592c8596aa5befa54158c14fdbac4b781ea5323aca3b36437e6fca"
++    }
++  ],
++  "constants": [
++    {
++      "address": "0x30038",
++      "bytes_hex": "000000000000f03f",
++      "ieee754_bits_hex": "3ff0000000000000",
++      "double_hex": "0x1.0000000000000p+0"
++    },
++    {
++      "address": "0x30040",
++      "bytes_hex": "00000000e0ffef4d",
++      "ieee754_bits_hex": "4defffe000000000",
++      "double_hex": "0x1.fffe000000000p+223"
++    },
++    {
++      "address": "0x30048",
++      "bytes_hex": "00000000e0ffef4e",
++      "ieee754_bits_hex": "4eefffe000000000",
++      "double_hex": "0x1.fffe000000000p+239"
++    },
++    {
++      "address": "0x30050",
++      "bytes_hex": "000000000000f033",
++      "ieee754_bits_hex": "33f0000000000000",
++      "double_hex": "0x1.0000000000000p-192"
++    },
++    {
++      "address": "0x30058",
++      "bytes_hex": "000000000000f0cb",
++      "ieee754_bits_hex": "cbf0000000000000",
++      "double_hex": "-0x1.0000000000000p+192"
++    },
++    {
++      "address": "0x30060",
++      "bytes_hex": "000000000000f037",
++      "ieee754_bits_hex": "37f0000000000000",
++      "double_hex": "0x1.0000000000000p-128"
++    },
++    {
++      "address": "0x30068",
++      "bytes_hex": "000000000000f0c7",
++      "ieee754_bits_hex": "c7f0000000000000",
++      "double_hex": "-0x1.0000000000000p+128"
++    },
++    {
++      "address": "0x30070",
++      "bytes_hex": "000000000000f03b",
++      "ieee754_bits_hex": "3bf0000000000000",
++      "double_hex": "0x1.0000000000000p-64"
++    },
++    {
++      "address": "0x30078",
++      "bytes_hex": "000000000000f0c3",
++      "ieee754_bits_hex": "c3f0000000000000",
++      "double_hex": "-0x1.0000000000000p+64"
++    }
++  ],
++  "branch_edges": [
++    {
++      "pc": "0x2fe80",
++      "instruction_hex": "ebffe4ec",
++      "target": "0x29238"
++    },
++    {
++      "pc": "0x2fec4",
++      "instruction_hex": "eb15858f",
++      "target": "0x591508"
++    },
++    {
++      "pc": "0x2fed0",
++      "instruction_hex": "eb158518",
++      "target": "0x591338"
++    },
++    {
++      "pc": "0x2feec",
++      "instruction_hex": "eb158585",
++      "target": "0x591508"
++    },
++    {
++      "pc": "0x2fef8",
++      "instruction_hex": "eb15850e",
++      "target": "0x591338"
++    },
++    {
++      "pc": "0x2ff14",
++      "instruction_hex": "eb15857b",
++      "target": "0x591508"
++    },
++    {
++      "pc": "0x2ff20",
++      "instruction_hex": "eb158504",
++      "target": "0x591338"
++    },
++    {
++      "pc": "0x2ff34",
++      "instruction_hex": "eb158573",
++      "target": "0x591508"
++    },
++    {
++      "pc": "0x2ff74",
++      "instruction_hex": "ebff8780",
++      "target": "0x11d7c"
++    },
++    {
++      "pc": "0x31074",
++      "instruction_hex": "eb1580af",
++      "target": "0x591338"
++    },
++    {
++      "pc": "0x31084",
++      "instruction_hex": "eb1580ab",
++      "target": "0x591338"
++    },
++    {
++      "pc": "0x310ac",
++      "instruction_hex": "eb1580a1",
++      "target": "0x591338"
++    },
++    {
++      "pc": "0x310c4",
++      "instruction_hex": "eb15809b",
++      "target": "0x591338"
++    },
++    {
++      "pc": "0x30d44",
++      "instruction_hex": "eb0360f5",
++      "target": "0x109120"
++    },
++    {
++      "pc": "0x30d54",
++      "instruction_hex": "eb036105",
++      "target": "0x109170"
++    },
++    {
++      "pc": "0x30d80",
++      "instruction_hex": "ebff83fd",
++      "target": "0x11d7c"
++    },
++    {
++      "pc": "0x30d8c",
++      "instruction_hex": "ebfffc33",
++      "target": "0x2fe60"
++    }
++  ],
++  "injected_external_operations": [
++    "model/algorithm lookup",
++    "memcpy",
++    "zero-difficulty logging"
++  ],
++  "instructions_not_stubbed": [
++    "SHA init/update/compression",
++    "uint64->binary64 helper and normalization",
++    "binary64->uint64 helper",
++    "target VFP arithmetic"
++  ],
++  "source_placement": "src/frontend/cgminer.c is integration placement within frontend cluster, not independent filename proof for every slice",
++  "new_helpers": [
++    "reconstruction/support/work_difficulty_pipeline.c"
++  ],
++  "new_api": "include/xminer/recovery/difficulty.h",
++  "arithmetic_domain": "binary64 default round-to-nearest/even, no fast-math/contraction/extended intermediates; forward quotient <2^256; negative and nonfinite difficulty rejected",
++  "target_fields": {
++    "midstate_offset": "0x80",
++    "target_offset": "0x100",
++    "input_difficulty_offset": "0x1a0"
++  },
++  "full_work_or_consumer_implemented": false,
++  "hardware_tested": false
++}
+diff --git a/evidence/validation/stage10/compile-policy.log b/evidence/validation/stage10/compile-policy.log
+new file mode 100644
+index 0000000..9f57ac6
+--- /dev/null
++++ b/evidence/validation/stage10/compile-policy.log
+@@ -0,0 +1 @@
++{"stage": 10, "status": "PASS", "compile_policy_checks": [{"compiler": "gcc", "flag": "-ffast-math", "rejected": true}, {"compiler": "gcc", "flag": "-ffinite-math-only", "rejected": true}, {"compiler": "clang", "flag": "-ffast-math", "rejected": true}, {"compiler": "clang", "flag": "-ffinite-math-only", "rejected": true}]}
+diff --git a/evidence/validation/stage10/focused-asan.log b/evidence/validation/stage10/focused-asan.log
+new file mode 100644
+index 0000000..038d6cf
+--- /dev/null
++++ b/evidence/validation/stage10/focused-asan.log
+@@ -0,0 +1,4 @@
++mkdir -p build
++cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer reconstruction/support/work_difficulty_pipeline.c reconstruction/support/sha256_bytes.c reconstruction/support/work_rebuild_pipeline.c src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_work_difficulty.c -o build/test-work-difficulty-sanitized
++ASAN_OPTIONS=detect_leaks=1 ./build/test-work-difficulty-sanitized
++{"status":"PASS","native_checks":408,"fragmented_genesis_replays":11,"target_derived_from_difficulty":true,"hardware_tested":false,"submitted":false}
+diff --git a/evidence/validation/stage10/focused-clang.log b/evidence/validation/stage10/focused-clang.log
+new file mode 100644
+index 0000000..f7dbccd
+--- /dev/null
++++ b/evidence/validation/stage10/focused-clang.log
+@@ -0,0 +1,16 @@
++mkdir -p build
++clang -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -shared -fPIC reconstruction/support/work_difficulty_pipeline.c reconstruction/support/sha256_bytes.c reconstruction/support/work_rebuild_pipeline.c src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c -o build/libvn135_recovered-clang.so
++clang -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror reconstruction/support/work_difficulty_pipeline.c reconstruction/support/sha256_bytes.c reconstruction/support/work_rebuild_pipeline.c src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_work_difficulty.c -o build/test-work-difficulty-clang
++./build/test-work-difficulty-clang
++{"status":"PASS","native_checks":408,"fragmented_genesis_replays":11,"target_derived_from_difficulty":true,"hardware_tested":false,"submitted":false}
++VN135_TEST_LIBRARY=./build/libvn135_recovered-clang.so python3 tests/test_stage10_differential.py target
++{"stage": 10, "group": "target", "status": "PASS", "comparisons": 1165, "zero_fallback_cases": 10, "independent_exact_power_cases": 33, "original_integer_conversion_helpers_executed": true}
++VN135_TEST_LIBRARY=./build/libvn135_recovered-clang.so python3 tests/test_stage10_differential.py inverse
++{"stage": 10, "group": "inverse", "status": "PASS", "comparisons": 950, "compared_all_binary64_bits": true, "zero_target_denominator_is_one": true}
++VN135_TEST_LIBRARY=./build/libvn135_recovered-clang.so python3 tests/test_stage10_differential.py math
++{"stage": 10, "group": "math", "status": "PASS", "comparisons": 256, "original_sha_and_target_execute_together": true, "all_other_632byte_work_bytes_checked_unchanged": true}
++VN135_TEST_LIBRARY=./build/libvn135_recovered-clang.so python3 tests/test_stage10_differential.py pipeline
++{"stage": 10, "group": "pipeline", "status": "PASS", "slice_composition_cases": 60, "not_a_full_original_consumer": true}
++clang -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer reconstruction/support/work_difficulty_pipeline.c reconstruction/support/sha256_bytes.c reconstruction/support/work_rebuild_pipeline.c src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_work_difficulty.c -o build/test-work-difficulty-clang-sanitized
++ASAN_OPTIONS=detect_leaks=1 ./build/test-work-difficulty-clang-sanitized
++{"status":"PASS","native_checks":408,"fragmented_genesis_replays":11,"target_derived_from_difficulty":true,"hardware_tested":false,"submitted":false}
+diff --git a/evidence/validation/stage10/focused-status.json b/evidence/validation/stage10/focused-status.json
+new file mode 100644
+index 0000000..fd1170e
+--- /dev/null
++++ b/evidence/validation/stage10/focused-status.json
+@@ -0,0 +1,12 @@
++[
++  {
++    "name": "clang",
++    "rc": 0,
++    "seconds": 74.475872246
++  },
++  {
++    "name": "asan",
++    "rc": 0,
++    "seconds": 4.692546687999993
++  }
++]
+\ No newline at end of file
+diff --git a/evidence/validation/stage10/stage10-interpreter-results.json b/evidence/validation/stage10/stage10-interpreter-results.json
+new file mode 100644
+index 0000000..a29afb6
+--- /dev/null
++++ b/evidence/validation/stage10/stage10-interpreter-results.json
+@@ -0,0 +1,8 @@
++{
++  "status": "PASS",
++  "synthetic_instruction_checks": 1302,
++  "original_conversion_helper_checks": 660,
++  "fused_vs_unfused_distinguished": true,
++  "default_rounding_only": true,
++  "hardware_tested": false
++}
+diff --git a/evidence/validation/stage10/stage10-inverse-clang-results.json b/evidence/validation/stage10/stage10-inverse-clang-results.json
+new file mode 100644
+index 0000000..85b72fd
+--- /dev/null
++++ b/evidence/validation/stage10/stage10-inverse-clang-results.json
+@@ -0,0 +1,8 @@
++{
++  "stage": 10,
++  "group": "inverse",
++  "status": "PASS",
++  "comparisons": 950,
++  "compared_all_binary64_bits": true,
++  "zero_target_denominator_is_one": true
++}
+diff --git a/evidence/validation/stage10/stage10-inverse-gcc-results.json b/evidence/validation/stage10/stage10-inverse-gcc-results.json
+new file mode 100644
+index 0000000..85b72fd
+--- /dev/null
++++ b/evidence/validation/stage10/stage10-inverse-gcc-results.json
+@@ -0,0 +1,8 @@
++{
++  "stage": 10,
++  "group": "inverse",
++  "status": "PASS",
++  "comparisons": 950,
++  "compared_all_binary64_bits": true,
++  "zero_target_denominator_is_one": true
++}
+diff --git a/evidence/validation/stage10/stage10-math-clang-results.json b/evidence/validation/stage10/stage10-math-clang-results.json
+new file mode 100644
+index 0000000..0c5449e
+--- /dev/null
++++ b/evidence/validation/stage10/stage10-math-clang-results.json
+@@ -0,0 +1,8 @@
++{
++  "stage": 10,
++  "group": "math",
++  "status": "PASS",
++  "comparisons": 256,
++  "original_sha_and_target_execute_together": true,
++  "all_other_632byte_work_bytes_checked_unchanged": true
++}
+diff --git a/evidence/validation/stage10/stage10-math-gcc-results.json b/evidence/validation/stage10/stage10-math-gcc-results.json
+new file mode 100644
+index 0000000..0c5449e
+--- /dev/null
++++ b/evidence/validation/stage10/stage10-math-gcc-results.json
+@@ -0,0 +1,8 @@
++{
++  "stage": 10,
++  "group": "math",
++  "status": "PASS",
++  "comparisons": 256,
++  "original_sha_and_target_execute_together": true,
++  "all_other_632byte_work_bytes_checked_unchanged": true
++}
+diff --git a/evidence/validation/stage10/stage10-pipeline-clang-results.json b/evidence/validation/stage10/stage10-pipeline-clang-results.json
+new file mode 100644
+index 0000000..25340fe
+--- /dev/null
++++ b/evidence/validation/stage10/stage10-pipeline-clang-results.json
+@@ -0,0 +1,7 @@
++{
++  "stage": 10,
++  "group": "pipeline",
++  "status": "PASS",
++  "slice_composition_cases": 60,
++  "not_a_full_original_consumer": true
++}
+diff --git a/evidence/validation/stage10/stage10-pipeline-gcc-results.json b/evidence/validation/stage10/stage10-pipeline-gcc-results.json
+new file mode 100644
+index 0000000..25340fe
+--- /dev/null
++++ b/evidence/validation/stage10/stage10-pipeline-gcc-results.json
+@@ -0,0 +1,7 @@
++{
++  "stage": 10,
++  "group": "pipeline",
++  "status": "PASS",
++  "slice_composition_cases": 60,
++  "not_a_full_original_consumer": true
++}
+diff --git a/evidence/validation/stage10/stage10-target-clang-results.json b/evidence/validation/stage10/stage10-target-clang-results.json
+new file mode 100644
+index 0000000..3ddd96d
+--- /dev/null
++++ b/evidence/validation/stage10/stage10-target-clang-results.json
+@@ -0,0 +1,9 @@
++{
++  "stage": 10,
++  "group": "target",
++  "status": "PASS",
++  "comparisons": 1165,
++  "zero_fallback_cases": 10,
++  "independent_exact_power_cases": 33,
++  "original_integer_conversion_helpers_executed": true
++}
+diff --git a/evidence/validation/stage10/stage10-target-gcc-results.json b/evidence/validation/stage10/stage10-target-gcc-results.json
+new file mode 100644
+index 0000000..3ddd96d
+--- /dev/null
++++ b/evidence/validation/stage10/stage10-target-gcc-results.json
+@@ -0,0 +1,9 @@
++{
++  "stage": 10,
++  "group": "target",
++  "status": "PASS",
++  "comparisons": 1165,
++  "zero_fallback_cases": 10,
++  "independent_exact_power_cases": 33,
++  "original_integer_conversion_helpers_executed": true
++}
+diff --git a/examples/rebuild_genesis_difficulty.c b/examples/rebuild_genesis_difficulty.c
+new file mode 100644
+index 0000000..c6bff9d
+--- /dev/null
++++ b/examples/rebuild_genesis_difficulty.c
+@@ -0,0 +1,20 @@
++/* Offline historical fixture demonstration; no devices, sockets or nonce search. */
++#include "xminer/recovery/difficulty.h"
++#include "../tests/fixtures/genesis_work.h"
++#include <stdio.h>
++#include <string.h>
++static uint32_t get_le(const uint8_t *p){return p[0]|((uint32_t)p[1]<<8)|((uint32_t)p[2]<<16)|((uint32_t)p[3]<<24);}
++int main(void){
++    vn135_rebuild_snapshot s={0};vn135_nonce_candidate c={0};vn135_difficulty_check result;
++    uint8_t scratch[sizeof(fixture_coinbase)];uint32_t last=0;
++    memcpy(s.header_words_le,fixture_words,112);memset(s.header_words_le+36,0x5a,32);
++    s.coinbase=fixture_coinbase;s.coinbase_size=sizeof(fixture_coinbase);
++    c.version_word=get_le(fixture_words);c.nonce=get_le(fixture_words+76);
++    if(vn135_candidate_verify_difficulty(&c,&s,scratch,sizeof(scratch),1.0,&last,0,&result))return 1;
++    if(memcmp(result.checked.rebuilt.merkle_root,fixture_root,32)||memcmp(result.checked.work.digest,fixture_hash,32)||
++       memcmp(result.checked.work.header_words_le,fixture_words,80)||!result.checked.meets_target)return 1;
++    printf("{\"fixture\":\"Bitcoin genesis, not live work\",\"block_hash\":\"");
++    for(unsigned i=0;i<32;i++)printf("%02x",result.checked.work.digest[31-i]);
++    puts("\",\"difficulty\":1,\"target_derived\":true,\"header_matches\":true,\"merkle_matches\":true,\"meets_target\":true,\"job_freshness_checked\":false,\"submitted\":false,\"hardware_tested\":false}");
++    return 0;
++}
+diff --git a/include/xminer/recovery/difficulty.h b/include/xminer/recovery/difficulty.h
+new file mode 100644
+index 0000000..a4413b6
+--- /dev/null
++++ b/include/xminer/recovery/difficulty.h
+@@ -0,0 +1,69 @@
++/* SPDX-License-Identifier: GPL-3.0-only
++ * New normalized API, not the original work/pool ABI. No miner registration.
++ */
++#ifndef VN135_RECOVERY_DIFFICULTY_H
++#define VN135_RECOVERY_DIFFICULTY_H
++#include <stdint.h>
++#include "xminer/recovery/work_rebuild.h"
++#ifdef __cplusplus
++extern "C" {
++#endif
++#define VN135_DIFFICULTY_RANGE (-4)
++
++/* Original 0x2fe60 arithmetic, default binary64 round-to-nearest/even required.
++ * selector==1 selects the literal at 0x30048; all others select 0x30040.
++ * Selectors are numeric, NOT claimed T21/algorithm names.
++ * +/-0 difficulty is replaced by 1, as in the original. Finite positive inputs
++ * are accepted only if the initial quotient is < 2^256. A larger value or
++ * overflow returns -4 instead of reproducing out-of-range conversions. NaN,
++ * infinities and negative inputs return -2. These are new API restrictions.
++ * All errors leave output unchanged. Output is 32 little-endian target bytes.
++ * Floating-point rounding is preserved; this is NOT exact rational division.
++ * No pool/difficulty policy, target validity, freshness or acceptance claim.
++ */
++int vn135_frontend_target_from_difficulty(double difficulty,uint32_t selector,
++    uint8_t target_le[32]);
++
++/* Original arithmetic slice 0x31070..0x31100, not the entire accounting routine.
++ * Four uint64 limbs are converted and added in original order (2,3,1,0).
++ * All-zero target uses denominator 1, as in original; NOT a consensus rule.
++ * Arbitrary 32-byte target accepted; returns 0, or -2 for NULL. Output unchanged
++ * on error. Default binary64 round-to-nearest/even required. No heap or I/O.
++ */
++int vn135_frontend_difficulty_from_target(const uint8_t target_le[32],
++    uint32_t selector,double *difficulty);
++
++typedef struct {
++    uint32_t midstate[8]; /* numeric state words, not a full digest */
++    uint8_t target_le[32];
++} vn135_work_math;
++
++/* Original math slice 0x30c9c..0x30d90: swap the first 64 work bytes within words,
++ * run one SHA compression and derive target from difficulty. 112 source bytes
++ * are required by the surrounding recovered prefix; only the first 64 are read
++ * here. Does NOT populate the rest of the 632-byte original work or own refs.
++ * Inputs and output must not overlap. Errors leave output unchanged.
++ */
++int vn135_frontend_work_math(const uint8_t words112[112],double difficulty,
++    uint32_t selector,vn135_work_math *out);
++
++typedef struct {
++    vn135_rebuild_check checked;
++    uint8_t target_le[32];
++} vn135_difficulty_check;
++
++/* New OFFLINE adapter, not the original queue consumer. Derive target then
++ * run Stage9 snapshot verification. Caller must supply a coherent, pinned job
++ * and its matching difficulty. No network, accepted-share or freshness check.
++ * On duplicate the target is derived but target_checked is still false.
++ * Invalid difficulty rejected BEFORE touching scratch/output/last_nonce.
++ * Other input/alias/scratch contracts are the same as Stage9.
++ */
++int vn135_candidate_verify_difficulty(const vn135_nonce_candidate *candidate,
++    const vn135_rebuild_snapshot *snapshot,uint8_t *scratch,size_t scratch_size,
++    double difficulty,uint32_t *last_nonce,uint32_t selector,
++    vn135_difficulty_check *out);
++#ifdef __cplusplus
++}
++#endif
++#endif
+diff --git a/reconstruction/cgminer-overlay.am b/reconstruction/cgminer-overlay.am
+index 8ce8506..ff45d16 100644
+--- a/reconstruction/cgminer-overlay.am
++++ b/reconstruction/cgminer-overlay.am
+@@ -4,7 +4,9 @@
+ AUTOMAKE_OPTIONS = subdir-objects
+ cgminer_CFLAGS = $(AM_CFLAGS) -ffp-contract=off
+ cgminer_CPPFLAGS += -I$(top_srcdir)/include
+-cgminer_SOURCES += reconstruction/support/sha256_bytes.c \
++cgminer_SOURCES += reconstruction/support/work_difficulty_pipeline.c \
++                   include/xminer/recovery/difficulty.h \
++                   reconstruction/support/sha256_bytes.c \
+                    reconstruction/support/work_rebuild_pipeline.c \
+                    include/xminer/recovery/work_rebuild.h \
+                    src/frontend/cgminer.c \
+diff --git a/reconstruction/support/work_difficulty_pipeline.c b/reconstruction/support/work_difficulty_pipeline.c
+new file mode 100644
+index 0000000..07c7fee
+--- /dev/null
++++ b/reconstruction/support/work_difficulty_pipeline.c
+@@ -0,0 +1,19 @@
++/* SPDX-License-Identifier: GPL-3.0-only
++ * New bounded offline adapter. Not original thread, queue, job lifetime or ABI.
++ */
++#include "xminer/recovery/difficulty.h"
++int vn135_candidate_verify_difficulty(const vn135_nonce_candidate *candidate,
++    const vn135_rebuild_snapshot *snapshot,uint8_t *scratch,size_t scratch_size,
++    double difficulty,uint32_t *last_nonce,uint32_t selector,
++    vn135_difficulty_check *out) {
++    vn135_difficulty_check result={0};
++    int rc;
++    if(!out||!last_nonce)return VN135_VERIFY_INVALID;
++    rc=vn135_frontend_target_from_difficulty(difficulty,selector,result.target_le);
++    if(rc)return rc;
++    rc=vn135_candidate_verify_snapshot(candidate,snapshot,scratch,scratch_size,
++        result.target_le,last_nonce,selector,&result.checked);
++    if(rc)return rc;
++    *out=result;
++    return 0;
++}
+diff --git a/src/frontend/cgminer.c b/src/frontend/cgminer.c
+index fd86796..003ca72 100644
+--- a/src/frontend/cgminer.c
++++ b/src/frontend/cgminer.c
+@@ -72,3 +72,82 @@ int vn135_frontend_rebuild_prefix(vn135_work_template *job,vn135_rebuilt_header
+     *out=result;
+     return 0;
+ }
++
++/* Stage10: difficulty/target and first-block midstate. These placements are
++ * integration choices within the same frontend cluster, NOT independently
++ * proven original filenames. See evidence/stage10/recovery-manifest.json.
++ * Compile without fast-math or fused contraction. Default RN is a precondition.
++ */
++#include "xminer/recovery/difficulty.h"
++#include "xminer/recovery/sha256_midstate.h"
++#include <float.h>
++#if defined(__FAST_MATH__) || (defined(__FINITE_MATH_ONLY__) && __FINITE_MATH_ONLY__)
++#error "Recovered floating-point arithmetic requires strict IEEE semantics"
++#endif
++#if FLT_RADIX != 2 || DBL_MANT_DIG != 53 || DBL_MAX_EXP != 1024 || FLT_EVAL_METHOD != 0
++#error "Recovery requires IEEE binary64 double"
++#endif
++static double difficulty_numerator(uint32_t selector) {
++    /* Exact literals: ELF 0x30040 = 0x4defffe000000000,
++     * ELF 0x30048 = 0x4eefffe000000000. */
++    return selector==1u ? 0x1.fffep239 : 0x1.fffep223;
++}
++static uint64_t load_le64(const uint8_t *p) {
++    return (uint64_t)load_le(p)|((uint64_t)load_le(p+4)<<32);
++}
++int vn135_frontend_target_from_difficulty(double difficulty,uint32_t selector,
++    uint8_t target_le[32]) {
++    static const double down[4]={0x1p-192,0x1p-128,0x1p-64,1.0};
++    static const double up[3]={0x1p192,0x1p128,0x1p64};
++    uint64_t limbs[4];
++    double q;
++    if(!target_le||difficulty!=difficulty||difficulty<0.0||difficulty>DBL_MAX)
++        return VN135_VERIFY_INVALID;
++    if(difficulty==0.0) difficulty=1.0;
++    q=difficulty_numerator(selector)/difficulty;
++    if(!(q<0x1p256)) return VN135_DIFFICULTY_RANGE;
++    for(size_t i=0;i<4u;++i){
++        double scaled=q*down[i];
++        /* Explicit bounds keep C FP-to-integer conversion defined. Original
++         * VFP helpers and C agree on the accepted finite input domain. */
++        if(!(scaled>=0.0&&scaled<0x1p64))return VN135_DIFFICULTY_RANGE;
++        limbs[3u-i]=(uint64_t)scaled;
++        if(i<3u){
++            volatile double product=(double)limbs[3u-i]*(-up[i]);
++            q=q+product; /* two rounded operations, matching VMLA not VFMA */
++        }
++    }
++    for(size_t i=0;i<4u;++i){
++        store_le(target_le+8u*i,(uint32_t)limbs[i]);
++        store_le(target_le+8u*i+4u,(uint32_t)(limbs[i]>>32));
++    }
++    return 0;
++}
++int vn135_frontend_difficulty_from_target(const uint8_t target_le[32],
++    uint32_t selector,double *difficulty) {
++    double q;
++    volatile double term;
++    if(!target_le||!difficulty)return VN135_VERIFY_INVALID;
++    q=(double)load_le64(target_le+16)*0x1p128;
++    term=(double)load_le64(target_le+24)*0x1p192;q=q+term;
++    term=(double)load_le64(target_le+8)*0x1p64;q=q+term;
++    q=q+(double)load_le64(target_le);
++    if(q==0.0)q=1.0;
++    *difficulty=difficulty_numerator(selector)/q;
++    return 0;
++}
++int vn135_frontend_work_math(const uint8_t words112[112],double difficulty,
++    uint32_t selector,vn135_work_math *out) {
++    vn135_work_math result;
++    uint8_t block[64];
++    int rc;
++    if(!words112||!out)return VN135_VERIFY_INVALID;
++    /* Validate arithmetic first; output remains untouched on API errors. */
++    rc=vn135_frontend_target_from_difficulty(difficulty,selector,result.target_le);
++    if(rc)return rc;
++    for(size_t i=0;i<64u;i+=4u)
++        for(size_t j=0;j<4u;++j)block[i+j]=words112[i+3u-j];
++    (void)vn135_sha256_midstate64(block,result.midstate);
++    *out=result;
++    return 0;
++}
+diff --git a/tests/arm32_stage10_instructions.S b/tests/arm32_stage10_instructions.S
+new file mode 100644
+index 0000000..0a42553
+--- /dev/null
++++ b/tests/arm32_stage10_instructions.S
+@@ -0,0 +1,14 @@
++.syntax unified
++.arm
++.fpu vfpv3-d16
++.text
++.global stage10_ops
++stage10_ops:
++    vmov d0, r0, r1
++    vmov r2, r3, d8
++    vcmp.f64 d8, #0
++    vcvt.u32.f64 s14, d7
++    vcvt.f64.u32 d4, s14
++    vmla.f64 d8, d1, d0
++    vmls.f64 d8, d1, d0
++    vmlaeq.f64 d8, d1, d0
+diff --git a/tests/difficulty_oracle.py b/tests/difficulty_oracle.py
+new file mode 100644
+index 0000000..a939e9b
+--- /dev/null
++++ b/tests/difficulty_oracle.py
+@@ -0,0 +1,66 @@
++"""Original target routine, including original uint64<->double helpers.
++Model lookup, memcpy and zero-difficulty logging are injected. No running ELF,
++threads, live job or physical hardware. Inputs finite, arithmetic default RN.
++"""
++from pathlib import Path
++import hashlib, struct, sys
++ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'tools'))
++from elf32 import ELF32
++from arm32_difficulty_subset import ARM32Difficulty
++from nonce_oracle import NonceOracle,SHA
++class DifficultyOracle:
++    def __init__(self):
++        self.elf=ELF32(ROOT/'reference/cgminer.vendor.elf')
++        assert hashlib.sha256(self.elf.data).hexdigest()==SHA
++        self.m=ARM32Difficulty(self.elf)
++    def prepare(self,selector):
++        m=self.m;a=m.DATA_BASE
++        m.mem[a:a+0x10000]=bytes(0x10000)
++        m.write(a+0x14,a+0x100);m.write(a+0x118,a+0x200)
++        m.write(a+0x234,selector)
++        self.events=[]
++        def lookup(mm):
++            assert mm.r[0]==0;self.events.append('lookup');mm.r[0]=a
++        def log(mm):self.events.append('zero-difficulty-log');mm.r[0]=0
++        return {0x29238:lookup,0x11d7c:NonceOracle.copy,0xfa0c4:log}
++    def target(self,difficulty,selector):
++        hooks=self.prepare(selector);m=self.m;out=m.DATA_BASE+0x800
++        m.mem[out-8:out+40]=b'\xa7'*48
++        m.reset((out,));m.set_d(0,difficulty)
++        m.run(0x2fe60,hooks=hooks,max_steps=20000)
++        assert m.mem[out-8:out]==b'\xa7'*8 and m.mem[out+32:out+40]==b'\xa7'*8
++        return bytes(m.mem[out:out+32])
++    def inverse(self,target,selector):
++        assert len(target)==32
++        hooks=self.prepare(selector);m=self.m;a=m.DATA_BASE;out=a+0x800
++        m.mem[out:out+32]=target;m.reset();m.r[10]=out;m.r[5]=a+0x200
++        m.run(0x31070,stop=0x31100,hooks=hooks,max_steps=20000)
++        assert m.mem[out:out+32]==target
++        return m.d(8)
++    def u64_to_double(self,x):
++        m=self.m;m.reset((x&0xffffffff,x>>32))
++        m.run(0x591338,max_steps=20000)
++        return struct.unpack('<d',struct.pack('<II',m.r[0],m.r[1]))[0]
++    def double_to_u64(self,x):
++        m=self.m;lo,hi=struct.unpack('<II',struct.pack('<d',x));m.reset((lo,hi))
++        m.run(0x591508,max_steps=20000)
++        return m.r[0]|m.r[1]<<32
++    def work_math(self,words,difficulty,selector):
++        assert len(words)==112
++        hooks=self.prepare(selector);m=self.m;a=m.DATA_BASE;work=a+0x1000
++        image=bytearray(b'\xa7'*632);image[:112]=words
++        struct.pack_into('<d',image,0x1a0,difficulty)
++        m.mem[work:work+632]=image
++        m.reset();m.r[4]=work;m.r[10]=work+0x100
++        m.r[13]=m.STACK_TOP-0x800;m.r[11]=m.r[13]+0x300
++        m.run(0x30c9c,stop=0x30d90,hooks=hooks,max_steps=100000)
++        mid=bytes(m.mem[work+0x80:work+0xa0]);target=bytes(m.mem[work+0x100:work+0x120])
++        image[0x80:0xa0]=mid;image[0x100:0x120]=target
++        assert m.mem[work:work+632]==image
++        return mid,target
++if __name__=='__main__':
++    o=DifficultyOracle()
++    for selector in [0,1,2]:
++        for d in [0.0,1.0,2.0,3.0,65536.0,1e12,1e40]:
++            t=o.target(d,selector)
++            print(selector,d,t[::-1].hex(),o.inverse(t,selector),o.events)
+diff --git a/tests/fixtures/arm32_stage10_instructions.o b/tests/fixtures/arm32_stage10_instructions.o
+new file mode 100644
+index 0000000000000000000000000000000000000000..04f93afc5e1999a8f655fb3c75a77b1771bf45a6
+GIT binary patch
+literal 416
+zcmb<-^>JflWMqH=Mg|QA1doB?21J6@1Wao%umWWTxE<d}Xa~P>=-&G7c=eul?%q4z
+zF?2J&a{yu>&F3f$RGgTan3T!DC<tV-aj`pcFmf_+u_z%M4K~pjOu`5z26h+|NDDA9
+zF)-+rq*jzL6qh8Xry3f>=NA++=s5=Y>Lr$x6lErrmZSpt#U({0iAg}ZG8aUvBqEtX
+zh^Y)zz>K750g!Em#D_T;M1wFJR1Op#3Q#tPVu7-Sfi%#(0w|Xu1jvwqaey?;JZ&Hw
+V=sP$7X)pj{kUU5nWS#&J0|1p@DGdMs
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/test_stage10_compile_policy.py b/tests/test_stage10_compile_policy.py
+new file mode 100644
+index 0000000..ce1cfea
+--- /dev/null
++++ b/tests/test_stage10_compile_policy.py
+@@ -0,0 +1,15 @@
++#!/usr/bin/env python3
++"""Require explicit rejection of math transformations outside the recovered API."""
++from pathlib import Path
++import json,subprocess,tempfile
++ROOT=Path(__file__).resolve().parents[1]
++records=[]
++with tempfile.TemporaryDirectory(prefix='vn135-fp-policy-') as td:
++    for cc in ('gcc','clang'):
++        for flag in ('-ffast-math','-ffinite-math-only'):
++            cmd=[cc,'-std=c11','-Werror','-Iinclude',flag,'-c','src/frontend/cgminer.c','-o',str(Path(td)/'test.o')]
++            r=subprocess.run(cmd,cwd=ROOT,text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
++            if r.returncode==0 or 'Recovered floating-point arithmetic requires strict IEEE semantics' not in r.stdout:
++                raise AssertionError((cmd,r.returncode,r.stdout))
++            records.append({'compiler':cc,'flag':flag,'rejected':True})
++print(json.dumps({'stage':10,'status':'PASS','compile_policy_checks':records}))
+diff --git a/tests/test_stage10_differential.py b/tests/test_stage10_differential.py
+new file mode 100644
+index 0000000..0461e1e
+--- /dev/null
++++ b/tests/test_stage10_differential.py
+@@ -0,0 +1,118 @@
++#!/usr/bin/env python3
++"""Original instructions versus compiled C on explicit, finite-input contracts.
++Numeric conversion helpers execute from ELF; no expected-value replacement.
++Pipeline group is a composition of bounded original slices, NOT full consumer.
++"""
++from pathlib import Path
++import argparse,ctypes as C,json,math,os,random,struct,sys
++ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'tests'))
++from difficulty_oracle import DifficultyOracle
++from rebuild_oracle import RebuildOracle
++from verify_oracle import VerifyOracle
++from test_stage9_differential import Candidate,Snapshot,Check,buf,ptr,cases,U8,U32,P
++class MathResult(C.Structure):_fields_=[('midstate',U32*8),('target',U8*32)]
++class DiffCheck(C.Structure):_fields_=[('checked',Check),('target',U8*32)]
++def load():
++    lib=C.CDLL(str(Path(os.environ.get('VN135_TEST_LIBRARY',ROOT/'build/libvn135_recovered.so')).resolve()))
++    lib.vn135_frontend_target_from_difficulty.argtypes=[C.c_double,U32,P]
++    lib.vn135_frontend_difficulty_from_target.argtypes=[P,U32,C.POINTER(C.c_double)]
++    lib.vn135_frontend_work_math.argtypes=[P,C.c_double,U32,C.POINTER(MathResult)]
++    lib.vn135_candidate_verify_difficulty.argtypes=[C.POINTER(Candidate),C.POINTER(Snapshot),P,C.c_size_t,
++         C.c_double,C.POINTER(U32),U32,C.POINTER(DiffCheck)]
++    return lib
++
++def forward_values(selector):
++    r=random.Random(10001+selector)
++    n=math.ldexp(65535.0,224 if selector==1 else 208)
++    edge=n/math.ldexp(1.,256)
++    explicit=[0.,-0.,1.,2.,3.,0.1,1.5,65536.,1e6,1e12,1e20,1e40,1e60,sys.float_info.max,
++              edge,math.nextafter(edge,math.inf),math.nextafter(1.,0.),math.nextafter(1.,math.inf)]
++    for ex in [-16,0,16,32,64,128,192,224,256,512,900,1023]:
++        x=math.ldexp(1.,ex)
++        explicit.extend([math.nextafter(x,0.),x,math.nextafter(x,math.inf)])
++    explicit.extend(math.ldexp(r.uniform(1.,2.),r.randrange(-15,1023)) for _ in range(180))
++    return [x for x in explicit if x==0 or n/x<2.**256]
++
++def target_tests(lib):
++    o=DifficultyOracle();count=0;zero=0
++    for selector in [0,1,2,7,0xffffffff]:
++        for d in forward_values(selector):
++            out=buf(b'\xcd'*34);expected=o.target(d,selector)
++            rc=lib.vn135_frontend_target_from_difficulty(d,selector,ptr(out,1))
++            assert rc==0 and bytes(out)==b'\xcd'+expected+b'\xcd',(d,selector,rc,bytes(out).hex(),expected.hex())
++            assert o.events==(['lookup','zero-difficulty-log'] if d==0 else ['lookup']),o.events
++            if d==0:zero+=1
++            # Independent arithmetic check: within defined domain the original
++            # target is integer truncation of the already rounded binary64 quotient.
++            n=math.ldexp(65535.,224 if selector==1 else 208)
++            assert int.from_bytes(expected,'little')==int(n/(1. if d==0. else d))
++            count+=1
++    # Known exact powers avoid validating against only the local ARM interpreter.
++    for selector in [0,1,2]:
++        for exponent in [0,1,16,32,64,128,192,224,240,256,900]:
++            a=buf(bytes(32));assert lib.vn135_frontend_target_from_difficulty(2.**exponent,selector,a)==0
++            numerator=65535<<(224 if selector==1 else 208)
++            assert int.from_bytes(bytes(a),'little')==numerator//(1<<exponent)
++    return {'comparisons':count,'zero_fallback_cases':zero,'independent_exact_power_cases':33,
++            'original_integer_conversion_helpers_executed':True}
++
++def inverse_tests(lib):
++    o=DifficultyOracle();r=random.Random(10002);values=[bytes(32),b'\xff'*32]
++    for bit in range(256):
++        for delta in [-1,0,1]:
++            x=(1<<bit)+delta
++            if x>=0:values.append(x.to_bytes(32,'little'))
++    values.extend(r.randbytes(32) for _ in range(180));count=0
++    for i,t in enumerate(values):
++        selector=[0,1,2,7,0xffffffff][i%5];a=buf(b'\xa3'+t+b'\x3a');d=C.c_double(-1.)
++        expected=o.inverse(t,selector)
++        assert lib.vn135_frontend_difficulty_from_target(ptr(a,1),selector,C.byref(d))==0
++        assert struct.pack('<d',d.value)==struct.pack('<d',expected),(t.hex(),d.value,expected)
++        assert bytes(a)==b'\xa3'+t+b'\x3a';count+=1
++    return {'comparisons':count,'compared_all_binary64_bits':True,'zero_target_denominator_is_one':True}
++
++def math_tests(lib):
++    o=DifficultyOracle();r=random.Random(10003);count=0
++    for i in range(256):
++        selector=i%3;d=[0.,1.,3.,65536.,1e12,1e50,sys.float_info.max][i%7]
++        words=r.randbytes(112);a=buf(b'\xa5'+words+b'\x5a');out=MathResult()
++        expected_mid,expected_target=o.work_math(words,d,selector)
++        assert lib.vn135_frontend_work_math(ptr(a,1),d,selector,C.byref(out))==0
++        assert struct.pack('<8I',*out.midstate)==expected_mid
++        assert bytes(out.target)==expected_target and bytes(a)==b'\xa5'+words+b'\x5a';count+=1
++    return {'comparisons':count,'original_sha_and_target_execute_together':True,
++            'all_other_632byte_work_bytes_checked_unchanged':True}
++
++def pipeline_tests(lib):
++    o=DifficultyOracle();rbuild=RebuildOracle();verify=VerifyOracle();r=random.Random(10004);count=0
++    for i,(words,coinbase,offset,width,counter,branches) in enumerate(cases(10005,60)):
++        cs=[r.getrandbits(32) for _ in range(17)];cs[4]=i%32;cs[6]=counter&0xffffffff;cs[7]=counter>>32
++        candidate=Candidate.from_buffer_copy(struct.pack('<17I',*cs));cb=buf(coinbase);br=buf(b''.join(branches))
++        snap=Snapshot((U8*112).from_buffer_copy(words),cb,len(coinbase),offset,width,br,len(branches))
++        before_snap=bytes(snap);before_candidate=bytes(candidate);scratch=buf(b'\xcc'*(len(coinbase)+2))
++        selector=i%3;d=[0.,1.,3.,65536.,1e12,1e40][i%6]
++        target=o.target(d,selector)
++        prefix=rbuild.candidate_prefix(words,coinbase,offset,width,bytes(candidate),branches)
++        last=candidate.nonce if i%4==0 else (candidate.nonce+1)&0xffffffff
++        original=verify.prefilter(prefix['words'][:80],bytes(32),last,candidate.nonce,selector)
++        previous=U32(last);out=DiffCheck()
++        assert lib.vn135_candidate_verify_difficulty(C.byref(candidate),C.byref(snap),ptr(scratch,1),len(coinbase),
++            d,C.byref(previous),selector,C.byref(out))==0
++        c=out.checked
++        assert bytes(out.target)==target and bytes(c.rebuilt.words)==prefix['words']
++        assert bytes(c.work.words)==original['words'] and bytes(c.work.digest)==original['digest']
++        assert previous.value==original['last'] and c.prefilter==original['outcome']
++        assert c.hash_computed==(c.prefilter!=1) and c.target_checked==(c.prefilter==0)
++        assert c.meets_target==(verify.target(original['digest'],target) if c.target_checked else 0)
++        assert bytes(scratch)==b'\xcc'+prefix['coinbase']+b'\xcc'
++        assert bytes(snap)==before_snap and bytes(candidate)==before_candidate and bytes(cb)[:len(coinbase)]==coinbase
++        count+=1
++    return {'slice_composition_cases':count,'not_a_full_original_consumer':True}
++
++def main():
++    p=argparse.ArgumentParser(description=__doc__);p.add_argument('group',choices=['target','inverse','math','pipeline']);a=p.parse_args()
++    lib=load();result={'stage':10,'group':a.group,'status':'PASS',**{'target':target_tests,'inverse':inverse_tests,'math':math_tests,'pipeline':pipeline_tests}[a.group](lib)}
++    tag='clang' if 'clang' in os.environ.get('VN135_TEST_LIBRARY','') else 'gcc'
++    (ROOT/f'build/stage10-{a.group}-{tag}-results.json').write_text(json.dumps(result,indent=2)+'\n')
++    print(json.dumps(result),flush=True)
++if __name__=='__main__':main()
+diff --git a/tests/test_stage10_interpreter.py b/tests/test_stage10_interpreter.py
+new file mode 100644
+index 0000000..dcb7c67
+--- /dev/null
++++ b/tests/test_stage10_interpreter.py
+@@ -0,0 +1,57 @@
++#!/usr/bin/env python3
++"""Synthetic and libgcc-helper checks kept OUTSIDE reconstruction case counts.
++Exact rational products/additions used for independent two-round references.
++No independently certified emulator or physical ARM CPU involved.
++"""
++from pathlib import Path
++from fractions import Fraction
++import json,math,random,struct,sys
++ROOT=Path(__file__).resolve().parents[1];sys.path[:0]=[str(ROOT/'tools'),str(ROOT/'tests')]
++from elf32 import ELF32
++from arm32_difficulty_subset import ARM32Difficulty
++from difficulty_oracle import DifficultyOracle
++m=ARM32Difficulty(ELF32(ROOT/'reference/cgminer.vendor.elf'));a=m.DATA_BASE
++code=ELF32(ROOT/'tests/fixtures/arm32_stage10_instructions.o').section('.text')
++ops=[int.from_bytes(code[i:i+4],'little') for i in range(0,len(code),4)]
++assert ops==[0xec410b10,0xec532b18,0xeeb58b40,0xeebc7bc7,0xeeb84b47,0xee018b00,0xee018b40,0x0e018b00]
++r=random.Random(10010);count=0
++
++def single(w):m.write(a,w);m.run(a,stop=a+4,max_steps=2)
++for bits in [0,1,0x8000000000000000,0x7ff8000000000012,0x7ff0000000000000,0xffffffffffffffff]+[r.getrandbits(64) for _ in range(150)]:
++    m.reset((bits&0xffffffff,bits>>32));single(ops[0]);assert m.dbits(0)==bits;count+=1
++    m.reset();m.set_dbits(8,bits);single(ops[1]);assert m.r[2]|m.r[3]<<32==bits;count+=1
++for x in [0.,-0.,-1.,1.,-2.**80,2.**80]+[r.uniform(-1e20,1e20) for _ in range(120)]:
++    m.reset();m.set_d(8,x);single(ops[2]);assert m.fp_flags==(x<0,x==0,x>=0,False);count+=1
++for x in [-2.**100,-1.,-0.,0.,0.9,1.,1.9,2.**32-1,2.**32,2.**64]+[r.uniform(-1e9,1e10) for _ in range(120)]:
++    m.reset();m.set_d(7,x);single(ops[3]);assert m.s[14]==max(0,min(2**32-1,int(x)));count+=1
++for u in [0,1,0xffffffff,0x80000000]+[r.getrandbits(32) for _ in range(120)]:
++    m.reset();m.s[14]=u;single(ops[4]);assert m.d(4)==float(u);count+=1
++values=[(1.+2.**-27,1.-2.**-27,-1.),(1.+2.**-27,1.-2.**-27,1.)]
++values += [(math.ldexp(r.uniform(-2,2),r.randrange(-100,100)),math.ldexp(r.uniform(-2,2),r.randrange(-100,100)),math.ldexp(r.uniform(-2,2),r.randrange(-100,100))) for _ in range(200)]
++for x,y,z in values:
++    product=float(Fraction(x)*Fraction(y))
++    for op,sign in [(5,1),(6,-1)]:
++        expected=float(Fraction(z)+sign*Fraction(product))
++        m.reset();m.set_d(1,x);m.set_d(0,y);m.set_d(8,z);single(ops[op])
++        assert struct.pack('<d',m.d(8))==struct.pack('<d',expected),(x,y,z,op,m.d(8),expected);count+=1
++    m.reset();m.z=False;m.set_d(8,z);single(ops[7]);assert m.d(8)==z;count+=1
++# An actual FMA here would produce -2^-54, not the original VMLA result zero.
++x,y,z=values[0];assert float(Fraction(x)*Fraction(y)+Fraction(z)) == -2.**-54
++m.reset();m.set_d(1,x);m.set_d(0,y);m.set_d(8,z);single(ops[5]);assert m.d(8)==0;count+=1
++for op in [2,3,5]:
++    m.reset();m.set_dbits(8,0x7ff0000000000000);m.set_dbits(7,0x7ff8000000000000)
++    try:single(ops[op])
++    except ValueError:count+=1
++    else:raise AssertionError('nonfinite arithmetic must be explicitly rejected')
++o=DifficultyOracle();helpers=0
++uv=[0,1,2**64-1]+[max(0,min(2**64-1,(1<<i)+delta)) for i in range(64) for delta in [-1,0,1]]+[r.getrandbits(64) for _ in range(250)]
++for u in uv:
++    assert struct.pack('<d',o.u64_to_double(u))==struct.pack('<d',float(u));helpers+=1
++fv=[-2.**100,-1.,-0.,0.,0.1,0.9,1.,1.9,2.**32-1,2.**32,2.**53-1,2.**53,math.nextafter(2.**64,0.),2.**64,2.**100]
++fv += [math.ldexp(r.uniform(1,2),r.randrange(-20,120)) for _ in range(200)]
++for v in fv:
++    assert o.double_to_u64(v)==max(0,min(2**64-1,int(v)));helpers+=1
++result={'status':'PASS','synthetic_instruction_checks':count,'original_conversion_helper_checks':helpers,
++        'fused_vs_unfused_distinguished':True,'default_rounding_only':True,'hardware_tested':False}
++(ROOT/'build/stage10-interpreter-results.json').write_text(json.dumps(result,indent=2)+'\n')
++print(json.dumps(result))
+diff --git a/tests/test_work_difficulty.c b/tests/test_work_difficulty.c
+new file mode 100644
+index 0000000..59ea591
+--- /dev/null
++++ b/tests/test_work_difficulty.c
+@@ -0,0 +1,131 @@
++/* Stage10 native checks. New APIs; historical synthetic data, no live work. */
++#include "xminer/recovery/difficulty.h"
++#include "xminer/recovery/sha256_midstate.h"
++#include "fixtures/genesis_work.h"
++#include <stdio.h>
++#include <string.h>
++#include <float.h>
++#include <math.h>
++static unsigned checks;
++#define CHECK(x) do {++checks;if(!(x)){fprintf(stderr,"FAIL line %d: %s\n",__LINE__,#x);return 1;}}while(0)
++static uint32_t get_le(const uint8_t *p){return p[0]|((uint32_t)p[1]<<8)|((uint32_t)p[2]<<16)|((uint32_t)p[3]<<24);}
++static void put_le(uint8_t *p,uint32_t x){for(unsigned i=0;i<4;i++)p[i]=(uint8_t)(x>>(8*i));}
++static void setup(vn135_rebuild_snapshot *s,vn135_nonce_candidate *c){
++    memset(s,0,sizeof(*s));memset(c,0,sizeof(*c));
++    memcpy(s->header_words_le,fixture_words,112);
++    memset(s->header_words_le,0xa8,4);memset(s->header_words_le+36,0xd3,32);
++    s->coinbase=fixture_coinbase;s->coinbase_size=sizeof(fixture_coinbase);
++    c->version_word=get_le(fixture_words);c->nonce=get_le(fixture_words+76);
++    c->job_word_70=UINT32_MAX;c->job_word_74=UINT32_MAX;c->job_slot=3;
++}
++static int arithmetic(void){
++    uint8_t t[34], before[34], zero[32]={0};double d;
++    memset(t,0xa7,sizeof(t));memcpy(before,t,sizeof(t));
++    CHECK(vn135_frontend_target_from_difficulty(1.,0,t+1)==0);
++    CHECK(memcmp(t+1,fixture_target,32)==0 && t[0]==0xa7 && t[33]==0xa7);
++    CHECK(vn135_frontend_difficulty_from_target(t+1,0,&d)==0 && d==1.);
++    CHECK(vn135_frontend_target_from_difficulty(65536.,1,t+1)==0);
++    CHECK(memcmp(t+1,fixture_target,32)==0);
++    CHECK(vn135_frontend_target_from_difficulty(0.,0,t+1)==0);
++    CHECK(memcmp(t+1,fixture_target,32)==0);
++    CHECK(vn135_frontend_target_from_difficulty(-0.,0,t+1)==0);
++    CHECK(memcmp(t+1,fixture_target,32)==0);
++    CHECK(vn135_frontend_target_from_difficulty(DBL_MAX,0,t+1)==0);
++    CHECK(memcmp(t+1,zero,32)==0);
++    CHECK(vn135_frontend_difficulty_from_target(zero,0,&d)==0 && d==0x1.fffep223);
++    CHECK(vn135_frontend_difficulty_from_target(zero,1,&d)==0 && d==0x1.fffep239);
++    CHECK(vn135_frontend_target_from_difficulty(1.,0,NULL)==-2);
++    CHECK(vn135_frontend_difficulty_from_target(t,0,NULL)==-2);
++    d=123.;CHECK(vn135_frontend_difficulty_from_target(NULL,0,&d)==-2 && d==123.);
++    const double bad[]={NAN,INFINITY,-INFINITY,-1.,-DBL_MAX,0x1p-1000,0x1p-33};
++    for(size_t i=0;i<sizeof(bad)/sizeof(bad[0]);++i){
++        memcpy(t,before,sizeof(t));
++        CHECK(vn135_frontend_target_from_difficulty(bad[i],0,t+1)==(i<5?-2:-4));
++        CHECK(memcmp(t,before,sizeof(t))==0);
++    }
++    vn135_work_math m,old;uint32_t expected_mid[8];
++    CHECK(vn135_frontend_work_math(fixture_words,1.,0,&m)==0);
++    CHECK(memcmp(m.target_le,fixture_target,32)==0);
++    CHECK(vn135_sha256_midstate64(fixture_header,expected_mid)==0);
++    CHECK(memcmp(m.midstate,expected_mid,sizeof(expected_mid))==0);
++    memcpy(&old,&m,sizeof(m));
++    CHECK(vn135_frontend_work_math(fixture_words,-1.,0,&m)==-2);
++    CHECK(memcmp(&m,&old,sizeof(m))==0);
++    CHECK(vn135_frontend_work_math(NULL,1.,0,&m)==-2);
++    CHECK(vn135_frontend_work_math(fixture_words,1.,0,NULL)==-2);
++    return 0;
++}
++static int pipeline_cases(void){
++    vn135_rebuild_snapshot s,before;vn135_nonce_candidate c;
++    vn135_difficulty_check out,old;uint8_t scratch[sizeof(fixture_coinbase)+2],prior[sizeof(scratch)];
++    setup(&s,&c);memcpy(&before,&s,sizeof(s));
++    const double values[]={0.,-0.,1.,2.,65536.,1e12,DBL_MAX};
++    for(unsigned selector=0;selector<3;selector++)for(size_t i=0;i<sizeof(values)/sizeof(values[0]);i++){
++        uint8_t target[32];uint32_t last=0;memset(scratch,0x19,sizeof(scratch));
++        CHECK(vn135_frontend_target_from_difficulty(values[i],selector,target)==0);
++        CHECK(vn135_candidate_verify_difficulty(&c,&s,scratch+1,sizeof(fixture_coinbase),values[i],&last,selector,&out)==0);
++        CHECK(memcmp(out.target_le,target,32)==0);
++        CHECK(memcmp(out.checked.work.digest,fixture_hash,32)==0);
++        CHECK(out.checked.target_checked==1 && out.checked.hash_computed==1);
++        CHECK(out.checked.meets_target==(uint32_t)vn135_target256_check_le(fixture_hash,target));
++        CHECK(scratch[0]==0x19 && scratch[sizeof(scratch)-1]==0x19);
++        CHECK(memcmp(&s,&before,sizeof(s))==0);
++        CHECK(vn135_candidate_verify_difficulty(&c,&s,scratch+1,sizeof(fixture_coinbase),values[i],&last,selector,&out)==0);
++        CHECK(out.checked.prefilter_result==1 && out.checked.hash_computed==0 && out.checked.target_checked==0);
++    }
++    memset(scratch,0x81,sizeof(scratch));memcpy(prior,scratch,sizeof(scratch));
++    memset(&out,0x73,sizeof(out));memcpy(&old,&out,sizeof(out));
++    const double bad[]={NAN,INFINITY,-1.,0x1p-33};
++    for(size_t i=0;i<sizeof(bad)/sizeof(bad[0]);++i){
++        uint32_t last=7788;
++        CHECK(vn135_candidate_verify_difficulty(&c,&s,scratch,sizeof(scratch),bad[i],&last,0,&out)==(i<3?-2:-4));
++        CHECK(last==7788 && memcmp(&out,&old,sizeof(out))==0 && memcmp(scratch,prior,sizeof(scratch))==0);
++    }
++    uint32_t last=7788;
++    CHECK(vn135_candidate_verify_difficulty(&c,&s,scratch,1,1.,&last,0,&out)==-3);
++    CHECK(vn135_candidate_verify_difficulty(NULL,&s,scratch,sizeof(scratch),1.,&last,0,&out)==-2);
++    CHECK(vn135_candidate_verify_difficulty(&c,NULL,scratch,sizeof(scratch),1.,&last,0,&out)==-2);
++    CHECK(vn135_candidate_verify_difficulty(&c,&s,scratch,sizeof(scratch),1.,NULL,0,&out)==-2);
++    CHECK(vn135_candidate_verify_difficulty(&c,&s,scratch,sizeof(scratch),1.,&last,0,NULL)==-2);
++    CHECK(last==7788 && memcmp(&out,&old,sizeof(out))==0 && memcmp(scratch,prior,sizeof(scratch))==0);
++    return 0;
++}
++typedef struct {vn135_work_job_snapshot row;uint32_t slot;unsigned reads,chips,cores;} reader_context;
++static int read_job(void *opaque,uint32_t slot,vn135_work_job_snapshot *out){
++    reader_context *x=opaque;x->reads++;if(slot!=x->slot)return 0;*out=x->row;return 1;
++}
++static uint32_t chip(void *opaque,uint32_t nonce){reader_context *x=opaque;(void)nonce;x->chips++;return 2;}
++static uint32_t core(void *opaque,uint32_t nonce){reader_context *x=opaque;(void)nonce;x->cores++;return 7;}
++static int stream(void){
++    vn135_rebuild_snapshot snap;vn135_nonce_candidate desired;
++    setup(&snap,&desired);
++    reader_context ctx={0};ctx.slot=3;
++    put_le(ctx.row.bytes+0x78,desired.version_word);
++    put_le(ctx.row.bytes+0x70,desired.job_word_70);put_le(ctx.row.bytes+0x74,desired.job_word_74);
++    memcpy(ctx.row.bytes+0x84,fixture_words+4,32);memcpy(ctx.row.bytes+0x50,fixture_words+36,28);
++    put_le(ctx.row.bytes+0xa4,0x12345678);
++    vn135_work_job_reader reader={&ctx,read_job};vn135_nonce_attribution ids={&ctx,chip,core};
++    uint8_t frame[11]={0xaa,0x55,0,0,0,0,0,24,0,0,0x80};
++    for(unsigned j=0;j<4;j++)frame[2+j]=(uint8_t)(desired.nonce>>(24-8*j));
++    for(size_t fragment=1;fragment<=11;fragment++){
++        vn135_work_rx_stream rx;vn135_work_rx_message msg;
++        CHECK(vn135_work_rx_stream_init(&rx,0,1,6,0)==0);
++        size_t pos=0;int event=0;
++        while(pos<sizeof(frame)){
++            size_t n=sizeof(frame)-pos,used=999;if(n>fragment)n=fragment;
++            event=vn135_work_rx_stream_feed(&rx,frame+pos,n,&used,&msg);
++            CHECK(used>0 && used<=n);pos+=used;
++            CHECK(event==(pos==sizeof(frame)?VN135_RX_NONCE_RAW:VN135_RX_NEED_MORE));
++        }
++        vn135_work_nonce_result candidate;vn135_difficulty_check checked;uint8_t scratch[sizeof(fixture_coinbase)];uint32_t last=0;
++        CHECK(vn135_work_nonce_from_rx(&rx.policy,&msg,&reader,&ids,&candidate)==0);
++        CHECK(candidate.candidate.nonce==desired.nonce && candidate.candidate.version_word==desired.version_word);
++        CHECK(memcmp(candidate.compression_block,fixture_header,64)==0);
++        CHECK(vn135_candidate_verify_difficulty(&candidate.candidate,&snap,scratch,sizeof(scratch),1.0,&last,0,&checked)==0);
++        CHECK(checked.checked.meets_target==1 && checked.checked.target_checked==1 && memcmp(checked.checked.work.digest,fixture_hash,32)==0);
++    }
++    CHECK(ctx.reads==11 && ctx.chips==11 && ctx.cores==11);
++    return 0;
++}
++int main(void){CHECK(arithmetic()==0);CHECK(pipeline_cases()==0);CHECK(stream()==0);
++    printf("{\"status\":\"PASS\",\"native_checks\":%u,\"fragmented_genesis_replays\":11,\"target_derived_from_difficulty\":true,\"hardware_tested\":false,\"submitted\":false}\n",checks);return 0;}
+diff --git a/tools/arm32_difficulty_subset.py b/tools/arm32_difficulty_subset.py
+new file mode 100644
+index 0000000..94b359f
+--- /dev/null
++++ b/tools/arm32_difficulty_subset.py
+@@ -0,0 +1,48 @@
++"""Stage10 bounded extensions for original difficulty/target routines.
++Default binary64 round-to-nearest/even only. VMLA/VMLS are deliberately two
++rounded operations, NOT fused. No FPSCR exception flags, non-default rounding,
++NaN/Inf arithmetic or physical CPU claim. VCVT.u32 saturates finite inputs.
++"""
++import math
++from arm32_rebuild_subset import ARM32Rebuild
++from arm32_subset import MASK
++
++class ARM32Difficulty(ARM32Rebuild):
++    def extra_instruction(self, w, pc):
++        # VMOV two core registers <-> a double register; bit-preserving.
++        if w & 0x0fe00fd0 == 0x0c400b10:
++            rt=(w>>12)&15; rt2=(w>>16)&15; dm=(w&15)+(((w>>5)&1)*16)
++            if rt==15 or rt2==15 or rt==rt2:
++                raise ValueError('Unsupported paired core register VMOV')
++            if w & (1<<20):
++                bits=self.dbits(dm);self.r[rt]=bits&MASK;self.r[rt2]=bits>>32
++            else:
++                self.set_dbits(dm,self.r[rt]|(self.r[rt2]<<32))
++            return True
++        dn=((w>>12)&15)+(((w>>22)&1)*16)
++        nn=((w>>16)&15)+(((w>>7)&1)*16)
++        mn=(w&15)+(((w>>5)&1)*16)
++        if w & 0x0fbf0fff == 0x0eb50b40:  # VCMP Dd, #0
++            a=self.d(dn)
++            if not math.isfinite(a):raise ValueError('Non-finite comparison')
++            self.fp_flags=(a<0.0,a==0.0,a>=0.0,False)
++            return True
++        unary=w & 0x0fbf0fd0
++        if unary==0x0ebc0bc0:  # VCVT.u32.f64 Sd, Dm
++            sd=((w>>12)&15)*2+((w>>22)&1);a=self.d(mn)
++            if not math.isfinite(a):raise ValueError('Non-finite conversion')
++            self.s[sd]=max(0,min(MASK,math.trunc(a)))
++            return True
++        if unary==0x0eb80b40:  # VCVT.f64.u32 Dd, Sm
++            sn=(w&15)*2+((w>>5)&1)
++            self.set_d(dn,float(self.s[sn]));return True
++        op=w & 0x0fb00f50
++        if op in (0x0e000b00,0x0e000b40):  # VMLA/VMLS.f64
++            a,b,c=self.d(nn),self.d(mn),self.d(dn)
++            if not all(math.isfinite(x) for x in (a,b,c)):
++                raise ValueError('Non-finite multiply accumulate input')
++            product=a*b
++            if not math.isfinite(product):raise ValueError('Non-finite product')
++            self.set_d(dn,c-product if op==0x0e000b40 else c+product)
++            return True
++        return super().extra_instruction(w,pc)
+diff --git a/tools/check_stage10_evidence.py b/tools/check_stage10_evidence.py
+new file mode 100644
+index 0000000..12cf1f2
+--- /dev/null
++++ b/tools/check_stage10_evidence.py
+@@ -0,0 +1,32 @@
++#!/usr/bin/env python3
++"""Verify Stage10 source bytes, literal constants, calls and explicit scope."""
++from pathlib import Path
++import hashlib,json,struct
++from elf32 import ELF32
++ROOT=Path(__file__).resolve().parents[1]
++e=ELF32(ROOT/'reference/cgminer.vendor.elf');m=json.loads((ROOT/'evidence/stage10/recovery-manifest.json').read_text())
++sha=lambda b:hashlib.sha256(b).hexdigest()
++word=lambda a:int.from_bytes(e.read(a,4),'little')
++assert len(e.data)==m['reference_bytes'] and sha(e.data)==m['reference_sha256']
++for s in m['slices']:
++ a,b=int(s['start'],16),int(s['end_exclusive'],16)
++ assert b-a==s['size'] and sha(e.read(a,b-a))==s['original_bytes_sha256']
++ assert sha((ROOT/s['disassembly']).read_bytes())==s['disassembly_sha256']
++for c in m['constants']:
++ b=e.read(int(c['address'],16),8)
++ assert b.hex()==c['bytes_hex'] and struct.unpack('<d',b)[0].hex()==c['double_hex']
++for x in m['branch_edges']:
++ pc=int(x['pc'],16);w=word(pc);d=w&0xffffff;d-=1<<24 if d&(1<<23) else 0
++ assert w>>24==0xeb and f'{w:08x}'==x['instruction_hex'] and pc+8+4*d==int(x['target'],16)
++assert e.read(0x30040,8).hex()=='00000000e0ffef4d'
++assert e.read(0x30048,8).hex()=='00000000e0ffef4e'
++assert word(0x2fea8)==0xe3500001 and word(0x2feac)==0x02811008
++assert word(0x30d78)==0xe2840080 and word(0x30d84)==0xed940b68
++assert word(0x30bbc)==0xe284ac01
++h=(ROOT/'include/xminer/recovery/difficulty.h').read_text()
++for claim in ['NOT claimed T21/algorithm names','NOT exact rational division','not the original queue consumer']:
++ assert claim in h
++am=(ROOT/'reconstruction/cgminer-overlay.am').read_text()
++for helper in m['new_helpers']:assert helper in am
++assert m['new_api'] in am
++print('Stage10 evidence: 6 slices/helper ranges, 9 exact constants, 17 call edges; numerical domain and scope PASS')
+diff --git a/tools/verify_stage10.py b/tools/verify_stage10.py
+new file mode 100644
+index 0000000..6c3bfb7
+--- /dev/null
++++ b/tools/verify_stage10.py
+@@ -0,0 +1,41 @@
++#!/usr/bin/env python3
++"""Checked per-group verification of a fresh Stage10 extraction.
++Logs MUST be outside source tree. No vendor ELF process or external network.
++"""
++from pathlib import Path
++import argparse,hashlib,json,subprocess,sys,time
++from verify_stage9 import GROUPS as PRIOR
++ROOT=Path(__file__).resolve().parents[1];PY=sys.executable
++GROUPS={name:[list(cmd) for cmd in cmds] for name,cmds in PRIOR.items()}
++GROUPS['build'][-1]+=['build/test-work-difficulty','build/vn135-rebuild-genesis-difficulty','fixtures-stage10']
++GROUPS.update({
++ 'difficulty-target':[[PY,'tests/test_stage10_differential.py','target']],
++ 'difficulty-inverse':[[PY,'tests/test_stage10_differential.py','inverse']],
++ 'work-math':[[PY,'tests/test_stage10_differential.py','math']],
++ 'difficulty-pipeline':[[PY,'tests/test_stage10_differential.py','pipeline']],
++ 'difficulty-native':[['./build/test-work-difficulty'],['./build/vn135-rebuild-genesis-difficulty'],
++                      [PY,'tests/test_stage10_interpreter.py'],[PY,'tests/test_stage10_compile_policy.py']],
++ 'clang-difficulty':[['make','-f','Makefile.recovery','stage10-clang']]
++})
++
++def main():
++    p=argparse.ArgumentParser(description=__doc__);p.add_argument('group',choices=GROUPS)
++    p.add_argument('--logs',type=Path,required=True);a=p.parse_args();directory=a.logs.resolve()
++    if directory.is_relative_to(ROOT):p.error('--logs must be outside source tree')
++    directory.mkdir(parents=True,exist_ok=True);records=[]
++    for i,cmd in enumerate(GROUPS[a.group]):
++        expected=2 if a.group=='full-runtime-blocked' else 0
++        log=directory/f'{a.group}-{i:02d}.log';start=time.monotonic()
++        with log.open('w') as out:
++            out.write('COMMAND: '+repr(cmd)+'\n');out.flush()
++            result=subprocess.run(cmd,cwd=ROOT,stdout=out,stderr=subprocess.STDOUT,check=False)
++        row={'command':cmd,'returncode':result.returncode,'expected_returncode':expected,'log':log.name,
++             'seconds':round(time.monotonic()-start,3),'sha256':hashlib.sha256(log.read_bytes()).hexdigest()}
++        records.append(row)
++        summary={'group':a.group,'status':'PASS' if all(x['returncode']==x['expected_returncode'] for x in records) else 'FAIL',
++                 'complete':len(records)==len(GROUPS[a.group]),'records':records}
++        (directory/(a.group+'.json')).write_text(json.dumps(summary,indent=2)+'\n')
++        print(f'{a.group} {i+1}/{len(GROUPS[a.group])}: return={result.returncode} expected={expected} ({row["seconds"]}s)',flush=True)
++        if result.returncode!=expected:return 1
++    return 0
++if __name__=='__main__':raise SystemExit(main())
+diff --git a/tools/verify_stage10_all.py b/tools/verify_stage10_all.py
+new file mode 100644
+index 0000000..0c888fc
+--- /dev/null
++++ b/tools/verify_stage10_all.py
+@@ -0,0 +1,46 @@
++#!/usr/bin/env python3
++"""Full local check with isolated per-command logs and bounded parallel groups.
++Use on a fresh extraction. Source files stay unchanged; build outputs are local.
++No network, firmware install, ASIC access or original ELF process execution.
++"""
++from pathlib import Path
++from concurrent.futures import ThreadPoolExecutor,as_completed
++import argparse,hashlib,json,subprocess,sys,time
++from verify_stage10 import GROUPS
++ROOT=Path(__file__).resolve().parents[1]
++def main():
++    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--logs',type=Path,required=True)
++    p.add_argument('--workers',type=int,default=2,choices=[1,2]);a=p.parse_args();logs=a.logs.resolve()
++    if logs.is_relative_to(ROOT):p.error('Logs must be outside the source tree')
++    logs.mkdir(parents=True,exist_ok=True);started=time.monotonic();done={};supplemental=[]
++    def run(group):
++        with (logs/(group+'-driver.log')).open('w') as f:
++            rc=subprocess.run([sys.executable,'tools/verify_stage10.py',group,'--logs',str(logs)],cwd=ROOT,stdout=f,stderr=subprocess.STDOUT).returncode
++        file=logs/(group+'.json')
++        row=json.loads(file.read_text()) if file.exists() else {'group':group,'status':'FAIL','complete':False,'records':[]}
++        row['driver_returncode']=rc
++        print(group,row['status'],'complete='+str(row['complete']),flush=True)
++        return group,row
++    group,row=run('build');done[group]=row
++    if row['status']=='PASS':
++        # Build shared Clang library once before independent Clang groups.
++        with (logs/'clang-library-prebuild.log').open('w') as f:
++            rc=subprocess.run(['make','-f','Makefile.recovery','build/libvn135_recovered-clang.so'],cwd=ROOT,stdout=f,stderr=subprocess.STDOUT).returncode
++        supplemental.append({'command':['make','-f','Makefile.recovery','build/libvn135_recovered-clang.so'],'returncode':rc,'log':'clang-library-prebuild.log','sha256':hashlib.sha256((logs/'clang-library-prebuild.log').read_bytes()).hexdigest()})
++        if rc:print('Clang library build failed',flush=True);return rc
++        pending=[g for g in GROUPS if g not in ('build','evidence','full-runtime-blocked')]
++        with ThreadPoolExecutor(max_workers=a.workers) as pool:
++            for f in as_completed([pool.submit(run,g) for g in pending]):
++                group,row=f.result();done[group]=row
++        for group in ('evidence','full-runtime-blocked'):
++            g,row=run(group);done[g]=row
++    success=len(done)==len(GROUPS) and all(x['status']=='PASS' and x['complete'] and x['driver_returncode']==0 for x in done.values())
++    result={'status':'PASS' if success else 'FAIL','complete':len(done)==len(GROUPS),
++       'groups_expected':len(GROUPS),'groups_run':len(done),'command_count':sum(len(x['records']) for x in done.values())+len(supplemental),'supplemental_commands':supplemental,
++       'seconds':round(time.monotonic()-started,3),'group_results':done,
++       'elf_sha256':hashlib.sha256((ROOT/'reference/cgminer.vendor.elf').read_bytes()).hexdigest(),
++       'hardware_tested':False,'full_upstream_build_tested':False,'full_runtime_expected_to_fail':True}
++    (logs/'ALL_GROUPS.json').write_text(json.dumps(result,indent=2)+'\n')
++    print('ALL_GROUPS',result['status'],result['groups_run'],result['command_count'],flush=True)
++    return 0 if success else 1
++if __name__=='__main__':raise SystemExit(main())

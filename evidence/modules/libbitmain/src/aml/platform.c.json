@@ -1,0 +1,105 @@
+{
+  "path": "libbitmain/src/aml/platform.c",
+  "observed_as": "/tmp/build/libbitmain/src/aml/platform.c",
+  "status": "pending-not-implemented",
+  "evidence": [
+    {
+      "address": "0x5ee737",
+      "xor": 136,
+      "decoded_length": 41,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x0011b750",
+      "end_exclusive": "0x0011bb64",
+      "path_references": [
+        {
+          "insn": "0x11b8d4",
+          "string": "0x5ee737",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/aml/platform.c"
+        },
+        {
+          "insn": "0x11b914",
+          "string": "0x5ee737",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/aml/platform.c"
+        },
+        {
+          "insn": "0x11b9a4",
+          "string": "0x5ee737",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/aml/platform.c"
+        },
+        {
+          "insn": "0x11b9f4",
+          "string": "0x5ee737",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/aml/platform.c"
+        },
+        {
+          "insn": "0x11ba90",
+          "string": "0x5ee737",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/aml/platform.c"
+        },
+        {
+          "insn": "0x11badc",
+          "string": "0x5ee737",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/aml/platform.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0011bb64",
+      "end_exclusive": "0x0011bc14",
+      "path_references": [
+        {
+          "insn": "0x11bb90",
+          "string": "0x5ee737",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/aml/platform.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0011bc14",
+      "end_exclusive": "0x0011bd64",
+      "path_references": [
+        {
+          "insn": "0x11bcc8",
+          "string": "0x5ee737",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/aml/platform.c"
+        },
+        {
+          "insn": "0x11bd14",
+          "string": "0x5ee737",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/aml/platform.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0011c2b8",
+      "end_exclusive": "0x0011c5c0",
+      "path_references": [
+        {
+          "insn": "0x11c338",
+          "string": "0x5ee737",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/aml/platform.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": []
+}

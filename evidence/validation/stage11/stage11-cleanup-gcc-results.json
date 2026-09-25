@@ -1,0 +1,10 @@
+{
+  "stage": 11,
+  "group": "cleanup",
+  "status": "PASS",
+  "comparisons": 384,
+  "clear": 192,
+  "delete": 192,
+  "null_original_diagnostic_observed_separately": true,
+  "repeated_clear_checked": 192
+}

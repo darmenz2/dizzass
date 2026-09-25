@@ -1,0 +1,19 @@
+mkdir -p build/host/src/backend/work-gen/
+cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c src/backend/work-gen/work-gen.c -o build/host/src/backend/work-gen/work-gen.o
+mkdir -p build/host/reconstruction/support/
+cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c reconstruction/support/work_rx_stream.c -o build/host/reconstruction/support/work_rx_stream.o
+mkdir -p build/host/libbitmain/src/
+cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c libbitmain/src/uart.c -o build/host/libbitmain/src/uart.o
+mkdir -p build/host/libbitmain/src/chip/
+cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c libbitmain/src/chip/chip1398.c -o build/host/libbitmain/src/chip/chip1398.o
+mkdir -p build/host/libbitmain/src/
+cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c libbitmain/src/pll.c -o build/host/libbitmain/src/pll.o
+mkdir -p build/host/libbitmain/src/aml/
+cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c libbitmain/src/aml/chip.c -o build/host/libbitmain/src/aml/chip.o
+mkdir -p build/host/reconstruction/support/
+cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c reconstruction/support/crc5.c -o build/host/reconstruction/support/crc5.o
+mkdir -p build/host/libbitmain/src/
+cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c libbitmain/src/reg_cache.c -o build/host/libbitmain/src/reg_cache.o
+ar rcs build/libvn135_recovered.a build/host/src/backend/work-gen/work-gen.o build/host/reconstruction/support/work_rx_stream.o build/host/libbitmain/src/uart.o build/host/libbitmain/src/chip/chip1398.o build/host/libbitmain/src/pll.o build/host/libbitmain/src/aml/chip.o build/host/reconstruction/support/crc5.o build/host/libbitmain/src/reg_cache.o
+mkdir -p build
+cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -shared -fPIC src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c -o build/libvn135_recovered.so

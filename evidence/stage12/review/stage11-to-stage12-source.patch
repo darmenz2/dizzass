@@ -1,0 +1,2116 @@
+diff --git a/Makefile.recovery b/Makefile.recovery
+index ea3d292..ca2aa76 100644
+--- a/Makefile.recovery
++++ b/Makefile.recovery
+@@ -7,8 +7,8 @@ PYTHON ?= python3
+ CPPFLAGS += -Iinclude
+ CFLAGS ?= -O2 -g
+ STRICT = -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror
+-SOURCES = reconstruction/support/work_storage_pipeline.c reconstruction/support/work_difficulty_pipeline.c reconstruction/support/sha256_bytes.c reconstruction/support/work_rebuild_pipeline.c src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c
+-HEADERS = include/xminer/recovery/work_storage.h include/xminer/recovery/difficulty.h include/xminer/recovery/work_rebuild.h include/xminer/recovery/nonce_verify.h include/xminer/recovery/work_nonce.h include/xminer/recovery/sha256_midstate.h include/xminer/recovery/work_rx.h include/xminer/recovery/uart.h include/xminer/recovery/chip1398.h include/xminer/recovery/pll.h include/xminer/recovery/aml_chip.h include/xminer/recovery/reg_cache.h reconstruction/data/reg_cache_defaults.inc
++SOURCES = reconstruction/support/work_time_hex.c reconstruction/support/work_storage_pipeline.c reconstruction/support/work_difficulty_pipeline.c reconstruction/support/sha256_bytes.c reconstruction/support/work_rebuild_pipeline.c src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c
++HEADERS = include/xminer/recovery/work_time.h include/xminer/recovery/work_storage.h include/xminer/recovery/difficulty.h include/xminer/recovery/work_rebuild.h include/xminer/recovery/nonce_verify.h include/xminer/recovery/work_nonce.h include/xminer/recovery/sha256_midstate.h include/xminer/recovery/work_rx.h include/xminer/recovery/uart.h include/xminer/recovery/chip1398.h include/xminer/recovery/pll.h include/xminer/recovery/aml_chip.h include/xminer/recovery/reg_cache.h reconstruction/data/reg_cache_defaults.inc
+ OBJECTS = $(patsubst %.c,build/host/%.o,$(SOURCES))
+ ARM_OBJECTS = $(patsubst %.c,build/arm/%.o,$(SOURCES))
+ .PHONY: all test linux-pty arm sanitize sanitize-linux-pty evidence-check clean full-runtime
+@@ -306,3 +306,32 @@ evidence-stage11:
+ test: stage11
+ sanitize: sanitize-stage11
+ evidence-check: evidence-stage11
++
++# Stage12: checked time-roll clone and original-equivalent fixed hex transforms.
++.PHONY: stage12 stage12-clang sanitize-stage12 evidence-stage12
++build/test-work-time: $(SOURCES) tests/test_work_time.c tests/fixtures/genesis_work.h tests/fixtures/time_roll_vectors.h $(HEADERS)
++	mkdir -p build
++	$(CC) $(CPPFLAGS) $(CFLAGS) $(STRICT) $(SOURCES) tests/test_work_time.c -o $@
++stage12: build/libvn135_recovered.so build/test-work-time
++	./build/test-work-time
++	$(PYTHON) tests/test_stage12_differential.py codec
++	$(PYTHON) tests/test_stage12_differential.py clone
++	$(PYTHON) tests/test_stage12_differential.py composition
++sanitize-stage12:
++	mkdir -p build
++	$(CC) $(CPPFLAGS) -O1 -g $(STRICT) -fsanitize=address,undefined -fno-omit-frame-pointer $(SOURCES) tests/test_work_time.c -o build/test-work-time-sanitized
++	ASAN_OPTIONS=detect_leaks=1 ./build/test-work-time-sanitized
++stage12-clang: build/libvn135_recovered-clang.so
++	$(CLANG) $(CPPFLAGS) $(CFLAGS) $(STRICT) $(SOURCES) tests/test_work_time.c -o build/test-work-time-clang
++	./build/test-work-time-clang
++	VN135_TEST_LIBRARY=./build/libvn135_recovered-clang.so $(PYTHON) tests/test_stage12_differential.py codec
++	VN135_TEST_LIBRARY=./build/libvn135_recovered-clang.so $(PYTHON) tests/test_stage12_differential.py clone
++	VN135_TEST_LIBRARY=./build/libvn135_recovered-clang.so $(PYTHON) tests/test_stage12_differential.py composition
++	$(CLANG) $(CPPFLAGS) -O1 -g $(STRICT) -fsanitize=address,undefined -fno-omit-frame-pointer $(SOURCES) tests/test_work_time.c -o build/test-work-time-clang-sanitized
++	ASAN_OPTIONS=detect_leaks=1 ./build/test-work-time-clang-sanitized
++evidence-stage12:
++	$(PYTHON) tools/check_stage12_evidence.py
++	$(PYTHON) tools/generate_time_fixture.py
++test: stage12
++sanitize: sanitize-stage12
++evidence-check: evidence-stage12
+diff --git a/RECONSTRUCTION_README_RU.md b/RECONSTRUCTION_README_RU.md
+index 81c0185..23050ee 100644
+--- a/RECONSTRUCTION_README_RU.md
++++ b/RECONSTRUCTION_README_RU.md
+@@ -1,64 +1,54 @@
+-# VNishNet T21 AML 1.3.5 — Stage 11, модульная реконструкция
++# VNishNet T21 AML 1.3.5 — Stage 12, модульная реконструкция
+ 
+ **Исходники и проверочные библиотеки. Не готовый cgminer и не установочная прошивка.**
+ 
+ ## Текущее состояние
+ 
+-| Показатель | Stage 11 |
++| Показатель | Stage 12 |
+ |---|---:|
+-| Наблюдаемые оригинальные пути | 46 |
++| Наблюдаемые исходные пути | 46 |
+ | Частично восстановлено / исключено из сборки | 7 / 39 |
+-| C-модули: 7 наблюдаемых + 11 новых helper/adapter | 18 |
+-| Сравнительные случаи нового этапа | 2 086 |
+-| Состав основного набора Stage 2–11 | 106 863 |
++| C-модули: 7 наблюдаемых + 12 новых helper/adapter | 19 |
++| Основные сравнения нового этапа | 2 511 |
++| Состав основного набора Stage 2–12 | 109 374 |
+ | Полный work ABI / живой consumer / T21 | Не восстановлены полностью |
+ 
+-Подробный отчёт — [STAGE11_CHANGELOG_RU.md](STAGE11_CHANGELOG_RU.md). Предыдущие отчёты
+-сохранены как исторические этапы. Количество файлов/тестов не является процентом готовности.
+-
+ ## Новое
+ 
+-В `src/frontend/cgminer.c` добавлены копирование строк метаданных, копия work **без
+-изменения времени**, очистка строк/объекта и два ограниченных участка присваиваний.
+-Все известные строки дублируются независимо. Частичные отказы выделения имеют явный
+-статус. Отдельный новый адаптер откатывает неполную копию и не публикует её.
++Добавлено копирование work с ненулевым смещением времени: поле заголовка и присутствующая
++hex-строка увеличиваются независимо, с сохранением переполнения 32 бит. Нулевая ветвь
++и старые API сохранены. Новые строгая проверка hex и откат при отказе выделения памяти
++отделены от поведения оригинала. Сам clone не пересчитывает хеш и не проверяет политику пула.
+ 
+-`vn135_work_storage` хранит 632 непрозрачных байта и четыре нативных указателя отдельно.
+-Четыре исходных 32-битных указательных слота нормализованы в нули. **Это не исходный
+-бинарный ABI и не полный конструктор work.** Неизвестные поля остаются неизвестными.
+-Пулы, шаблоны и иные внешние ссылки этим слоем не удерживаются и не освобождаются.
++Основные изменения: `src/frontend/cgminer.c`, `reconstruction/support/work_time_hex.c`,
++`reconstruction/support/work_storage_pipeline.c`, `include/xminer/recovery/work_time.h`.
++Полное описание и границы доказательств: [STAGE12_CHANGELOG_RU.md](STAGE12_CHANGELOG_RU.md).
++Предыдущие отчёты сохранены как история. Число файлов/тестов не является процентом готовности.
+ 
+-Новые файлы: `include/xminer/recovery/work_storage.h` и
+-`reconstruction/support/work_storage_pipeline.c`. Их имена интеграционные, не vendor.
+-Старые SHA/target/coinbase/драйверные модули сохранены. Остальные 39 наблюдаемых файлов
+-содержат явный `#error` и исключены из сборки. Нет фиктивного майнера или монолита.
++Новый API по-прежнему хранит 632 непрозрачных байта и четыре нативных указателя отдельно.
++Известные ARM pointer-слоты нормализованы; **это не оригинальный бинарный ABI**.
++Остальные 39 наблюдаемых файлов исключены из сборки, монолита и фиктивных успешных заглушек нет.
+ 
+ ## Проверка
+ 
+ ```sh
+-make -f Makefile.recovery all arm stage11
+-make -f Makefile.recovery stage11-clang sanitize-stage11
+-./build/vn135-work-lifecycle
++make -f Makefile.recovery all arm stage12
++make -f Makefile.recovery stage12-clang sanitize-stage12
++python3 tools/verify_stage12_all.py --logs /absolute/path/stage12-logs --workers 2
+ ```
+ 
+-Новые сравнения с ARM прошли на GCC и Clang. 1 200 нативных сценариев (12 220 утверждений)
+-прошли с настоящим malloc/free и ASan/UBSan, включая частичные отказы и откат.
+-В ограниченном эталоне исполняются оригинальные инструкции strdup, но внешние
+-allocator/libc/mutex подменены. Нет аппаратных испытаний и проверки всех возможных входов.
+-
+-Проверка полной поставки **из чистой распаковки**, логи вне дерева:
+-
+-```sh
+-python3 tools/verify_stage11_all.py --logs /absolute/path/stage11-logs --workers 2
+-```
++2 511 новых сравнений прошли на GCC/Clang. Отдельно прошли 70 композиций с оригинальным
++SHA256d и hashlib, 6 158 нативных сценариев с malloc/free и ASan/UBSan. В эталоне выполняются
++оригинальные hex-процедуры и XOR-конструктор алфавита; внешние операции подменяются.
++Это локальные офлайн-проверки, не стенд T21 или доказательство всех возможных входов.
+ 
+-34 группы. Результат фактического прогона ZIP передаётся отдельными финальными логом
+-и JSON. Само наличие runner не является успешным прогоном. `full-runtime` ожидаемо
+-возвращает 2. Требуются Python 3.10+, GCC/Clang, llvm-ar/llvm-objdump, Git;
+-Automake/Autoconf для теста overlay и Linux для PTY. Сторонние Python-пакеты не нужны.
++Полный runner: 38 групп / 74 команды. Результат прогона именно поставленного ZIP находится
++в отдельно передаваемых Stage12 Final Verification JSON/логе; наличие runner не равно
++успешному прогону. `full-runtime` намеренно возвращает 2.
+ 
+-Выход — host `.a`/`.so`, freestanding ARMv7-A/A32 hard-float `.a` и офлайн-утилиты.
+-**Ни библиотеки, ни fixture-утилита не заменяют `/usr/bin/cgminer`.**
++Нужны Python 3.10+, GCC/Clang, llvm-ar/llvm-objdump, Git; Autoconf/Automake для фикстуры
++наложения, Linux для PTY. Сторонние Python-пакеты не требуются. Выход — библиотеки
++host `.a`/`.so` и freestanding ARMv7 `.a`, **не замена `/usr/bin/cgminer`**.
+ 
+ ## Поверх настоящего public cgminer
+ 
+@@ -83,13 +73,13 @@ Automake-фикстуры не равна полной сборке настоя
+ 
+ `reference/cgminer.vendor.elf` сохранён неизменным, SHA-256:
+ `b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9`.
+-Новые адреса/байты/связи — `evidence/stage11/recovery-manifest.json`;
+-листинги — `evidence/stage11/disasm/`. Исторические карты и тесты не удалены.
++Новые адреса/байты/связи — `evidence/stage12/recovery-manifest.json`;
++листинги — `evidence/stage12/disasm/`. Исторические карты и тесты не удалены.
+ `tools/update_overlay_inventory.py --check` проверяет файлы архива, кроме build.
+ 
+ Копирование непрозрачных байтов, строк и математических полей — не полная семантика
+ 632-байтного work. Остаются другие метаданные, владение/жизненный цикл заданий,
+-ненулевой time-roll, полный consumer и очередь, CRC ответов,
++политика допустимого времени, полный consumer и очередь, CRC ответов,
+ выбор драйвера T21, запуск цепей, PSU/датчики/защиты, runtime-интеграция и автотюн.
+ 
+ **Не устанавливать эту библиотеку вместо штатного `/usr/bin/cgminer`.**
+diff --git a/RECONSTRUCTION_STATUS.json b/RECONSTRUCTION_STATUS.json
+index 96b88f0..fe5aeec 100644
+--- a/RECONSTRUCTION_STATUS.json
++++ b/RECONSTRUCTION_STATUS.json
+@@ -1,16 +1,16 @@
+ {
+-  "artifact": "modular-source-overlay-stage11",
++  "artifact": "modular-source-overlay-stage12",
+   "reference": "VNishNet T21 AML 1.3.5 cgminer",
+   "observed_source_paths": 46,
+   "partially_reconstructed_observed_files": 7,
+   "pending_observed_files": 39,
+-  "compiled_c_translation_units": 18,
+-  "public_reconstruction_c_functions": 64,
++  "compiled_c_translation_units": 19,
++  "public_reconstruction_c_functions": 68,
+   "public_functions_are_not_a_count_of_recovered_original_functions": true,
+   "original_data_records_verified": 9,
+   "stage2_differential_cases_repeated": 2546,
+   "stage3_differential_cases_passed": 3219,
+-  "cumulative_distinct_test_cases": 106863,
++  "cumulative_distinct_test_cases": 109374,
+   "stage3_cases_repeated_with_clang": 3219,
+   "separate_synthetic_interpreter_checks": 1318,
+   "full_vendor_tree_recovered": false,
+@@ -45,7 +45,7 @@
+   "source_path_count_increased_by_correcting_truncated_string": true,
+   "stage5_scope": "Common UART routines and combined original AML/UART TX with injected external calls, plus separate Linux PTY test",
+   "stage3_one_write_claim_corrected": "One UART helper invocation in AML, up to five OS write attempts inside UART helper",
+-  "archive_verification_record": "Delivered separately: VNish135_Stage10_Final_Verification.json",
++  "archive_verification_record": "Delivered separately: VNish135_Stage12_Final_Verification.json",
+   "stage6_rx_differential_cases_passed": 6088,
+   "stage6_cases_repeated_with_clang": 6088,
+   "stage6_distinct_streams_compared": 96,
+@@ -185,5 +185,23 @@
+   "stage11_live_reference_ownership_recovered": false,
+   "stage11_atomic_adapter_is_new": true,
+   "stage11_full_archive_verification": "See separately supplied final verification log and JSON; new focused suites already passed.",
+-  "stage11_scope": "Owned metadata text, unrolled clone, clear/delete and bounded field assignments. Opaque image with four pointer slots normalized to sidecars. New rollback adapter; not full runtime lifecycle."
++  "stage11_scope": "Owned metadata text, unrolled clone, clear/delete and bounded field assignments. Opaque image with four pointer slots normalized to sidecars. New rollback adapter; not full runtime lifecycle.",
++  "stage12_original_instruction_comparisons": 2511,
++  "stage12_counts": {
++    "codec": 1188,
++    "clone_time": 1323
++  },
++  "stage12_separate_compositions": 70,
++  "stage12_native_scenarios": 6158,
++  "stage12_native_assertions": 43397,
++  "stage12_cases_repeated_with_clang": 2511,
++  "stage12_native_gcc_clang_sanitizers_passed": true,
++  "stage12_time_roll_valid_domain_recovered": true,
++  "stage12_invalid_time_guards_are_new": true,
++  "stage12_failed_original_encoder_allocation_compared": false,
++  "stage12_time_policy_or_freshness_checked": false,
++  "stage12_hash_recomputed_by_clone": false,
++  "stage12_original_hex_initializer_executed": true,
++  "stage12_full_external_reference_ownership_recovered": false,
++  "stage12_scope": "Clone with independent header/time-string roll modulo 2^32 on valid input; original hex helpers for four-byte time; new input/ENOMEM guards and rollback. No original full ABI or runtime policy."
+ }
+diff --git a/STAGE12_CHANGELOG_RU.md b/STAGE12_CHANGELOG_RU.md
+new file mode 100644
+index 0000000..a6e5d5c
+--- /dev/null
++++ b/STAGE12_CHANGELOG_RU.md
+@@ -0,0 +1,159 @@
++# Stage 12 — копирование work с изменением времени
++
++**Модульные исходники и библиотеки, не готовый T21 cgminer.** Ничего не установлено
++на оборудование. Нет подключения к пулам или серверу HashStat.
++
++## Исходная база и выполненная работа
++
++Продолжение точного Stage 11 (`8dc61d9bc4ec4a9b65e0b67ff5489c8873da2b681943fd87ca05dcb2079becd0`).
++`reference/cgminer.vendor.elf` не изменён: 6 228 004 байта, SHA-256
++`b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9`.
++
++В `src/frontend/cgminer.c` расширена реконструкция clone (`0x2ce84–0x2d108`):
++теперь перенесены обе ветви изменения времени, с присутствующей строкой и без неё.
++Поддерживаются корректные входные объекты, успешное выделение внешнего объекта и,
++для сравнения с оригиналом, успешное выделение строки кодировщиком времени.
++Нулевая ветвь и прежний API `vn135_frontend_work_clone_unrolled` сохранены.
++
++Новое API `vn135_frontend_work_clone_time_legacy` принимает явные `fresh_id` и
++32-битный `delta`. Это новые интеграционные имена, не исходный бинарный ABI.
++
++| Файл | Изменения |
++|---|---|
++| `src/frontend/cgminer.c` | Clone с нулевым/ненулевым смещением времени, независимое копирование строк |
++| `reconstruction/support/work_time_hex.c` | Четырёхбайтное значение времени ↔ восемь hex-цифр |
++| `reconstruction/support/work_storage_pipeline.c` | Новый all-or-nothing адаптер для копии с изменением времени |
++| `include/xminer/recovery/work_time.h` | Контракт входов, представления и ограничений |
++
++Имена support-файлов/заголовков — наши. Их исходные названия в прошивке не доказаны.
++Размещение clone во frontend сохраняет прежний интеграционный выбор внутри
++подтверждённого исходными путями кластера, не отдельное доказательство имени каждой функции.
++
++## Поведение оригинального clone
++
++1. Создаётся копия 632 байт; в `+0x1bc` записывается новый идентификатор.
++2. Строки копируются в порядке `18c → 1a8 → 19c → 1b0`.
++3. При ненулевом смещении четыре байта `image + 0x44` трактуются как big-endian
++   число, увеличиваются по модулю 2^32 и сохраняются в прежнем порядке байтов.
++4. Если строка по `+0x19c` присутствует, её значение отдельно декодируется,
++   увеличивается на тот же delta и кодируется строчными hex-цифрами.
++5. Если строки нет, она не создаётся; меняется только поле заголовка.
++
++**Время в заголовке и время в строке увеличиваются независимо.** Исходная функция
++не исправляет их расхождение и не проверяет равенство. Переносы и wrap сохранены;
++`delta=0xffffffff` означает сырой 32-битный addend, а не разрешённую политику пула.
++В нулевой ветви строка копируется буквально, включая регистр букв.
++
++Для ненулевой ветви оригинальный кодировщик `0x1068c`, вызванный с длиной 4,
++выделяет **12 нулевых байт**, из которых 8 — hex-цифры и следующий байт — NUL.
++Реконструкция сохраняет этот размер и оставшиеся нули. Общий кодировщик произвольной
++длины здесь не объявляется восстановленным; проверен конкретный четырёхбайтный контракт.
++
++**Clone не вычисляет новый хеш, не меняет target, не сбрасывает nonce/last_nonce,
++не проверяет свежесть задания и не согласовывает пределы времени с пулом.** Он
++копирует эти непрозрачные поля без изменений. Проверка SHA256d выполняется отдельно.
++Ни успешная копия, ни совпадение хеша не означают принятую пулом шару.
++
++## Что добавлено сознательно, а не найдено в оригинале
++
++Исходная функция после `BL 0x107b0` не проверяет возвращаемый статус декодирования.
++При неверном тексте часть временного буфера может остаться незаписанной. Такое
++поведение не переносится как определённая функция над произвольной строкой.
++
++Новый API при `delta != 0` и присутствующей строке требует **ровно восемь корректных
++ASCII hex-цифр**. При несоответствии возвращается `VN135_STORAGE_INVALID` до любых
++выделений/мутаций. Нулевой delta сохраняет прежний договор Stage 11: произвольная
++корректная NUL-terminated строка копируется без разбора как время.
++
++В оригинальном hex-кодировщике нет проверки NULL перед записью в результат calloc.
++Этот исход не исполнялся и не объявляется дифференциально восстановленным. Новый
++C-код обрабатывает отказ как `PARTIAL`, помечает отсутствующую строку и продолжает
++копирование последующих строк. Отказ внешнего выделения также обрабатывается новым guard.
++
++`vn135_work_clone_time_atomic` — **новая политика публикации**, а не восстановленный
++код производителя: освобождает все части неудачной копии и оставляет выход NULL.
++Слово atomic не означает потокобезопасность или аппаратную атомарность. Как и прежде,
++нужны доступные раздельные буферы, одна согласованная пара allocate/release и внешняя
++синхронизация. Входные строки не изменяются; общие pool/template-объекты не удерживаются.
++
++## Сравнение с оригинальными инструкциями
++
++| Основной новый набор | Случаев |
++|---|---:|
++| Hex encode/decode четырёхбайтного времени | 1 188 |
++| Clone: ветви времени, все нормализованные байты, строки, порядок выделений | 1 323 |
++| **Всего** | **2 511** |
++
++Из 1 323 clone-случаев 1 242 имеют ненулевой delta, 621 — отсутствующую строку времени,
++513 — исходное расхождение строки и заголовка; 939 случаев проверяют частичные отказы
++остальных строк. Это пересекающиеся группы, их нельзя суммировать.
++
++Новый основной набор прошёл на GCC и Clang. Старый основной набор имеет 106 863 случая;
++состав общего набора Stage 2–12 — **109 374**. Это количество тестовых входов,
++не восстановленных функций и не процент готовности.
++
++Отдельно, **без прибавления к основному итогу**:
++
++- 70 композиций «оригинальный clone → оригинальный SHA256d», сравнённых с новой
++  библиотекой и независимо с Python `hashlib`;
++- 6 158 нативных сценариев / 43 397 утверждений с настоящими malloc/free, включая
++  все байтовые значения в каждой позиции hex, отказы внешнего выделения/строк,
++  новый откат, отсутствие строки, повторное освобождение и обратное смещение;
++- шесть синтетически изменённых заголовков на основе сохранённого исторического
++  вектора Stage 9. При обратном смещении восстанавливается первоначальный заголовок
++  и известный хеш. Изменённые заголовки не объявляются допустимыми сетевыми блоками.
++
++Нативный набор прошёл GCC/Clang и ASan/UBSan с `detect_leaks=1`. Санитайзеры относятся
++к этому C-набору, не ко всем Python/ctypes сравнениям.
++
++### Граница эталона
++
++Используется прежний ограниченный локальный A32-интерпретатор; новые инструкции
++ему не добавлялись. В оригинале исполняются clone, hex2bin, bin2hex и тело strdup.
++Hex-алфавит не подставляется готовой константой в эталон: исполняется исходный
++XOR-цикл `0x1ff00–0x1ff2c`. Его охватывающий конструктор найден в `.init_array`.
++Таблица разбора по `0x5b0310` сверена побайтно, включая все 256 значений.
++
++Внешние calloc/malloc/free, strlen, memcpy/memset, mutex и диагностика внедрены.
++Основная арифметика и hex-конверсии оригинальные. Проверяются независимость копии,
++все 632 байта после нормализации известных pointer-слотов, строки и порядок аллокаций.
++Остальные поля от этого не становятся понятыми или совместимыми с оригинальным ABI.
++
++Интерпретатор не является независимо сертифицированным процессором. Не проверены
++конкурентность, полное пространство входов, аппаратные тайминги, физический ARM,
++периферия или принятие пулом. Полный исходный ELF как процесс не запускался.
++
++## Сборка и чистая проверка
++
++```sh
++make -f Makefile.recovery all arm stage12
++make -f Makefile.recovery stage12-clang sanitize-stage12
++make -f Makefile.recovery evidence-check
++python3 tools/verify_stage12_all.py --logs /absolute/path/outside-source --workers 2
++```
++
++Полный runner содержит 38 групп / 74 команды верхнего уровня, включая ожидаемый
++отказ `full-runtime` с кодом 2. Итог **фактически выполненного прогона поставленного
++ZIP** передаётся отдельно в `VNish135_Stage12_Final_Verification.log` и `.json`.
++Наличие runner само по себе не доказывает прохождение тестов.
++
++`evidence/stage12/recovery-manifest.json` фиксирует 4 диапазона кода, 7 блоков данных/
++литералов и 12 рёбер вызовов. Карта и данные проверяются `tools/check_stage12_evidence.py`.
++`tools/generate_time_fixture.py` независимо воспроизводит шесть hash-векторов.
++
++## Текущее состояние и продолжение
++
++Компилируются **19 C-модулей**: 7 на наблюдаемых путях, 12 явно новых support/adapter.
++Наблюдаемых путей по-прежнему 46; 39 невосстановленных исключены из сборки. Не добавлены
++пустые функции с фиктивным успехом, монолит или заменяющий cgminer main.
++
++Полное дерево публичного upstream cgminer не включено, совместная сборка настоящего
++upstream не заявляется. Additive overlay и тест Automake сохраняют прежние имена,
++авторство и раздельные объектные файлы. Сборка выдаёт host и freestanding ARMv7-A/A32
++hard-float библиотеки, **не исполняемый майнер**.
++
++Остаются общие внешние ссылки/владение и актуальность заданий, полноценный consumer,
++очередь 72/68, CRC ответов, выбор T21-драйвера, запуск цепей, питание/датчики/
++охлаждение/защиты, интеграция runtime и автотюн.
++
++**Штатный `/usr/bin/cgminer` этим комплектом не заменять.**
+diff --git a/evidence/stage12/disasm/clone_time.S b/evidence/stage12/disasm/clone_time.S
+new file mode 100644
+index 0000000..c9314c4
+--- /dev/null
++++ b/evidence/stage12/disasm/clone_time.S
+@@ -0,0 +1,167 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   2ce84: e92d4bf0     	push	{r4, r5, r6, r7, r8, r9, r11, lr}
++   2ce88: e28db018     	add	r11, sp, #24
++   2ce8c: e24dd010     	sub	sp, sp, #16
++   2ce90: e1a08001     	mov	r8, r1
++   2ce94: e1a09000     	mov	r9, r0
++   2ce98: e3a00001     	mov	r0, #1
++   2ce9c: e3a01f9e     	mov	r1, #632
++   2cea0: eb159b43     	bl	0x593bb4 <.text+0x583ab4> @ imm = #0x566d0c
++   2cea4: e59f725c     	ldr	r7, [pc, #0x25c]        @ 0x2d108 <.text+0x1d008>
++   2cea8: e1a05000     	mov	r5, r0
++   2ceac: e79f7007     	ldr	r7, [pc, r7]
++   2ceb0: e1a00007     	mov	r0, r7
++   2ceb4: eb15e493     	bl	0x5a6108 <.text+0x596008> @ imm = #0x57924c
++   2ceb8: e59f024c     	ldr	r0, [pc, #0x24c]        @ 0x2d10c <.text+0x1d00c>
++   2cebc: e59f424c     	ldr	r4, [pc, #0x24c]        @ 0x2d110 <.text+0x1d010>
++   2cec0: e08f0000     	add	r0, pc, r0
++   2cec4: e79f4004     	ldr	r4, [pc, r4]
++   2cec8: e2841001     	add	r1, r4, #1
++   2cecc: e5801000     	str	r1, [r0]
++   2ced0: e1a00007     	mov	r0, r7
++   2ced4: eb15e5fa     	bl	0x5a66c4 <.text+0x5965c4> @ imm = #0x5797e8
++   2ced8: e1a00005     	mov	r0, r5
++   2cedc: e3a01000     	mov	r1, #0
++   2cee0: e3a02f9e     	mov	r2, #632
++   2cee4: eb15d968     	bl	0x5a348c <.text+0x59338c> @ imm = #0x5765a0
++   2cee8: e59f3224     	ldr	r3, [pc, #0x224]        @ 0x2d114 <.text+0x1d014>
++   2ceec: e3001874     	movw	r1, #0x874
++   2cef0: e59f0220     	ldr	r0, [pc, #0x220]        @ 0x2d118 <.text+0x1d018>
++   2cef4: e3a02f9e     	mov	r2, #632
++   2cef8: e08f3003     	add	r3, pc, r3
++   2cefc: e08f0000     	add	r0, pc, r0
++   2cf00: e88d0003     	stm	sp, {r0, r1}
++   2cf04: e1a00005     	mov	r0, r5
++   2cf08: e1a01009     	mov	r1, r9
++   2cf0c: ebff939a     	bl	0x11d7c <.text+0x1c7c>  @ imm = #-0x1b198
++   2cf10: e58541bc     	str	r4, [r5, #0x1bc]
++   2cf14: e599018c     	ldr	r0, [r9, #0x18c]
++   2cf18: e3500000     	cmp	r0, #0
++   2cf1c: 0a000001     	beq	0x2cf28 <.text+0x1ce28> @ imm = #0x4
++   2cf20: eb15da5e     	bl	0x5a38a0 <.text+0x5937a0> @ imm = #0x576978
++   2cf24: e585018c     	str	r0, [r5, #0x18c]
++   2cf28: e59971a8     	ldr	r7, [r9, #0x1a8]
++   2cf2c: e3570000     	cmp	r7, #0
++   2cf30: 0a00001a     	beq	0x2cfa0 <.text+0x1cea0> @ imm = #0x68
++   2cf34: e59f61e0     	ldr	r6, [pc, #0x1e0]        @ 0x2d11c <.text+0x1d01c>
++   2cf38: e79f6006     	ldr	r6, [pc, r6]
++   2cf3c: e5960000     	ldr	r0, [r6]
++   2cf40: e59f41d8     	ldr	r4, [pc, #0x1d8]        @ 0x2d120 <.text+0x1d020>
++   2cf44: e2401001     	sub	r1, r0, #1
++   2cf48: e0000190     	mul	r0, r0, r1
++   2cf4c: e79f4004     	ldr	r4, [pc, r4]
++   2cf50: e3100001     	tst	r0, #1
++   2cf54: 0a000002     	beq	0x2cf64 <.text+0x1ce64> @ imm = #0x8
++   2cf58: e5940000     	ldr	r0, [r4]
++   2cf5c: e3500009     	cmp	r0, #9
++   2cf60: ca00000a     	bgt	0x2cf90 <.text+0x1ce90> @ imm = #0x28
++   2cf64: e1a00007     	mov	r0, r7
++   2cf68: eb15da4c     	bl	0x5a38a0 <.text+0x5937a0> @ imm = #0x576930
++   2cf6c: e58501a8     	str	r0, [r5, #0x1a8]
++   2cf70: e5960000     	ldr	r0, [r6]
++   2cf74: e2401001     	sub	r1, r0, #1
++   2cf78: e0000190     	mul	r0, r0, r1
++   2cf7c: e3100001     	tst	r0, #1
++   2cf80: 0a000006     	beq	0x2cfa0 <.text+0x1cea0> @ imm = #0x18
++   2cf84: e5940000     	ldr	r0, [r4]
++   2cf88: e3500009     	cmp	r0, #9
++   2cf8c: da000003     	ble	0x2cfa0 <.text+0x1cea0> @ imm = #0xc
++   2cf90: e1a00007     	mov	r0, r7
++   2cf94: eb15da41     	bl	0x5a38a0 <.text+0x5937a0> @ imm = #0x576904
++   2cf98: e58501a8     	str	r0, [r5, #0x1a8]
++   2cf9c: eafffff0     	b	0x2cf64 <.text+0x1ce64> @ imm = #-0x40
++   2cfa0: e599119c     	ldr	r1, [r9, #0x19c]
++   2cfa4: e59f0178     	ldr	r0, [pc, #0x178]        @ 0x2d124 <.text+0x1d024>
++   2cfa8: e3510000     	cmp	r1, #0
++   2cfac: e79f0000     	ldr	r0, [pc, r0]
++   2cfb0: 0a00001d     	beq	0x2d02c <.text+0x1cf2c> @ imm = #0x74
++   2cfb4: e59f216c     	ldr	r2, [pc, #0x16c]        @ 0x2d128 <.text+0x1d028>
++   2cfb8: e79f2002     	ldr	r2, [pc, r2]
++   2cfbc: e5903000     	ldr	r3, [r0]
++   2cfc0: e2437001     	sub	r7, r3, #1
++   2cfc4: e0030793     	mul	r3, r3, r7
++   2cfc8: e3130001     	tst	r3, #1
++   2cfcc: 0a000002     	beq	0x2cfdc <.text+0x1cedc> @ imm = #0x8
++   2cfd0: e5923000     	ldr	r3, [r2]
++   2cfd4: e3530009     	cmp	r3, #9
++   2cfd8: cafffff7     	bgt	0x2cfbc <.text+0x1cebc> @ imm = #-0x24
++   2cfdc: e3580000     	cmp	r8, #0
++   2cfe0: 0a000022     	beq	0x2d070 <.text+0x1cf70> @ imm = #0x88
++   2cfe4: e5950044     	ldr	r0, [r5, #0x44]
++   2cfe8: e28d700c     	add	r7, sp, #12
++   2cfec: e3a02004     	mov	r2, #4
++   2cff0: e6bf0f30     	rev	r0, r0
++   2cff4: e0800008     	add	r0, r0, r8
++   2cff8: e6bf0f30     	rev	r0, r0
++   2cffc: e5850044     	str	r0, [r5, #0x44]
++   2d000: e1a00007     	mov	r0, r7
++   2d004: ebff8de9     	bl	0x107b0 <.text+0x6b0>   @ imm = #-0x1c85c
++   2d008: e59d000c     	ldr	r0, [sp, #0xc]
++   2d00c: e3a01004     	mov	r1, #4
++   2d010: e6bf0f30     	rev	r0, r0
++   2d014: e0800008     	add	r0, r0, r8
++   2d018: e6bf0f30     	rev	r0, r0
++   2d01c: e58d000c     	str	r0, [sp, #0xc]
++   2d020: e1a00007     	mov	r0, r7
++   2d024: ebff8d98     	bl	0x1068c <.text+0x58c>   @ imm = #-0x1c9a0
++   2d028: ea000012     	b	0x2d078 <.text+0x1cf78> @ imm = #0x48
++   2d02c: e59f10f8     	ldr	r1, [pc, #0xf8]         @ 0x2d12c <.text+0x1d02c>
++   2d030: e79f1001     	ldr	r1, [pc, r1]
++   2d034: e5902000     	ldr	r2, [r0]
++   2d038: e2423001     	sub	r3, r2, #1
++   2d03c: e0020392     	mul	r2, r2, r3
++   2d040: e3120001     	tst	r2, #1
++   2d044: 0a000002     	beq	0x2d054 <.text+0x1cf54> @ imm = #0x8
++   2d048: e5912000     	ldr	r2, [r1]
++   2d04c: e3520009     	cmp	r2, #9
++   2d050: cafffff7     	bgt	0x2d034 <.text+0x1cf34> @ imm = #-0x24
++   2d054: e3580000     	cmp	r8, #0
++   2d058: 15950044     	ldrne	r0, [r5, #0x44]
++   2d05c: 16bf0f30     	revne	r0, r0
++   2d060: 10800008     	addne	r0, r0, r8
++   2d064: 16bf0f30     	revne	r0, r0
++   2d068: 15850044     	strne	r0, [r5, #0x44]
++   2d06c: ea000002     	b	0x2d07c <.text+0x1cf7c> @ imm = #0x8
++   2d070: e1a00001     	mov	r0, r1
++   2d074: eb15da09     	bl	0x5a38a0 <.text+0x5937a0> @ imm = #0x576824
++   2d078: e585019c     	str	r0, [r5, #0x19c]
++   2d07c: e59961b0     	ldr	r6, [r9, #0x1b0]
++   2d080: e3560000     	cmp	r6, #0
++   2d084: 0a00001a     	beq	0x2d0f4 <.text+0x1cff4> @ imm = #0x68
++   2d088: e59f70a0     	ldr	r7, [pc, #0xa0]         @ 0x2d130 <.text+0x1d030>
++   2d08c: e79f7007     	ldr	r7, [pc, r7]
++   2d090: e5970000     	ldr	r0, [r7]
++   2d094: e59f4098     	ldr	r4, [pc, #0x98]         @ 0x2d134 <.text+0x1d034>
++   2d098: e2401001     	sub	r1, r0, #1
++   2d09c: e0000190     	mul	r0, r0, r1
++   2d0a0: e79f4004     	ldr	r4, [pc, r4]
++   2d0a4: e3100001     	tst	r0, #1
++   2d0a8: 0a000002     	beq	0x2d0b8 <.text+0x1cfb8> @ imm = #0x8
++   2d0ac: e5940000     	ldr	r0, [r4]
++   2d0b0: e3500009     	cmp	r0, #9
++   2d0b4: ca00000a     	bgt	0x2d0e4 <.text+0x1cfe4> @ imm = #0x28
++   2d0b8: e1a00006     	mov	r0, r6
++   2d0bc: eb15d9f7     	bl	0x5a38a0 <.text+0x5937a0> @ imm = #0x5767dc
++   2d0c0: e58501b0     	str	r0, [r5, #0x1b0]
++   2d0c4: e5970000     	ldr	r0, [r7]
++   2d0c8: e2401001     	sub	r1, r0, #1
++   2d0cc: e0000190     	mul	r0, r0, r1
++   2d0d0: e3100001     	tst	r0, #1
++   2d0d4: 0a000006     	beq	0x2d0f4 <.text+0x1cff4> @ imm = #0x18
++   2d0d8: e5940000     	ldr	r0, [r4]
++   2d0dc: e3500009     	cmp	r0, #9
++   2d0e0: da000003     	ble	0x2d0f4 <.text+0x1cff4> @ imm = #0xc
++   2d0e4: e1a00006     	mov	r0, r6
++   2d0e8: eb15d9ec     	bl	0x5a38a0 <.text+0x5937a0> @ imm = #0x5767b0
++   2d0ec: e58501b0     	str	r0, [r5, #0x1b0]
++   2d0f0: eafffff0     	b	0x2d0b8 <.text+0x1cfb8> @ imm = #-0x40
++   2d0f4: e5990254     	ldr	r0, [r9, #0x254]
++   2d0f8: e5850254     	str	r0, [r5, #0x254]
++   2d0fc: e1a00005     	mov	r0, r5
++   2d100: e24bd018     	sub	sp, r11, #24
++   2d104: e8bd8bf0     	pop	{r4, r5, r6, r7, r8, r9, r11, pc}
+diff --git a/evidence/stage12/disasm/hex_alphabet_initializer.S b/evidence/stage12/disasm/hex_alphabet_initializer.S
+new file mode 100644
+index 0000000..eff8cad
+--- /dev/null
++++ b/evidence/stage12/disasm/hex_alphabet_initializer.S
+@@ -0,0 +1,17 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   1ff00: e3a02000     	mov	r2, #0
++   1ff04: e3520000     	cmp	r2, #0
++   1ff08: 1a000007     	bne	0x1ff2c <.text+0xfe2c>  @ imm = #0x1c
++   1ff0c: e59f3fd8     	ldr	r3, [pc, #0xfd8]        @ 0x20eec <.text+0x10dec>
++   1ff10: e08f3003     	add	r3, pc, r3
++   1ff14: e7d30002     	ldrb	r0, [r3, r2]
++   1ff18: e220001a     	eor	r0, r0, #26
++   1ff1c: e7c30002     	strb	r0, [r3, r2]
++   1ff20: e2822001     	add	r2, r2, #1
++   1ff24: e3520010     	cmp	r2, #16
++   1ff28: 1afffff9     	bne	0x1ff14 <.text+0xfe14>  @ imm = #-0x1c
+diff --git a/evidence/stage12/disasm/hex_decode.S b/evidence/stage12/disasm/hex_decode.S
+new file mode 100644
+index 0000000..2deab8e
+--- /dev/null
++++ b/evidence/stage12/disasm/hex_decode.S
+@@ -0,0 +1,115 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   107b0: e92d4df0     	push	{r4, r5, r6, r7, r8, r10, r11, lr}
++   107b4: e28db018     	add	r11, sp, #24
++   107b8: e24dd008     	sub	sp, sp, #8
++   107bc: e59f81a0     	ldr	r8, [pc, #0x1a0]        @ 0x10964 <.text+0x864>
++   107c0: e79f8008     	ldr	r8, [pc, r8]
++   107c4: e5983000     	ldr	r3, [r8]
++   107c8: e2437001     	sub	r7, r3, #1
++   107cc: e0030793     	mul	r3, r3, r7
++   107d0: e3130001     	tst	r3, #1
++   107d4: e5983000     	ldr	r3, [r8]
++   107d8: e3520000     	cmp	r2, #0
++   107dc: e59f5184     	ldr	r5, [pc, #0x184]        @ 0x10968 <.text+0x868>
++   107e0: e1a06002     	mov	r6, r2
++   107e4: e2437001     	sub	r7, r3, #1
++   107e8: 13006001     	movwne	r6, #0x1
++   107ec: e0070793     	mul	r7, r3, r7
++   107f0: e79f5005     	ldr	r5, [pc, r5]
++   107f4: e5d14000     	ldrb	r4, [r1]
++   107f8: e3540000     	cmp	r4, #0
++   107fc: e1a03004     	mov	r3, r4
++   10800: 13003001     	movwne	r3, #0x1
++   10804: e3170001     	tst	r7, #1
++   10808: 0a000002     	beq	0x10818 <.text+0x718>   @ imm = #0x8
++   1080c: e5957000     	ldr	r7, [r5]
++   10810: e3570009     	cmp	r7, #9
++   10814: caffffee     	bgt	0x107d4 <.text+0x6d4>   @ imm = #-0x48
++   10818: e0163003     	ands	r3, r6, r3
++   1081c: 0a000012     	beq	0x1086c <.text+0x76c>   @ imm = #0x48
++   10820: e59f6144     	ldr	r6, [pc, #0x144]        @ 0x1096c <.text+0x86c>
++   10824: e2811001     	add	r1, r1, #1
++   10828: e08f6006     	add	r6, pc, r6
++   1082c: e5d17000     	ldrb	r7, [r1]
++   10830: e3570000     	cmp	r7, #0
++   10834: 0a000011     	beq	0x10880 <.text+0x780>   @ imm = #0x44
++   10838: e6ef3074     	uxtb	r3, r4
++   1083c: e7967107     	ldr	r7, [r6, r7, lsl #2]
++   10840: e7963103     	ldr	r3, [r6, r3, lsl #2]
++   10844: e1874003     	orr	r4, r7, r3
++   10848: e3740001     	cmn	r4, #1
++   1084c: da000016     	ble	0x108ac <.text+0x7ac>   @ imm = #0x58
++   10850: e1873203     	orr	r3, r7, r3, lsl #4
++   10854: e4c03001     	strb	r3, [r0], #1
++   10858: e5d14001     	ldrb	r4, [r1, #0x1]
++   1085c: e2522001     	subs	r2, r2, #1
++   10860: 12811002     	addne	r1, r1, #2
++   10864: 13540000     	cmpne	r4, #0
++   10868: 1affffef     	bne	0x1082c <.text+0x72c>   @ imm = #-0x44
++   1086c: e1820004     	orr	r0, r2, r4
++   10870: e16f0f10     	clz	r0, r0
++   10874: e1a002a0     	lsr	r0, r0, #5
++   10878: e24bd018     	sub	sp, r11, #24
++   1087c: e8bd8df0     	pop	{r4, r5, r6, r7, r8, r10, r11, pc}
++   10880: e5980000     	ldr	r0, [r8]
++   10884: e59f60e4     	ldr	r6, [pc, #0xe4]         @ 0x10970 <.text+0x870>
++   10888: e2401001     	sub	r1, r0, #1
++   1088c: e08f6006     	add	r6, pc, r6
++   10890: e0000190     	mul	r0, r0, r1
++   10894: e3100001     	tst	r0, #1
++   10898: 0a000013     	beq	0x108ec <.text+0x7ec>   @ imm = #0x4c
++   1089c: e5950000     	ldr	r0, [r5]
++   108a0: e3500009     	cmp	r0, #9
++   108a4: ca000023     	bgt	0x10938 <.text+0x838>   @ imm = #0x8c
++   108a8: ea00000f     	b	0x108ec <.text+0x7ec>   @ imm = #0x3c
++   108ac: e59f00d8     	ldr	r0, [pc, #0xd8]         @ 0x1098c <.text+0x88c>
++   108b0: e3a07001     	mov	r7, #1
++   108b4: e59f10d4     	ldr	r1, [pc, #0xd4]         @ 0x10990 <.text+0x890>
++   108b8: e59f20d4     	ldr	r2, [pc, #0xd4]         @ 0x10994 <.text+0x894>
++   108bc: e08f0000     	add	r0, pc, r0
++   108c0: e59f30d0     	ldr	r3, [pc, #0xd0]         @ 0x10998 <.text+0x898>
++   108c4: e08f1001     	add	r1, pc, r1
++   108c8: e08f2002     	add	r2, pc, r2
++   108cc: e58d7000     	str	r7, [sp]
++   108d0: e08f3003     	add	r3, pc, r3
++   108d4: e58d3004     	str	r3, [sp, #0x4]
++   108d8: e3a030e6     	mov	r3, #230
++   108dc: eb03a5f8     	bl	0xfa0c4 <.text+0xe9fc4> @ imm = #0xe97e0
++   108e0: e3a00000     	mov	r0, #0
++   108e4: e24bd018     	sub	sp, r11, #24
++   108e8: e8bd8df0     	pop	{r4, r5, r6, r7, r8, r10, r11, pc}
++   108ec: e59f0080     	ldr	r0, [pc, #0x80]         @ 0x10974 <.text+0x874>
++   108f0: e3a03001     	mov	r3, #1
++   108f4: e59f107c     	ldr	r1, [pc, #0x7c]         @ 0x10978 <.text+0x878>
++   108f8: e59f207c     	ldr	r2, [pc, #0x7c]         @ 0x1097c <.text+0x87c>
++   108fc: e08f0000     	add	r0, pc, r0
++   10900: e08f1001     	add	r1, pc, r1
++   10904: e88d0048     	stm	sp, {r3, r6}
++   10908: e08f2002     	add	r2, pc, r2
++   1090c: e3a030dc     	mov	r3, #220
++   10910: eb03a5eb     	bl	0xfa0c4 <.text+0xe9fc4> @ imm = #0xe97ac
++   10914: e5980000     	ldr	r0, [r8]
++   10918: e2401001     	sub	r1, r0, #1
++   1091c: e0010190     	mul	r1, r0, r1
++   10920: e3a00000     	mov	r0, #0
++   10924: e3110001     	tst	r1, #1
++   10928: 0affffd2     	beq	0x10878 <.text+0x778>   @ imm = #-0xb8
++   1092c: e5951000     	ldr	r1, [r5]
++   10930: e351000a     	cmp	r1, #10
++   10934: baffffcf     	blt	0x10878 <.text+0x778>   @ imm = #-0xc4
++   10938: e59f0040     	ldr	r0, [pc, #0x40]         @ 0x10980 <.text+0x880>
++   1093c: e3a03001     	mov	r3, #1
++   10940: e59f103c     	ldr	r1, [pc, #0x3c]         @ 0x10984 <.text+0x884>
++   10944: e59f203c     	ldr	r2, [pc, #0x3c]         @ 0x10988 <.text+0x888>
++   10948: e08f0000     	add	r0, pc, r0
++   1094c: e08f1001     	add	r1, pc, r1
++   10950: e88d0048     	stm	sp, {r3, r6}
++   10954: e08f2002     	add	r2, pc, r2
++   10958: e3a030dc     	mov	r3, #220
++   1095c: eb03a5d8     	bl	0xfa0c4 <.text+0xe9fc4> @ imm = #0xe9760
++   10960: eaffffe1     	b	0x108ec <.text+0x7ec>   @ imm = #-0x7c
+diff --git a/evidence/stage12/disasm/hex_encode.S b/evidence/stage12/disasm/hex_encode.S
+new file mode 100644
+index 0000000..bd47cb8
+--- /dev/null
++++ b/evidence/stage12/disasm/hex_encode.S
+@@ -0,0 +1,76 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   1068c: e92d48f0     	push	{r4, r5, r6, r7, r11, lr}
++   10690: e28db010     	add	r11, sp, #16
++   10694: e59f6108     	ldr	r6, [pc, #0x108]        @ 0x107a4 <.text+0x6a4>
++   10698: e1a05000     	mov	r5, r0
++   1069c: e1a04001     	mov	r4, r1
++   106a0: e79f6006     	ldr	r6, [pc, r6]
++   106a4: e5960000     	ldr	r0, [r6]
++   106a8: e59f70f8     	ldr	r7, [pc, #0xf8]         @ 0x107a8 <.text+0x6a8>
++   106ac: e2401001     	sub	r1, r0, #1
++   106b0: e0000190     	mul	r0, r0, r1
++   106b4: e79f7007     	ldr	r7, [pc, r7]
++   106b8: e3100001     	tst	r0, #1
++   106bc: 0a000002     	beq	0x106cc <.text+0x5cc>   @ imm = #0x8
++   106c0: e5970000     	ldr	r0, [r7]
++   106c4: e3500009     	cmp	r0, #9
++   106c8: ca00000f     	bgt	0x1070c <.text+0x60c>   @ imm = #0x3c
++   106cc: e3a00001     	mov	r0, #1
++   106d0: e1800084     	orr	r0, r0, r4, lsl #1
++   106d4: e1a01fc0     	asr	r1, r0, #31
++   106d8: e0800f21     	add	r0, r0, r1, lsr #30
++   106dc: e3a01001     	mov	r1, #1
++   106e0: e3c00003     	bic	r0, r0, #3
++   106e4: e2800004     	add	r0, r0, #4
++   106e8: eb160d31     	bl	0x593bb4 <.text+0x583ab4> @ imm = #0x5834c4
++   106ec: e5961000     	ldr	r1, [r6]
++   106f0: e2412001     	sub	r2, r1, #1
++   106f4: e0010291     	mul	r1, r1, r2
++   106f8: e3110001     	tst	r1, #1
++   106fc: 0a00000b     	beq	0x10730 <.text+0x630>   @ imm = #0x2c
++   10700: e5971000     	ldr	r1, [r7]
++   10704: e3510009     	cmp	r1, #9
++   10708: da000008     	ble	0x10730 <.text+0x630>   @ imm = #0x20
++   1070c: e3a00001     	mov	r0, #1
++   10710: e1800084     	orr	r0, r0, r4, lsl #1
++   10714: e1a01fc0     	asr	r1, r0, #31
++   10718: e0800f21     	add	r0, r0, r1, lsr #30
++   1071c: e3a01001     	mov	r1, #1
++   10720: e3c00003     	bic	r0, r0, #3
++   10724: e2800004     	add	r0, r0, #4
++   10728: eb160d21     	bl	0x593bb4 <.text+0x583ab4> @ imm = #0x583484
++   1072c: eaffffe6     	b	0x106cc <.text+0x5cc>   @ imm = #-0x68
++   10730: e3550000     	cmp	r5, #0
++   10734: 0a000011     	beq	0x10780 <.text+0x680>   @ imm = #0x44
++   10738: e3540001     	cmp	r4, #1
++   1073c: e1a01000     	mov	r1, r0
++   10740: ba00000c     	blt	0x10778 <.text+0x678>   @ imm = #0x30
++   10744: e59f2060     	ldr	r2, [pc, #0x60]         @ 0x107ac <.text+0x6ac>
++   10748: e1a01000     	mov	r1, r0
++   1074c: e08f2002     	add	r2, pc, r2
++   10750: e5d53000     	ldrb	r3, [r5]
++   10754: e2544001     	subs	r4, r4, #1
++   10758: e7d23223     	ldrb	r3, [r2, r3, lsr #4]
++   1075c: e5c13000     	strb	r3, [r1]
++   10760: e4d53001     	ldrb	r3, [r5], #1
++   10764: e203300f     	and	r3, r3, #15
++   10768: e7d23003     	ldrb	r3, [r2, r3]
++   1076c: e5c13001     	strb	r3, [r1, #0x1]
++   10770: e2811002     	add	r1, r1, #2
++   10774: 1afffff5     	bne	0x10750 <.text+0x650>   @ imm = #-0x2c
++   10778: e3a02000     	mov	r2, #0
++   1077c: e5c12000     	strb	r2, [r1]
++   10780: e5961000     	ldr	r1, [r6]
++   10784: e2412001     	sub	r2, r1, #1
++   10788: e0010291     	mul	r1, r1, r2
++   1078c: e3110001     	tst	r1, #1
++   10790: 0a000002     	beq	0x107a0 <.text+0x6a0>   @ imm = #0x8
++   10794: e5971000     	ldr	r1, [r7]
++   10798: e3510009     	cmp	r1, #9
++   1079c: cafffff7     	bgt	0x10780 <.text+0x680>   @ imm = #-0x24
++   107a0: e8bd88f0     	pop	{r4, r5, r6, r7, r11, pc}
+diff --git a/evidence/stage12/disasm/hex_helpers_context.S b/evidence/stage12/disasm/hex_helpers_context.S
+new file mode 100644
+index 0000000..b17d067
+--- /dev/null
++++ b/evidence/stage12/disasm/hex_helpers_context.S
+@@ -0,0 +1,195 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   1068c: e92d48f0     	push	{r4, r5, r6, r7, r11, lr}
++   10690: e28db010     	add	r11, sp, #16
++   10694: e59f6108     	ldr	r6, [pc, #0x108]        @ 0x107a4 <.text+0x6a4>
++   10698: e1a05000     	mov	r5, r0
++   1069c: e1a04001     	mov	r4, r1
++   106a0: e79f6006     	ldr	r6, [pc, r6]
++   106a4: e5960000     	ldr	r0, [r6]
++   106a8: e59f70f8     	ldr	r7, [pc, #0xf8]         @ 0x107a8 <.text+0x6a8>
++   106ac: e2401001     	sub	r1, r0, #1
++   106b0: e0000190     	mul	r0, r0, r1
++   106b4: e79f7007     	ldr	r7, [pc, r7]
++   106b8: e3100001     	tst	r0, #1
++   106bc: 0a000002     	beq	0x106cc <.text+0x5cc>   @ imm = #0x8
++   106c0: e5970000     	ldr	r0, [r7]
++   106c4: e3500009     	cmp	r0, #9
++   106c8: ca00000f     	bgt	0x1070c <.text+0x60c>   @ imm = #0x3c
++   106cc: e3a00001     	mov	r0, #1
++   106d0: e1800084     	orr	r0, r0, r4, lsl #1
++   106d4: e1a01fc0     	asr	r1, r0, #31
++   106d8: e0800f21     	add	r0, r0, r1, lsr #30
++   106dc: e3a01001     	mov	r1, #1
++   106e0: e3c00003     	bic	r0, r0, #3
++   106e4: e2800004     	add	r0, r0, #4
++   106e8: eb160d31     	bl	0x593bb4 <.text+0x583ab4> @ imm = #0x5834c4
++   106ec: e5961000     	ldr	r1, [r6]
++   106f0: e2412001     	sub	r2, r1, #1
++   106f4: e0010291     	mul	r1, r1, r2
++   106f8: e3110001     	tst	r1, #1
++   106fc: 0a00000b     	beq	0x10730 <.text+0x630>   @ imm = #0x2c
++   10700: e5971000     	ldr	r1, [r7]
++   10704: e3510009     	cmp	r1, #9
++   10708: da000008     	ble	0x10730 <.text+0x630>   @ imm = #0x20
++   1070c: e3a00001     	mov	r0, #1
++   10710: e1800084     	orr	r0, r0, r4, lsl #1
++   10714: e1a01fc0     	asr	r1, r0, #31
++   10718: e0800f21     	add	r0, r0, r1, lsr #30
++   1071c: e3a01001     	mov	r1, #1
++   10720: e3c00003     	bic	r0, r0, #3
++   10724: e2800004     	add	r0, r0, #4
++   10728: eb160d21     	bl	0x593bb4 <.text+0x583ab4> @ imm = #0x583484
++   1072c: eaffffe6     	b	0x106cc <.text+0x5cc>   @ imm = #-0x68
++   10730: e3550000     	cmp	r5, #0
++   10734: 0a000011     	beq	0x10780 <.text+0x680>   @ imm = #0x44
++   10738: e3540001     	cmp	r4, #1
++   1073c: e1a01000     	mov	r1, r0
++   10740: ba00000c     	blt	0x10778 <.text+0x678>   @ imm = #0x30
++   10744: e59f2060     	ldr	r2, [pc, #0x60]         @ 0x107ac <.text+0x6ac>
++   10748: e1a01000     	mov	r1, r0
++   1074c: e08f2002     	add	r2, pc, r2
++   10750: e5d53000     	ldrb	r3, [r5]
++   10754: e2544001     	subs	r4, r4, #1
++   10758: e7d23223     	ldrb	r3, [r2, r3, lsr #4]
++   1075c: e5c13000     	strb	r3, [r1]
++   10760: e4d53001     	ldrb	r3, [r5], #1
++   10764: e203300f     	and	r3, r3, #15
++   10768: e7d23003     	ldrb	r3, [r2, r3]
++   1076c: e5c13001     	strb	r3, [r1, #0x1]
++   10770: e2811002     	add	r1, r1, #2
++   10774: 1afffff5     	bne	0x10750 <.text+0x650>   @ imm = #-0x2c
++   10778: e3a02000     	mov	r2, #0
++   1077c: e5c12000     	strb	r2, [r1]
++   10780: e5961000     	ldr	r1, [r6]
++   10784: e2412001     	sub	r2, r1, #1
++   10788: e0010291     	mul	r1, r1, r2
++   1078c: e3110001     	tst	r1, #1
++   10790: 0a000002     	beq	0x107a0 <.text+0x6a0>   @ imm = #0x8
++   10794: e5971000     	ldr	r1, [r7]
++   10798: e3510009     	cmp	r1, #9
++   1079c: cafffff7     	bgt	0x10780 <.text+0x680>   @ imm = #-0x24
++   107a0: e8bd88f0     	pop	{r4, r5, r6, r7, r11, pc}
++   107a4: 005cf6ec     	subseq	pc, r12, r12, ror #13
++   107a8: 005ce6c0     	subseq	lr, r12, r0, asr #13
++   107ac: 005cf968     	subseq	pc, r12, r8, ror #18
++   107b0: e92d4df0     	push	{r4, r5, r6, r7, r8, r10, r11, lr}
++   107b4: e28db018     	add	r11, sp, #24
++   107b8: e24dd008     	sub	sp, sp, #8
++   107bc: e59f81a0     	ldr	r8, [pc, #0x1a0]        @ 0x10964 <.text+0x864>
++   107c0: e79f8008     	ldr	r8, [pc, r8]
++   107c4: e5983000     	ldr	r3, [r8]
++   107c8: e2437001     	sub	r7, r3, #1
++   107cc: e0030793     	mul	r3, r3, r7
++   107d0: e3130001     	tst	r3, #1
++   107d4: e5983000     	ldr	r3, [r8]
++   107d8: e3520000     	cmp	r2, #0
++   107dc: e59f5184     	ldr	r5, [pc, #0x184]        @ 0x10968 <.text+0x868>
++   107e0: e1a06002     	mov	r6, r2
++   107e4: e2437001     	sub	r7, r3, #1
++   107e8: 13006001     	movwne	r6, #0x1
++   107ec: e0070793     	mul	r7, r3, r7
++   107f0: e79f5005     	ldr	r5, [pc, r5]
++   107f4: e5d14000     	ldrb	r4, [r1]
++   107f8: e3540000     	cmp	r4, #0
++   107fc: e1a03004     	mov	r3, r4
++   10800: 13003001     	movwne	r3, #0x1
++   10804: e3170001     	tst	r7, #1
++   10808: 0a000002     	beq	0x10818 <.text+0x718>   @ imm = #0x8
++   1080c: e5957000     	ldr	r7, [r5]
++   10810: e3570009     	cmp	r7, #9
++   10814: caffffee     	bgt	0x107d4 <.text+0x6d4>   @ imm = #-0x48
++   10818: e0163003     	ands	r3, r6, r3
++   1081c: 0a000012     	beq	0x1086c <.text+0x76c>   @ imm = #0x48
++   10820: e59f6144     	ldr	r6, [pc, #0x144]        @ 0x1096c <.text+0x86c>
++   10824: e2811001     	add	r1, r1, #1
++   10828: e08f6006     	add	r6, pc, r6
++   1082c: e5d17000     	ldrb	r7, [r1]
++   10830: e3570000     	cmp	r7, #0
++   10834: 0a000011     	beq	0x10880 <.text+0x780>   @ imm = #0x44
++   10838: e6ef3074     	uxtb	r3, r4
++   1083c: e7967107     	ldr	r7, [r6, r7, lsl #2]
++   10840: e7963103     	ldr	r3, [r6, r3, lsl #2]
++   10844: e1874003     	orr	r4, r7, r3
++   10848: e3740001     	cmn	r4, #1
++   1084c: da000016     	ble	0x108ac <.text+0x7ac>   @ imm = #0x58
++   10850: e1873203     	orr	r3, r7, r3, lsl #4
++   10854: e4c03001     	strb	r3, [r0], #1
++   10858: e5d14001     	ldrb	r4, [r1, #0x1]
++   1085c: e2522001     	subs	r2, r2, #1
++   10860: 12811002     	addne	r1, r1, #2
++   10864: 13540000     	cmpne	r4, #0
++   10868: 1affffef     	bne	0x1082c <.text+0x72c>   @ imm = #-0x44
++   1086c: e1820004     	orr	r0, r2, r4
++   10870: e16f0f10     	clz	r0, r0
++   10874: e1a002a0     	lsr	r0, r0, #5
++   10878: e24bd018     	sub	sp, r11, #24
++   1087c: e8bd8df0     	pop	{r4, r5, r6, r7, r8, r10, r11, pc}
++   10880: e5980000     	ldr	r0, [r8]
++   10884: e59f60e4     	ldr	r6, [pc, #0xe4]         @ 0x10970 <.text+0x870>
++   10888: e2401001     	sub	r1, r0, #1
++   1088c: e08f6006     	add	r6, pc, r6
++   10890: e0000190     	mul	r0, r0, r1
++   10894: e3100001     	tst	r0, #1
++   10898: 0a000013     	beq	0x108ec <.text+0x7ec>   @ imm = #0x4c
++   1089c: e5950000     	ldr	r0, [r5]
++   108a0: e3500009     	cmp	r0, #9
++   108a4: ca000023     	bgt	0x10938 <.text+0x838>   @ imm = #0x8c
++   108a8: ea00000f     	b	0x108ec <.text+0x7ec>   @ imm = #0x3c
++   108ac: e59f00d8     	ldr	r0, [pc, #0xd8]         @ 0x1098c <.text+0x88c>
++   108b0: e3a07001     	mov	r7, #1
++   108b4: e59f10d4     	ldr	r1, [pc, #0xd4]         @ 0x10990 <.text+0x890>
++   108b8: e59f20d4     	ldr	r2, [pc, #0xd4]         @ 0x10994 <.text+0x894>
++   108bc: e08f0000     	add	r0, pc, r0
++   108c0: e59f30d0     	ldr	r3, [pc, #0xd0]         @ 0x10998 <.text+0x898>
++   108c4: e08f1001     	add	r1, pc, r1
++   108c8: e08f2002     	add	r2, pc, r2
++   108cc: e58d7000     	str	r7, [sp]
++   108d0: e08f3003     	add	r3, pc, r3
++   108d4: e58d3004     	str	r3, [sp, #0x4]
++   108d8: e3a030e6     	mov	r3, #230
++   108dc: eb03a5f8     	bl	0xfa0c4 <.text+0xe9fc4> @ imm = #0xe97e0
++   108e0: e3a00000     	mov	r0, #0
++   108e4: e24bd018     	sub	sp, r11, #24
++   108e8: e8bd8df0     	pop	{r4, r5, r6, r7, r8, r10, r11, pc}
++   108ec: e59f0080     	ldr	r0, [pc, #0x80]         @ 0x10974 <.text+0x874>
++   108f0: e3a03001     	mov	r3, #1
++   108f4: e59f107c     	ldr	r1, [pc, #0x7c]         @ 0x10978 <.text+0x878>
++   108f8: e59f207c     	ldr	r2, [pc, #0x7c]         @ 0x1097c <.text+0x87c>
++   108fc: e08f0000     	add	r0, pc, r0
++   10900: e08f1001     	add	r1, pc, r1
++   10904: e88d0048     	stm	sp, {r3, r6}
++   10908: e08f2002     	add	r2, pc, r2
++   1090c: e3a030dc     	mov	r3, #220
++   10910: eb03a5eb     	bl	0xfa0c4 <.text+0xe9fc4> @ imm = #0xe97ac
++   10914: e5980000     	ldr	r0, [r8]
++   10918: e2401001     	sub	r1, r0, #1
++   1091c: e0010190     	mul	r1, r0, r1
++   10920: e3a00000     	mov	r0, #0
++   10924: e3110001     	tst	r1, #1
++   10928: 0affffd2     	beq	0x10878 <.text+0x778>   @ imm = #-0xb8
++   1092c: e5951000     	ldr	r1, [r5]
++   10930: e351000a     	cmp	r1, #10
++   10934: baffffcf     	blt	0x10878 <.text+0x778>   @ imm = #-0xc4
++   10938: e59f0040     	ldr	r0, [pc, #0x40]         @ 0x10980 <.text+0x880>
++   1093c: e3a03001     	mov	r3, #1
++   10940: e59f103c     	ldr	r1, [pc, #0x3c]         @ 0x10984 <.text+0x884>
++   10944: e59f203c     	ldr	r2, [pc, #0x3c]         @ 0x10988 <.text+0x888>
++   10948: e08f0000     	add	r0, pc, r0
++   1094c: e08f1001     	add	r1, pc, r1
++   10950: e88d0048     	stm	sp, {r3, r6}
++   10954: e08f2002     	add	r2, pc, r2
++   10958: e3a030dc     	mov	r3, #220
++   1095c: eb03a5d8     	bl	0xfa0c4 <.text+0xe9fc4> @ imm = #0xe9760
++   10960: eaffffe1     	b	0x108ec <.text+0x7ec>   @ imm = #-0x7c
++   10964: 005ce8f0     	ldrsheq	lr, [r12], #-128
++   10968: 005cf1b0     	ldrheq	pc, [r12], #-16
++   1096c: 0059fae0     	subseq	pc, r9, r0, ror #21
++   10970: 005cf83e     	subseq	pc, r12, lr, lsr r8
++   10974: 005cf7c8     	subseq	pc, r12, r8, asr #15
++   10978: 005cf70c     	subseq	pc, r12, r12, lsl #14
++   1097c: 005cf723     	subseq	pc, r12, r3, lsr #14
+diff --git a/evidence/stage12/recovery-manifest.json b/evidence/stage12/recovery-manifest.json
+new file mode 100644
+index 0000000..0365fc7
+--- /dev/null
++++ b/evidence/stage12/recovery-manifest.json
+@@ -0,0 +1,222 @@
++{
++  "stage": 12,
++  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
++  "reference_bytes": 6228004,
++  "slices": [
++    {
++      "name": "clone_time",
++      "start": "0x2ce84",
++      "end_exclusive": "0x2d108",
++      "bytes": 644,
++      "sha256": "ce93b4868dfadf7f72cef35ad99a93f9ed203b939f745eda342d509c39c6f579",
++      "disassembly": "evidence/stage12/disasm/clone_time.S",
++      "disassembly_sha256": "81908ac8c92679560013fc2645d391cd9b15b5c6c14236ec506bee972b526dfe",
++      "scope": "Full bounded clone, valid 8-digit time or absent; original allocation success for encoder. Original API/ownership adapted."
++    },
++    {
++      "name": "hex_encode",
++      "start": "0x1068c",
++      "end_exclusive": "0x107a4",
++      "bytes": 280,
++      "sha256": "7866e7e3a43a8cde1d0c7fc57ccaaad14174d583d3c3c621fdab4a1f02ebac34",
++      "disassembly": "evidence/stage12/disasm/hex_encode.S",
++      "disassembly_sha256": "f601529bbf2a7dd01dc46077656e2b51d68fc607fe604d5d3b3bdf849b081164",
++      "scope": "Original body compared for length=4 and successful 12-byte calloc; not general helper API."
++    },
++    {
++      "name": "hex_decode",
++      "start": "0x107b0",
++      "end_exclusive": "0x10964",
++      "bytes": 436,
++      "sha256": "173684197321d4d7888a494f0b66c3f8481d259f34d5979545bc70ef10f34134",
++      "disassembly": "evidence/stage12/disasm/hex_decode.S",
++      "disassembly_sha256": "12dc94e118330469c07709a6e7077de5612b2b98f527f906dcb264a10f835a21",
++      "scope": "Original body compared for exactly 8 valid hex chars and 4 output bytes; malformed partial-output semantics excluded from clone."
++    },
++    {
++      "name": "hex_alphabet_initializer",
++      "start": "0x1ff00",
++      "end_exclusive": "0x1ff2c",
++      "bytes": 44,
++      "sha256": "20b5b2e33dd5a332c604c83b47c9d821587734be210fe3a9667c68ee864734a4",
++      "disassembly": "evidence/stage12/disasm/hex_alphabet_initializer.S",
++      "disassembly_sha256": "1944ea2966d8012171f81dd542ad0a951fa62734c257dbfde8a6d95826876d9e",
++      "scope": "Exact original XOR loop for 16 encoding characters, executed once in the oracle."
++    }
++  ],
++  "literals": [
++    {
++      "name": "clone_literals",
++      "address": "0x2d108",
++      "bytes": 48,
++      "sha256": "cfc078449170b87554d453e2ab513f87f6f7fd8ffbded5b8352b23fed6458725"
++    },
++    {
++      "name": "encode_literals",
++      "address": "0x107a4",
++      "bytes": 12,
++      "sha256": "4baba93e0f9187271cd752ead4adbbd613135d24e6b59eddc4a3dd5510eb430e"
++    },
++    {
++      "name": "decode_literals",
++      "address": "0x10964",
++      "bytes": 56,
++      "sha256": "e9578dba89141e26a2e856255f5d807344bba36824510362a0126e30ad4035c4"
++    },
++    {
++      "name": "initializer_literal",
++      "address": "0x20eec",
++      "bytes": 4,
++      "sha256": "fcb60d8dd140822b90505e1260e762b3f139c72bdad906471d8487ab0430ef12"
++    },
++    {
++      "name": "encoded_hex_alphabet",
++      "address": "0x5e00bc",
++      "bytes": 16,
++      "sha256": "d5d7c036c5ab2612684f795d8811aeba95184f7b98c2e8d56494fcccf7894709"
++    },
++    {
++      "name": "decode_table",
++      "address": "0x5b0310",
++      "bytes": 1024,
++      "sha256": "3bdae4e9a1608b923ce879a3b00044941a145b52410ec3de888000f0dd6df199"
++    },
++    {
++      "name": "initializer_entry",
++      "address": "0x5daf70",
++      "bytes": 740,
++      "sha256": "e32ae4d7a36cc58b813bf793046c82c470a7c80ee12bfefa03b80375e9c9f3d1"
++    }
++  ],
++  "branch_edges": [
++    {
++      "pc": "0x2cea0",
++      "instruction_hex": "eb159b43",
++      "target": "0x593bb4",
++      "link": true
++    },
++    {
++      "pc": "0x2ceb4",
++      "instruction_hex": "eb15e493",
++      "target": "0x5a6108",
++      "link": true
++    },
++    {
++      "pc": "0x2ced4",
++      "instruction_hex": "eb15e5fa",
++      "target": "0x5a66c4",
++      "link": true
++    },
++    {
++      "pc": "0x2cee4",
++      "instruction_hex": "eb15d968",
++      "target": "0x5a348c",
++      "link": true
++    },
++    {
++      "pc": "0x2cf0c",
++      "instruction_hex": "ebff939a",
++      "target": "0x11d7c",
++      "link": true
++    },
++    {
++      "pc": "0x2cf20",
++      "instruction_hex": "eb15da5e",
++      "target": "0x5a38a0",
++      "link": true
++    },
++    {
++      "pc": "0x2cf68",
++      "instruction_hex": "eb15da4c",
++      "target": "0x5a38a0",
++      "link": true
++    },
++    {
++      "pc": "0x2d004",
++      "instruction_hex": "ebff8de9",
++      "target": "0x107b0",
++      "link": true
++    },
++    {
++      "pc": "0x2d024",
++      "instruction_hex": "ebff8d98",
++      "target": "0x1068c",
++      "link": true
++    },
++    {
++      "pc": "0x2d074",
++      "instruction_hex": "eb15da09",
++      "target": "0x5a38a0",
++      "link": true
++    },
++    {
++      "pc": "0x2d0bc",
++      "instruction_hex": "eb15d9f7",
++      "target": "0x5a38a0",
++      "link": true
++    },
++    {
++      "pc": "0x106e8",
++      "instruction_hex": "eb160d31",
++      "target": "0x593bb4",
++      "link": true
++    }
++  ],
++  "initializer_function": "0x1fc04",
++  "hex_alphabet_address": "0x5e00bc",
++  "hex_decode_table_address": "0x5b0310",
++  "original_bodies_execute": [
++    "clone",
++    "hex_decode",
++    "hex_encode",
++    "strdup"
++  ],
++  "original_initializer_slice_executed": true,
++  "normalized_pointer_slots": [
++    "0x18c",
++    "0x19c",
++    "0x1a8",
++    "0x1b0"
++  ],
++  "time_header_offset": "0x44",
++  "time_text_slot": "0x19c",
++  "time_addition": "modulo 2^32; independent header and text values",
++  "new_exported_functions": 4,
++  "modified_observed_source": "src/frontend/cgminer.c",
++  "new_support": "reconstruction/support/work_time_hex.c",
++  "new_header": "include/xminer/recovery/work_time.h",
++  "source_placement": "Integration in observed frontend cluster; original helper filenames not proved.",
++  "failed_original_encoder_allocation_compared": false,
++  "malformed_time_clone_compared": false,
++  "invalid_time_guard_is_new": true,
++  "encoder_allocation_guard_is_new": true,
++  "runtime_time_policy_checked": false,
++  "hash_refreshed_by_clone": false,
++  "live_reference_ownership_recovered": false,
++  "physical_hardware_tested": false,
++  "original_general_hex_api_fully_recovered": false,
++  "original_clone_valid_time_domain_recovered": true,
++  "comparison_counts": {
++    "time_codec": 1188,
++    "clone_time": 1323
++  },
++  "native_scenarios": 6158,
++  "native_assertions": 43397,
++  "oracle": "tests/work_time_oracle.py",
++  "differential_tests": "tests/test_stage12_differential.py",
++  "native_tests": "tests/test_work_time.c",
++  "oracle_external_calls": [
++    "calloc",
++    "malloc",
++    "free",
++    "strlen",
++    "memcpy",
++    "memset",
++    "debug memcpy",
++    "mutex lock",
++    "mutex unlock",
++    "logging"
++  ],
++  "interpreter_instructions_modified": false,
++  "separate_hash_compositions": 70
++}
+diff --git a/evidence/stage12/time-vectors.json b/evidence/stage12/time-vectors.json
+new file mode 100644
+index 0000000..ce4a65b
+--- /dev/null
++++ b/evidence/stage12/time-vectors.json
+@@ -0,0 +1,45 @@
++{
++  "source": "evidence/stage9/genesis-vector.json",
++  "start_time": 1231006505,
++  "synthetic_rolled_headers": true,
++  "pool_policy_checked": false,
++  "submitted": false,
++  "rows": [
++    {
++      "delta": 0,
++      "time": 1231006505,
++      "time_hex": "495fab29",
++      "raw_sha256d": "6fe28c0ab6f1b372c1a6a246ae63f74f931e8365e15a089c68d6190000000000"
++    },
++    {
++      "delta": 1,
++      "time": 1231006506,
++      "time_hex": "495fab2a",
++      "raw_sha256d": "694b169f9ddfba0abb115d1e98b31892dbb22c3cf450c0e60039bc40d7125277"
++    },
++    {
++      "delta": 2,
++      "time": 1231006507,
++      "time_hex": "495fab2b",
++      "raw_sha256d": "9aa92aa72b73bc4fd2faed0cd47529765255f0b9e9aae0d891273a8aef05277a"
++    },
++    {
++      "delta": 1000,
++      "time": 1231007505,
++      "time_hex": "495faf11",
++      "raw_sha256d": "b439bbd04672a3c1391a6787bbda5d4d31d312467404fd43d7c25a4bcf88bc18"
++    },
++    {
++      "delta": 4294967295,
++      "time": 1231006504,
++      "time_hex": "495fab28",
++      "raw_sha256d": "09539d227120d7ca554e146f32827d91599ee93b76abca948f11934b39b8615a"
++    },
++    {
++      "delta": 2147483648,
++      "time": 3378490153,
++      "time_hex": "c95fab29",
++      "raw_sha256d": "5f4ed91ef8257fcff17402db675c78471904fc2e9e937e3735f81863afba8692"
++    }
++  ]
++}
+diff --git a/evidence/validation/stage12/focused-build-clang-sanitizers.log b/evidence/validation/stage12/focused-build-clang-sanitizers.log
+new file mode 100644
+index 0000000..2ac1b1c
+--- /dev/null
++++ b/evidence/validation/stage12/focused-build-clang-sanitizers.log
+@@ -0,0 +1,14 @@
++clang -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror reconstruction/support/work_time_hex.c reconstruction/support/work_storage_pipeline.c reconstruction/support/work_difficulty_pipeline.c reconstruction/support/sha256_bytes.c reconstruction/support/work_rebuild_pipeline.c src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_work_time.c -o build/test-work-time-clang
++./build/test-work-time-clang
++{"stage":12,"status":"PASS","native_scenarios":6158,"assertions":43397,"hardware_tested":false}
++VN135_TEST_LIBRARY=./build/libvn135_recovered-clang.so python3 tests/test_stage12_differential.py codec
++{"stage": 12, "status": "PASS", "group": "codec", "comparisons": 1188, "values": 396, "original_hex_bodies_executed": true, "alphabet_initialized_by_original_instructions": true}
++VN135_TEST_LIBRARY=./build/libvn135_recovered-clang.so python3 tests/test_stage12_differential.py clone
++{"stage": 12, "status": "PASS", "group": "clone", "comparisons": 1323, "nonzero_delta": 1242, "absent_time_text": 621, "independent_mismatching_header_and_text": 513, "partial_other_string_failures": 939, "compares_full_normalized_image_and_copy_order": true, "failed_original_encoder_allocation_not_in_domain": true}
++clang -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer reconstruction/support/work_time_hex.c reconstruction/support/work_storage_pipeline.c reconstruction/support/work_difficulty_pipeline.c reconstruction/support/sha256_bytes.c reconstruction/support/work_rebuild_pipeline.c src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_work_time.c -o build/test-work-time-clang-sanitized
++ASAN_OPTIONS=detect_leaks=1 ./build/test-work-time-clang-sanitized
++{"stage":12,"status":"PASS","native_scenarios":6158,"assertions":43397,"hardware_tested":false}
++mkdir -p build
++cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer reconstruction/support/work_time_hex.c reconstruction/support/work_storage_pipeline.c reconstruction/support/work_difficulty_pipeline.c reconstruction/support/sha256_bytes.c reconstruction/support/work_rebuild_pipeline.c src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_work_time.c -o build/test-work-time-sanitized
++ASAN_OPTIONS=detect_leaks=1 ./build/test-work-time-sanitized
++{"stage":12,"status":"PASS","native_scenarios":6158,"assertions":43397,"hardware_tested":false}
+diff --git a/evidence/validation/stage12/stage12-clone-clang-results.json b/evidence/validation/stage12/stage12-clone-clang-results.json
+new file mode 100644
+index 0000000..6cf2fba
+--- /dev/null
++++ b/evidence/validation/stage12/stage12-clone-clang-results.json
+@@ -0,0 +1,12 @@
++{
++  "stage": 12,
++  "status": "PASS",
++  "group": "clone",
++  "comparisons": 1323,
++  "nonzero_delta": 1242,
++  "absent_time_text": 621,
++  "independent_mismatching_header_and_text": 513,
++  "partial_other_string_failures": 939,
++  "compares_full_normalized_image_and_copy_order": true,
++  "failed_original_encoder_allocation_not_in_domain": true
++}
+diff --git a/evidence/validation/stage12/stage12-clone-gcc-results.json b/evidence/validation/stage12/stage12-clone-gcc-results.json
+new file mode 100644
+index 0000000..6cf2fba
+--- /dev/null
++++ b/evidence/validation/stage12/stage12-clone-gcc-results.json
+@@ -0,0 +1,12 @@
++{
++  "stage": 12,
++  "status": "PASS",
++  "group": "clone",
++  "comparisons": 1323,
++  "nonzero_delta": 1242,
++  "absent_time_text": 621,
++  "independent_mismatching_header_and_text": 513,
++  "partial_other_string_failures": 939,
++  "compares_full_normalized_image_and_copy_order": true,
++  "failed_original_encoder_allocation_not_in_domain": true
++}
+diff --git a/evidence/validation/stage12/stage12-codec-clang-results.json b/evidence/validation/stage12/stage12-codec-clang-results.json
+new file mode 100644
+index 0000000..4eaecea
+--- /dev/null
++++ b/evidence/validation/stage12/stage12-codec-clang-results.json
+@@ -0,0 +1,9 @@
++{
++  "stage": 12,
++  "status": "PASS",
++  "group": "codec",
++  "comparisons": 1188,
++  "values": 396,
++  "original_hex_bodies_executed": true,
++  "alphabet_initialized_by_original_instructions": true
++}
+diff --git a/evidence/validation/stage12/stage12-codec-gcc-results.json b/evidence/validation/stage12/stage12-codec-gcc-results.json
+new file mode 100644
+index 0000000..4eaecea
+--- /dev/null
++++ b/evidence/validation/stage12/stage12-codec-gcc-results.json
+@@ -0,0 +1,9 @@
++{
++  "stage": 12,
++  "status": "PASS",
++  "group": "codec",
++  "comparisons": 1188,
++  "values": 396,
++  "original_hex_bodies_executed": true,
++  "alphabet_initialized_by_original_instructions": true
++}
+diff --git a/evidence/validation/stage12/stage12-composition-gcc-results.json b/evidence/validation/stage12/stage12-composition-gcc-results.json
+new file mode 100644
+index 0000000..c6be54f
+--- /dev/null
++++ b/evidence/validation/stage12/stage12-composition-gcc-results.json
+@@ -0,0 +1,9 @@
++{
++  "stage": 12,
++  "status": "PASS",
++  "group": "composition",
++  "separate_compositions": 70,
++  "original_clone_then_original_sha256d": true,
++  "hashlib_independent_check": true,
++  "pool_policy_checked": false
++}
+diff --git a/include/xminer/recovery/work_time.h b/include/xminer/recovery/work_time.h
+new file mode 100644
+index 0000000..12c0c07
+--- /dev/null
++++ b/include/xminer/recovery/work_time.h
+@@ -0,0 +1,44 @@
++#ifndef VN135_RECOVERY_WORK_TIME_H
++#define VN135_RECOVERY_WORK_TIME_H
++#include "xminer/recovery/work_storage.h"
++#ifdef __cplusplus
++extern "C" {
++#endif
++/* Stage12 fixed-width integration API. The original general hex helpers accept
++ * different lengths; only their four-byte time use is reconstructed here.
++ * All pointers must reference accessible, nonoverlapping objects. decode8 reads
++ * exactly eight bytes (no terminator required), accepts ASCII 0-9/a-f/A-F, and
++ * leaves *value unchanged on invalid input. encode8 writes eight lowercase hex
++ * characters and NUL. Invalid input rejection is NEW, not the original partial
++ * write behavior of 0x107b0. These functions do not validate pool time policy. */
++int vn135_work_time_decode8(const uint8_t hex[8],uint32_t *value);
++int vn135_work_time_encode8(uint32_t value,char hex[9]);
++/* Original clone at 0x2ce84, time branch included on the valid-input domain.
++ * delta is the raw 32-bit addend; addition wraps modulo 2^32. It is NOT permission
++ * to roll pool time by that amount. fresh_id replaces the global ID allocator.
++ * With delta==0 this is exactly the previous unrolled API. With delta!=0:
++ * - image[0x44..0x47] is a big-endian time value and receives delta;
++ * - present text[VN135_TEXT_19C] MUST contain exactly eight valid hex digits;
++ *   its independent value receives delta and is rendered in lowercase;
++ * - an absent time string stays absent. No equality check is implied between
++ *   the header's time and the string. No wall clock, time bounds, target or
++ *   hash refresh, job lifetime check, work submission or last_nonce reset.
++ * String copy order stays 18c,1a8,19c,1b0; the rolled 19c allocation is 12 zeroed
++ * bytes (original calloc extent), logical text size 8. Other strings use size+1.
++ * Original unchecked NULL from time-encoder calloc is NOT reproduced: failure
++ * produces PARTIAL with bit 19c and later copies proceed (NEW guarded policy).
++ * Source/normalized-pointer/ownership requirements are in work_storage.h.
++ * Invalid time rejects BEFORE allocations and leaves output/failure mask intact.
++ * This API is NOT vendor binary ABI and not a complete roll-work scheduler. */
++int vn135_frontend_work_clone_time_legacy(const vn135_work_storage *source,
++    uint32_t fresh_id,uint32_t delta,const vn135_work_memory *memory,
++    vn135_work_storage **out,uint32_t *failed_mask);
++/* NEW all-or-nothing publication policy. A failed partial copy is freed; output
++ * remains NULL. Not hardware atomicity, thread safety or vendor rollback logic. */
++int vn135_work_clone_time_atomic(const vn135_work_storage *source,
++    uint32_t fresh_id,uint32_t delta,const vn135_work_memory *memory,
++    vn135_work_storage **out);
++#ifdef __cplusplus
++}
++#endif
++#endif
+diff --git a/reconstruction/cgminer-overlay.am b/reconstruction/cgminer-overlay.am
+index 5c51032..787099e 100644
+--- a/reconstruction/cgminer-overlay.am
++++ b/reconstruction/cgminer-overlay.am
+@@ -4,7 +4,9 @@
+ AUTOMAKE_OPTIONS = subdir-objects
+ cgminer_CFLAGS = $(AM_CFLAGS) -ffp-contract=off
+ cgminer_CPPFLAGS += -I$(top_srcdir)/include
+-cgminer_SOURCES += reconstruction/support/work_storage_pipeline.c \
++cgminer_SOURCES += reconstruction/support/work_time_hex.c \
++                   include/xminer/recovery/work_time.h \
++                   reconstruction/support/work_storage_pipeline.c \
+                    include/xminer/recovery/work_storage.h \
+                    reconstruction/support/work_difficulty_pipeline.c \
+                    include/xminer/recovery/difficulty.h \
+diff --git a/reconstruction/support/work_storage_pipeline.c b/reconstruction/support/work_storage_pipeline.c
+index 94aeac2..94b9d45 100644
+--- a/reconstruction/support/work_storage_pipeline.c
++++ b/reconstruction/support/work_storage_pipeline.c
+@@ -13,3 +13,17 @@ int vn135_work_clone_atomic(const vn135_work_storage *source,uint32_t fresh_id,
+     }
+     *out=candidate;return VN135_STORAGE_OK;
+ }
++
++#include "xminer/recovery/work_time.h"
++int vn135_work_clone_time_atomic(const vn135_work_storage *source,
++    uint32_t fresh_id,uint32_t delta,const vn135_work_memory *memory,
++    vn135_work_storage **out) {
++    vn135_work_storage *candidate=0;uint32_t failed=0;
++    if(!out||*out)return VN135_STORAGE_INVALID;
++    int rc=vn135_frontend_work_clone_time_legacy(source,fresh_id,delta,memory,&candidate,&failed);
++    if(rc!=VN135_STORAGE_OK){
++        if(candidate)(void)vn135_frontend_work_storage_delete(&candidate,memory);
++        return rc==VN135_STORAGE_PARTIAL?VN135_STORAGE_NOMEM:rc;
++    }
++    *out=candidate;return VN135_STORAGE_OK;
++}
+diff --git a/reconstruction/support/work_time_hex.c b/reconstruction/support/work_time_hex.c
+new file mode 100644
+index 0000000..b064eef
+--- /dev/null
++++ b/reconstruction/support/work_time_hex.c
+@@ -0,0 +1,26 @@
++/* Fixed-width time helpers from 0x107b0/0x1068c for their four-byte call site.
++ * New path/API; original source filename is not proven. General partial decode
++ * and allocator ABI are NOT exposed. See evidence/stage12/recovery-manifest.json. */
++#include "xminer/recovery/work_time.h"
++static int hex_nibble(uint8_t c) {
++    if(c>=(uint8_t)'0'&&c<=(uint8_t)'9')return c-(uint8_t)'0';
++    if(c>=(uint8_t)'a'&&c<=(uint8_t)'f')return c-(uint8_t)'a'+10;
++    if(c>=(uint8_t)'A'&&c<=(uint8_t)'F')return c-(uint8_t)'A'+10;
++    return -1;
++}
++int vn135_work_time_decode8(const uint8_t hex[8],uint32_t *value) {
++    uint32_t v=0;
++    if(!hex||!value)return VN135_STORAGE_INVALID;
++    for(size_t i=0;i<8u;++i){
++        int nibble=hex_nibble(hex[i]);
++        if(nibble<0)return VN135_STORAGE_INVALID;
++        v=(v<<4)|(uint32_t)nibble;
++    }
++    *value=v;return VN135_STORAGE_OK;
++}
++int vn135_work_time_encode8(uint32_t value,char hex[9]) {
++    static const char alphabet[]="0123456789abcdef";
++    if(!hex)return VN135_STORAGE_INVALID;
++    for(size_t i=0;i<8u;++i)hex[i]=alphabet[(value>>(28u-4u*i))&15u];
++    hex[8]='\0';return VN135_STORAGE_OK;
++}
+diff --git a/src/frontend/cgminer.c b/src/frontend/cgminer.c
+index 6e7ecc7..44e0bfa 100644
+--- a/src/frontend/cgminer.c
++++ b/src/frontend/cgminer.c
+@@ -152,10 +152,11 @@ int vn135_frontend_work_math(const uint8_t words112[112],double difficulty,
+     return 0;
+ }
+ 
+-/* Stage11: owned strings, opaque work copy (zero time-roll only), clear/delete,
++/* Stage11/12: owned strings, opaque work copy with checked time-roll, clear/delete,
+  * and bounded builder/wrapper field writes. Source placement is an integration
+  * choice in the existing frontend cluster. See evidence/stage11. */
+ #include "xminer/recovery/work_storage.h"
++#include "xminer/recovery/work_time.h"
+ static const size_t work_text_offsets[4]={0x18cu,0x19cu,0x1a8u,0x1b0u};
+ static int storage_memory_ok(const vn135_work_memory *m) {
+     return m && m->allocate && m->release;
+@@ -200,10 +201,11 @@ int vn135_frontend_work_metadata_copy_legacy(vn135_work_storage *out,
+     }
+     *failed=mask;return mask?VN135_STORAGE_PARTIAL:VN135_STORAGE_OK;
+ }
+-int vn135_frontend_work_clone_unrolled(const vn135_work_storage *source,
+-    uint32_t fresh_id,const vn135_work_memory *m,vn135_work_storage **out,uint32_t *failed) {
++int vn135_frontend_work_clone_time_legacy(const vn135_work_storage *source,
++    uint32_t fresh_id,uint32_t delta,const vn135_work_memory *m,
++    vn135_work_storage **out,uint32_t *failed) {
+     static const unsigned order[4]={0u,2u,1u,3u};
+-    vn135_work_storage *copy;uint32_t mask=0;
++    vn135_work_storage *copy;uint32_t mask=0,time_value=0;
+     if(!out||*out||!failed||!storage_memory_ok(m)||!storage_image_ok(source))
+         return VN135_STORAGE_INVALID;
+     for(size_t i=0;i<4u;++i){
+@@ -213,6 +215,13 @@ int vn135_frontend_work_clone_unrolled(const vn135_work_storage *source,
+         if(source->text[i] && source->text[i][source->text_size[i]]!='\0')
+             return VN135_STORAGE_INVALID;
+     }
++    /* NEW strict format guard: original clone ignored hex2bin failure and could
++     * use incomplete stack data. We do not give such input invented semantics. */
++    if(delta && source->text[VN135_TEXT_19C]){
++        if(source->text_size[VN135_TEXT_19C]!=8u ||
++           vn135_work_time_decode8((const uint8_t *)source->text[VN135_TEXT_19C],&time_value))
++            return VN135_STORAGE_INVALID;
++    }
+     copy=(vn135_work_storage *)m->allocate(m->context,sizeof(*copy));
+     if(!copy)return VN135_STORAGE_NOMEM; /* Added, not a vendor guarantee. */
+     for(size_t i=0;i<VN135_WORK_IMAGE_BYTES;++i)copy->image[i]=source->image[i];
+@@ -220,15 +229,38 @@ int vn135_frontend_work_clone_unrolled(const vn135_work_storage *source,
+     store_le(copy->image+0x1bcu,fresh_id);
+     for(size_t i=0;i<4u;++i){
+         unsigned slot=order[i];
++        if(slot==VN135_TEXT_19C && delta){
++            uint8_t *p=copy->image+0x44u;
++            uint32_t n=((uint32_t)p[0]<<24)|((uint32_t)p[1]<<16)|((uint32_t)p[2]<<8)|p[3];
++            n+=delta;
++            p[0]=(uint8_t)(n>>24);p[1]=(uint8_t)(n>>16);p[2]=(uint8_t)(n>>8);p[3]=(uint8_t)n;
++        }
+         if(source->text[slot]){
+             vn135_text_view v={(const uint8_t *)source->text[slot],source->text_size[slot]};
+-            char *p=storage_duplicate(v,m);copy->text[slot]=p;
+-            copy->text_size[slot]=p?v.size:0u;
++            char *p;
++            if(slot==VN135_TEXT_19C && delta){
++                /* Original 0x1068c calloc size when len=4 is 12, not 9. */
++                p=(char *)m->allocate(m->context,12u);
++                if(p){
++                    for(size_t j=0;j<12u;++j)p[j]='\0';
++                    (void)vn135_work_time_encode8(time_value+delta,p);
++                }
++                /* Guarding p==NULL here is NEW; original encoder writes it. */
++                copy->text_size[slot]=p?8u:0u;
++            }else{
++                p=storage_duplicate(v,m);copy->text_size[slot]=p?v.size:0u;
++            }
++            copy->text[slot]=p;
+             if(!p)mask|=UINT32_C(1)<<slot;
+         }
+     }
+     *out=copy;*failed=mask;return mask?VN135_STORAGE_PARTIAL:VN135_STORAGE_OK;
+ }
++/* Preserve the Stage11 zero-roll API and its existing string domain. */
++int vn135_frontend_work_clone_unrolled(const vn135_work_storage *source,
++    uint32_t fresh_id,const vn135_work_memory *m,vn135_work_storage **out,uint32_t *failed) {
++    return vn135_frontend_work_clone_time_legacy(source,fresh_id,0u,m,out,failed);
++}
+ static void storage_release_strings(vn135_work_storage *work,const vn135_work_memory *m) {
+     static const unsigned order[4]={0u,1u,3u,2u};
+     for(size_t i=0;i<4u;++i){
+diff --git a/tests/fixtures/time_roll_vectors.h b/tests/fixtures/time_roll_vectors.h
+new file mode 100644
+index 0000000..568ff6b
+--- /dev/null
++++ b/tests/fixtures/time_roll_vectors.h
+@@ -0,0 +1,10 @@
++/* Generated synthetic time vectors; no newly mined blocks. */
++typedef struct { uint32_t delta,time; uint8_t digest[32]; } time_vector;
++static const time_vector time_vectors[]={
++    {UINT32_C(0),UINT32_C(1231006505),{0x6f,0xe2,0x8c,0x0a,0xb6,0xf1,0xb3,0x72,0xc1,0xa6,0xa2,0x46,0xae,0x63,0xf7,0x4f,0x93,0x1e,0x83,0x65,0xe1,0x5a,0x08,0x9c,0x68,0xd6,0x19,0x00,0x00,0x00,0x00,0x00}},
++    {UINT32_C(1),UINT32_C(1231006506),{0x69,0x4b,0x16,0x9f,0x9d,0xdf,0xba,0x0a,0xbb,0x11,0x5d,0x1e,0x98,0xb3,0x18,0x92,0xdb,0xb2,0x2c,0x3c,0xf4,0x50,0xc0,0xe6,0x00,0x39,0xbc,0x40,0xd7,0x12,0x52,0x77}},
++    {UINT32_C(2),UINT32_C(1231006507),{0x9a,0xa9,0x2a,0xa7,0x2b,0x73,0xbc,0x4f,0xd2,0xfa,0xed,0x0c,0xd4,0x75,0x29,0x76,0x52,0x55,0xf0,0xb9,0xe9,0xaa,0xe0,0xd8,0x91,0x27,0x3a,0x8a,0xef,0x05,0x27,0x7a}},
++    {UINT32_C(1000),UINT32_C(1231007505),{0xb4,0x39,0xbb,0xd0,0x46,0x72,0xa3,0xc1,0x39,0x1a,0x67,0x87,0xbb,0xda,0x5d,0x4d,0x31,0xd3,0x12,0x46,0x74,0x04,0xfd,0x43,0xd7,0xc2,0x5a,0x4b,0xcf,0x88,0xbc,0x18}},
++    {UINT32_C(4294967295),UINT32_C(1231006504),{0x09,0x53,0x9d,0x22,0x71,0x20,0xd7,0xca,0x55,0x4e,0x14,0x6f,0x32,0x82,0x7d,0x91,0x59,0x9e,0xe9,0x3b,0x76,0xab,0xca,0x94,0x8f,0x11,0x93,0x4b,0x39,0xb8,0x61,0x5a}},
++    {UINT32_C(2147483648),UINT32_C(3378490153),{0x5f,0x4e,0xd9,0x1e,0xf8,0x25,0x7f,0xcf,0xf1,0x74,0x02,0xdb,0x67,0x5c,0x78,0x47,0x19,0x04,0xfc,0x2e,0x9e,0x93,0x7e,0x37,0x35,0xf8,0x18,0x63,0xaf,0xba,0x86,0x92}},
++};
+diff --git a/tests/test_stage12_differential.py b/tests/test_stage12_differential.py
+new file mode 100644
+index 0000000..d10b027
+--- /dev/null
++++ b/tests/test_stage12_differential.py
+@@ -0,0 +1,121 @@
++#!/usr/bin/env python3
++"""Original time-roll on valid input, including original hex conversions.
++New guards/rollback/encoder-ENOMEM policy are tested separately, not disguised as
++original behavior. Original binary only executes bounded A32 instructions.
++"""
++from pathlib import Path
++import argparse,ctypes as C,hashlib,json,os,random,sys
++ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'tests'))
++from test_stage11_differential import Work,WP,Memory,U32,Arena,normalize,load,texts,octets
++from work_time_oracle import TimeOracle
++
++def time_load():
++    lib=load()
++    lib.vn135_frontend_work_clone_time_legacy.argtypes=[WP,U32,U32,C.POINTER(Memory),C.POINTER(WP),C.POINTER(U32)]
++    lib.vn135_work_clone_time_atomic.argtypes=[WP,U32,U32,C.POINTER(Memory),C.POINTER(WP)]
++    lib.vn135_work_time_decode8.argtypes=[C.c_void_p,C.POINTER(U32)]
++    lib.vn135_work_time_encode8.argtypes=[U32,C.c_void_p]
++    return lib
++
++def codec_tests(lib):
++    o=TimeOracle();r=random.Random(12001);count=0
++    values=[0,1,15,16,255,256,65535,65536,0x7fffffff,0x80000000,0xfffffffe,0xffffffff]
++    values += [r.getrandbits(32) for _ in range(384)]
++    for value in values:
++        encoded=o.encode(value);out=C.create_string_buffer(b'\xa5'*11,11)
++        assert lib.vn135_work_time_encode8(value,C.byref(out,1))==0
++        assert out.raw[0]==0xa5 and out.raw[-1]==0xa5
++        assert out.raw[1:10]==encoded[:9]==f'{value:08x}'.encode()+b'\0'
++        assert encoded[9:]==bytes(3)
++        count+=1
++        for casing in (str.lower,str.upper):
++            s=casing(f'{value:08x}').encode();original,raw=o.decode(s)
++            dst=U32(0xaabbccdd)
++            assert original==1 and lib.vn135_work_time_decode8(s,C.byref(dst))==0
++            assert dst.value==int.from_bytes(raw,'big')==value
++            count+=1
++    return {'comparisons':count,'values':len(values),'original_hex_bodies_executed':True,
++            'alphabet_initialized_by_original_instructions':True}
++
++def clone_tests(lib):
++    o=TimeOracle();r=random.Random(12002);count=0;rolls=0;absent=0;disagree=0;failures=0
++    vectors=[(0,0,0),(0,0,1),(0xffffffff,0xffffffff,1),(0,0,0xffffffff),
++             (0x7fffffff,0x80000000,1),(0x80000000,0x7fffffff,0x80000000),
++             (1231006505,1231006505,1),(0xfffffffe,0,2)]
++    vectors += [(r.getrandbits(32),r.getrandbits(32),r.getrandbits(32)) for _ in range(16)]
++    for present in range(16):
++        for case,(header_time,text_time,delta) in enumerate(vectors):
++            strings=[octets(r,(case*17+i*9)%87) if present&(1<<i) else None for i in range(4)]
++            if strings[1] is not None:strings[1]=(f'{text_time:08X}' if case%2 else f'{text_time:08x}').encode()
++            image=bytearray(normalize(r.randbytes(632)));image[0x44:0x48]=header_time.to_bytes(4,'big')
++            image=bytes(image);fresh=r.getrandbits(32)
++            if case<8:fresh=[0,1,0xffffffff,0x80000000][case%4]
++            order=[i for i in (0,2,1,3) if strings[i] is not None]
++            for fail in range(1<<len(order)):
++                # Original encoder does not guard failed calloc; NEW API guards
++                # it, but its undefined write path is not a differential test.
++                if delta and 1 in order and fail&(1<<order.index(1)):continue
++                expected=o.clone_time(image,strings,fresh,delta,fail)
++                a=Arena(fail);src=a.source(image,strings);before=bytes(src);blocks=set(a.blocks)
++                out=WP();mask=U32(0xdeadbeef)
++                rc=lib.vn135_frontend_work_clone_time_legacy(C.byref(src),fresh,delta,C.byref(a.ops),C.byref(out),C.byref(mask))
++                emask=sum(1<<i for i in range(4) if strings[i] is not None and expected['texts'][i] is None)
++                assert out and rc==(1 if emask else 0) and mask.value==emask
++                assert bytes(out.contents.image)==expected['image'],(case,present,fail,delta)
++                assert texts(out.contents)==expected['texts'],(texts(out.contents),expected['texts'])
++                assert a.events==expected['events'] and bytes(src)==before
++                if delta:
++                    assert int.from_bytes(bytes(out.contents.image)[0x44:0x48],'big')==(header_time+delta)&0xffffffff
++                    rolls+=1
++                    if strings[1] is not None:
++                        assert C.string_at(out.contents.text[1],12)==expected['time_allocation']
++                        assert texts(out.contents)[1]==f'{(text_time+delta)&0xffffffff:08x}'.encode()
++                        disagree+=int(header_time!=text_time)
++                    else:absent+=1
++                failures+=int(bool(emask))
++                for i,s in enumerate(strings):
++                    if out.contents.text[i]:assert out.contents.text[i]!=src.text[i]
++                assert lib.vn135_frontend_work_storage_delete(C.byref(out),C.byref(a.ops))==0
++                assert set(a.blocks)==blocks
++                assert lib.vn135_frontend_work_storage_clear(C.byref(src),C.byref(a.ops))==0
++                a.guard();assert not a.blocks;count+=1
++    return {'comparisons':count,'nonzero_delta':rolls,'absent_time_text':absent,
++            'independent_mismatching_header_and_text':disagree,'partial_other_string_failures':failures,
++            'compares_full_normalized_image_and_copy_order':True,
++            'failed_original_encoder_allocation_not_in_domain':True}
++
++def composition_tests(lib):
++    o=TimeOracle();r=random.Random(12003);count=0
++    fixture=json.loads((ROOT/'evidence/stage9/genesis-vector.json').read_text())['data']
++    vectors=json.loads((ROOT/'evidence/stage12/time-vectors.json').read_text())['rows']
++    for case in range(70):
++        image=bytearray(normalize(r.randbytes(632)));delta=r.getrandbits(32)
++        if case<6:
++            image[:112]=bytes.fromhex(fixture['words']);delta=vectors[case]['delta']
++        stamp=int.from_bytes(image[0x44:0x48],'big');strings=[b'offline-only',f'{stamp:08X}'.encode(),b'extra',None]
++        expected=o.clone_time(image,strings,case,delta);m=o.m
++        before=bytes(m.mem[o.new:o.new+632]);m.reset((o.new,))
++        m.run(0x2d994,hooks=o.hooks(),max_steps=80000)
++        digest=bytes(m.mem[o.new+0x120:o.new+0x140]);modified=bytearray(before);modified[0x120:0x140]=digest
++        assert m.mem[o.new:o.new+632]==modified
++        a=Arena();src=a.source(image,strings);out=WP();actual=C.create_string_buffer(32)
++        assert lib.vn135_work_clone_time_atomic(C.byref(src),case,delta,C.byref(a.ops),C.byref(out))==0
++        assert bytes(out.contents.image)==expected['image']
++        assert lib.vn135_frontend_hash_words80(C.byref(out.contents.image),actual)==0
++        header=b''.join(bytes(out.contents.image[i:i+4])[::-1] for i in range(0,80,4))
++        assert actual.raw==digest==hashlib.sha256(hashlib.sha256(header).digest()).digest()
++        assert bytes(out.contents.image)==expected['image']
++        if case<6:assert digest.hex()==vectors[case]['raw_sha256d']
++        assert lib.vn135_frontend_work_storage_delete(C.byref(out),C.byref(a.ops))==0
++        assert lib.vn135_frontend_work_storage_clear(C.byref(src),C.byref(a.ops))==0
++        a.guard();assert not a.blocks;count+=1
++    return {'separate_compositions':count,'original_clone_then_original_sha256d':True,
++            'hashlib_independent_check':True,'pool_policy_checked':False}
++
++def main():
++    p=argparse.ArgumentParser(description=__doc__);p.add_argument('group',choices=['codec','clone','composition']);a=p.parse_args()
++    result={'stage':12,'status':'PASS','group':a.group,**{'codec':codec_tests,'clone':clone_tests,'composition':composition_tests}[a.group](time_load())}
++    tag='clang' if 'clang' in os.environ.get('VN135_TEST_LIBRARY','') else 'gcc'
++    (ROOT/f'build/stage12-{a.group}-{tag}-results.json').write_text(json.dumps(result,indent=2)+'\n')
++    print(json.dumps(result),flush=True)
++if __name__=='__main__':main()
+diff --git a/tests/test_work_time.c b/tests/test_work_time.c
+new file mode 100644
+index 0000000..c9339c7
+--- /dev/null
++++ b/tests/test_work_time.c
+@@ -0,0 +1,153 @@
++/* Native Stage12 checks. Only synthetic storage and real malloc/free.
++ * No pool, hardware, vendor ABI cast or unchecked invalid-time execution. */
++#include "xminer/recovery/work_time.h"
++#include "xminer/recovery/nonce_verify.h"
++#include "fixtures/genesis_work.h"
++#include "fixtures/time_roll_vectors.h"
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++static unsigned checks,scenarios;
++#define CHECK(x) do {++checks;if(!(x)){fprintf(stderr,"FAIL %s:%d %s\n",__FILE__,__LINE__,#x);return 1;}}while(0)
++typedef struct{void*p;size_t n;int live;} block;
++typedef struct{block blocks[16];unsigned count,calls,live,fail,error;size_t sizes[16];} arena;
++static void *allocate(void *ctx,size_t n){
++    arena*a=ctx;unsigned call=a->calls++;
++    if(call>=16u||!n){a->error=1;return NULL;}
++    a->sizes[call]=n;
++    if(a->fail&(1u<<call))return NULL;
++    void*p=malloc(n);if(!p){a->error=2;return NULL;}
++    memset(p,0xcd,n);a->blocks[a->count++]=(block){p,n,1};++a->live;return p;
++}
++static void release(void *ctx,void*p){
++    arena*a=ctx;
++    for(unsigned i=0;i<a->count;++i)if(a->blocks[i].live&&a->blocks[i].p==p){
++        a->blocks[i].live=0;--a->live;free(p);return;
++    }
++    a->error=3;
++}
++static vn135_work_memory mem(arena*a){vn135_work_memory m={a,allocate,release};return m;}
++static void putbe(uint8_t*p,uint32_t n){p[0]=(uint8_t)(n>>24);p[1]=(uint8_t)(n>>16);p[2]=(uint8_t)(n>>8);p[3]=(uint8_t)n;}
++static void putle(uint8_t*p,uint32_t n){p[0]=(uint8_t)n;p[1]=(uint8_t)(n>>8);p[2]=(uint8_t)(n>>16);p[3]=(uint8_t)(n>>24);}
++static const size_t slots[4]={0x18c,0x19c,0x1a8,0x1b0};
++static void init(vn135_work_storage*w,unsigned seed){
++    memset(w,0,sizeof(*w));for(size_t i=0;i<632u;++i)w->image[i]=(uint8_t)(37u*i+seed);
++    for(size_t i=0;i<4u;++i)memset(w->image+slots[i],0,4);
++}
++static int codec(void){
++    for(unsigned pos=0;pos<8u;++pos)for(unsigned byte=0;byte<256u;++byte){
++        ++scenarios;uint8_t text[8]={'0','1','2','3','a','b','c','d'};text[pos]=(uint8_t)byte;
++        uint32_t value=0xabcdef12u,expected=0;int valid=1;
++        for(size_t j=0;j<8u;++j){int c=text[j],n;
++            if(c>='0'&&c<='9')n=c-'0';else if(c>='a'&&c<='f')n=c-'a'+10;
++            else if(c>='A'&&c<='F')n=c-'A'+10;else{valid=0;break;}
++            expected=16u*expected+(unsigned)n;
++        }
++        int rc=vn135_work_time_decode8(text,&value);
++        CHECK(rc==(valid?0:-2));CHECK(value==(valid?expected:0xabcdef12u));
++        if(valid){char buffer[11],reference[9];memset(buffer,0x5a,sizeof(buffer));
++            CHECK(vn135_work_time_encode8(value,buffer+1)==0);
++            (void)snprintf(reference,sizeof(reference),"%08x",(unsigned)value);
++            CHECK(!memcmp(reference,buffer+1,9));CHECK(buffer[0]==0x5a&&buffer[10]==0x5a);}
++    }
++    uint32_t n=7;char s[9];CHECK(vn135_work_time_decode8(NULL,&n)==-2);CHECK(n==7);
++    CHECK(vn135_work_time_decode8((const uint8_t*)"12345678",NULL)==-2);
++    CHECK(vn135_work_time_encode8(0,NULL)==-2);CHECK(vn135_work_time_encode8(0,s)==0);
++    CHECK(!strcmp(s,"00000000"));return 0;
++}
++static int clone_cases(void){
++    static const unsigned order[4]={0,2,1,3};
++    static const uint32_t deltas[]={0,1,0xffffffffu,0x80000000u};
++    char *strings[4]={"job","ABCDEF01","extra","tail"};
++    for(unsigned present=0;present<16u;++present)for(unsigned di=0;di<4u;++di)for(unsigned fail=0;fail<32u;++fail){
++        uint32_t delta=deltas[di],ht=(present&1u)?0xffffffffu:0,tt=0xabcdef01u;
++        vn135_work_storage src;init(&src,present);putbe(src.image+0x44,ht);
++        for(size_t i=0;i<4u;++i)if(present&(1u<<i)){src.text[i]=strings[i];src.text_size[i]=strlen(strings[i]);}
++        vn135_work_storage before=src;
++        for(unsigned atomic=0;atomic<2u;++atomic){
++            ++scenarios;arena a={0};a.fail=fail;vn135_work_memory m=mem(&a);vn135_work_storage*out=NULL;
++            uint32_t mask=0xaabbccddu;unsigned emask=0,call=1;
++            for(unsigned j=0;j<4u;++j)if(present&(1u<<order[j])){
++                if(fail&(1u<<call))emask|=1u<<order[j];
++                ++call;
++            }
++            int rc=atomic?vn135_work_clone_time_atomic(&src,0xfeedbabeu,delta,&m,&out):
++                vn135_frontend_work_clone_time_legacy(&src,0xfeedbabeu,delta,&m,&out,&mask);
++            CHECK(!memcmp(&src,&before,sizeof(src)));CHECK(!a.error);
++            if(fail&1u){CHECK(rc==-3&&!out&&!a.live);CHECK(mask==0xaabbccddu);CHECK(a.calls==1);}
++            else if(atomic&&emask){CHECK(rc==-3&&!out&&!a.live);CHECK(a.calls==call);}
++            else{
++                CHECK(out);CHECK(rc==(emask?1:0));if(!atomic)CHECK(mask==emask);CHECK(a.calls==call);
++                uint8_t expected[632];memcpy(expected,src.image,632);putle(expected+0x1bc,0xfeedbabeu);
++                if(delta)putbe(expected+0x44,ht+delta);
++                CHECK(!memcmp(expected,out->image,632));
++                unsigned index=1;
++                for(unsigned k=0;k<4u;++k){unsigned i=order[k];
++                    if(!(present&(1u<<i))){CHECK(!out->text[i]&&!out->text_size[i]);continue;}
++                    CHECK(a.sizes[index]==((i==1u&&delta)?12u:strlen(strings[i])+1u));++index;
++                    if(emask&(1u<<i)){CHECK(!out->text[i]&&!out->text_size[i]);continue;}
++                    CHECK(out->text[i]!=src.text[i]);
++                    if(i==1u&&delta){char expected_text[9];(void)snprintf(expected_text,9,"%08x",(unsigned)(tt+delta));
++                        CHECK(!strcmp(out->text[i],expected_text));CHECK(out->text_size[i]==8u);
++                        CHECK(out->text[i][9]==0&&out->text[i][10]==0&&out->text[i][11]==0);
++                    }else{CHECK(!strcmp(out->text[i],strings[i]));CHECK(out->text_size[i]==strlen(strings[i]));}
++                }
++                CHECK(vn135_frontend_work_storage_delete(&out,&m)==0);CHECK(!out&&!a.live&&!a.error);
++                unsigned calls=a.calls;CHECK(vn135_frontend_work_storage_delete(&out,&m)==0);CHECK(a.calls==calls);
++            }
++        }
++    }
++    return 0;
++}
++static int guards(void){
++    static const char *bad[]={"","1234567","123456789","0x123456","0000000g","--------"," 1234567",("\xff" "2345678")};
++    for(size_t i=0;i<sizeof(bad)/sizeof(bad[0]);++i){
++        ++scenarios;vn135_work_storage src;init(&src,7);src.text[1]=(char*)bad[i];src.text_size[1]=strlen(bad[i]);
++        vn135_work_storage before=src,*out=NULL;arena a={0};vn135_work_memory m=mem(&a);uint32_t mask=0xeeeeeeeeu;
++        CHECK(vn135_frontend_work_clone_time_legacy(&src,0,1,&m,&out,&mask)==-2);
++        CHECK(!out&&!a.calls&&mask==0xeeeeeeeeu);CHECK(!memcmp(&src,&before,sizeof(src)));
++        CHECK(vn135_work_clone_time_atomic(&src,0,1,&m,&out)==-2);CHECK(!a.calls);
++        /* Zero delta retains Stage11's arbitrary-string contract. */
++        CHECK(vn135_frontend_work_clone_time_legacy(&src,0,0,&m,&out,&mask)==0);
++        CHECK(!strcmp(out->text[1],bad[i]));CHECK(vn135_frontend_work_storage_delete(&out,&m)==0);CHECK(!a.live);
++    }
++    arena a={0};vn135_work_memory m=mem(&a),broken={0};vn135_work_storage src;init(&src,9);
++    vn135_work_storage *out=NULL;uint32_t mask=3;
++    CHECK(vn135_frontend_work_clone_time_legacy(NULL,0,1,&m,&out,&mask)==-2);
++    CHECK(vn135_frontend_work_clone_time_legacy(&src,0,1,&broken,&out,&mask)==-2);
++    CHECK(vn135_frontend_work_clone_time_legacy(&src,0,1,&m,NULL,&mask)==-2);
++    CHECK(vn135_frontend_work_clone_time_legacy(&src,0,1,&m,&out,NULL)==-2);
++    out=&src;CHECK(vn135_work_clone_time_atomic(&src,0,1,&m,&out)==-2);CHECK(out==&src&&!a.calls);
++    out=NULL;src.image[0x18c]=1;CHECK(vn135_work_clone_time_atomic(&src,0,1,&m,&out)==-2);
++    CHECK(!a.calls);src.image[0x18c]=0;
++    char no_term[]={'1','2','3','4','5','6','7','8','X'};src.text[1]=no_term;src.text_size[1]=8;
++    CHECK(vn135_work_clone_time_atomic(&src,0,1,&m,&out)==-2);CHECK(!a.calls);
++    return 0;
++}
++static int lifecycle(void){
++    for(size_t i=0;i<sizeof(time_vectors)/sizeof(time_vectors[0]);++i){
++        ++scenarios;const time_vector*v=&time_vectors[i];arena a={0};vn135_work_memory m=mem(&a);
++        vn135_work_storage source={0};memcpy(source.image,fixture_words,112);
++        source.text[0]="historical-fixture";source.text_size[0]=18;
++        source.text[1]="495FAB29";source.text_size[1]=8;
++        vn135_work_storage *copy=NULL,*restored=NULL;uint8_t hash[32],expected[632];
++        memcpy(expected,source.image,632);putle(expected+0x1bc,9);putbe(expected+0x44,v->time);
++        CHECK(vn135_work_clone_time_atomic(&source,9,v->delta,&m,&copy)==0);
++        CHECK(!memcmp(copy->image,expected,632));CHECK(vn135_frontend_hash_words80(copy->image,hash)==0);
++        CHECK(!memcmp(hash,v->digest,32));
++        /* Reverse offset in a distinct owned clone, then clear the intermediate. */
++        CHECK(vn135_work_clone_time_atomic(copy,10,0u-v->delta,&m,&restored)==0);
++        CHECK(vn135_frontend_work_storage_clear(copy,&m)==0);
++        CHECK(!memcmp(restored->image,fixture_words,112));
++        CHECK(!strcmp(restored->text[0],"historical-fixture"));
++        CHECK(!strcmp(restored->text[1],v->delta?"495fab29":"495FAB29"));
++        CHECK(vn135_frontend_hash_words80(restored->image,hash)==0);CHECK(!memcmp(hash,fixture_hash,32));
++        CHECK(vn135_frontend_work_storage_delete(&copy,&m)==0);
++        CHECK(vn135_frontend_work_storage_delete(&restored,&m)==0);CHECK(!a.live&&!a.error);
++    }
++    return 0;
++}
++int main(void){
++    if(codec()||clone_cases()||guards()||lifecycle())return 1;
++    printf("{\"stage\":12,\"status\":\"PASS\",\"native_scenarios\":%u,\"assertions\":%u,\"hardware_tested\":false}\n",scenarios,checks);return 0;
++}
+diff --git a/tests/work_time_oracle.py b/tests/work_time_oracle.py
+new file mode 100644
+index 0000000..43dd33d
+--- /dev/null
++++ b/tests/work_time_oracle.py
+@@ -0,0 +1,48 @@
++"""Stage12 original clone + original hex helpers + original alphabet initializer.
++No helper result or decoded alphabet is injected. Only documented allocation,
++libc copy/strlen/memset, mutex and diagnostics are hooks. No Linux/ASIC execution.
++"""
++from work_storage_oracle import StorageOracle
++class TimeOracle(StorageOracle):
++    def __init__(self):
++        super().__init__();m=self.m
++        before=bytes(m.mem[0x5e00bb:0x5e00cd])
++        m.reset();m.run(0x1ff00,stop=0x1ff2c,max_steps=200)
++        assert bytes(m.mem[0x5e00bc:0x5e00cc])==b'0123456789abcdef'
++        assert m.mem[0x5e00bb]==before[0] and m.mem[0x5e00cc]==before[-1]
++        self.alphabet_steps=m.steps
++    def hooks(self):
++        hooks=super().hooks();original=hooks[0x593bb4]
++        def calloc(m):
++            if m.r[:2]==[1,632]:return original(m)
++            assert m.r[:2]==[12,1],m.r[:2]
++            m.r[0]=12;hooks[0x5940ec](m)
++            if not m.r[0]:
++                raise ValueError('Original bin2hex NULL write is outside compared domain')
++            m.mem[m.r[0]:m.r[0]+12]=bytes(12)
++        hooks[0x593bb4]=calloc
++        return hooks
++    def clone_time(self,image,texts,fresh_id,delta,fail=0):
++        self.prepare(image,texts,fail);m=self.m
++        g=(0x2cec4+8+m.read(0x2d110))&0xffffffff
++        m.write(g,fresh_id);m.reset((self.work,delta))
++        m.run(0x2ce84,hooks=self.hooks(),max_steps=50000)
++        assert m.r[0]==self.new and m.read(g)==(fresh_id+1)&0xffffffff
++        assert bytes(m.mem[self.work:self.work+632])==self.source_before
++        assert len(self.locks)==2 and self.locks[0][1]==self.locks[1][1]
++        result=self.result(self.new)
++        if delta and texts[1] is not None:
++            result['time_allocation']=bytes(m.mem[m.read(self.new+0x19c):m.read(self.new+0x19c)+12])
++        return result
++    def decode(self,text):
++        assert len(text)==8 and b'\0' not in text
++        self.prepare(bytes(632),[None]*4);m=self.m;src=m.DATA_BASE+0x2000;dst=m.DATA_BASE+0x3000
++        m.mem[src:src+9]=text+b'\0';m.mem[dst-1:dst+5]=b'\xa5'*6
++        m.reset((dst,src,4));m.run(0x107b0,hooks=self.hooks(),max_steps=5000)
++        assert m.mem[dst-1]==0xa5 and m.mem[dst+4]==0xa5
++        return m.r[0],bytes(m.mem[dst:dst+4])
++    def encode(self,value):
++        self.prepare(bytes(632),[None]*4);m=self.m;src=m.DATA_BASE+0x2000
++        m.mem[src:src+4]=value.to_bytes(4,'big');m.reset((src,4))
++        m.run(0x1068c,hooks=self.hooks(),max_steps=5000)
++        return bytes(m.mem[m.r[0]:m.r[0]+12])
+diff --git a/tools/check_stage12_evidence.py b/tools/check_stage12_evidence.py
+new file mode 100644
+index 0000000..fee2476
+--- /dev/null
++++ b/tools/check_stage12_evidence.py
+@@ -0,0 +1,45 @@
++#!/usr/bin/env python3
++"""Verify Stage12 source evidence from the unchanged ELF and original XOR loop.
++This checks bytes/links/data/scope, not hardware behavior or every possible input.
++"""
++from pathlib import Path
++import hashlib,json,struct,sys
++from elf32 import ELF32
++ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'tests'))
++from work_time_oracle import TimeOracle
++e=ELF32(ROOT/'reference/cgminer.vendor.elf');m=json.loads((ROOT/'evidence/stage12/recovery-manifest.json').read_text())
++sha=lambda b:hashlib.sha256(b).hexdigest()
++assert len(e.data)==m['reference_bytes'] and sha(e.data)==m['reference_sha256']
++for row in m['slices']:
++ a,b=int(row['start'],16),int(row['end_exclusive'],16)
++ assert row['bytes']==b-a and sha(e.read(a,b-a))==row['sha256']
++ assert sha((ROOT/row['disassembly']).read_bytes())==row['disassembly_sha256']
++for row in m['literals']:assert sha(e.read(int(row['address'],16),row['bytes']))==row['sha256']
++for row in m['branch_edges']:
++ pc=int(row['pc'],16);w=int.from_bytes(e.read(pc,4),'little');d=w&0xffffff
++ if d&(1<<23):d-=1<<24
++ assert w&0x0e000000==0x0a000000 and f'{w:08x}'==row['instruction_hex']
++ assert pc+8+4*d==int(row['target'],16) and bool(w&(1<<24))==row['link']
++init=e.section('.init_array');assert int(m['initializer_function'],16) in struct.unpack('<'+'I'*(len(init)//4),init)
++# Code pointers to alphabet and decode table, plus initializer's relative literal.
++for pc,lit,want in ((0x1074c,0x107ac,0x5e00bc),(0x10828,0x1096c,0x5b0310),(0x1ff10,0x20eec,0x5e00bc)):
++ assert pc+8+int.from_bytes(e.read(lit,4),'little')==want
++nibbles=struct.unpack('<256i',e.read(0x5b0310,1024))
++for i,value in enumerate(nibbles):
++ c=chr(i);expected=int(c,16) if c in '0123456789abcdefABCDEF' else -1
++ assert value==expected,(i,value)
++o=TimeOracle();assert bytes(o.m.mem[0x5e00bc:0x5e00cc])==b'0123456789abcdef'
++# Decoder return is not checked at the observed caller: load stack result next.
++assert e.read(0x2d008,4)==bytes.fromhex('0c009de5')
++assert e.read(0x2cfe4,4)==bytes.fromhex('440095e5')
++assert e.read(0x2cffc,4)==bytes.fromhex('440085e5')
++assert e.read(0x2d078,4)==bytes.fromhex('9c0185e5')
++assert sum(m['comparison_counts'].values())==2511
++for key in ('failed_original_encoder_allocation_compared','malformed_time_clone_compared','runtime_time_policy_checked','hash_refreshed_by_clone','live_reference_ownership_recovered','physical_hardware_tested','original_general_hex_api_fully_recovered','interpreter_instructions_modified'):
++ assert m[key] is False,key
++h=(ROOT/m['new_header']).read_text()
++for s in ('NOT vendor binary ABI','independent value','Invalid time rejects BEFORE','Original unchecked NULL','12 zeroed'):
++ assert s in h,s
++am=(ROOT/'reconstruction/cgminer-overlay.am').read_text()
++assert m['new_header'] in am and m['new_support'] in am
++print('Stage12 evidence: 4 code ranges, 7 literal/data blocks, 12 call edges, original XOR and table PASS')
+diff --git a/tools/generate_time_fixture.py b/tools/generate_time_fixture.py
+new file mode 100644
+index 0000000..bfa65ae
+--- /dev/null
++++ b/tools/generate_time_fixture.py
+@@ -0,0 +1,33 @@
++#!/usr/bin/env python3
++"""Check deterministic time/hash vectors derived from the existing Stage9 fixture.
++Not mined blocks or pool-approved time values. hashlib is an independent check.
++"""
++from pathlib import Path
++import hashlib,json,argparse
++ROOT=Path(__file__).resolve().parents[1]
++def payload():
++    g=json.loads((ROOT/'evidence/stage9/genesis-vector.json').read_text())['data']
++    header=bytes.fromhex(g['header']);start=int.from_bytes(header[68:72],'little')
++    rows=[]
++    for delta in (0,1,2,1000,0xffffffff,0x80000000):
++        time=(start+delta)&0xffffffff;h=bytearray(header);h[68:72]=time.to_bytes(4,'little')
++        digest=hashlib.sha256(hashlib.sha256(h).digest()).digest()
++        rows.append({'delta':delta,'time':time,'time_hex':f'{time:08x}','raw_sha256d':digest.hex()})
++    return {'source':'evidence/stage9/genesis-vector.json','start_time':start,'synthetic_rolled_headers':True,
++            'pool_policy_checked':False,'submitted':False,'rows':rows}
++def ctext(v):
++    s='/* Generated synthetic time vectors; no newly mined blocks. */\n'
++    s+='typedef struct { uint32_t delta,time; uint8_t digest[32]; } time_vector;\n'
++    s+='static const time_vector time_vectors[]={\n'
++    for r in v['rows']:
++        d=','.join('0x'+r['raw_sha256d'][i:i+2] for i in range(0,64,2))
++        s+=f'    {{UINT32_C({r["delta"]}),UINT32_C({r["time"]}),{{{d}}}}},\n'
++    return s+'};\n'
++def main():
++    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--write',action='store_true');a=p.parse_args()
++    v=payload();out={ROOT/'evidence/stage12/time-vectors.json':json.dumps(v,indent=2)+'\n',ROOT/'tests/fixtures/time_roll_vectors.h':ctext(v)}
++    for path,text in out.items():
++        if a.write:path.parent.mkdir(parents=True,exist_ok=True);path.write_text(text)
++        else:assert path.read_text()==text,path
++    print('Stage12 hashlib vectors:',len(v['rows']),'written' if a.write else 'PASS')
++if __name__=='__main__':main()
+diff --git a/tools/verify_stage12.py b/tools/verify_stage12.py
+new file mode 100644
+index 0000000..7eb36dc
+--- /dev/null
++++ b/tools/verify_stage12.py
+@@ -0,0 +1,38 @@
++#!/usr/bin/env python3
++"""Checked per-group verification of a fresh Stage12 extraction.
++Logs MUST be outside source tree. No vendor ELF process or external network.
++"""
++from pathlib import Path
++import argparse,hashlib,json,subprocess,sys,time
++from verify_stage11 import GROUPS as PRIOR
++ROOT=Path(__file__).resolve().parents[1];PY=sys.executable
++GROUPS={name:[list(cmd) for cmd in cmds] for name,cmds in PRIOR.items()}
++GROUPS['build'][-1]+=['build/test-work-time']
++GROUPS.update({
++ 'time-codec':[[PY,'tests/test_stage12_differential.py','codec']],
++ 'time-clone':[[PY,'tests/test_stage12_differential.py','clone']],
++ 'time-native':[['./build/test-work-time'],[PY,'tools/generate_time_fixture.py'],[PY,'tests/test_stage12_differential.py','composition']],
++ 'clang-time':[['make','-f','Makefile.recovery','stage12-clang']]
++})
++
++def main():
++    p=argparse.ArgumentParser(description=__doc__);p.add_argument('group',choices=GROUPS)
++    p.add_argument('--logs',type=Path,required=True);a=p.parse_args();directory=a.logs.resolve()
++    if directory.is_relative_to(ROOT):p.error('--logs must be outside source tree')
++    directory.mkdir(parents=True,exist_ok=True);records=[]
++    for i,cmd in enumerate(GROUPS[a.group]):
++        expected=2 if a.group=='full-runtime-blocked' else 0
++        log=directory/f'{a.group}-{i:02d}.log';start=time.monotonic()
++        with log.open('w') as out:
++            out.write('COMMAND: '+repr(cmd)+'\n');out.flush()
++            result=subprocess.run(cmd,cwd=ROOT,stdout=out,stderr=subprocess.STDOUT,check=False)
++        row={'command':cmd,'returncode':result.returncode,'expected_returncode':expected,'log':log.name,
++             'seconds':round(time.monotonic()-start,3),'sha256':hashlib.sha256(log.read_bytes()).hexdigest()}
++        records.append(row)
++        summary={'group':a.group,'status':'PASS' if all(x['returncode']==x['expected_returncode'] for x in records) else 'FAIL',
++                 'complete':len(records)==len(GROUPS[a.group]),'records':records}
++        (directory/(a.group+'.json')).write_text(json.dumps(summary,indent=2)+'\n')
++        print(f'{a.group} {i+1}/{len(GROUPS[a.group])}: return={result.returncode} expected={expected} ({row["seconds"]}s)',flush=True)
++        if result.returncode!=expected:return 1
++    return 0
++if __name__=='__main__':raise SystemExit(main())
+diff --git a/tools/verify_stage12_all.py b/tools/verify_stage12_all.py
+new file mode 100644
+index 0000000..64f73c5
+--- /dev/null
++++ b/tools/verify_stage12_all.py
+@@ -0,0 +1,46 @@
++#!/usr/bin/env python3
++"""Full local check with isolated per-command logs and bounded parallel groups.
++Use on a fresh extraction. Source files stay unchanged; build outputs are local.
++No network, firmware install, ASIC access or original ELF process execution.
++"""
++from pathlib import Path
++from concurrent.futures import ThreadPoolExecutor,as_completed
++import argparse,hashlib,json,subprocess,sys,time
++from verify_stage12 import GROUPS
++ROOT=Path(__file__).resolve().parents[1]
++def main():
++    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--logs',type=Path,required=True)
++    p.add_argument('--workers',type=int,default=2,choices=[1,2]);a=p.parse_args();logs=a.logs.resolve()
++    if logs.is_relative_to(ROOT):p.error('Logs must be outside the source tree')
++    logs.mkdir(parents=True,exist_ok=True);started=time.monotonic();done={};supplemental=[]
++    def run(group):
++        with (logs/(group+'-driver.log')).open('w') as f:
++            rc=subprocess.run([sys.executable,'tools/verify_stage12.py',group,'--logs',str(logs)],cwd=ROOT,stdout=f,stderr=subprocess.STDOUT).returncode
++        file=logs/(group+'.json')
++        row=json.loads(file.read_text()) if file.exists() else {'group':group,'status':'FAIL','complete':False,'records':[]}
++        row['driver_returncode']=rc
++        print(group,row['status'],'complete='+str(row['complete']),flush=True)
++        return group,row
++    group,row=run('build');done[group]=row
++    if row['status']=='PASS':
++        # Build shared Clang library once before independent Clang groups.
++        with (logs/'clang-library-prebuild.log').open('w') as f:
++            rc=subprocess.run(['make','-f','Makefile.recovery','build/libvn135_recovered-clang.so'],cwd=ROOT,stdout=f,stderr=subprocess.STDOUT).returncode
++        supplemental.append({'command':['make','-f','Makefile.recovery','build/libvn135_recovered-clang.so'],'returncode':rc,'log':'clang-library-prebuild.log','sha256':hashlib.sha256((logs/'clang-library-prebuild.log').read_bytes()).hexdigest()})
++        if rc:print('Clang library build failed',flush=True);return rc
++        pending=[g for g in GROUPS if g not in ('build','evidence','full-runtime-blocked')]
++        with ThreadPoolExecutor(max_workers=a.workers) as pool:
++            for f in as_completed([pool.submit(run,g) for g in pending]):
++                group,row=f.result();done[group]=row
++        for group in ('evidence','full-runtime-blocked'):
++            g,row=run(group);done[g]=row
++    success=len(done)==len(GROUPS) and all(x['status']=='PASS' and x['complete'] and x['driver_returncode']==0 for x in done.values())
++    result={'status':'PASS' if success else 'FAIL','complete':len(done)==len(GROUPS),
++       'groups_expected':len(GROUPS),'groups_run':len(done),'command_count':sum(len(x['records']) for x in done.values())+len(supplemental),'supplemental_commands':supplemental,
++       'seconds':round(time.monotonic()-started,3),'group_results':done,
++       'elf_sha256':hashlib.sha256((ROOT/'reference/cgminer.vendor.elf').read_bytes()).hexdigest(),
++       'hardware_tested':False,'full_upstream_build_tested':False,'full_runtime_expected_to_fail':True}
++    (logs/'ALL_GROUPS.json').write_text(json.dumps(result,indent=2)+'\n')
++    print('ALL_GROUPS',result['status'],result['groups_run'],result['command_count'],flush=True)
++    return 0 if success else 1
++if __name__=='__main__':raise SystemExit(main())

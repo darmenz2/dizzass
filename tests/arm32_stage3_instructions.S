@@ -1,0 +1,63 @@
+.syntax unified
+.arm
+.fpu vfpv3-d16
+.text
+.macro fn name
+.global \name
+.type \name,%function
+\name:
+.endm
+fn fx_clz
+clz r0,r0
+bx lr
+fn fx_half
+mov r2,r0
+strh r1,[r2],#2
+ldrh r0,[r2,#-2]
+bx lr
+fn fx_add
+vadd.f64 d2,d0,d1
+vstr d2,[r0]
+bx lr
+fn fx_sub
+vsub.f64 d2,d0,d1
+vstr d2,[r0]
+bx lr
+fn fx_mul
+vmul.f64 d2,d0,d1
+vstr d2,[r0]
+bx lr
+fn fx_div
+vdiv.f64 d2,d0,d1
+vstr d2,[r0]
+bx lr
+fn fx_abs
+vabs.f64 d2,d0
+vstr d2,[r0]
+bx lr
+fn fx_i2d
+vmov s1,r0
+vcvt.f64.s32 d2,s1
+vstr d2,[r1]
+bx lr
+fn fx_d2i
+vcvt.s32.f64 s3,d0
+vmov r0,s3
+bx lr
+fn fx_cmp
+vcmp.f64 d0,d1
+vmrs APSR_nzcv,fpscr
+mvnlt r0,#0
+moveq r0,#0
+movgt r0,#1
+bx lr
+fn fx_push
+vpush {d8-d9}
+vmov.f64 d8,d0
+vmov.f64 d9,d1
+vpop {d8-d9}
+bx lr
+fn fx_load
+vldr d2,[r0]
+vstr d2,[r1]
+bx lr

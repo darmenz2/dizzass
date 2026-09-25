@@ -1,0 +1,19 @@
+{
+  "group": "difficulty-inverse",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage10_differential.py",
+        "inverse"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "difficulty-inverse-00.log",
+      "seconds": 2.365,
+      "sha256": "aec4cfebf4c7374db75a187a98025a5f85e569d203570d49d996279ce15f4592"
+    }
+  ]
+}

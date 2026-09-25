@@ -1,0 +1,9 @@
+{
+  "stage": 9,
+  "group": "candidate",
+  "status": "PASS",
+  "comparisons": 144,
+  "slice_composition_cases": 144,
+  "real_caller_wrapper_core": true,
+  "full_consumer_or_job_lifecycle": false
+}

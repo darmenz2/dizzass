@@ -1,0 +1,62 @@
+{
+  "path": "src/backend/dummy_job.c",
+  "observed_as": "/tmp/build/src/backend/dummy_job.c",
+  "status": "pending-not-implemented",
+  "evidence": [
+    {
+      "address": "0x5e5022",
+      "xor": 231,
+      "decoded_length": 35,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x0002b688",
+      "end_exclusive": "0x0002c1a8",
+      "path_references": [
+        {
+          "insn": "0x2b6bc",
+          "string": "0x5e5022",
+          "kind": "literal-abs",
+          "text": "/tmp/build/src/backend/dummy_job.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0005c4dc",
+      "end_exclusive": "0x0005ca80",
+      "path_references": [
+        {
+          "insn": "0x5c9a8",
+          "string": "0x5e5022",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/dummy_job.c"
+        },
+        {
+          "insn": "0x5c9f0",
+          "string": "0x5e5022",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/dummy_job.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0005ca80",
+      "end_exclusive": "0x0005cca8",
+      "path_references": [
+        {
+          "insn": "0x5cbe0",
+          "string": "0x5e5022",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/dummy_job.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": []
+}

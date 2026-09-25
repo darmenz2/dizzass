@@ -1,0 +1,5 @@
+COMMAND: ['make', '-f', 'Makefile.recovery', 'linux-pty-rx']
+mkdir -p build
+cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror libbitmain/src/uart.c src/backend/work-gen/work-gen.c reconstruction/support/sha256_midstate.c reconstruction/support/work_rx_stream.c tests/test_work_rx_linux_pty.c -pthread -o build/test-work-rx-pty
+./build/test-work-rx-pty
+Stage 6 real Linux PTY -> UART -> RX: PASS (88 decoded messages)

@@ -1,0 +1,17 @@
+{
+  "group": "fifo-threaded",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "./build/test-nonce-fifo-threads"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "fifo-threaded-00.log",
+      "seconds": 0.026,
+      "sha256": "faff897a8fba6f0c0cd87eed17f18a8a06cac90f143f9b0f9cd3bb7867fd46d1"
+    }
+  ]
+}

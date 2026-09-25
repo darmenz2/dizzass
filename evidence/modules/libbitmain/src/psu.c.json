@@ -1,0 +1,516 @@
+{
+  "path": "libbitmain/src/psu.c",
+  "observed_as": "/tmp/build/libbitmain/src/psu.c",
+  "status": "pending-not-implemented",
+  "evidence": [
+    {
+      "address": "0x5ed1c8",
+      "xor": 155,
+      "decoded_length": 32,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x00100fc4",
+      "end_exclusive": "0x00102988",
+      "path_references": [
+        {
+          "insn": "0x1010b4",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x101148",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x1012dc",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x101634",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x101660",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x101704",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x101750",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x101780",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x1017cc",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x1018bc",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x10191c",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x101964",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x101994",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x101a44",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x101b5c",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x101ba4",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x101bd8",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x101cbc",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x101d88",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x101ea0",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x101eec",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x101fa8",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x102090",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x1020cc",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x10216c",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x102248",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x102310",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x10264c",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x1027fc",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x10284c",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x1028a8",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x1028fc",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00102b08",
+      "end_exclusive": "0x00102ec0",
+      "path_references": [
+        {
+          "insn": "0x102b54",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x102de0",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x102e1c",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x102e68",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00102ec0",
+      "end_exclusive": "0x00103058",
+      "path_references": [
+        {
+          "insn": "0x102f84",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x102fcc",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00103058",
+      "end_exclusive": "0x00103ae8",
+      "path_references": [
+        {
+          "insn": "0x10384c",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x1038ac",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x1038e0",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00103ae8",
+      "end_exclusive": "0x00104134",
+      "path_references": [
+        {
+          "insn": "0x103d74",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x103e9c",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x103f9c",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x103fe8",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x104014",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x10405c",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x10408c",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00104218",
+      "end_exclusive": "0x00104368",
+      "path_references": [
+        {
+          "insn": "0x1042dc",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x104310",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00104368",
+      "end_exclusive": "0x00104538",
+      "path_references": [
+        {
+          "insn": "0x10443c",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x1044d8",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00104538",
+      "end_exclusive": "0x00104868",
+      "path_references": [
+        {
+          "insn": "0x1045e8",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x1046fc",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x104748",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00104aa0",
+      "end_exclusive": "0x00104fe4",
+      "path_references": [
+        {
+          "insn": "0x104bf4",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x104c88",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00104fe4",
+      "end_exclusive": "0x00105394",
+      "path_references": [
+        {
+          "insn": "0x105120",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x105154",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x1051f4",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x105290",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00105394",
+      "end_exclusive": "0x0010560c",
+      "path_references": [
+        {
+          "insn": "0x1054a4",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x10559c",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0010560c",
+      "end_exclusive": "0x00105d24",
+      "path_references": [
+        {
+          "insn": "0x105864",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x1058c8",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x105b70",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        },
+        {
+          "insn": "0x105c24",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00105f58",
+      "end_exclusive": "0x00106a58",
+      "path_references": [
+        {
+          "insn": "0x1060cc",
+          "string": "0x5ed1c8",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/psu.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": []
+}

@@ -1,0 +1,12 @@
+{
+  "repository": "https://github.com/ckolivas/cgminer.git",
+  "commit": "b8491c66e7e22f23a9edf095dd1337ee581e88bd",
+  "tree": "2228aee63ac41271bbbe26773ad81f31fdec0373",
+  "makefile_am_git_blob": "17d2fbde26b5e8cb614b61908b84d5937af48325",
+  "role": "Chosen public cgminer base for additive integration; NOT proven exact VNish ancestor",
+  "observed_commit_date": "2018-12-06T21:13:30Z",
+  "base_sources_bundled": false,
+  "base_sources_built_in_this_environment": false,
+  "metadata_source": "https://api.github.com/repos/ckolivas/cgminer/commits?per_page=1",
+  "makefile_source": "https://github.com/ckolivas/cgminer/blob/b8491c66e7e22f23a9edf095dd1337ee581e88bd/Makefile.am"
+}

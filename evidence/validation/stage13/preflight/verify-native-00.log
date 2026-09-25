@@ -1,0 +1,2 @@
+COMMAND: ['./build/test-nonce-verify']
+Stage8 native cases: 198 PASS; no device access

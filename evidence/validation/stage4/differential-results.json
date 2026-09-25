@@ -1,0 +1,83 @@
+{
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "passed": true,
+  "cases": {
+    "ticket-mask argument slice": 384,
+    "sweep-clock argument slice": 256,
+    "clock-delay argument slice, null context": 384,
+    "clock-delay argument slice, chip context": 384,
+    "analog-mux argument slice": 160,
+    "misc-control transform after injected successful cache read": 528,
+    "CRC5 complete function": 194,
+    "SET_CONFIG packet through original CRC, before transport": 256
+  },
+  "total_cases": 2546,
+  "elapsed_seconds": 1.732,
+  "method": "New host C versus bounded local A32 instruction interpreter on original ELF",
+  "hardware_tested": false,
+  "full_miner_tested": false,
+  "packet_vectors": [
+    {
+      "mode": 0,
+      "chip_address": 0,
+      "register": 1995597791,
+      "value": 1227374103,
+      "packet_hex": "410900df49283e1718"
+    },
+    {
+      "mode": 0,
+      "chip_address": 3137776602,
+      "register": 1207771311,
+      "value": 2999447743,
+      "packet_hex": "4109daafb2c7f0bf0c"
+    },
+    {
+      "mode": 0,
+      "chip_address": 0,
+      "register": 1615866877,
+      "value": 1155547543,
+      "packet_hex": "410900fd44e041971f"
+    },
+    {
+      "mode": 0,
+      "chip_address": 3390839735,
+      "register": 2510105735,
+      "value": 2498490759,
+      "packet_hex": "4109b78794ebf18709"
+    },
+    {
+      "mode": 0,
+      "chip_address": 0,
+      "register": 3612511446,
+      "value": 289520431,
+      "packet_hex": "410900d61141bb2f0d"
+    },
+    {
+      "mode": 0,
+      "chip_address": 2127653205,
+      "register": 3255342728,
+      "value": 1818415138,
+      "packet_hex": "410955886c62d02217"
+    },
+    {
+      "mode": 0,
+      "chip_address": 0,
+      "register": 1640839128,
+      "value": 4125337053,
+      "packet_hex": "410900d8f5e3a5dd04"
+    },
+    {
+      "mode": 0,
+      "chip_address": 2733228213,
+      "register": 2663633086,
+      "value": 777283529,
+      "packet_hex": "4109b5be2e5467c904"
+    }
+  ],
+  "limits": [
+    "Local subset interpreter, not a hardware or independently certified ARM emulator.",
+    "Payload-building prefixes do not verify full callers, error paths, timing or hardware effects.",
+    "Cache read for misc-control is a declared test input, not reconstructed cache implementation.",
+    "No equivalence claim for untested inputs, ABI, vendor data structures, full transport, full PLL programming or autotune."
+  ]
+}

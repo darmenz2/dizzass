@@ -1,0 +1,2300 @@
+{
+  "path": "src/backend/base.c",
+  "observed_as": "/tmp/build/src/backend/base.c",
+  "status": "pending-not-implemented",
+  "evidence": [
+    {
+      "address": "0x5e50be",
+      "xor": 245,
+      "decoded_length": 30,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x0005d148",
+      "end_exclusive": "0x0005d324",
+      "path_references": [
+        {
+          "insn": "0x5d2d4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0005d378",
+      "end_exclusive": "0x0005d65c",
+      "path_references": [
+        {
+          "insn": "0x5d5c0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x5d608",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0005de64",
+      "end_exclusive": "0x0005e084",
+      "path_references": [
+        {
+          "insn": "0x5decc",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x5df20",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0005e084",
+      "end_exclusive": "0x0005e188",
+      "path_references": [
+        {
+          "insn": "0x5e0ac",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x5e0fc",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0005e188",
+      "end_exclusive": "0x0005e524",
+      "path_references": [
+        {
+          "insn": "0x5e2d0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x5e4a0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0005e53c",
+      "end_exclusive": "0x00060718",
+      "path_references": [
+        {
+          "insn": "0x5e720",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x5e800",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x5ec38",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x5ed00",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x5eea4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x5efd0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x5f1c8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x5fcd4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00060730",
+      "end_exclusive": "0x00060a2c",
+      "path_references": [
+        {
+          "insn": "0x607bc",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6081c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x60944",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x609a4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00060a2c",
+      "end_exclusive": "0x00060d48",
+      "path_references": [
+        {
+          "insn": "0x60b48",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x60d04",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00060d58",
+      "end_exclusive": "0x0006100c",
+      "path_references": [
+        {
+          "insn": "0x60f58",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x60fa0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00061170",
+      "end_exclusive": "0x00061ac4",
+      "path_references": [
+        {
+          "insn": "0x61770",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x619a8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x619f8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00061ed0",
+      "end_exclusive": "0x000625b8",
+      "path_references": [
+        {
+          "insn": "0x620b8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x62158",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x621f8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x622e4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x62334",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x62384",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x62434",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00062e9c",
+      "end_exclusive": "0x00063780",
+      "path_references": [
+        {
+          "insn": "0x63114",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x63154",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x631d4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x63220",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x63290",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x63480",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x634b4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x636a4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x636d8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6370c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00063780",
+      "end_exclusive": "0x0006397c",
+      "path_references": [
+        {
+          "insn": "0x637e8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x63840",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x63904",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0006397c",
+      "end_exclusive": "0x00064254",
+      "path_references": [
+        {
+          "insn": "0x63a64",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x63ba8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x63bf4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x640f8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x64184",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000644a8",
+      "end_exclusive": "0x00065b3c",
+      "path_references": [
+        {
+          "insn": "0x64674",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6495c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x64998",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x649d0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x650e0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x65194",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x651fc",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x65334",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x654d0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x65764",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x657ec",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x65950",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6599c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00065b3c",
+      "end_exclusive": "0x00066244",
+      "path_references": [
+        {
+          "insn": "0x65cb4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x65da0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x65e1c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x65eec",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x65f40",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x66134",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x661c4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00066244",
+      "end_exclusive": "0x000663cc",
+      "path_references": [
+        {
+          "insn": "0x66278",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000663cc",
+      "end_exclusive": "0x00066504",
+      "path_references": [
+        {
+          "insn": "0x664a8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00066504",
+      "end_exclusive": "0x0006687c",
+      "path_references": [
+        {
+          "insn": "0x66560",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x66648",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x666b0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x666f8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6676c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000668a8",
+      "end_exclusive": "0x00066f80",
+      "path_references": [
+        {
+          "insn": "0x66b98",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x66c4c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x66e54",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x66eb4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00066f80",
+      "end_exclusive": "0x0006709c",
+      "path_references": [
+        {
+          "insn": "0x66ffc",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6704c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0006709c",
+      "end_exclusive": "0x000676f0",
+      "path_references": [
+        {
+          "insn": "0x672b0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x67334",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6738c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x675dc",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x67640",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000676f0",
+      "end_exclusive": "0x000677b8",
+      "path_references": [
+        {
+          "insn": "0x67760",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00067a28",
+      "end_exclusive": "0x00067de8",
+      "path_references": [
+        {
+          "insn": "0x67ab0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x67b3c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x67cc0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x67d14",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00067de8",
+      "end_exclusive": "0x00067e88",
+      "path_references": [
+        {
+          "insn": "0x67e38",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00067ff8",
+      "end_exclusive": "0x0006b778",
+      "path_references": [
+        {
+          "insn": "0x680f4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x681ac",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x682c8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x68314",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x68390",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x68588",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x685f0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x68628",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x68674",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x687b8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x68804",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x68aac",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x68af0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x68b44",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x68b9c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x68c14",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x68dd4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x68fb8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x69004",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x69238",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x693f4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6988c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x698d8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x699c4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x69a34",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x69a80",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x69b9c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x69cc4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x69d14",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x69d68",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x69dbc",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x69e9c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x69f80",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x69fcc",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6a004",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6a068",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6a0a4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6a100",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6a220",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6a27c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6a2f8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6a3f0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6a5c0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6a768",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6a7c4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6a8f8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6a954",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6a99c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6a9f8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6aa40",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6aaac",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6ab0c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6abbc",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6b0a8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6b194",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6b20c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6b2c0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6b520",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6b57c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0006b778",
+      "end_exclusive": "0x0006b8fc",
+      "path_references": [
+        {
+          "insn": "0x6b7dc",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6b82c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6b868",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0006b8fc",
+      "end_exclusive": "0x0006f550",
+      "path_references": [
+        {
+          "insn": "0x6ba98",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6bb08",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6bbfc",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6bc50",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6c090",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6c164",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6c1b0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6c284",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6c2d0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6c358",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6c3a4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6c3d0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6c42c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6c4c0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6c548",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6c834",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6c914",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6c998",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6ca10",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6cb40",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6cba8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6cc4c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6cd1c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6ce00",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6ce9c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6d0cc",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6d140",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6d4f0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6d5b8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6d5e0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6d8a0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6da34",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6da84",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6ded0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6e894",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6e90c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6eb08",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6eb78",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6ee80",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6eee4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6f2cc",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6f30c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6f3d0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6f480",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6f4cc",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0006f6f4",
+      "end_exclusive": "0x0006fae8",
+      "path_references": [
+        {
+          "insn": "0x6f9f8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0006fae8",
+      "end_exclusive": "0x00070d04",
+      "path_references": [
+        {
+          "insn": "0x6fc34",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6fccc",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6fd38",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x6fd84",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x700d8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x70208",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x7023c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x70280",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x70314",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x70368",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x704e0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x70528",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x7057c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x705c8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x705f4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x70640",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x70970",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x70a44",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x70a7c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x70b04",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x70b50",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00070e30",
+      "end_exclusive": "0x000727e0",
+      "path_references": [
+        {
+          "insn": "0x70fe8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x71098",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x71104",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x711bc",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x71290",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x712f4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x713dc",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x715d4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x71614",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x7166c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x71724",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x717ac",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x71838",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x7189c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x718d0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x71934",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x71a08",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x71a9c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x71b08",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x71d00",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x71db0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x71e24",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x71ec4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x720d8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x72144",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x721d8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x722e0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x7245c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x724cc",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00072824",
+      "end_exclusive": "0x00072978",
+      "path_references": [
+        {
+          "insn": "0x728a0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x728f0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00072d4c",
+      "end_exclusive": "0x00072dec",
+      "path_references": [
+        {
+          "insn": "0x72d74",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00072fb8",
+      "end_exclusive": "0x000753ac",
+      "path_references": [
+        {
+          "insn": "0x731a8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x73234",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x73378",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x737a8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x737dc",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x73810",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x73858",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x739d8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x73a2c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x73a64",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x73ab8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x73c2c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x73c70",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x73ca4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x73cd4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x73d74",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x73dbc",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x73e70",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x741c4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x7428c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x743a4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x74498",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x7450c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x745fc",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x74714",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x747c4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x74838",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x748c4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x74934",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x74990",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x749e4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x74a4c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x74aa4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x752f4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x75330",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00075498",
+      "end_exclusive": "0x00076588",
+      "path_references": [
+        {
+          "insn": "0x7557c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00076b28",
+      "end_exclusive": "0x00076e48",
+      "path_references": [
+        {
+          "insn": "0x76bc8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x76d94",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00076f54",
+      "end_exclusive": "0x000772d8",
+      "path_references": [
+        {
+          "insn": "0x770c4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x771d0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00077d64",
+      "end_exclusive": "0x0007863c",
+      "path_references": [
+        {
+          "insn": "0x77dd8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x78330",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x785f0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0007863c",
+      "end_exclusive": "0x0007870c",
+      "path_references": [
+        {
+          "insn": "0x786cc",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00078810",
+      "end_exclusive": "0x000790c0",
+      "path_references": [
+        {
+          "insn": "0x78c64",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x78cc0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x78db0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x78e18",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000790c0",
+      "end_exclusive": "0x00079778",
+      "path_references": [
+        {
+          "insn": "0x796f0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00079778",
+      "end_exclusive": "0x0007bc78",
+      "path_references": [
+        {
+          "insn": "0x79ba4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x79c14",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x79f98",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x7a19c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x7a230",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x7a29c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x7a5b4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x7a628",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x7a6c0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x7aa90",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x7ab68",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x7abd0",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x7b3c8",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x7b92c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x7b990",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0007be58",
+      "end_exclusive": "0x0007bfc0",
+      "path_references": [
+        {
+          "insn": "0x7bf50",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0007bfc0",
+      "end_exclusive": "0x0007c208",
+      "path_references": [
+        {
+          "insn": "0x7c02c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x7c0b4",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x7c104",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        },
+        {
+          "insn": "0x7c168",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0007c3d4",
+      "end_exclusive": "0x00081f68",
+      "path_references": [
+        {
+          "insn": "0x7c58c",
+          "string": "0x5e50be",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": []
+}

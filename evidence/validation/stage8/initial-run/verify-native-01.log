@@ -1,0 +1,2 @@
+COMMAND: ['/opt/pyvenv/bin/python', 'tests/test_stage8_interpreter.py']
+{"status": "PASS", "synthetic_instruction_cases": 3779, "instructions": ["BLX register, A32 targets"], "unsupported_thumb_rejected": true, "ELF_not_executed_as_process": true}

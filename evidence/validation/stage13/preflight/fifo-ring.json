@@ -1,0 +1,19 @@
+{
+  "group": "fifo-ring",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage13_differential.py",
+        "ring"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "fifo-ring-00.log",
+      "seconds": 2.809,
+      "sha256": "a23028134db6cd78f457cea936af8162ee3d6099c8650429e6d3dfcafb40f906"
+    }
+  ]
+}

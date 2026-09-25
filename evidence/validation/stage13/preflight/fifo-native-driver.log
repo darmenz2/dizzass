@@ -1,0 +1,2 @@
+fifo-native 1/2: return=0 expected=0 (0.004s)
+fifo-native 2/2: return=0 expected=0 (2.35s)

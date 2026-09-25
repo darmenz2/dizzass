@@ -1,0 +1,102 @@
+[
+  {
+    "path": "Makefile.recovery",
+    "previous_sha256": "fbda42c71ca33cde2b8126af7296a69e48e09e912fc500eff75ab7a44359eda9",
+    "current_sha256": "47f329ff8cc299a4a76e5436d8010b124fb1d9870c27f916e9ab94f68ff27f03"
+  },
+  {
+    "path": "RECONSTRUCTION_README_RU.md",
+    "previous_sha256": "73cf92fd31d53d0292d6952c5014f341ddb4bdd40073c1aa4a4d63a7a27b542e",
+    "current_sha256": "a18e55700085e7ad4e597caab046121cd35962e30de4be02d402c671d35ffeba"
+  },
+  {
+    "path": "RECONSTRUCTION_STATUS.json",
+    "previous_sha256": "cf04fa99a8c9eff128650037b8baa0657edef5fddad19638f11c64287f4353e9",
+    "current_sha256": "8732660ca5380c8c1e26911e48333c3b6038d111b5a78600095cce8ba6ba8ab6"
+  },
+  {
+    "path": "STAGE6_CHANGELOG_RU.md",
+    "previous_sha256": null,
+    "current_sha256": "f6b225f8e06183d1553be9985a9642d46d380bdc7645fe9441cbe9aac1d4879f"
+  },
+  {
+    "path": "include/xminer/recovery/work_rx.h",
+    "previous_sha256": null,
+    "current_sha256": "37d50c90b74bad73623100d52a269ab2c22568061e7637d6682e42d66722a60b"
+  },
+  {
+    "path": "reconstruction/cgminer-overlay.am",
+    "previous_sha256": "61ead573e87c1de108140343f73a106dcd6d2b65aadf7c2e5fe243357de88e70",
+    "current_sha256": "64fd3328af0d1ff25dea6a1711d9e5b142e94f01040baa9c168098a932626368"
+  },
+  {
+    "path": "reconstruction/support/work_rx_stream.c",
+    "previous_sha256": null,
+    "current_sha256": "c825fa7e559baf15d6f839e20b170a9d19293ad76030fca91cb9fa765762c07d"
+  },
+  {
+    "path": "src/backend/work-gen/work-gen.c",
+    "previous_sha256": "327e94809c8909124ced9e4a121f955d2eeca1819b62c0d5a288ded82bff58b8",
+    "current_sha256": "9ba0125b1f9341c5821434adb549ac795101d4cadf34736042ebcf41d83a62f0"
+  },
+  {
+    "path": "tests/arm32_stage6_instructions.S",
+    "previous_sha256": null,
+    "current_sha256": "7a1d51eeb530814e198bb305a93cc9c0d1e1e459ee463f176101aeab2f9f8502"
+  },
+  {
+    "path": "tests/test_stage6_interpreter.py",
+    "previous_sha256": null,
+    "current_sha256": "6ed1cdbbf7acd787af3d22b96198d52f9f13b9c9b104ab60173d8a6f5ebcab6e"
+  },
+  {
+    "path": "tests/test_stage6_rx_differential.py",
+    "previous_sha256": null,
+    "current_sha256": "9af20bbe4d760e0e1bf162111412737aaa9c77faa96e1d320e83a78ef027f328"
+  },
+  {
+    "path": "tests/test_stage6_stream_differential.py",
+    "previous_sha256": null,
+    "current_sha256": "5886003a7957811faa155f4e5317ba488770975243873ad98d15b84740005d7a"
+  },
+  {
+    "path": "tests/test_tree.py",
+    "previous_sha256": "835e56081a85a57cfb8a1e3c517f170999c6a23d01484aab8c481f227e9f3b64",
+    "current_sha256": "96fa4935810033d235f633ff304218d550a2a8355693ce781fef4301e370e70e"
+  },
+  {
+    "path": "tests/test_work_rx.c",
+    "previous_sha256": null,
+    "current_sha256": "e8abfe349018740a1a7187c88ee3b888545f2a4e47c49d3d9819b5c95d4d2214"
+  },
+  {
+    "path": "tests/test_work_rx_linux_pty.c",
+    "previous_sha256": null,
+    "current_sha256": "57a19776142eac2360a73cc71d416693af17827a8d0c33d4c2113977d16aefd5"
+  },
+  {
+    "path": "tests/work_rx_oracle.py",
+    "previous_sha256": null,
+    "current_sha256": "41a2bfef037d3bd491099e3474cd1c4aacefed696191407d914806393a82801c"
+  },
+  {
+    "path": "tools/arm32_rx_subset.py",
+    "previous_sha256": null,
+    "current_sha256": "d1944972347f5b4e64ba3b291bdaf7d924dfb3096c4075845b2162f80400cdf6"
+  },
+  {
+    "path": "tools/build_source_tree.py",
+    "previous_sha256": "e501033dc8e9e54b29fde426464a65a891e7c5d3cb80e63a7f98d713c7aa734b",
+    "current_sha256": "f2f3a272f5156f4c8dcecf0e3c5fc940d9d4aec19cd97e346fc4ffd5bfe22161"
+  },
+  {
+    "path": "tools/check_stage6_evidence.py",
+    "previous_sha256": null,
+    "current_sha256": "f57ac71b288c82987de28e2f38338b4a90d6b53328c3f46232c10b9568e11cc1"
+  },
+  {
+    "path": "tools/verify_stage6.py",
+    "previous_sha256": null,
+    "current_sha256": "14e8620930c6599871a5829681c9f1c1a0ebebca276da8f6e3fc14301d3205a3"
+  }
+]

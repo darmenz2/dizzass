@@ -1,0 +1,392 @@
+{
+  "path": "libbitmain/src/chip/chip1362.c",
+  "observed_as": "/tmp/build/libbitmain/src/chip/chip1362.c",
+  "status": "pending-not-implemented",
+  "evidence": [
+    {
+      "address": "0x5ea9c7",
+      "xor": 229,
+      "decoded_length": 42,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x000d9050",
+      "end_exclusive": "0x000d9280",
+      "path_references": [
+        {
+          "insn": "0xd9204",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000d9288",
+      "end_exclusive": "0x000d954c",
+      "path_references": [
+        {
+          "insn": "0xd9320",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        },
+        {
+          "insn": "0xd9428",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        },
+        {
+          "insn": "0xd94c8",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000d954c",
+      "end_exclusive": "0x000d962c",
+      "path_references": [
+        {
+          "insn": "0xd95e4",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000d962c",
+      "end_exclusive": "0x000d9810",
+      "path_references": [
+        {
+          "insn": "0xd967c",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        },
+        {
+          "insn": "0xd976c",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000d9810",
+      "end_exclusive": "0x000d9a5c",
+      "path_references": [
+        {
+          "insn": "0xd9948",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        },
+        {
+          "insn": "0xd9994",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        },
+        {
+          "insn": "0xd99f0",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000d9b44",
+      "end_exclusive": "0x000da0d0",
+      "path_references": [
+        {
+          "insn": "0xd9c68",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        },
+        {
+          "insn": "0xd9cb4",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        },
+        {
+          "insn": "0xd9e3c",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        },
+        {
+          "insn": "0xd9e88",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        },
+        {
+          "insn": "0xd9eb8",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        },
+        {
+          "insn": "0xd9f14",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        },
+        {
+          "insn": "0xd9fe0",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000da268",
+      "end_exclusive": "0x000da43c",
+      "path_references": [
+        {
+          "insn": "0xda398",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        },
+        {
+          "insn": "0xda3ec",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000da454",
+      "end_exclusive": "0x000da540",
+      "path_references": [
+        {
+          "insn": "0xda4bc",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000da540",
+      "end_exclusive": "0x000da6c8",
+      "path_references": [
+        {
+          "insn": "0xda638",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000da6c8",
+      "end_exclusive": "0x000da7b0",
+      "path_references": [
+        {
+          "insn": "0xda72c",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000da7f4",
+      "end_exclusive": "0x000da904",
+      "path_references": [
+        {
+          "insn": "0xda8b8",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000da904",
+      "end_exclusive": "0x000daa14",
+      "path_references": [
+        {
+          "insn": "0xda958",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        },
+        {
+          "insn": "0xda9c0",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000daa14",
+      "end_exclusive": "0x000dac5c",
+      "path_references": [
+        {
+          "insn": "0xdaadc",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        },
+        {
+          "insn": "0xdabd4",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000dac6c",
+      "end_exclusive": "0x000db0c0",
+      "path_references": [
+        {
+          "insn": "0xdafe8",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000db148",
+      "end_exclusive": "0x000db1e4",
+      "path_references": [
+        {
+          "insn": "0xdb19c",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000db1ec",
+      "end_exclusive": "0x000db314",
+      "path_references": [
+        {
+          "insn": "0xdb2b8",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000db314",
+      "end_exclusive": "0x000db3f4",
+      "path_references": [
+        {
+          "insn": "0xdb374",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000db3f4",
+      "end_exclusive": "0x000db590",
+      "path_references": [
+        {
+          "insn": "0xdb4a0",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        },
+        {
+          "insn": "0xdb500",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000db680",
+      "end_exclusive": "0x000dbb54",
+      "path_references": [
+        {
+          "insn": "0xdb850",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        },
+        {
+          "insn": "0xdba2c",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        },
+        {
+          "insn": "0xdbac8",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000dbdbc",
+      "end_exclusive": "0x000dc0c8",
+      "path_references": [
+        {
+          "insn": "0xdc068",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000dc1c8",
+      "end_exclusive": "0x000dcbe0",
+      "path_references": [
+        {
+          "insn": "0xdc278",
+          "string": "0x5ea9c7",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/chip/chip1362.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": []
+}

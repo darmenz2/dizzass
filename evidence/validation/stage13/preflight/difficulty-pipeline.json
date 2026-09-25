@@ -1,0 +1,19 @@
+{
+  "group": "difficulty-pipeline",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage10_differential.py",
+        "pipeline"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "difficulty-pipeline-00.log",
+      "seconds": 35.271,
+      "sha256": "9465af878c518da97be044d08e3af9e12839944ab08872581f64ec54f79de953"
+    }
+  ]
+}

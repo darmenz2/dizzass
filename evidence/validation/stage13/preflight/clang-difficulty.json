@@ -1,0 +1,20 @@
+{
+  "group": "clang-difficulty",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "make",
+        "-f",
+        "Makefile.recovery",
+        "stage10-clang"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "clang-difficulty-00.log",
+      "seconds": 50.151,
+      "sha256": "83223ba2e16153dc706029bc1d11bb5c5fae45aab539281b7c89d649312e6efd"
+    }
+  ]
+}

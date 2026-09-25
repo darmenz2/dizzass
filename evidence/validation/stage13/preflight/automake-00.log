@@ -1,0 +1,2 @@
+COMMAND: ['/opt/pyvenv/bin/python3', 'tests/test_overlay_automake.py']
+Automake fixture PASS: reproduced basename collision and fixed it with subdir-objects; upstream cgminer NOT built.

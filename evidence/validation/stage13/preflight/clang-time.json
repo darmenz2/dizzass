@@ -1,0 +1,20 @@
+{
+  "group": "clang-time",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "make",
+        "-f",
+        "Makefile.recovery",
+        "stage12-clang"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "clang-time-00.log",
+      "seconds": 17.401,
+      "sha256": "29c90ce764eb2c0690b87059743cdbc8fad31e990a9d9640040c7668b7634b3f"
+    }
+  ]
+}

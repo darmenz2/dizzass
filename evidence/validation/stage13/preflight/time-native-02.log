@@ -1,0 +1,2 @@
+COMMAND: ['/opt/pyvenv/bin/python3', 'tests/test_stage12_differential.py', 'composition']
+{"stage": 12, "status": "PASS", "group": "composition", "separate_compositions": 70, "original_clone_then_original_sha256d": true, "hashlib_independent_check": true, "pool_policy_checked": false}

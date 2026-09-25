@@ -1,0 +1,35 @@
+COMMAND: ['make', '-f', 'Makefile.recovery', 'sanitize', 'sanitize-linux-pty', 'sanitize-linux-pty-rx']
+mkdir -p build
+cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer src/backend/work-gen/work-gen.c reconstruction/support/sha256_midstate.c reconstruction/support/work_rx_stream.c tests/test_work_rx.c -o build/test-work-rx-sanitized
+ASAN_OPTIONS=detect_leaks=1 ./build/test-work-rx-sanitized
+Stage 6 C safety and stream chunk-invariance: PASS (3600 stream replays)
+mkdir -p build
+cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_work_nonce.c -o build/test-work-nonce-sanitized
+ASAN_OPTIONS=detect_leaks=1 ./build/test-work-nonce-sanitized
+Stage7 native: SHA KATs, candidate fixture, guards, 176 fragment streams and lookup failure cases PASS
+mkdir -p build
+cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_nonce_verify.c -o build/test-nonce-verify-sanitized
+ASAN_OPTIONS=detect_leaks=1 ./build/test-nonce-verify-sanitized
+Stage8 native cases: 198 PASS; no device access
+mkdir -p build
+cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_chip1398.c -o build/test-sanitized
+ASAN_OPTIONS=detect_leaks=0 ./build/test-sanitized
+host unit tests: PASS (no hardware)
+cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_pll_aml.c -o build/test-pll-aml-sanitized
+ASAN_OPTIONS=detect_leaks=0 ./build/test-pll-aml-sanitized
+PLL/AML host guards and flow tests: PASS (no hardware)
+cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_reg_cache.c -o build/test-reg-cache-sanitized
+ASAN_OPTIONS=detect_leaks=1 ./build/test-reg-cache-sanitized
+Stage 4 cache/transaction native assertions: PASS
+cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer libbitmain/src/uart.c tests/test_uart.c -o build/test-uart-sanitized
+ASAN_OPTIONS=detect_leaks=1 ./build/test-uart-sanitized
+UART native API guards, legacy retry and lifecycle: PASS
+mkdir -p build
+cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer libbitmain/src/uart.c libbitmain/src/aml/chip.c tests/test_uart_linux_pty.c -pthread -o build/test-uart-pty-sanitized
+ASAN_OPTIONS=detect_leaks=1 ./build/test-uart-pty-sanitized
+Linux PTY: open/termios2/arbitrary baud/fragmented RX/TX frame/flush/destroy: PASS
+No physical UART, chip protocol, timings, init, mining or autotune tested.
+mkdir -p build
+cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer libbitmain/src/uart.c src/backend/work-gen/work-gen.c reconstruction/support/sha256_midstate.c reconstruction/support/work_rx_stream.c tests/test_work_rx_linux_pty.c -pthread -o build/test-work-rx-pty-sanitized
+ASAN_OPTIONS=detect_leaks=1 ./build/test-work-rx-pty-sanitized
+Stage 6 real Linux PTY -> UART -> RX: PASS (88 decoded messages)

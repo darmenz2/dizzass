@@ -1,0 +1,538 @@
+{
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "passed": true,
+  "cases": {
+    "PLL legacy: return and all 32 result bytes": 619,
+    "PLL round4: return and all 32 result bytes": 619,
+    "PLL register 0x08 word at SET_CONFIG boundary": 517,
+    "AML chain mask with injected model lookup": 1040,
+    "AML send: return, allocation, lock, write bytes, unlock, release": 371,
+    "AML pure framing versus original write buffer": 53
+  },
+  "total_cases": 3219,
+  "elapsed_seconds": 7.822,
+  "pll_constraint_record": {
+    "address": "0x5ebea8",
+    "hex": "0000000000003940000000000000a9400000000000c0a2400000000000409f4002000000fa00000007000000000000000000000000000440",
+    "model_mapping_to_T21_confirmed": false
+  },
+  "pll_vectors": [
+    {
+      "algorithm": "legacy",
+      "requested_mhz": 0.0,
+      "return": -1,
+      "result_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+      "vco_mhz": 0.0,
+      "dividers": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "algorithm": "legacy",
+      "requested_mhz": 200.0,
+      "return": 0,
+      "result_hex": "0000000000409f4002000000a000000005000000020000000100000000000000",
+      "vco_mhz": 2000.0,
+      "dividers": [
+        2,
+        160,
+        5,
+        2
+      ]
+    },
+    {
+      "algorithm": "legacy",
+      "requested_mhz": 400.0,
+      "return": 0,
+      "result_hex": "0000000000409f4002000000a000000005000000010000000100000000000000",
+      "vco_mhz": 2000.0,
+      "dividers": [
+        2,
+        160,
+        5,
+        1
+      ]
+    },
+    {
+      "algorithm": "legacy",
+      "requested_mhz": 500.0,
+      "return": 0,
+      "result_hex": "0000000000409f4002000000a000000004000000010000000100000000000000",
+      "vco_mhz": 2000.0,
+      "dividers": [
+        2,
+        160,
+        4,
+        1
+      ]
+    },
+    {
+      "algorithm": "legacy",
+      "requested_mhz": 625.0,
+      "return": 0,
+      "result_hex": "000000000088a34002000000c800000004000000010000000100000000000000",
+      "vco_mhz": 2500.0,
+      "dividers": [
+        2,
+        200,
+        4,
+        1
+      ]
+    },
+    {
+      "algorithm": "legacy",
+      "requested_mhz": 1000.0,
+      "return": 0,
+      "result_hex": "0000000000409f4002000000a000000002000000010000000100000000000000",
+      "vco_mhz": 2000.0,
+      "dividers": [
+        2,
+        160,
+        2,
+        1
+      ]
+    },
+    {
+      "algorithm": "legacy",
+      "requested_mhz": 400.0,
+      "return": 0,
+      "result_hex": "0000000000409f4002000000a000000005000000010000000100000000000000",
+      "vco_mhz": 2000.0,
+      "dividers": [
+        2,
+        160,
+        5,
+        1
+      ]
+    },
+    {
+      "algorithm": "legacy",
+      "requested_mhz": 500.0,
+      "return": 0,
+      "result_hex": "0000000000409f4002000000a000000004000000010000000100000000000000",
+      "vco_mhz": 2000.0,
+      "dividers": [
+        2,
+        160,
+        4,
+        1
+      ]
+    },
+    {
+      "algorithm": "legacy",
+      "requested_mhz": 625.0,
+      "return": 0,
+      "result_hex": "000000000088a34002000000c800000004000000010000000100000000000000",
+      "vco_mhz": 2500.0,
+      "dividers": [
+        2,
+        200,
+        4,
+        1
+      ]
+    },
+    {
+      "algorithm": "round4",
+      "requested_mhz": 0.0,
+      "return": -1,
+      "result_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+      "vco_mhz": 0.0,
+      "dividers": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "algorithm": "round4",
+      "requested_mhz": 200.0,
+      "return": 0,
+      "result_hex": "0000000000c0a24002000000c000000004000000030000000100000000000000",
+      "vco_mhz": 2400.0,
+      "dividers": [
+        2,
+        192,
+        4,
+        3
+      ]
+    },
+    {
+      "algorithm": "round4",
+      "requested_mhz": 400.0,
+      "return": 0,
+      "result_hex": "0000000000c0a24002000000c000000003000000020000000100000000000000",
+      "vco_mhz": 2400.0,
+      "dividers": [
+        2,
+        192,
+        3,
+        2
+      ]
+    },
+    {
+      "algorithm": "round4",
+      "requested_mhz": 500.0,
+      "return": 0,
+      "result_hex": "0000000000409f4002000000a000000002000000020000000100000000000000",
+      "vco_mhz": 2000.0,
+      "dividers": [
+        2,
+        160,
+        2,
+        2
+      ]
+    },
+    {
+      "algorithm": "round4",
+      "requested_mhz": 625.0,
+      "return": 0,
+      "result_hex": "000000000088a34002000000c800000002000000020000000100000000000000",
+      "vco_mhz": 2500.0,
+      "dividers": [
+        2,
+        200,
+        2,
+        2
+      ]
+    },
+    {
+      "algorithm": "round4",
+      "requested_mhz": 1000.0,
+      "return": 0,
+      "result_hex": "0000000000409f4002000000a000000002000000010000000100000000000000",
+      "vco_mhz": 2000.0,
+      "dividers": [
+        2,
+        160,
+        2,
+        1
+      ]
+    },
+    {
+      "algorithm": "round4",
+      "requested_mhz": 400.0,
+      "return": 0,
+      "result_hex": "0000000000c0a24002000000c000000003000000020000000100000000000000",
+      "vco_mhz": 2400.0,
+      "dividers": [
+        2,
+        192,
+        3,
+        2
+      ]
+    },
+    {
+      "algorithm": "round4",
+      "requested_mhz": 500.0,
+      "return": 0,
+      "result_hex": "0000000000409f4002000000a000000002000000020000000100000000000000",
+      "vco_mhz": 2000.0,
+      "dividers": [
+        2,
+        160,
+        2,
+        2
+      ]
+    },
+    {
+      "algorithm": "round4",
+      "requested_mhz": 625.0,
+      "return": 0,
+      "result_hex": "000000000088a34002000000c800000002000000020000000100000000000000",
+      "vco_mhz": 2500.0,
+      "dividers": [
+        2,
+        200,
+        2,
+        2
+      ]
+    }
+  ],
+  "aml_trace_examples": [
+    {
+      "condition": "exact",
+      "return": 0,
+      "trace": [
+        [
+          "allocate",
+          11
+        ],
+        [
+          "lock"
+        ],
+        [
+          "write",
+          4660,
+          "55aa34640c39fb4db6afc1"
+        ],
+        [
+          "unlock"
+        ],
+        [
+          "release"
+        ]
+      ]
+    },
+    {
+      "condition": "short",
+      "return": -1,
+      "trace": [
+        [
+          "allocate",
+          11
+        ],
+        [
+          "lock"
+        ],
+        [
+          "write",
+          4660,
+          "55aa34640c39fb4db6afc1"
+        ],
+        [
+          "unlock"
+        ],
+        [
+          "release"
+        ]
+      ]
+    },
+    {
+      "condition": "negative",
+      "return": -1,
+      "trace": [
+        [
+          "allocate",
+          11
+        ],
+        [
+          "lock"
+        ],
+        [
+          "write",
+          4660,
+          "55aa34640c39fb4db6afc1"
+        ],
+        [
+          "unlock"
+        ],
+        [
+          "release"
+        ]
+      ]
+    },
+    {
+      "condition": "oversize",
+      "return": -1,
+      "trace": [
+        [
+          "allocate",
+          11
+        ],
+        [
+          "lock"
+        ],
+        [
+          "write",
+          4660,
+          "55aa34640c39fb4db6afc1"
+        ],
+        [
+          "unlock"
+        ],
+        [
+          "release"
+        ]
+      ]
+    },
+    {
+      "condition": "zero",
+      "return": -1,
+      "trace": [
+        [
+          "allocate",
+          11
+        ],
+        [
+          "lock"
+        ],
+        [
+          "write",
+          4660,
+          "55aa34640c39fb4db6afc1"
+        ],
+        [
+          "unlock"
+        ],
+        [
+          "release"
+        ]
+      ]
+    },
+    {
+      "condition": "alloc-fail",
+      "return": -1,
+      "trace": [
+        [
+          "allocate",
+          11
+        ]
+      ]
+    },
+    {
+      "condition": "no-uart",
+      "return": -1,
+      "trace": []
+    },
+    {
+      "condition": "exact",
+      "return": 0,
+      "trace": [
+        [
+          "allocate",
+          11
+        ],
+        [
+          "lock"
+        ],
+        [
+          "write",
+          4660,
+          "55aa784ed34b7f15c38a11"
+        ],
+        [
+          "unlock"
+        ],
+        [
+          "release"
+        ]
+      ]
+    },
+    {
+      "condition": "short",
+      "return": -1,
+      "trace": [
+        [
+          "allocate",
+          11
+        ],
+        [
+          "lock"
+        ],
+        [
+          "write",
+          4660,
+          "55aa784ed34b7f15c38a11"
+        ],
+        [
+          "unlock"
+        ],
+        [
+          "release"
+        ]
+      ]
+    },
+    {
+      "condition": "negative",
+      "return": -1,
+      "trace": [
+        [
+          "allocate",
+          11
+        ],
+        [
+          "lock"
+        ],
+        [
+          "write",
+          4660,
+          "55aa784ed34b7f15c38a11"
+        ],
+        [
+          "unlock"
+        ],
+        [
+          "release"
+        ]
+      ]
+    },
+    {
+      "condition": "oversize",
+      "return": -1,
+      "trace": [
+        [
+          "allocate",
+          11
+        ],
+        [
+          "lock"
+        ],
+        [
+          "write",
+          4660,
+          "55aa784ed34b7f15c38a11"
+        ],
+        [
+          "unlock"
+        ],
+        [
+          "release"
+        ]
+      ]
+    },
+    {
+      "condition": "zero",
+      "return": -1,
+      "trace": [
+        [
+          "allocate",
+          11
+        ],
+        [
+          "lock"
+        ],
+        [
+          "write",
+          4660,
+          "55aa784ed34b7f15c38a11"
+        ],
+        [
+          "unlock"
+        ],
+        [
+          "release"
+        ]
+      ]
+    },
+    {
+      "condition": "alloc-fail",
+      "return": -1,
+      "trace": [
+        [
+          "allocate",
+          11
+        ]
+      ]
+    },
+    {
+      "condition": "no-uart",
+      "return": -1,
+      "trace": []
+    }
+  ],
+  "method": "New host C compared with unchanged original A32 instructions under local finite-input VFP/A32 interpreter",
+  "hardware_tested": false,
+  "full_miner_tested": false,
+  "limits": [
+    "Local subset interpreter is not an independently certified CPU emulator.",
+    "VFP tests cover finite normal numbers/default rounding, not FPSCR exception behavior or denormals.",
+    "Original logging calls are skipped; allocation/copy/serialization/UART/model lookup are injected and traced.",
+    "New API pointer/capacity/finite-input/iteration guards are tested separately, not claimed vendor behavior.",
+    "PLL packing tested at call boundary, not original full cache/write caller or physical PLL.",
+    "No claim of timing, multitasking, UART hardware, T21 model dispatch, mining or autotune equivalence."
+  ]
+}

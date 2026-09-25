@@ -1,0 +1,137 @@
+{
+  "path": "src/backend/tuner/tuner_nonce.c",
+  "observed_as": "/tmp/build/src/backend/tuner/tuner_nonce.c",
+  "status": "pending-not-implemented",
+  "evidence": [
+    {
+      "address": "0x5e7b4e",
+      "xor": 156,
+      "decoded_length": 43,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x0009f2e8",
+      "end_exclusive": "0x0009fab4",
+      "path_references": [
+        {
+          "insn": "0x9f68c",
+          "string": "0x5e7b4e",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_nonce.c"
+        },
+        {
+          "insn": "0x9f828",
+          "string": "0x5e7b4e",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_nonce.c"
+        },
+        {
+          "insn": "0x9f874",
+          "string": "0x5e7b4e",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_nonce.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0009fc80",
+      "end_exclusive": "0x000a0824",
+      "path_references": [
+        {
+          "insn": "0x9fdf0",
+          "string": "0x5e7b4e",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_nonce.c"
+        },
+        {
+          "insn": "0xa058c",
+          "string": "0x5e7b4e",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_nonce.c"
+        },
+        {
+          "insn": "0xa073c",
+          "string": "0x5e7b4e",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_nonce.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000a0824",
+      "end_exclusive": "0x000a0af8",
+      "path_references": [
+        {
+          "insn": "0xa0a50",
+          "string": "0x5e7b4e",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_nonce.c"
+        },
+        {
+          "insn": "0xa0aa8",
+          "string": "0x5e7b4e",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_nonce.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000a0af8",
+      "end_exclusive": "0x000a1160",
+      "path_references": [
+        {
+          "insn": "0xa0ca4",
+          "string": "0x5e7b4e",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_nonce.c"
+        },
+        {
+          "insn": "0xa0f5c",
+          "string": "0x5e7b4e",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_nonce.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000a1160",
+      "end_exclusive": "0x000a13a8",
+      "path_references": [
+        {
+          "insn": "0xa1188",
+          "string": "0x5e7b4e",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_nonce.c"
+        },
+        {
+          "insn": "0xa11fc",
+          "string": "0x5e7b4e",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_nonce.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000a1b58",
+      "end_exclusive": "0x000a1fe0",
+      "path_references": [
+        {
+          "insn": "0xa1b98",
+          "string": "0x5e7b4e",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_nonce.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": []
+}

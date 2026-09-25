@@ -1,0 +1,9 @@
+{
+  "applied_to_exact_stage13": true,
+  "compared_files": 787,
+  "excluded": [
+    "reconstruction/overlay-files.json",
+    "new patch/review files themselves"
+  ],
+  "hardware_changed": false
+}

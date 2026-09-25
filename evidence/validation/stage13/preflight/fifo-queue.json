@@ -1,0 +1,19 @@
+{
+  "group": "fifo-queue",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage13_differential.py",
+        "queue"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "fifo-queue-00.log",
+      "seconds": 2.051,
+      "sha256": "3d848136e51a3df3faf30d150ed9dcfa6ba85ce21b838ac47fc56307a0d940b4"
+    }
+  ]
+}

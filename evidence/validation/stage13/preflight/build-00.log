@@ -1,0 +1,2 @@
+COMMAND: ['make', '-f', 'Makefile.recovery', 'clean']
+rm -rf build

@@ -1,0 +1,91 @@
+{
+  "group": "core",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "./build/test-chip1398"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "core-00.log",
+      "seconds": 0.001,
+      "sha256": "53d45580aec8e36f1e85a2c3075d3fbd167e74ff6b56e5923c775f8490355a69"
+    },
+    {
+      "command": [
+        "./build/test-pll-aml"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "core-01.log",
+      "seconds": 0.001,
+      "sha256": "c65f8253803e8e38483b9e8289ae61b175e5636e0dd1f525dbe787c294d36f5d"
+    },
+    {
+      "command": [
+        "./build/test-reg-cache"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "core-02.log",
+      "seconds": 0.001,
+      "sha256": "9af9658aec1b4241ddbbdbe0bfdec191dac9b3b616391f9b6c52037115a44942"
+    },
+    {
+      "command": [
+        "./build/test-uart"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "core-03.log",
+      "seconds": 0.001,
+      "sha256": "0a01a3789cd9d994d0ba6b200a249cd41db7637505151efa5f8b6b64a4afb1dd"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_arm_subset.py"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "core-04.log",
+      "seconds": 0.615,
+      "sha256": "25ac88d3a7e0755f2c822bd3a87ef94401e7af07a15864f8b7d1f1d356fc44da"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_arm_differential.py"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "core-05.log",
+      "seconds": 2.426,
+      "sha256": "1a0829973f81d741d40cbd04af8a609ea8c9c8e3a19ad8da9d0409f9edd5db24"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage3_interpreter.py"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "core-06.log",
+      "seconds": 0.695,
+      "sha256": "89987c98c17224f5e21956b87bfdd24017156167f429574887eb9998e32ce820"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage3_differential.py"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "core-07.log",
+      "seconds": 6.527,
+      "sha256": "f58f89aa25f9e5522f0a8d80bec2a8c85c04a676e9ab082f4faebc1bac9007fd"
+    }
+  ]
+}

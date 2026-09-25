@@ -1,0 +1,136 @@
+{
+  "path": "libbitmain/src/bb/i2c.c",
+  "observed_as": "/tmp/build/libbitmain/src/bb/i2c.c",
+  "status": "pending-not-implemented",
+  "evidence": [
+    {
+      "address": "0x5eeb08",
+      "xor": 40,
+      "decoded_length": 35,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x0011e6d8",
+      "end_exclusive": "0x0011e850",
+      "path_references": [
+        {
+          "insn": "0x11e794",
+          "string": "0x5eeb08",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/bb/i2c.c"
+        },
+        {
+          "insn": "0x11e7e0",
+          "string": "0x5eeb08",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/bb/i2c.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0011e8a8",
+      "end_exclusive": "0x0011ebd4",
+      "path_references": [
+        {
+          "insn": "0x11e968",
+          "string": "0x5eeb08",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/bb/i2c.c"
+        },
+        {
+          "insn": "0x11e9b8",
+          "string": "0x5eeb08",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/bb/i2c.c"
+        },
+        {
+          "insn": "0x11eab4",
+          "string": "0x5eeb08",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/bb/i2c.c"
+        },
+        {
+          "insn": "0x11eae8",
+          "string": "0x5eeb08",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/bb/i2c.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0011ebd4",
+      "end_exclusive": "0x0011ee38",
+      "path_references": [
+        {
+          "insn": "0x11ec84",
+          "string": "0x5eeb08",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/bb/i2c.c"
+        },
+        {
+          "insn": "0x11ecdc",
+          "string": "0x5eeb08",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/bb/i2c.c"
+        },
+        {
+          "insn": "0x11ed70",
+          "string": "0x5eeb08",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/bb/i2c.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0011ee38",
+      "end_exclusive": "0x0011f114",
+      "path_references": [
+        {
+          "insn": "0x11efc8",
+          "string": "0x5eeb08",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/bb/i2c.c"
+        },
+        {
+          "insn": "0x11effc",
+          "string": "0x5eeb08",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/bb/i2c.c"
+        },
+        {
+          "insn": "0x11f03c",
+          "string": "0x5eeb08",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/bb/i2c.c"
+        },
+        {
+          "insn": "0x11f094",
+          "string": "0x5eeb08",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/bb/i2c.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0011f114",
+      "end_exclusive": "0x0011f620",
+      "path_references": [
+        {
+          "insn": "0x11f220",
+          "string": "0x5eeb08",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/bb/i2c.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": []
+}

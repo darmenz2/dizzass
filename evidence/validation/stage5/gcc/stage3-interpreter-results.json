@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "synthetic_cases": 1318,
+  "fixture_functions": 12,
+  "scope": "CLZ, halfword post-index store/load, finite binary64 arithmetic/conversions/flags/transfers",
+  "independent_cpu_emulator": false
+}

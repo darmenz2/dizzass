@@ -1,0 +1,96 @@
+{
+  "path": "libbitmain/src/uart.c",
+  "observed_as": "/tmp/build/libbitmain/src/uart.c",
+  "status": "partial-verified-slices",
+  "evidence": [
+    {
+      "address": "0x5edbbf",
+      "xor": 170,
+      "decoded_length": 33,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x0010e0c8",
+      "end_exclusive": "0x0010e938",
+      "path_references": [
+        {
+          "insn": "0x10e1a8",
+          "string": "0x5edbbf",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/uart.c",
+          "text_corrected_from_constructor": true
+        },
+        {
+          "insn": "0x10e284",
+          "string": "0x5edbbf",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/uart.c",
+          "text_corrected_from_constructor": true
+        },
+        {
+          "insn": "0x10e3a0",
+          "string": "0x5edbbf",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/uart.c",
+          "text_corrected_from_constructor": true
+        },
+        {
+          "insn": "0x10e3f4",
+          "string": "0x5edbbf",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/uart.c",
+          "text_corrected_from_constructor": true
+        },
+        {
+          "insn": "0x10e428",
+          "string": "0x5edbbf",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/uart.c",
+          "text_corrected_from_constructor": true
+        },
+        {
+          "insn": "0x10e47c",
+          "string": "0x5edbbf",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/uart.c",
+          "text_corrected_from_constructor": true
+        },
+        {
+          "insn": "0x10e560",
+          "string": "0x5edbbf",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/uart.c",
+          "text_corrected_from_constructor": true
+        },
+        {
+          "insn": "0x10e66c",
+          "string": "0x5edbbf",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/uart.c",
+          "text_corrected_from_constructor": true
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0010ea5c",
+      "end_exclusive": "0x0010ed2c",
+      "path_references": [
+        {
+          "insn": "0x10eadc",
+          "string": "0x5edbbf",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/uart.c",
+          "text_corrected_from_constructor": true
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": [
+    "libbitmain/src/uart.c"
+  ]
+}

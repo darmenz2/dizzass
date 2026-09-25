@@ -1,0 +1,19 @@
+{
+  "group": "storage-metadata",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage11_differential.py",
+        "metadata"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "storage-metadata-00.log",
+      "seconds": 1.239,
+      "sha256": "0003ca74a9a467e6ebe8148cd5c9bdf44fa2a7f78744b27fea9ab53a9b8013e8"
+    }
+  ]
+}

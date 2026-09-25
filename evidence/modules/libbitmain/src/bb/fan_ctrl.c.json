@@ -1,0 +1,81 @@
+{
+  "path": "libbitmain/src/bb/fan_ctrl.c",
+  "observed_as": "/tmp/build/libbitmain/src/bb/fan_ctrl.c",
+  "status": "pending-not-implemented",
+  "evidence": [
+    {
+      "address": "0x5ee993",
+      "xor": 73,
+      "decoded_length": 40,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x0011d5c8",
+      "end_exclusive": "0x0011d908",
+      "path_references": [
+        {
+          "insn": "0x11d870",
+          "string": "0x5ee993",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/bb/fan_ctrl.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0011d930",
+      "end_exclusive": "0x0011df8c",
+      "path_references": [
+        {
+          "insn": "0x11d9cc",
+          "string": "0x5ee993",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/bb/fan_ctrl.c"
+        },
+        {
+          "insn": "0x11dd88",
+          "string": "0x5ee993",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/bb/fan_ctrl.c"
+        },
+        {
+          "insn": "0x11dde8",
+          "string": "0x5ee993",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/bb/fan_ctrl.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0011df8c",
+      "end_exclusive": "0x0011e00c",
+      "path_references": [
+        {
+          "insn": "0x11dfb8",
+          "string": "0x5ee993",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/bb/fan_ctrl.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0011e120",
+      "end_exclusive": "0x0011e6d8",
+      "path_references": [
+        {
+          "insn": "0x11e134",
+          "string": "0x5ee993",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/bb/fan_ctrl.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": []
+}

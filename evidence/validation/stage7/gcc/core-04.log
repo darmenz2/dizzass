@@ -1,0 +1,2 @@
+COMMAND: ['/opt/pyvenv/bin/python3', 'tests/test_arm_subset.py']
+bounded A32 interpreter self-tests: PASS

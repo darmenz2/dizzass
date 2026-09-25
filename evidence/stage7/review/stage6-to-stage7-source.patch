@@ -1,0 +1,2512 @@
+--- a/Makefile.recovery
++++ b/Makefile.recovery
+@@ -7,8 +7,8 @@
+ CPPFLAGS += -Iinclude
+ CFLAGS ?= -O2 -g
+ STRICT = -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror
+-SOURCES = src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c
+-HEADERS = include/xminer/recovery/work_rx.h include/xminer/recovery/uart.h include/xminer/recovery/chip1398.h include/xminer/recovery/pll.h include/xminer/recovery/aml_chip.h include/xminer/recovery/reg_cache.h reconstruction/data/reg_cache_defaults.inc
++SOURCES = reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c
++HEADERS = include/xminer/recovery/work_nonce.h include/xminer/recovery/sha256_midstate.h include/xminer/recovery/work_rx.h include/xminer/recovery/uart.h include/xminer/recovery/chip1398.h include/xminer/recovery/pll.h include/xminer/recovery/aml_chip.h include/xminer/recovery/reg_cache.h reconstruction/data/reg_cache_defaults.inc
+ OBJECTS = $(patsubst %.c,build/host/%.o,$(SOURCES))
+ ARM_OBJECTS = $(patsubst %.c,build/arm/%.o,$(SOURCES))
+ .PHONY: all test linux-pty arm sanitize sanitize-linux-pty evidence-check clean full-runtime
+@@ -58,6 +58,7 @@
+ 	$(PYTHON) tests/test_stage5_aml_uart_differential.py
+ 	$(PYTHON) tools/check_stage5_evidence.py
+ 	$(PYTHON) tools/check_stage6_evidence.py
++	$(PYTHON) tools/check_stage7_evidence.py
+ 	$(PYTHON) tests/test_stage6_interpreter.py
+ 	$(PYTHON) tests/test_stage6_rx_differential.py
+ 	$(PYTHON) tests/test_stage6_stream_differential.py
+@@ -82,6 +83,7 @@
+ 	$(PYTHON) tools/extract_reg_cache_defaults.py
+ 	$(PYTHON) tools/check_stage5_evidence.py
+ 	$(PYTHON) tools/check_stage6_evidence.py
++	$(PYTHON) tools/check_stage7_evidence.py
+ full-runtime:
+ 	@echo "NOT IMPLEMENTED: T21 runtime/model dispatch/live transport/PLL programming/PSU/autotune are incomplete." >&2
+ 	@exit 2
+@@ -94,26 +96,63 @@
+ 	$(CLANG) --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -c tests/arm32_stage3_instructions.S -o tests/fixtures/arm32_stage3_instructions.o
+ 
+ # Stage 6 RX code plus a separately identified bounded integration adapter.
+-build/test-work-rx: src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c tests/test_work_rx.c include/xminer/recovery/work_rx.h
++build/test-work-rx: src/backend/work-gen/work-gen.c reconstruction/support/sha256_midstate.c reconstruction/support/work_rx_stream.c tests/test_work_rx.c include/xminer/recovery/work_rx.h
+ 	mkdir -p build
+-	$(CC) $(CPPFLAGS) $(CFLAGS) $(STRICT) src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c tests/test_work_rx.c -o $@
++	$(CC) $(CPPFLAGS) $(CFLAGS) $(STRICT) src/backend/work-gen/work-gen.c reconstruction/support/sha256_midstate.c reconstruction/support/work_rx_stream.c tests/test_work_rx.c -o $@
+ .PHONY: sanitize-work-rx
+ sanitize: sanitize-work-rx
+ sanitize-work-rx:
+ 	mkdir -p build
+-	$(CC) $(CPPFLAGS) -O1 -g $(STRICT) -fsanitize=address,undefined -fno-omit-frame-pointer src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c tests/test_work_rx.c -o build/test-work-rx-sanitized
++	$(CC) $(CPPFLAGS) -O1 -g $(STRICT) -fsanitize=address,undefined -fno-omit-frame-pointer src/backend/work-gen/work-gen.c reconstruction/support/sha256_midstate.c reconstruction/support/work_rx_stream.c tests/test_work_rx.c -o build/test-work-rx-sanitized
+ 	ASAN_OPTIONS=detect_leaks=1 ./build/test-work-rx-sanitized
+ .PHONY: fixtures-stage6
+ fixtures-stage6:
+ 	$(CLANG) --target=armv7-none-eabihf -marm -march=armv7-a -c tests/arm32_stage6_instructions.S -o tests/fixtures/arm32_stage6_instructions.o
+ 
+ .PHONY: linux-pty-rx sanitize-linux-pty-rx
+-build/test-work-rx-pty: libbitmain/src/uart.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c tests/test_work_rx_linux_pty.c $(HEADERS)
++build/test-work-rx-pty: libbitmain/src/uart.c src/backend/work-gen/work-gen.c reconstruction/support/sha256_midstate.c reconstruction/support/work_rx_stream.c tests/test_work_rx_linux_pty.c $(HEADERS)
+ 	mkdir -p build
+-	$(CC) $(CPPFLAGS) $(CFLAGS) $(STRICT) libbitmain/src/uart.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c tests/test_work_rx_linux_pty.c -pthread -o $@
++	$(CC) $(CPPFLAGS) $(CFLAGS) $(STRICT) libbitmain/src/uart.c src/backend/work-gen/work-gen.c reconstruction/support/sha256_midstate.c reconstruction/support/work_rx_stream.c tests/test_work_rx_linux_pty.c -pthread -o $@
+ linux-pty-rx: build/test-work-rx-pty
+ 	./build/test-work-rx-pty
+ sanitize-linux-pty-rx:
+ 	mkdir -p build
+-	$(CC) $(CPPFLAGS) -O1 -g $(STRICT) -fsanitize=address,undefined -fno-omit-frame-pointer libbitmain/src/uart.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c tests/test_work_rx_linux_pty.c -pthread -o build/test-work-rx-pty-sanitized
++	$(CC) $(CPPFLAGS) -O1 -g $(STRICT) -fsanitize=address,undefined -fno-omit-frame-pointer libbitmain/src/uart.c src/backend/work-gen/work-gen.c reconstruction/support/sha256_midstate.c reconstruction/support/work_rx_stream.c tests/test_work_rx_linux_pty.c -pthread -o build/test-work-rx-pty-sanitized
+ 	ASAN_OPTIONS=detect_leaks=1 ./build/test-work-rx-pty-sanitized
++
++# Stage 7: original nonce materialization; separately labeled pipeline adapter.
++.PHONY: stage7 sanitize-stage7 fixtures-stage7
++build/test-work-nonce: $(SOURCES) tests/test_work_nonce.c $(HEADERS)
++	mkdir -p build
++	$(CC) $(CPPFLAGS) $(CFLAGS) $(STRICT) $(SOURCES) tests/test_work_nonce.c -o $@
++stage7: build/libvn135_recovered.so build/test-work-nonce
++	./build/test-work-nonce
++	$(PYTHON) tests/test_stage7_interpreter.py
++	$(PYTHON) tests/test_stage7_differential.py version
++	$(PYTHON) tests/test_stage7_differential.py prepare
++	$(PYTHON) tests/test_stage7_differential.py sha
++	$(PYTHON) tests/test_stage7_differential.py core
++test: stage7
++sanitize: sanitize-stage7
++sanitize-stage7:
++	mkdir -p build
++	$(CC) $(CPPFLAGS) -O1 -g $(STRICT) -fsanitize=address,undefined -fno-omit-frame-pointer $(SOURCES) tests/test_work_nonce.c -o build/test-work-nonce-sanitized
++	ASAN_OPTIONS=detect_leaks=1 ./build/test-work-nonce-sanitized
++fixtures-stage7:
++	$(CLANG) --target=armv7-none-eabihf -marm -march=armv7-a -c tests/arm32_stage7_instructions.S -o tests/fixtures/arm32_stage7_instructions.o
++
++.PHONY: stage7-clang
++build/libvn135_recovered-clang.so: $(SOURCES) $(HEADERS)
++	mkdir -p build
++	$(CLANG) $(CPPFLAGS) $(CFLAGS) $(STRICT) -shared -fPIC $(SOURCES) -o $@
++build/test-work-nonce-clang: $(SOURCES) $(HEADERS) tests/test_work_nonce.c
++	mkdir -p build
++	$(CLANG) $(CPPFLAGS) $(CFLAGS) $(STRICT) $(SOURCES) tests/test_work_nonce.c -o $@
++stage7-clang: build/libvn135_recovered-clang.so build/test-work-nonce-clang
++	./build/test-work-nonce-clang
++	$(PYTHON) tests/test_stage7_differential.py version --library ./build/libvn135_recovered-clang.so --tag clang
++	$(PYTHON) tests/test_stage7_differential.py prepare --library ./build/libvn135_recovered-clang.so --tag clang
++	$(PYTHON) tests/test_stage7_differential.py sha --library ./build/libvn135_recovered-clang.so --tag clang
++	$(PYTHON) tests/test_stage7_differential.py core --library ./build/libvn135_recovered-clang.so --tag clang
++	$(CLANG) $(CPPFLAGS) -O1 -g $(STRICT) -fsanitize=address,undefined -fno-omit-frame-pointer $(SOURCES) tests/test_work_nonce.c -o build/test-work-nonce-clang-sanitized
++	ASAN_OPTIONS=detect_leaks=1 ./build/test-work-nonce-clang-sanitized
+--- a/RECONSTRUCTION_README_RU.md
++++ b/RECONSTRUCTION_README_RU.md
+@@ -1,4 +1,4 @@
+-# VNishNet T21 AML 1.3.5 — Stage 6, модульная реконструкция
++# VNishNet T21 AML 1.3.5 — Stage 7, модульная реконструкция
+ 
+ **Исходники и библиотеки, не готовая прошивка и не заменяющий cgminer бинарник.**
+ Восстанавливаются отдельные проверенные участки оригинального ARM-кода на
+@@ -7,22 +7,24 @@
+ 
+ ## Текущее состояние
+ 
+-| Показатель | Stage 6 |
++| Показатель | Stage 7 |
+ |---|---:|
+ | Наблюдаемых исходных путей | 46 |
+ | Частично восстановленных наблюдаемых файлов | 6 |
+ | Невосстановленных, исключённых из сборки | 40 |
+-| Единиц трансляции, включая CRC5-helper и новый RX-адаптер | 8 |
+-| Сравнительных случаев, совокупный набор | 28 184 |
++| Единиц трансляции, включая четыре новых helper/adapter-файла | 10 |
++| Сравнительных случаев, совокупный набор | 96 439 |
+ | Реальный T21 майнинг, hardware acceptance, полный автотюн | Не выполнены |
+ 
+ Количество файлов/тестов **не является процентом готовности** и не доказывает
+-полноту всех ветвей или входных условий.
++полноту всех ветвей или входных условий. Из нового набора 65 536 случаев —
++полный перебор входов одного 16-битного преобразования, не тысячи новых функций.
+ 
+ ### Восстановленные части на исходных путях
+ 
+ - `libbitmain/src/chip/chip1398.c`: отдельные битовые преобразования регистров,
+-  пакет SET_CONFIG, его исследованный управляющий путь и связь с кэшем.
++  пакет SET_CONFIG, его исследованный управляющий путь, связь с кэшем и helper
++  определения core по nonce и числовому model ID.
+ - `libbitmain/src/pll.c`: два расчёта делителей PLL, не замена всего физического
+   программирования PLL.
+ - `libbitmain/src/aml/chip.c`: префикс `55 AA`, оболочка вызова UART-helper,
+@@ -33,7 +35,8 @@
+   с явными callbacks вместо оригинальных внешних Linux/libc/mutex функций.
+ 
+ - `src/backend/work-gen/work-gen.c`: форматы и преамбула входящих кадров, разбор
+-  ответов регистров, фильтрация и сырой индекс задания (не проверка nonce).
++  ответов регистров, фильтрация, индекс задания и подготовка nonce-кандидата
++  со снимком задания, битами версии и SHA-256 midstate (не проверка самой шары).
+ 
+ Новые support-файлы, заголовки API, тесты и инструменты находятся отдельно.
+ Они не выдаются за оригинальные имена/сигнатуры VNish. Невосстановленные исходные
+@@ -45,14 +48,24 @@
+ ARM-конструктора в локальном интерпретаторе. Все 46 путей не обязательно
+ составляют весь оригинальный проект.
+ 
+-Подробности текущего этапа: **`STAGE6_CHANGELOG_RU.md`**. Отчёты Stage 3/4/5
++Подробности текущего этапа: **`STAGE7_CHANGELOG_RU.md`**. Отчёты Stage 3/4/5/6
+ сохранены как исторические; исправление значения «одна запись AML» находится
+ в Stage 5: один вызов helper может содержать до пяти системных записей.
++
++## Важная граница Stage 7
++
++Оригинальный producer заполняет 68 байт; очередь настроена на 72 байта.
++Назначение последних четырёх байт не установлено. Новый компактный тип
++**не является полным исходным ABI очереди** и не передаётся в неё автоматически.
++Слот задания 0–31 не доказывает его актуальность. Чтение согласованного снимка,
++chip/core attribution и управление поколениями остаются внешними задачами.
++Готовый кандидат не означает корректный SHA256d, выполненный target или accepted share.
+ 
+ ## Сборка и тесты
+ 
+ ```sh
+ make -f Makefile.recovery clean all test arm evidence-check sanitize
++make -f Makefile.recovery stage7-clang
+ make -f Makefile.recovery linux-pty sanitize-linux-pty
+ make -f Makefile.recovery linux-pty-rx sanitize-linux-pty-rx
+ python3 tests/test_assembler.py
+@@ -76,10 +89,12 @@
+ без Linux sysroot. Это **не ARM Linux executable**. Совпадение исходных структур
+ на 64-битном host и original ARM ABI не предполагается.
+ 
+-Совокупный сравнительный набор: 22 096 прежних случаев + 6 088 новых RX-случаев.
+-Новые случаи повторены на Clang; это не новые уникальные случаи. Отдельно
+-сравнивались 96 составных потоков с 672 вариантами фрагментации. Прежние 1 318
+-и новые 2 053 синтетических проверок интерпретатора идут отдельно.
++Совокупный набор: 28 184 прежних случаев + 68 255 сравнений Stage 7.
++Из новых 65 536 относятся к исчерпывающей проверке одного 16-битного поля,
++остальные 2 719 — к другим проверенным входам. Новые случаи повторены на Clang;
++повтор не увеличивает сумму. Отдельно: 104 проверки SHA против hashlib,
++3 536 новых синтетических тестов интерпретатора и 176 нативных потоков
++RX → snapshot → candidate. Прежние RX/PTY проверки повторены.
+ ASan/UBSan проверяют native C-тесты, не заявляются для всех ctypes случаев.
+ 
+ Сравнение выполняет исходные инструкции в ограниченном локальном A32/VFP-
+@@ -133,11 +148,13 @@
+ - `reference/cgminer.vendor.elf`: неизменённые 6 228 004 байта.
+ - SHA-256: `b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9`.
+ - `evidence/source-tree.json` и `evidence/modules/`: пути, статусы и ссылки.
+-- `evidence/verified-slices.json`: хеши 40 проверяемых участков кода и 9 записей данных.
++- `evidence/verified-slices.json`: историческая карта до Stage 6: 40 участков и 9 записей данных.
++- `evidence/stage7/recovery-manifest.json`: новые nonce/SHA-участки, контекст и граница 68/72.
++- `evidence/validation/stage7/`: протоколы новых проверок GCC/Clang.
+ - `evidence/stage5/`: листинги UART, поправка длины исходной строки и примечания.
+ - `evidence/validation/stage5/`: исторические GCC/Clang протоколы.
+-- `evidence/stage6/`: новые границы, листинги и условия RX-сравнений.
+-- `evidence/validation/stage6/`: новые GCC/Clang протоколы.
++- `evidence/stage6/`: границы, листинги и условия прежних RX-сравнений.
++- `evidence/validation/stage6/`: исторические GCC/Clang протоколы.
+ - `evidence/ehabi-ranges.json`: 1 570 unwind-записей, **не список всех функций**.
+ 
+ Извлечение reference из пользовательского образа:
+@@ -164,3 +181,12 @@
+ 
+ **Не устанавливать библиотеку вместо `/usr/bin/cgminer`. `full-runtime`
+ намеренно выдаёт ошибку: полноценный майнер ещё не реализован.**
++
++## Проверка группами из чистой копии
++
++`python3 tools/verify_stage7.py GROUP --logs /absolute/path/outside-source`
++
++Сначала `build`, затем `core`, `cache`, `uart`, `rx`, `nonce`, `clang-nonce`,
++`sanitizers`, `evidence`, `full-runtime-blocked`. Последняя группа ожидает отказ
++полной сборки майнера, а не успех. Финальная сводка и лог проверки именно
++поставленного ZIP находятся в отдельных файлах `VNish135_Stage7_Final_Verification.*`.
+--- a/RECONSTRUCTION_STATUS.json
++++ b/RECONSTRUCTION_STATUS.json
+@@ -1,17 +1,17 @@
+ {
+-  "artifact": "modular-source-overlay-stage6",
++  "artifact": "modular-source-overlay-stage7",
+   "reference": "VNishNet T21 AML 1.3.5 cgminer",
+   "observed_source_paths": 46,
+   "partially_reconstructed_observed_files": 6,
+   "pending_observed_files": 40,
+-  "compiled_c_translation_units": 8,
+-  "public_reconstruction_c_functions": 34,
++  "compiled_c_translation_units": 10,
++  "public_reconstruction_c_functions": 40,
+   "public_functions_are_not_a_count_of_recovered_original_functions": true,
+-  "original_code_slices_tested": 40,
++  "original_code_slices_tested": 46,
+   "original_data_records_verified": 9,
+   "stage2_differential_cases_repeated": 2546,
+   "stage3_differential_cases_passed": 3219,
+-  "cumulative_distinct_test_cases": 28184,
++  "cumulative_distinct_test_cases": 96439,
+   "stage3_cases_repeated_with_clang": 3219,
+   "separate_synthetic_interpreter_checks": 1318,
+   "full_vendor_tree_recovered": false,
+@@ -46,7 +46,7 @@
+   "source_path_count_increased_by_correcting_truncated_string": true,
+   "stage5_scope": "Common UART routines and combined original AML/UART TX with injected external calls, plus separate Linux PTY test",
+   "stage3_one_write_claim_corrected": "One UART helper invocation in AML, up to five OS write attempts inside UART helper",
+-  "archive_verification_record": "Delivered separately: VNish135_Stage6_Final_Verification.json",
++  "archive_verification_record": "Delivered separately: VNish135_Stage7_Final_Verification.json",
+   "stage6_rx_differential_cases_passed": 6088,
+   "stage6_cases_repeated_with_clang": 6088,
+   "stage6_distinct_streams_compared": 96,
+@@ -60,5 +60,30 @@
+   "stage6_crc_validation_implemented": false,
+   "stage6_nonce_validation_implemented": false,
+   "stage6_scope": "Stable-policy RX layout, prefix/consumption, register decoding/filter, raw job-slot bits; separate new bounded stream adapter.",
+-  "stage6_full_receiver_thread_recovered": false
++  "stage6_full_receiver_thread_recovered": false,
++  "original_code_slices_count_is_not_full_function_count": true,
++  "stage7_manifest_slices": 10,
++  "stage7_context_only_slices": 4,
++  "stage7_original_instruction_comparisons": 68255,
++  "stage7_exhaustive_uint16_version_cases": 65536,
++  "stage7_other_original_instruction_cases": 2719,
++  "stage7_nonce_candidate_cases": 864,
++  "stage7_core_helper_cases": 1305,
++  "stage7_sha_midstate_compression_original_cases": 264,
++  "stage7_original_full_digest_vs_hashlib_cases": 20,
++  "stage7_independent_hashlib_only_cases": 104,
++  "stage7_separate_interpreter_checks": 3536,
++  "stage7_new_native_fragment_streams": 176,
++  "stage7_cases_repeated_with_clang": 68255,
++  "stage7_native_gcc_clang_sanitizers_passed": true,
++  "stage7_candidate_preparation_implemented": true,
++  "stage7_full_nonce_validation_implemented": false,
++  "stage7_register_crc_validation_implemented": false,
++  "stage7_job_lifetime_or_generation_tracking_implemented": false,
++  "stage7_queue_insert_or_consumer_implemented": false,
++  "stage7_original_queue_element_bytes": 72,
++  "stage7_explicitly_populated_candidate_bytes": 68,
++  "stage7_remaining_queue_bytes_semantics": "Unproven: not written in tested producer slice. Padding is a hypothesis.",
++  "stage7_binary_drop_in_abi_compatible": false,
++  "stage7_scope": "Bounded original RX nonce producer with supplied immutable 168-byte job snapshot, injected chip/core attribution and original-equivalent SHA first-block midstate; new bounded integration adapter; one core bit helper."
+ }
+--- /dev/null
++++ b/STAGE7_CHANGELOG_RU.md
+@@ -0,0 +1,210 @@
++# Stage 7 — подготовка nonce-кандидата и SHA-256 midstate
++
++**Модульные исходники и библиотеки. Это не готовый cgminer и не прошивка.**
++Физический ASIC, пул и сервер не использовались и не изменялись.
++
++Продолжение архива Stage 6 с SHA-256
++`853a60107f192fbb148b998fd250630e12a271edc4abf575bd0eb626f0637ead`.
++Оригинальный `reference/cgminer.vendor.elf` сохранён без изменения, 6 228 004 байта:
++`b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9`.
++
++## 1. Следующий участок после приёма кадра
++
++В `src/backend/work-gen/work-gen.c` перенесён исследованный путь
++`0xc4480–0xc46fc` (последняя граница не выполняется):
++
++```text
++nonce-кадр, уже выделенный Stage 6
++    ↓
++5-битный слот задания, 0–31
++    ↓
++предоставленная вызывающим кодом согласованная копия записи задания
++    ↓
++преобразование битов версии и извлечение nonce
++    ↓
++chip/core attribution через явные обработчики
++    ↓
++сборка 64-байтного блока и одно сжатие SHA-256
++    ↓
++68 явно заполненных байт кандидата
++```
++
++Это **подготовка кандидата**, а не проверка его хеша относительно target,
++не поиск полного задания у пула, не проверка его актуальности и не accepted share.
++Запись в оригинальную очередь и её потребитель ещё не восстановлены.
++
++### Таблица заданий
++
++В исследуемом ELF адрес записи: `0x653460 + slot * 168`.
++Присутствующая рядом исходная запись таблицы копирует 168 байт и оборачивает индекс
++после 31. Это проверенная геометрия таблицы, не восстановленный менеджер заданий.
++
++Новый API принимает согласованный неизменяемый 168-байтный снимок. Указатели из
++снимка не разыменовываются. Слот может переиспользоваться: сам индекс **не доказывает
++свежесть задания**, и API не приписывает ему выдуманный номер поколения.
++
++### Биты версии
++
++Для формата `variant == 2` используются два байта payload[6..7] в big-endian.
++Для двух прежних форматов оригинальный код подставляет `0xffff`, **не ноль**.
++Перестановка в C сохраняется буквально:
++
++```c
++(v >> 11) | ((v & 7u) << 21) | ((v & 0x7f8u) << 5)
++```
++
++Результат объединяется OR с исходным словом записи задания. Это не объявляется
++полной реализацией pool version-rolling или согласованием его маски.
++Все 65 536 значений двухбайтного поля сравнены с исходными ARM-инструкциями.
++
++### Заполняемые поля кандидата
++
++В новом компактном типе находятся chain_id, chip_id, core_id, сырое слово записи
++по +0xa4, индекс слота, слово версии, сырые слова по +0x70/+0x74, nonce и восемь
++32-битных слов midstate. Неподтверждённым полям не присваивались предположительные
++названия вроде времени, сложности или указателя.
++
++Вариант 1 извлекает nonce со смещением одного байта, остальные — с нулевого;
++четырёхбайтное значение читается как big-endian. Chip/core-обработчики вызываются
++по одному разу, в этом порядке. Их значения сохраняются без выдуманной проверки
++физических диапазонов или полноценного восстановления общего диспетчера.
++
++## 2. Важное различие: 68 заполненных байт против очереди 72 байта
++
++Исследованный producer пишет **68 байт**, однако оригинальная инициализация
++по `0xfa5c4` задаёт **72 байта на элемент** очереди, ёмкость 4096 элементов.
++Последние четыре байта этот участок не записывает. В 864 тестах они заранее
++заполнялись маркером `a1b2c3d4` и проверялись на неизменность.
++
++Назначение этих четырёх байт не установлено. Padding — лишь гипотеза.
++Поэтому `vn135_nonce_candidate` **не совместим побайтно с полным исходным ABI
++очереди**. Его нельзя передавать вместо 72-байтного элемента в оригинальный
++потребитель. В заголовке явно раздельные константы 68 и 72; нет чтения лишних
++четырёх байт, фиктивного поля с придуманным смыслом или неявной вставки в очередь.
++
++## 3. SHA-256: настоящее вычисление, не заглушка
++
++Новый `reconstruction/support/sha256_midstate.c` содержит переносимую процедуру
++сжатия одного 64-байтного блока и получение midstate от стандартного начального
++состояния. Имена этого support-файла/API новые: исходное имя файла SHA-библиотеки
++производителя здесь не объявляется восстановленным.
++
++Midstate — состояние после одного блока, **не полный SHA256d-хеш nonce-кандидата**.
++В новом API нет потокового финализатора или автоматического padding. Стандартное
++дополнение добавляет только независимый тест для сравнения с Python `hashlib`.
++Не подменяется публичный upstream `sha2.c` и не создаётся конкурирующий main.
++
++При сравнении кандидатов реально выполняются оригинальные процедуры
++`0x109120` (init), `0x109170` (update) и `0x108b7c` (compression). Их результат
++**не подставляется тестовой константой**. Отдельно исходный финализатор
++`0x10939c` используется в 20 проверках полного SHA-256 от 64-байтных сообщений
++против `hashlib`; это тестовая процедура, не обещание восстановления всего API.
++
++Сборка блока подтверждена побайтно. Интерпретация всех исходных полей как полного
++80-байтного заголовка Bitcoin ещё не доказана и в интерфейс не зашита.
++
++## 4. Отдельный helper определения core
++
++В `libbitmain/src/chip/chip1398.c` добавлено битовое преобразование из `0xed974`:
++
++- числовой model ID `0x1398`: `nonce >> 24`;
++- `0x1397`: `((nonce >> 21) & 0x3fe) | (nonce >> 31)`;
++- остальные значения: `0`.
++
++Числовой model ID здесь не смешивается с селекторами платы/чипа 0–7. Общая
++маршрутизация chip/core в producer остаётся внешними callbacks.
++**Это не подтверждает привязку T21 к chip1398 и не подтверждает валидность nonce.**
++
++## 5. Новый адаптер — отдельно от исходного кода
++
++`reconstruction/support/work_nonce_pipeline.c` соединяет Stage 6 RX с новым
++обработчиком. Проверяет согласованность формата, nonce-флаг и индекс слота;
++вызывает reader снимка ровно один раз. Без записи возвращает `NO_JOB`, при ошибке
++reader — `LOOKUP_FAILED`. В этих случаях выход не изменяется, chip/core callbacks
++не запускаются. Неверные аргументы/форматы отклоняются до внешних вызовов.
++
++Нет аллокаций, скрытых повторов, потоков, аппаратных записей, обращения к пулу
++или подстановки задания из другого слота. Согласованность снимка и управление
++жизненным циклом задания являются обязанностью вызывающего кода.
++
++## 6. Реально выполненные проверки
++
++| Новый набор | Успешных случаев |
++|---|---:|
++| Кандидат: 68 байт, блок 64 байта, порядок вызовов, неизменный хвост очереди | 864 |
++| Биты версии variant 2: все uint16 | 65 536 |
++| Биты версии двух прежних форматов | 266 |
++| SHA midstate от стандартного IV | 132 |
++| SHA compression от произвольного состояния | 132 |
++| Оригинальный полный SHA-256 и hashlib на 64-байтном сообщении | 20 |
++| Helper core по исходному ARM | 1 305 |
++| **Новые сравнения с оригинальными инструкциями** | **68 255** |
++| Предыдущие Stage 2–6, повторно | 28 184 |
++| **Совокупный набор сравнительных случаев** | **96 439** |
++
++Большое число обусловлено **65 536 входами одного небольшого преобразования**,
++а не восстановлением десятков тысяч новых функций. Остальные новые сравнения
++с оригиналом — 2 719 случаев. Повтор всего нового набора на Clang также прошёл;
++он не прибавляется к количеству уникальных тестовых входов.
++
++Отдельные проверки, не включённые в указанную сумму:
++
++- 104 сообщения с корректным padding, новый SHA-helper против `hashlib`;
++- 3 536 синтетических тестов добавленных UXTH/SMLABB в локальном интерпретаторе;
++- 176 нативных потоковых прогонов RX → snapshot reader → candidate с фрагментацией
++  от 1 до 11 байт, плюс проверки отказов и известных SHA-векторов;
++- GCC/Clang C-тесты и ASan/UBSan с проверкой утечек нового нативного набора;
++- повтор прежних Linux PTY/UART/RX тестов; новых испытаний физического UART нет.
++
++### Границы эталонного сравнения
++
++Используется локальный ограниченный A32-интерпретатор, не независимо
++сертифицированный эмулятор. Добавлены UXTH и SMLABB, проверена в том числе
++накопительная семантика Q для переполнения; неподдерживаемые инструкции
++останавливают тест. Это не исполнение полного бинарника как Linux-процесса.
++
++В candidate-тестах внедрены chip/core attribution и memcpy; SHA оригинальный.
++В тесте core внедрён getter числовой модели. В отдельной SHA-финализации
++внедрён memset. Запись задания, очередь/потоки, гонки, смена поколений, реальные
++UART/хешплаты/PSU не эмулируются. Равенство на этих входах не доказывает все
++ветви прошивки, аппаратную безопасность или принятые пулом шары.
++
++## 7. Сборка, структура и воспроизведение
++
++```sh
++make -f Makefile.recovery clean
++make -f Makefile.recovery all test arm evidence-check sanitize
++make -f Makefile.recovery stage7-clang
++make -f Makefile.recovery linux-pty sanitize-linux-pty
++make -f Makefile.recovery linux-pty-rx sanitize-linux-pty-rx
++python3 tests/test_assembler.py
++python3 tools/update_overlay_inventory.py --check
++```
++
++Тесты нового этапа отдельно: `make -f Makefile.recovery stage7`.
++Групповая проверка чистого архива: `tools/verify_stage7.py`, группы
++`build core cache uart rx nonce clang-nonce sanitizers evidence full-runtime-blocked`.
++Логи передаются параметром `--logs` в каталог **вне дерева исходников**.
++
++Сохраняется 46 наблюдаемых исходных путей, 6 частично восстановленных файлов,
++40 невосстановленных исключены из сборки. Компилируется 10 C-единиц:
++6 на наблюдаемых путях плюс 4 явно новых support/adapter-файла.
++Это не процент готовности. Монолитных файлов и функций-заглушек с фиктивным
++успехом не добавлено.
++
++Выход: host `.a`/`.so` для проверок, ARMv7-A/A32 hard-float freestanding `.a`
++без Linux sysroot. **Не исполняемый cgminer.** Механизм наложения на выбранный
++public cgminer сохранён; полное дерево upstream по-прежнему не включено, совместная
++сборка полного cgminer на данном этапе не выполнялась. Сетевой доступ для этой
++работы не требуется, новый поиск/скачивание upstream на этом этапе не заявляется.
++
++Карты исходных байтов/адресов: `evidence/stage7/recovery-manifest.json`.
++Четыре листинга помечены context-only (стек/таблица/очередь), не считаются
++восстановленными реализациями. Проверка связей: `tools/check_stage7_evidence.py`.
++Протоколы: `evidence/validation/stage7/`. Патч:
++`evidence/stage7/review/stage6-to-stage7-source.patch`.
++
++Остались CRC ответов, полный SHA256d/target-контроль nonce, lifecycle заданий,
++потребитель очереди, T21 model dispatch/запуск цепей, PSU/датчики/защиты,
++регистрация драйвера cgminer и автотюн. Ничего не установлено на ASIC.
++**Не заменять штатный `/usr/bin/cgminer` этими библиотеками.**
+--- /dev/null
++++ b/evidence/stage7/disasm/chip1398-core-helper.S
+@@ -0,0 +1,24 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   ed974: e92d4c10     	push	{r4, r10, r11, lr}
++   ed978: e28db008     	add	r11, sp, #8
++   ed97c: e1a04000     	mov	r4, r0
++   ed980: eb004191     	bl	0xfdfcc <.text+0xedecc> @ imm = #0x10644
++   ed984: e1a01000     	mov	r1, r0
++   ed988: e3010398     	movw	r0, #0x1398
++   ed98c: e1510000     	cmp	r1, r0
++   ed990: 0a000007     	beq	0xed9b4 <.text+0xdd8b4> @ imm = #0x1c
++   ed994: e3012397     	movw	r2, #0x1397
++   ed998: e3a00000     	mov	r0, #0
++   ed99c: e1510002     	cmp	r1, r2
++   ed9a0: 1a000004     	bne	0xed9b8 <.text+0xdd8b8> @ imm = #0x10
++   ed9a4: e30003fe     	movw	r0, #0x3fe
++   ed9a8: e0000aa4     	and	r0, r0, r4, lsr #21
++   ed9ac: e1800fa4     	orr	r0, r0, r4, lsr #31
++   ed9b0: e8bd8c10     	pop	{r4, r10, r11, pc}
++   ed9b4: e1a00c24     	lsr	r0, r4, #24
++   ed9b8: e8bd8c10     	pop	{r4, r10, r11, pc}
+--- /dev/null
++++ b/evidence/stage7/disasm/job-writer-context.S
+@@ -0,0 +1,24 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   c4d90: e59f42cc     	ldr	r4, [pc, #0x2cc]        @ 0xc5064 <.text+0xb4f64>
++   c4d94: e3a000a8     	mov	r0, #168
++   c4d98: e1a01009     	mov	r1, r9
++   c4d9c: e3a020a8     	mov	r2, #168
++   c4da0: e79f4004     	ldr	r4, [pc, r4]
++   c4da4: e59f82bc     	ldr	r8, [pc, #0x2bc]        @ 0xc5068 <.text+0xb4f68>
++   c4da8: e08f8008     	add	r8, pc, r8
++   c4dac: e0208094     	mla	r0, r4, r0, r8
++   c4db0: e2806008     	add	r6, r0, #8
++   c4db4: e1a00006     	mov	r0, r6
++   c4db8: eb13784a     	bl	0x5a2ee8 <.text+0x592de8> @ imm = #0x4de128
++   c4dbc: e59f02a8     	ldr	r0, [pc, #0x2a8]        @ 0xc506c <.text+0xb4f6c>
++   c4dc0: e79f0000     	ldr	r0, [pc, r0]
++   c4dc4: e2800001     	add	r0, r0, #1
++   c4dc8: e350001f     	cmp	r0, #31
++   c4dcc: 83000000     	movwhi	r0, #0x0
++   c4dd0: e5880000     	str	r0, [r8]
++   c4dd4: e1a00007     	mov	r0, r7
+--- /dev/null
++++ b/evidence/stage7/disasm/nonce-producer.S
+@@ -0,0 +1,166 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   c4480: e59d0010     	ldr	r0, [sp, #0x10]
++   c4484: e3500005     	cmp	r0, #5
++   c4488: 1a000009     	bne	0xc44b4 <.text+0xb43b4> @ imm = #0x24
++   c448c: e3881005     	orr	r1, r8, #5
++   c4490: e3520001     	cmp	r2, #1
++   c4494: 03881006     	orreq	r1, r8, #6
++   c4498: e55b0064     	ldrb	r0, [r11, #-0x64]
++   c449c: e3520002     	cmp	r2, #2
++   c44a0: e5d11000     	ldrb	r1, [r1]
++   c44a4: e1a00380     	lsl	r0, r0, #7
++   c44a8: 33e0007f     	mvnlo	r0, #127
++   c44ac: e18000a1     	orr	r0, r0, r1, lsr #1
++   c44b0: ea000003     	b	0xc44c4 <.text+0xb43c4> @ imm = #0xc
++   c44b4: e3880005     	orr	r0, r8, #5
++   c44b8: e3520001     	cmp	r2, #1
++   c44bc: 03880006     	orreq	r0, r8, #6
++   c44c0: e5d00000     	ldrb	r0, [r0]
++   c44c4: e59a1000     	ldr	r1, [r10]
++   c44c8: e2412001     	sub	r2, r1, #1
++   c44cc: e0010291     	mul	r1, r1, r2
++   c44d0: e3110001     	tst	r1, #1
++   c44d4: e59a2000     	ldr	r2, [r10]
++   c44d8: e7e411d0     	ubfx	r1, r0, #0x3, #0x5
++   c44dc: e2423001     	sub	r3, r2, #1
++   c44e0: e0020392     	mul	r2, r2, r3
++   c44e4: e3120001     	tst	r2, #1
++   c44e8: 0a000004     	beq	0xc4500 <.text+0xb4400> @ imm = #0x10
++   c44ec: e59f25dc     	ldr	r2, [pc, #0x5dc]        @ 0xc4ad0 <.text+0xb49d0>
++   c44f0: e79f2002     	ldr	r2, [pc, r2]
++   c44f4: e5922000     	ldr	r2, [r2]
++   c44f8: e3520009     	cmp	r2, #9
++   c44fc: cafffff4     	bgt	0xc44d4 <.text+0xb43d4> @ imm = #-0x30
++   c4500: e59f05cc     	ldr	r0, [pc, #0x5cc]        @ 0xc4ad4 <.text+0xb49d4>
++   c4504: e3a020a8     	mov	r2, #168
++   c4508: e08f0000     	add	r0, pc, r0
++   c450c: e10a0281     	smlabb	r10, r1, r2, r0
++   c4510: e29a0008     	adds	r0, r10, #8
++   c4514: 0a00007f     	beq	0xc4718 <.text+0xb4618> @ imm = #0x1fc
++   c4518: e15b26b2     	ldrh	r2, [r11, #-98]
++   c451c: e5190300     	ldr	r0, [r9, #-0x300]
++   c4520: e58d6050     	str	r6, [sp, #0x50]
++   c4524: e59d604c     	ldr	r6, [sp, #0x4c]
++   c4528: e50b00f8     	str	r0, [r11, #-0xf8]
++   c452c: e59a00ac     	ldr	r0, [r10, #0xac]
++   c4530: e3560002     	cmp	r6, #2
++   c4534: e50b00ec     	str	r0, [r11, #-0xec]
++   c4538: e1a00402     	lsl	r0, r2, #8
++   c453c: e50b10e8     	str	r1, [r11, #-0xe8]
++   c4540: e1a01422     	lsr	r1, r2, #8
++   c4544: 33e000ff     	mvnlo	r0, #255
++   c4548: 330010ff     	movwlo	r1, #0xff
++   c454c: e1800001     	orr	r0, r0, r1
++   c4550: e30027f8     	movw	r2, #0x7f8
++   c4554: e000c002     	and	r12, r0, r2
++   c4558: e2011007     	and	r1, r1, #7
++   c455c: e6ff0070     	uxth	r0, r0
++   c4560: e59a2080     	ldr	r2, [r10, #0x80]
++   c4564: e1a005a0     	lsr	r0, r0, #11
++   c4568: e59a8078     	ldr	r8, [r10, #0x78]
++   c456c: e1800a81     	orr	r0, r0, r1, lsl #21
++   c4570: e59d1030     	ldr	r1, [sp, #0x30]
++   c4574: e180028c     	orr	r0, r0, r12, lsl #5
++   c4578: e58d002c     	str	r0, [sp, #0x2c]
++   c457c: e1800002     	orr	r0, r0, r2
++   c4580: e50b00e4     	str	r0, [r11, #-0xe4]
++   c4584: e59d0004     	ldr	r0, [sp, #0x4]
++   c4588: e3560001     	cmp	r6, #1
++   c458c: e59a307c     	ldr	r3, [r10, #0x7c]
++   c4590: e5808000     	str	r8, [r0]
++   c4594: e5803004     	str	r3, [r0, #0x4]
++   c4598: e24b0068     	sub	r0, r11, #104
++   c459c: 01a00001     	moveq	r0, r1
++   c45a0: e5900000     	ldr	r0, [r0]
++   c45a4: e6bf0f30     	rev	r0, r0
++   c45a8: e50b00d8     	str	r0, [r11, #-0xd8]
++   c45ac: eb00386b     	bl	0xd2760 <.text+0xc2660> @ imm = #0xe1ac
++   c45b0: e51b10d8     	ldr	r1, [r11, #-0xd8]
++   c45b4: e50b00f4     	str	r0, [r11, #-0xf4]
++   c45b8: e1a00001     	mov	r0, r1
++   c45bc: eb003892     	bl	0xd280c <.text+0xc270c> @ imm = #0xe248
++   c45c0: e50b00f0     	str	r0, [r11, #-0xf0]
++   c45c4: e59a0058     	ldr	r0, [r10, #0x58]
++   c45c8: e58d0018     	str	r0, [sp, #0x18]
++   c45cc: e59a0070     	ldr	r0, [r10, #0x70]
++   c45d0: e59a106c     	ldr	r1, [r10, #0x6c]
++   c45d4: e6bf0f30     	rev	r0, r0
++   c45d8: e59a2068     	ldr	r2, [r10, #0x68]
++   c45dc: e50b0070     	str	r0, [r11, #-0x70]
++   c45e0: e6bf0f31     	rev	r0, r1
++   c45e4: e59ac064     	ldr	r12, [r10, #0x64]
++   c45e8: e59a3080     	ldr	r3, [r10, #0x80]
++   c45ec: e50b0074     	str	r0, [r11, #-0x74]
++   c45f0: e6bf0f32     	rev	r0, r2
++   c45f4: e59a6060     	ldr	r6, [r10, #0x60]
++   c45f8: e58d3028     	str	r3, [sp, #0x28]
++   c45fc: e59a308c     	ldr	r3, [r10, #0x8c]
++   c4600: e50b0078     	str	r0, [r11, #-0x78]
++   c4604: e6bf0f3c     	rev	r0, r12
++   c4608: e59a905c     	ldr	r9, [r10, #0x5c]
++   c460c: e58d3024     	str	r3, [sp, #0x24]
++   c4610: e59a3090     	ldr	r3, [r10, #0x90]
++   c4614: e50b007c     	str	r0, [r11, #-0x7c]
++   c4618: e6bf0f36     	rev	r0, r6
++   c461c: e58d3020     	str	r3, [sp, #0x20]
++   c4620: e28d6058     	add	r6, sp, #88
++   c4624: e59a3094     	ldr	r3, [r10, #0x94]
++   c4628: e50b0080     	str	r0, [r11, #-0x80]
++   c462c: e6bf0f39     	rev	r0, r9
++   c4630: e58d301c     	str	r3, [sp, #0x1c]
++   c4634: e59a3098     	ldr	r3, [r10, #0x98]
++   c4638: e50b0084     	str	r0, [r11, #-0x84]
++   c463c: e59d0018     	ldr	r0, [sp, #0x18]
++   c4640: e58d3014     	str	r3, [sp, #0x14]
++   c4644: e59a809c     	ldr	r8, [r10, #0x9c]
++   c4648: e6bf0f30     	rev	r0, r0
++   c464c: e59ae0a0     	ldr	lr, [r10, #0xa0]
++   c4650: e59a30a4     	ldr	r3, [r10, #0xa4]
++   c4654: e59aa0a8     	ldr	r10, [r10, #0xa8]
++   c4658: e50b0088     	str	r0, [r11, #-0x88]
++   c465c: e6bf0f3a     	rev	r0, r10
++   c4660: e50b008c     	str	r0, [r11, #-0x8c]
++   c4664: e6bf0f33     	rev	r0, r3
++   c4668: e50b0090     	str	r0, [r11, #-0x90]
++   c466c: e6bf0f3e     	rev	r0, lr
++   c4670: e50b0094     	str	r0, [r11, #-0x94]
++   c4674: e6bf0f38     	rev	r0, r8
++   c4678: e50b0098     	str	r0, [r11, #-0x98]
++   c467c: e59d0014     	ldr	r0, [sp, #0x14]
++   c4680: e24b8068     	sub	r8, r11, #104
++   c4684: e59d1028     	ldr	r1, [sp, #0x28]
++   c4688: e6bf0f30     	rev	r0, r0
++   c468c: e50b009c     	str	r0, [r11, #-0x9c]
++   c4690: e59d001c     	ldr	r0, [sp, #0x1c]
++   c4694: e6bf0f30     	rev	r0, r0
++   c4698: e50b00a0     	str	r0, [r11, #-0xa0]
++   c469c: e59d0020     	ldr	r0, [sp, #0x20]
++   c46a0: e6bf0f30     	rev	r0, r0
++   c46a4: e50b00a4     	str	r0, [r11, #-0xa4]
++   c46a8: e59d0024     	ldr	r0, [sp, #0x24]
++   c46ac: e6bf0f30     	rev	r0, r0
++   c46b0: e50b00a8     	str	r0, [r11, #-0xa8]
++   c46b4: e59d002c     	ldr	r0, [sp, #0x2c]
++   c46b8: e1810000     	orr	r0, r1, r0
++   c46bc: e6bf0f30     	rev	r0, r0
++   c46c0: e50b00ac     	str	r0, [r11, #-0xac]
++   c46c4: e1a00006     	mov	r0, r6
++   c46c8: eb011294     	bl	0x109120 <.text+0xf9020> @ imm = #0x44a50
++   c46cc: e24b10ac     	sub	r1, r11, #172
++   c46d0: e1a00006     	mov	r0, r6
++   c46d4: e3a02040     	mov	r2, #64
++   c46d8: eb0112a4     	bl	0x109170 <.text+0xf9070> @ imm = #0x44a90
++   c46dc: e59dc00c     	ldr	r12, [sp, #0xc]
++   c46e0: e59d1008     	ldr	r1, [sp, #0x8]
++   c46e4: e8bc004d     	ldm	r12!, {r0, r2, r3, r6}
++   c46e8: e8a1004d     	stm	r1!, {r0, r2, r3, r6}
++   c46ec: e89c004d     	ldm	r12, {r0, r2, r3, r6}
++   c46f0: e881004d     	stm	r1, {r0, r2, r3, r6}
++   c46f4: e24b00f8     	sub	r0, r11, #248
++   c46f8: e59d6050     	ldr	r6, [sp, #0x50]
++   c46fc: eb00d7b7     	bl	0xfa5e0 <.text+0xea4e0> @ imm = #0x35edc
+--- /dev/null
++++ b/evidence/stage7/disasm/nonce-queue-init-context.S
+@@ -0,0 +1,21 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   fa5a4: e92d4800     	push	{r11, lr}
++   fa5a8: e1a0b00d     	mov	r11, sp
++   fa5ac: e59f0024     	ldr	r0, [pc, #0x24]         @ 0xfa5d8 <.text+0xea4d8>
++   fa5b0: e3a01000     	mov	r1, #0
++   fa5b4: e08f0000     	add	r0, pc, r0
++   fa5b8: eb12aec7     	bl	0x5a60dc <.text+0x595fdc> @ imm = #0x4abb1c
++   fa5bc: e59f0018     	ldr	r0, [pc, #0x18]         @ 0xfa5dc <.text+0xea4dc>
++   fa5c0: e3a01a01     	mov	r1, #4096
++   fa5c4: e3a02048     	mov	r2, #72
++   fa5c8: e08f0000     	add	r0, pc, r0
++   fa5cc: ebff5cf7     	bl	0xd19b0 <.text+0xc18b0> @ imm = #-0x28c24
++   fa5d0: e3a00000     	mov	r0, #0
++   fa5d4: e8bd8800     	pop	{r11, pc}
++   fa5d8: 0055a514     	subseq	r10, r5, r4, lsl r5
++   fa5dc: 0055a518     	subseq	r10, r5, r8, lsl r5
+--- /dev/null
++++ b/evidence/stage7/disasm/nonce-queue-push-context.S
+@@ -0,0 +1,38 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   fa5e0: e92d4c70     	push	{r4, r5, r6, r10, r11, lr}
++   fa5e4: e28db010     	add	r11, sp, #16
++   fa5e8: e1a04000     	mov	r4, r0
++   fa5ec: e59f00c4     	ldr	r0, [pc, #0xc4]         @ 0xfa6b8 <.text+0xea5b8>
++   fa5f0: e08f0000     	add	r0, pc, r0
++   fa5f4: eb12aec3     	bl	0x5a6108 <.text+0x596008> @ imm = #0x4abb0c
++   fa5f8: e59f00bc     	ldr	r0, [pc, #0xbc]         @ 0xfa6bc <.text+0xea5bc>
++   fa5fc: e08f0000     	add	r0, pc, r0
++   fa600: ebff5d6a     	bl	0xd1bb0 <.text+0xc1ab0> @ imm = #-0x28a58
++   fa604: e3500000     	cmp	r0, #0
++   fa608: 0a00001c     	beq	0xfa680 <.text+0xea580> @ imm = #0x70
++   fa60c: e59f50ac     	ldr	r5, [pc, #0xac]         @ 0xfa6c0 <.text+0xea5c0>
++   fa610: e79f5005     	ldr	r5, [pc, r5]
++   fa614: e5950000     	ldr	r0, [r5]
++   fa618: e59f60a4     	ldr	r6, [pc, #0xa4]         @ 0xfa6c4 <.text+0xea5c4>
++   fa61c: e2401001     	sub	r1, r0, #1
++   fa620: e0000190     	mul	r0, r0, r1
++   fa624: e79f6006     	ldr	r6, [pc, r6]
++   fa628: e3100001     	tst	r0, #1
++   fa62c: 0a000002     	beq	0xfa63c <.text+0xea53c> @ imm = #0x8
++   fa630: e5960000     	ldr	r0, [r6]
++   fa634: e3500009     	cmp	r0, #9
++   fa638: ca00000b     	bgt	0xfa66c <.text+0xea56c> @ imm = #0x2c
++   fa63c: e59f0084     	ldr	r0, [pc, #0x84]         @ 0xfa6c8 <.text+0xea5c8>
++   fa640: e3a01000     	mov	r1, #0
++   fa644: e08f0000     	add	r0, pc, r0
++   fa648: ebff5de8     	bl	0xd1df0 <.text+0xc1cf0> @ imm = #-0x28860
++   fa64c: e5950000     	ldr	r0, [r5]
++   fa650: e2401001     	sub	r1, r0, #1
++   fa654: e0000190     	mul	r0, r0, r1
++   fa658: e3100001     	tst	r0, #1
++   fa65c: 0a000007     	beq	0xfa680 <.text+0xea580> @ imm = #0x1c
+--- /dev/null
++++ b/evidence/stage7/disasm/nonce-stack-context.S
+@@ -0,0 +1,34 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   c4114: e3010064     	movw	r0, #0x1064
++   c4118: e1a01009     	mov	r1, r9
++   c411c: e7e18000     	strb	r8, [r1, r0]!
++   c4120: e24b8068     	sub	r8, r11, #104
++   c4124: e59d004c     	ldr	r0, [sp, #0x4c]
++   c4128: e58d1044     	str	r1, [sp, #0x44]
++   c412c: e3500001     	cmp	r0, #1
++   c4130: 03007008     	movweq	r7, #0x8
++   c4134: e3500000     	cmp	r0, #0
++   c4138: e28d0058     	add	r0, sp, #88
++   c413c: 03007007     	movweq	r7, #0x7
++   c4140: e2800088     	add	r0, r0, #136
++   c4144: e58d000c     	str	r0, [sp, #0xc]
++   c4148: e24b00f8     	sub	r0, r11, #248
++   c414c: e2801024     	add	r1, r0, #36
++   c4150: e2800018     	add	r0, r0, #24
++   c4154: e58d0004     	str	r0, [sp, #0x4]
++   c4158: e3880001     	orr	r0, r8, #1
++   c415c: e58d0030     	str	r0, [sp, #0x30]
++   c4160: e2880008     	add	r0, r8, #8
++   c4164: e58d0034     	str	r0, [sp, #0x34]
++   c4168: e3880006     	orr	r0, r8, #6
++   c416c: e58d0048     	str	r0, [sp, #0x48]
++   c4170: e3880007     	orr	r0, r8, #7
++   c4174: e58d003c     	str	r0, [sp, #0x3c]
++   c4178: e3860001     	orr	r0, r6, #1
++   c417c: e58d1008     	str	r1, [sp, #0x8]
++   c4180: e58d0010     	str	r0, [sp, #0x10]
+--- /dev/null
++++ b/evidence/stage7/disasm/sha256-compression.S
+@@ -0,0 +1,245 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++  108b7c: e92d4ff0     	push	{r4, r5, r6, r7, r8, r9, r10, r11, lr}
++  108b80: e28db01c     	add	r11, sp, #28
++  108b84: e24ddf55     	sub	sp, sp, #340
++  108b88: e3520001     	cmp	r2, #1
++  108b8c: e58d000c     	str	r0, [sp, #0xc]
++  108b90: e58d2008     	str	r2, [sp, #0x8]
++  108b94: ba0000de     	blt	0x108f14 <.text+0xf8e14> @ imm = #0x378
++  108b98: e59f937c     	ldr	r9, [pc, #0x37c]        @ 0x108f1c <.text+0xf8e1c>
++  108b9c: e79f9009     	ldr	r9, [pc, r9]
++  108ba0: e5990000     	ldr	r0, [r9]
++  108ba4: e2402001     	sub	r2, r0, #1
++  108ba8: e0000290     	mul	r0, r0, r2
++  108bac: e3100001     	tst	r0, #1
++  108bb0: e5990000     	ldr	r0, [r9]
++  108bb4: e59fa364     	ldr	r10, [pc, #0x364]       @ 0x108f20 <.text+0xf8e20>
++  108bb8: e2402001     	sub	r2, r0, #1
++  108bbc: e0000290     	mul	r0, r0, r2
++  108bc0: e79fa00a     	ldr	r10, [pc, r10]
++  108bc4: e3100001     	tst	r0, #1
++  108bc8: 0a000002     	beq	0x108bd8 <.text+0xf8ad8> @ imm = #0x8
++  108bcc: e59a0000     	ldr	r0, [r10]
++  108bd0: e3500009     	cmp	r0, #9
++  108bd4: cafffff5     	bgt	0x108bb0 <.text+0xf8ab0> @ imm = #-0x2c
++  108bd8: e59d000c     	ldr	r0, [sp, #0xc]
++  108bdc: e28d5050     	add	r5, sp, #80
++  108be0: e3a02000     	mov	r2, #0
++  108be4: e2800088     	add	r0, r0, #136
++  108be8: e58d0004     	str	r0, [sp, #0x4]
++  108bec: ea00002c     	b	0x108ca4 <.text+0xf8ba4> @ imm = #0xb0
++  108bf0: e59d400c     	ldr	r4, [sp, #0xc]
++  108bf4: e58d7048     	str	r7, [sp, #0x48]
++  108bf8: e284e088     	add	lr, r4, #136
++  108bfc: e58da044     	str	r10, [sp, #0x44]
++  108c00: e58d3040     	str	r3, [sp, #0x40]
++  108c04: e58d604c     	str	r6, [sp, #0x4c]
++  108c08: e58d803c     	str	r8, [sp, #0x3c]
++  108c0c: e58d1038     	str	r1, [sp, #0x38]
++  108c10: e58dc034     	str	r12, [sp, #0x34]
++  108c14: e58d7010     	str	r7, [sp, #0x10]
++  108c18: e58d5030     	str	r5, [sp, #0x30]
++  108c1c: e89e4284     	ldm	lr, {r2, r7, r9, lr}
++  108c20: e0822005     	add	r2, r2, r5
++  108c24: e5842088     	str	r2, [r4, #0x88]
++  108c28: e087200c     	add	r2, r7, r12
++  108c2c: e584208c     	str	r2, [r4, #0x8c]
++  108c30: e0892001     	add	r2, r9, r1
++  108c34: e5842090     	str	r2, [r4, #0x90]
++  108c38: e5942098     	ldr	r2, [r4, #0x98]
++  108c3c: e08e5008     	add	r5, lr, r8
++  108c40: e59470a0     	ldr	r7, [r4, #0xa0]
++  108c44: e5845094     	str	r5, [r4, #0x94]
++  108c48: e0821003     	add	r1, r2, r3
++  108c4c: e594509c     	ldr	r5, [r4, #0x9c]
++  108c50: e59420a4     	ldr	r2, [r4, #0xa4]
++  108c54: e085000a     	add	r0, r5, r10
++  108c58: e5841098     	str	r1, [r4, #0x98]
++  108c5c: e584009c     	str	r0, [r4, #0x9c]
++  108c60: e28d5050     	add	r5, sp, #80
++  108c64: e59d0010     	ldr	r0, [sp, #0x10]
++  108c68: e59d1018     	ldr	r1, [sp, #0x18]
++  108c6c: e0870000     	add	r0, r7, r0
++  108c70: e58400a0     	str	r0, [r4, #0xa0]
++  108c74: e0820006     	add	r0, r2, r6
++  108c78: e58400a4     	str	r0, [r4, #0xa4]
++  108c7c: e59d2014     	ldr	r2, [sp, #0x14]
++  108c80: e2811040     	add	r1, r1, #64
++  108c84: e59d0008     	ldr	r0, [sp, #0x8]
++  108c88: e59f92a0     	ldr	r9, [pc, #0x2a0]        @ 0x108f30 <.text+0xf8e30>
++  108c8c: e2822001     	add	r2, r2, #1
++  108c90: e1520000     	cmp	r2, r0
++  108c94: e79f9009     	ldr	r9, [pc, r9]
++  108c98: e59fa294     	ldr	r10, [pc, #0x294]       @ 0x108f34 <.text+0xf8e34>
++  108c9c: e79fa00a     	ldr	r10, [pc, r10]
++  108ca0: 0a00009b     	beq	0x108f14 <.text+0xf8e14> @ imm = #0x26c
++  108ca4: e3a00000     	mov	r0, #0
++  108ca8: e58d2014     	str	r2, [sp, #0x14]
++  108cac: e7912000     	ldr	r2, [r1, r0]
++  108cb0: e6bf2f32     	rev	r2, r2
++  108cb4: e7852000     	str	r2, [r5, r0]
++  108cb8: e2800004     	add	r0, r0, #4
++  108cbc: e3500040     	cmp	r0, #64
++  108cc0: 1afffff9     	bne	0x108cac <.text+0xf8bac> @ imm = #-0x1c
++  108cc4: e5990000     	ldr	r0, [r9]
++  108cc8: e58d1018     	str	r1, [sp, #0x18]
++  108ccc: e2401001     	sub	r1, r0, #1
++  108cd0: e0000190     	mul	r0, r0, r1
++  108cd4: e3100001     	tst	r0, #1
++  108cd8: e5990000     	ldr	r0, [r9]
++  108cdc: e59de050     	ldr	lr, [sp, #0x50]
++  108ce0: e2401001     	sub	r1, r0, #1
++  108ce4: e0000190     	mul	r0, r0, r1
++  108ce8: e3100001     	tst	r0, #1
++  108cec: 0a000002     	beq	0x108cfc <.text+0xf8bfc> @ imm = #0x8
++  108cf0: e59a0000     	ldr	r0, [r10]
++  108cf4: e3500009     	cmp	r0, #9
++  108cf8: cafffff6     	bgt	0x108cd8 <.text+0xf8bd8> @ imm = #-0x28
++  108cfc: e3a0c010     	mov	r12, #16
++  108d00: e3a08000     	mov	r8, #0
++  108d04: ea000004     	b	0x108d1c <.text+0xf8c1c> @ imm = #0x10
++  108d08: e2888001     	add	r8, r8, #1
++  108d0c: e28cc001     	add	r12, r12, #1
++  108d10: e3580030     	cmp	r8, #48
++  108d14: e1a0e000     	mov	lr, r0
++  108d18: 0a00002d     	beq	0x108dd4 <.text+0xf8cd4> @ imm = #0xb4
++  108d1c: e5990000     	ldr	r0, [r9]
++  108d20: e2401001     	sub	r1, r0, #1
++  108d24: e0000190     	mul	r0, r0, r1
++  108d28: e3100001     	tst	r0, #1
++  108d2c: 0a000002     	beq	0x108d3c <.text+0xf8c3c> @ imm = #0x8
++  108d30: e59a0000     	ldr	r0, [r10]
++  108d34: e3500009     	cmp	r0, #9
++  108d38: ca000016     	bgt	0x108d98 <.text+0xf8c98> @ imm = #0x58
++  108d3c: e0853108     	add	r3, r5, r8, lsl #2
++  108d40: e5991000     	ldr	r1, [r9]
++  108d44: e5930004     	ldr	r0, [r3, #0x4]
++  108d48: e2412001     	sub	r2, r1, #1
++  108d4c: e5934038     	ldr	r4, [r3, #0x38]
++  108d50: e0020291     	mul	r2, r1, r2
++  108d54: e5935024     	ldr	r5, [r3, #0x24]
++  108d58: e1a01960     	ror	r1, r0, #18
++  108d5c: e02111a0     	eor	r1, r1, r0, lsr #3
++  108d60: e08e5005     	add	r5, lr, r5
++  108d64: e02173e0     	eor	r7, r1, r0, ror #7
++  108d68: e1a019e4     	ror	r1, r4, #19
++  108d6c: e0216524     	eor	r6, r1, r4, lsr #10
++  108d70: e59a1000     	ldr	r1, [r10]
++  108d74: e02648e4     	eor	r4, r6, r4, ror #17
++  108d78: e3120001     	tst	r2, #1
++  108d7c: e0854004     	add	r4, r5, r4
++  108d80: e28d5050     	add	r5, sp, #80
++  108d84: e0844007     	add	r4, r4, r7
++  108d88: e5834040     	str	r4, [r3, #0x40]
++  108d8c: 0affffdd     	beq	0x108d08 <.text+0xf8c08> @ imm = #-0x8c
++  108d90: e3510009     	cmp	r1, #9
++  108d94: daffffdb     	ble	0x108d08 <.text+0xf8c08> @ imm = #-0x94
++  108d98: e0850108     	add	r0, r5, r8, lsl #2
++  108d9c: e5901004     	ldr	r1, [r0, #0x4]
++  108da0: e5903038     	ldr	r3, [r0, #0x38]
++  108da4: e5902024     	ldr	r2, [r0, #0x24]
++  108da8: e1a04961     	ror	r4, r1, #18
++  108dac: e02441a1     	eor	r4, r4, r1, lsr #3
++  108db0: e08e2002     	add	r2, lr, r2
++  108db4: e02413e1     	eor	r1, r4, r1, ror #7
++  108db8: e1a049e3     	ror	r4, r3, #19
++  108dbc: e0244523     	eor	r4, r4, r3, lsr #10
++  108dc0: e02438e3     	eor	r3, r4, r3, ror #17
++  108dc4: e0822003     	add	r2, r2, r3
++  108dc8: e0821001     	add	r1, r2, r1
++  108dcc: e5801040     	str	r1, [r0, #0x40]
++  108dd0: eaffffd9     	b	0x108d3c <.text+0xf8c3c> @ imm = #-0x9c
++  108dd4: e59d0004     	ldr	r0, [sp, #0x4]
++  108dd8: e28d1030     	add	r1, sp, #48
++  108ddc: e3a0e000     	mov	lr, #0
++  108de0: e8b000cc     	ldm	r0!, {r2, r3, r6, r7}
++  108de4: e8a100cc     	stm	r1!, {r2, r3, r6, r7}
++  108de8: e89000cc     	ldm	r0, {r2, r3, r6, r7}
++  108dec: e88100cc     	stm	r1, {r2, r3, r6, r7}
++  108df0: e59d003c     	ldr	r0, [sp, #0x3c]
++  108df4: e58d002c     	str	r0, [sp, #0x2c]
++  108df8: e59d5030     	ldr	r5, [sp, #0x30]
++  108dfc: e59d9034     	ldr	r9, [sp, #0x34]
++  108e00: e59d2038     	ldr	r2, [sp, #0x38]
++  108e04: e59d4048     	ldr	r4, [sp, #0x48]
++  108e08: e59d0044     	ldr	r0, [sp, #0x44]
++  108e0c: e59d3040     	ldr	r3, [sp, #0x40]
++  108e10: e59d104c     	ldr	r1, [sp, #0x4c]
++  108e14: e58d1028     	str	r1, [sp, #0x28]
++  108e18: ea000022     	b	0x108ea8 <.text+0xf8da8> @ imm = #0x88
++  108e1c: e59d6024     	ldr	r6, [sp, #0x24]
++  108e20: e000400a     	and	r4, r0, r10
++  108e24: e59d3028     	ldr	r3, [sp, #0x28]
++  108e28: e28ee001     	add	lr, lr, #1
++  108e2c: e1c6500a     	bic	r5, r6, r10
++  108e30: e59d8020     	ldr	r8, [sp, #0x20]
++  108e34: e1854004     	orr	r4, r5, r4
++  108e38: e1a0536a     	ror	r5, r10, #6
++  108e3c: e02555ea     	eor	r5, r5, r10, ror #11
++  108e40: e0822003     	add	r2, r2, r3
++  108e44: e0255cea     	eor	r5, r5, r10, ror #25
++  108e48: e35e0040     	cmp	lr, #64
++  108e4c: e0822005     	add	r2, r2, r5
++  108e50: e1a0900c     	mov	r9, r12
++  108e54: e0822004     	add	r2, r2, r4
++  108e58: e1a0416c     	ror	r4, r12, #2
++  108e5c: e0822001     	add	r2, r2, r1
++  108e60: e59d102c     	ldr	r1, [sp, #0x2c]
++  108e64: e02446ec     	eor	r4, r4, r12, ror #13
++  108e68: e1a07000     	mov	r7, r0
++  108e6c: e0813002     	add	r3, r1, r2
++  108e70: e59d101c     	ldr	r1, [sp, #0x1c]
++  108e74: e0244b6c     	eor	r4, r4, r12, ror #22
++  108e78: e58d802c     	str	r8, [sp, #0x2c]
++  108e7c: e0285001     	eor	r5, r8, r1
++  108e80: e0842002     	add	r2, r4, r2
++  108e84: e0084001     	and	r4, r8, r1
++  108e88: e005500c     	and	r5, r5, r12
++  108e8c: e0254004     	eor	r4, r5, r4
++  108e90: e58d6028     	str	r6, [sp, #0x28]
++  108e94: e0825004     	add	r5, r2, r4
++  108e98: e1a04000     	mov	r4, r0
++  108e9c: e1a02001     	mov	r2, r1
++  108ea0: e1a0000a     	mov	r0, r10
++  108ea4: 0affff51     	beq	0x108bf0 <.text+0xf8af0> @ imm = #-0x2bc
++  108ea8: e58d4024     	str	r4, [sp, #0x24]
++  108eac: e1a0a003     	mov	r10, r3
++  108eb0: e58d901c     	str	r9, [sp, #0x1c]
++  108eb4: e1a0c005     	mov	r12, r5
++  108eb8: e58d2020     	str	r2, [sp, #0x20]
++  108ebc: e59f7060     	ldr	r7, [pc, #0x60]         @ 0x108f24 <.text+0xf8e24>
++  108ec0: e79f7007     	ldr	r7, [pc, r7]
++  108ec4: e5971000     	ldr	r1, [r7]
++  108ec8: e59f9058     	ldr	r9, [pc, #0x58]         @ 0x108f28 <.text+0xf8e28>
++  108ecc: e2412001     	sub	r2, r1, #1
++  108ed0: e0010291     	mul	r1, r1, r2
++  108ed4: e79f9009     	ldr	r9, [pc, r9]
++  108ed8: e3110001     	tst	r1, #1
++  108edc: e5974000     	ldr	r4, [r7]
++  108ee0: e28d1050     	add	r1, sp, #80
++  108ee4: e799210e     	ldr	r2, [r9, lr, lsl #2]
++  108ee8: e2445001     	sub	r5, r4, #1
++  108eec: e791110e     	ldr	r1, [r1, lr, lsl #2]
++  108ef0: e0040594     	mul	r4, r4, r5
++  108ef4: e3140001     	tst	r4, #1
++  108ef8: 0affffc7     	beq	0x108e1c <.text+0xf8d1c> @ imm = #-0xe4
++  108efc: e59f4028     	ldr	r4, [pc, #0x28]         @ 0x108f2c <.text+0xf8e2c>
++  108f00: e79f4004     	ldr	r4, [pc, r4]
++  108f04: e5944000     	ldr	r4, [r4]
++  108f08: e3540009     	cmp	r4, #9
++  108f0c: cafffff2     	bgt	0x108edc <.text+0xf8ddc> @ imm = #-0x38
++  108f10: eaffffc1     	b	0x108e1c <.text+0xf8d1c> @ imm = #-0xfc
++  108f14: e24bd01c     	sub	sp, r11, #28
++  108f18: e8bd8ff0     	pop	{r4, r5, r6, r7, r8, r9, r10, r11, pc}
++  108f1c: 004d6288     	subeq	r6, sp, r8, lsl #5
++  108f20: 004d67d8     	ldrdeq	r6, r7, [sp], #-120
++  108f24: 004d5f64     	subeq	r5, sp, r4, ror #30
++  108f28: 004d6d80     	subeq	r6, sp, r0, lsl #27
++  108f2c: 004d6498     	umaaleq	r6, sp, r8, r4
++  108f30: 004d6190     	umaaleq	r6, sp, r0, r1
++  108f34: 004d66fc     	strdeq	r6, r7, [sp], #-108
+--- /dev/null
++++ b/evidence/stage7/disasm/sha256-final-for-oracle.S
+@@ -0,0 +1,239 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++  10939c: e92d4ff0     	push	{r4, r5, r6, r7, r8, r9, r10, r11, lr}
++  1093a0: e28db01c     	add	r11, sp, #28
++  1093a4: e24dd004     	sub	sp, sp, #4
++  1093a8: e59f8384     	ldr	r8, [pc, #0x384]        @ 0x109734 <.text+0xf9634>
++  1093ac: e1a05000     	mov	r5, r0
++  1093b0: e1a04001     	mov	r4, r1
++  1093b4: e79f8008     	ldr	r8, [pc, r8]
++  1093b8: e5980000     	ldr	r0, [r8]
++  1093bc: e2401001     	sub	r1, r0, #1
++  1093c0: e0000190     	mul	r0, r0, r1
++  1093c4: e3100001     	tst	r0, #1
++  1093c8: 0a000004     	beq	0x1093e0 <.text+0xf92e0> @ imm = #0x10
++  1093cc: e59f0364     	ldr	r0, [pc, #0x364]        @ 0x109738 <.text+0xf9638>
++  1093d0: e79f0000     	ldr	r0, [pc, r0]
++  1093d4: e5900000     	ldr	r0, [r0]
++  1093d8: e3500009     	cmp	r0, #9
++  1093dc: ca00006d     	bgt	0x109598 <.text+0xf9498> @ imm = #0x1b4
++  1093e0: e5959004     	ldr	r9, [r5, #0x4]
++  1093e4: e3a07001     	mov	r7, #1
++  1093e8: e2856008     	add	r6, r5, #8
++  1093ec: e595a000     	ldr	r10, [r5]
++  1093f0: e2091038     	and	r1, r9, #56
++  1093f4: e0860009     	add	r0, r6, r9
++  1093f8: e3510038     	cmp	r1, #56
++  1093fc: e3a01000     	mov	r1, #0
++  109400: 03007002     	movweq	r7, #0x2
++  109404: e0692307     	rsb	r2, r9, r7, lsl #6
++  109408: eb12681f     	bl	0x5a348c <.text+0x59338c> @ imm = #0x49a07c
++  10940c: e5950004     	ldr	r0, [r5, #0x4]
++  109410: e3a01080     	mov	r1, #128
++  109414: e7c61000     	strb	r1, [r6, r0]
++  109418: e08a1009     	add	r1, r10, r9
++  10941c: e0860307     	add	r0, r6, r7, lsl #6
++  109420: e1a022a1     	lsr	r2, r1, #5
++  109424: e5402002     	strb	r2, [r0, #-0x2]
++  109428: e1a026a1     	lsr	r2, r1, #13
++  10942c: e5402003     	strb	r2, [r0, #-0x3]
++  109430: e1a02aa1     	lsr	r2, r1, #21
++  109434: e1a01181     	lsl	r1, r1, #3
++  109438: e5402004     	strb	r2, [r0, #-0x4]
++  10943c: e5401001     	strb	r1, [r0, #-0x1]
++  109440: e1a00005     	mov	r0, r5
++  109444: e1a01006     	mov	r1, r6
++  109448: e1a02007     	mov	r2, r7
++  10944c: ebfffdca     	bl	0x108b7c <.text+0xf8a7c> @ imm = #-0x8d8
++  109450: e5950088     	ldr	r0, [r5, #0x88]
++  109454: e5c40003     	strb	r0, [r4, #0x3]
++  109458: e5950088     	ldr	r0, [r5, #0x88]
++  10945c: e1a00420     	lsr	r0, r0, #8
++  109460: e5c40002     	strb	r0, [r4, #0x2]
++  109464: e1d508ba     	ldrh	r0, [r5, #138]
++  109468: e5c40001     	strb	r0, [r4, #0x1]
++  10946c: e5d5008b     	ldrb	r0, [r5, #0x8b]
++  109470: e5c40000     	strb	r0, [r4]
++  109474: e595008c     	ldr	r0, [r5, #0x8c]
++  109478: e5c40007     	strb	r0, [r4, #0x7]
++  10947c: e595008c     	ldr	r0, [r5, #0x8c]
++  109480: e1a00420     	lsr	r0, r0, #8
++  109484: e5c40006     	strb	r0, [r4, #0x6]
++  109488: e1d508be     	ldrh	r0, [r5, #142]
++  10948c: e5c40005     	strb	r0, [r4, #0x5]
++  109490: e5d5008f     	ldrb	r0, [r5, #0x8f]
++  109494: e5c40004     	strb	r0, [r4, #0x4]
++  109498: e5950090     	ldr	r0, [r5, #0x90]
++  10949c: e5c4000b     	strb	r0, [r4, #0xb]
++  1094a0: e5950090     	ldr	r0, [r5, #0x90]
++  1094a4: e1a00420     	lsr	r0, r0, #8
++  1094a8: e5c4000a     	strb	r0, [r4, #0xa]
++  1094ac: e1d509b2     	ldrh	r0, [r5, #146]
++  1094b0: e5c40009     	strb	r0, [r4, #0x9]
++  1094b4: e5d50093     	ldrb	r0, [r5, #0x93]
++  1094b8: e5c40008     	strb	r0, [r4, #0x8]
++  1094bc: e5950094     	ldr	r0, [r5, #0x94]
++  1094c0: e5c4000f     	strb	r0, [r4, #0xf]
++  1094c4: e5950094     	ldr	r0, [r5, #0x94]
++  1094c8: e1a00420     	lsr	r0, r0, #8
++  1094cc: e5c4000e     	strb	r0, [r4, #0xe]
++  1094d0: e1d509b6     	ldrh	r0, [r5, #150]
++  1094d4: e5c4000d     	strb	r0, [r4, #0xd]
++  1094d8: e5d50097     	ldrb	r0, [r5, #0x97]
++  1094dc: e5c4000c     	strb	r0, [r4, #0xc]
++  1094e0: e5950098     	ldr	r0, [r5, #0x98]
++  1094e4: e5c40013     	strb	r0, [r4, #0x13]
++  1094e8: e5950098     	ldr	r0, [r5, #0x98]
++  1094ec: e1a00420     	lsr	r0, r0, #8
++  1094f0: e5c40012     	strb	r0, [r4, #0x12]
++  1094f4: e1d509ba     	ldrh	r0, [r5, #154]
++  1094f8: e5c40011     	strb	r0, [r4, #0x11]
++  1094fc: e5d5009b     	ldrb	r0, [r5, #0x9b]
++  109500: e5c40010     	strb	r0, [r4, #0x10]
++  109504: e595009c     	ldr	r0, [r5, #0x9c]
++  109508: e5c40017     	strb	r0, [r4, #0x17]
++  10950c: e595009c     	ldr	r0, [r5, #0x9c]
++  109510: e1a00420     	lsr	r0, r0, #8
++  109514: e5c40016     	strb	r0, [r4, #0x16]
++  109518: e1d509be     	ldrh	r0, [r5, #158]
++  10951c: e5c40015     	strb	r0, [r4, #0x15]
++  109520: e5d5009f     	ldrb	r0, [r5, #0x9f]
++  109524: e5c40014     	strb	r0, [r4, #0x14]
++  109528: e59500a0     	ldr	r0, [r5, #0xa0]
++  10952c: e5c4001b     	strb	r0, [r4, #0x1b]
++  109530: e59500a0     	ldr	r0, [r5, #0xa0]
++  109534: e1a00420     	lsr	r0, r0, #8
++  109538: e5c4001a     	strb	r0, [r4, #0x1a]
++  10953c: e1d50ab2     	ldrh	r0, [r5, #162]
++  109540: e5c40019     	strb	r0, [r4, #0x19]
++  109544: e5d500a3     	ldrb	r0, [r5, #0xa3]
++  109548: e5c40018     	strb	r0, [r4, #0x18]
++  10954c: e59500a4     	ldr	r0, [r5, #0xa4]
++  109550: e5c4001f     	strb	r0, [r4, #0x1f]
++  109554: e59500a4     	ldr	r0, [r5, #0xa4]
++  109558: e1a00420     	lsr	r0, r0, #8
++  10955c: e5c4001e     	strb	r0, [r4, #0x1e]
++  109560: e1d50ab6     	ldrh	r0, [r5, #166]
++  109564: e5c4001d     	strb	r0, [r4, #0x1d]
++  109568: e5d500a7     	ldrb	r0, [r5, #0xa7]
++  10956c: e5c4001c     	strb	r0, [r4, #0x1c]
++  109570: e5980000     	ldr	r0, [r8]
++  109574: e2401001     	sub	r1, r0, #1
++  109578: e0000190     	mul	r0, r0, r1
++  10957c: e3100001     	tst	r0, #1
++  109580: 0a000069     	beq	0x10972c <.text+0xf962c> @ imm = #0x1a4
++  109584: e59f01b0     	ldr	r0, [pc, #0x1b0]        @ 0x10973c <.text+0xf963c>
++  109588: e79f0000     	ldr	r0, [pc, r0]
++  10958c: e5900000     	ldr	r0, [r0]
++  109590: e3500009     	cmp	r0, #9
++  109594: da000064     	ble	0x10972c <.text+0xf962c> @ imm = #0x190
++  109598: e5956004     	ldr	r6, [r5, #0x4]
++  10959c: e3a07001     	mov	r7, #1
++  1095a0: e285a008     	add	r10, r5, #8
++  1095a4: e5959000     	ldr	r9, [r5]
++  1095a8: e2061038     	and	r1, r6, #56
++  1095ac: e08a0006     	add	r0, r10, r6
++  1095b0: e3510038     	cmp	r1, #56
++  1095b4: e3a01000     	mov	r1, #0
++  1095b8: 03007002     	movweq	r7, #0x2
++  1095bc: e0662307     	rsb	r2, r6, r7, lsl #6
++  1095c0: eb1267b1     	bl	0x5a348c <.text+0x59338c> @ imm = #0x499ec4
++  1095c4: e5950004     	ldr	r0, [r5, #0x4]
++  1095c8: e3a01080     	mov	r1, #128
++  1095cc: e7ca1000     	strb	r1, [r10, r0]
++  1095d0: e0891006     	add	r1, r9, r6
++  1095d4: e08a0307     	add	r0, r10, r7, lsl #6
++  1095d8: e1a022a1     	lsr	r2, r1, #5
++  1095dc: e5402002     	strb	r2, [r0, #-0x2]
++  1095e0: e1a026a1     	lsr	r2, r1, #13
++  1095e4: e5402003     	strb	r2, [r0, #-0x3]
++  1095e8: e1a02aa1     	lsr	r2, r1, #21
++  1095ec: e1a01181     	lsl	r1, r1, #3
++  1095f0: e5402004     	strb	r2, [r0, #-0x4]
++  1095f4: e5401001     	strb	r1, [r0, #-0x1]
++  1095f8: e1a00005     	mov	r0, r5
++  1095fc: e1a0100a     	mov	r1, r10
++  109600: e1a02007     	mov	r2, r7
++  109604: ebfffd5c     	bl	0x108b7c <.text+0xf8a7c> @ imm = #-0xa90
++  109608: e5950088     	ldr	r0, [r5, #0x88]
++  10960c: e5c40003     	strb	r0, [r4, #0x3]
++  109610: e5950088     	ldr	r0, [r5, #0x88]
++  109614: e1a00420     	lsr	r0, r0, #8
++  109618: e5c40002     	strb	r0, [r4, #0x2]
++  10961c: e1d508ba     	ldrh	r0, [r5, #138]
++  109620: e5c40001     	strb	r0, [r4, #0x1]
++  109624: e5d5008b     	ldrb	r0, [r5, #0x8b]
++  109628: e5c40000     	strb	r0, [r4]
++  10962c: e595008c     	ldr	r0, [r5, #0x8c]
++  109630: e5c40007     	strb	r0, [r4, #0x7]
++  109634: e595008c     	ldr	r0, [r5, #0x8c]
++  109638: e1a00420     	lsr	r0, r0, #8
++  10963c: e5c40006     	strb	r0, [r4, #0x6]
++  109640: e1d508be     	ldrh	r0, [r5, #142]
++  109644: e5c40005     	strb	r0, [r4, #0x5]
++  109648: e5d5008f     	ldrb	r0, [r5, #0x8f]
++  10964c: e5c40004     	strb	r0, [r4, #0x4]
++  109650: e5950090     	ldr	r0, [r5, #0x90]
++  109654: e5c4000b     	strb	r0, [r4, #0xb]
++  109658: e5950090     	ldr	r0, [r5, #0x90]
++  10965c: e1a00420     	lsr	r0, r0, #8
++  109660: e5c4000a     	strb	r0, [r4, #0xa]
++  109664: e1d509b2     	ldrh	r0, [r5, #146]
++  109668: e5c40009     	strb	r0, [r4, #0x9]
++  10966c: e5d50093     	ldrb	r0, [r5, #0x93]
++  109670: e5c40008     	strb	r0, [r4, #0x8]
++  109674: e5950094     	ldr	r0, [r5, #0x94]
++  109678: e5c4000f     	strb	r0, [r4, #0xf]
++  10967c: e5950094     	ldr	r0, [r5, #0x94]
++  109680: e1a00420     	lsr	r0, r0, #8
++  109684: e5c4000e     	strb	r0, [r4, #0xe]
++  109688: e1d509b6     	ldrh	r0, [r5, #150]
++  10968c: e5c4000d     	strb	r0, [r4, #0xd]
++  109690: e5d50097     	ldrb	r0, [r5, #0x97]
++  109694: e5c4000c     	strb	r0, [r4, #0xc]
++  109698: e5950098     	ldr	r0, [r5, #0x98]
++  10969c: e5c40013     	strb	r0, [r4, #0x13]
++  1096a0: e5950098     	ldr	r0, [r5, #0x98]
++  1096a4: e1a00420     	lsr	r0, r0, #8
++  1096a8: e5c40012     	strb	r0, [r4, #0x12]
++  1096ac: e1d509ba     	ldrh	r0, [r5, #154]
++  1096b0: e5c40011     	strb	r0, [r4, #0x11]
++  1096b4: e5d5009b     	ldrb	r0, [r5, #0x9b]
++  1096b8: e5c40010     	strb	r0, [r4, #0x10]
++  1096bc: e595009c     	ldr	r0, [r5, #0x9c]
++  1096c0: e5c40017     	strb	r0, [r4, #0x17]
++  1096c4: e595009c     	ldr	r0, [r5, #0x9c]
++  1096c8: e1a00420     	lsr	r0, r0, #8
++  1096cc: e5c40016     	strb	r0, [r4, #0x16]
++  1096d0: e1d509be     	ldrh	r0, [r5, #158]
++  1096d4: e5c40015     	strb	r0, [r4, #0x15]
++  1096d8: e5d5009f     	ldrb	r0, [r5, #0x9f]
++  1096dc: e5c40014     	strb	r0, [r4, #0x14]
++  1096e0: e59500a0     	ldr	r0, [r5, #0xa0]
++  1096e4: e5c4001b     	strb	r0, [r4, #0x1b]
++  1096e8: e59500a0     	ldr	r0, [r5, #0xa0]
++  1096ec: e1a00420     	lsr	r0, r0, #8
++  1096f0: e5c4001a     	strb	r0, [r4, #0x1a]
++  1096f4: e1d50ab2     	ldrh	r0, [r5, #162]
++  1096f8: e5c40019     	strb	r0, [r4, #0x19]
++  1096fc: e5d500a3     	ldrb	r0, [r5, #0xa3]
++  109700: e5c40018     	strb	r0, [r4, #0x18]
++  109704: e59500a4     	ldr	r0, [r5, #0xa4]
++  109708: e5c4001f     	strb	r0, [r4, #0x1f]
++  10970c: e59500a4     	ldr	r0, [r5, #0xa4]
++  109710: e1a00420     	lsr	r0, r0, #8
++  109714: e5c4001e     	strb	r0, [r4, #0x1e]
++  109718: e1d50ab6     	ldrh	r0, [r5, #166]
++  10971c: e5c4001d     	strb	r0, [r4, #0x1d]
++  109720: e5d500a7     	ldrb	r0, [r5, #0xa7]
++  109724: e5c4001c     	strb	r0, [r4, #0x1c]
++  109728: eaffff2c     	b	0x1093e0 <.text+0xf92e0> @ imm = #-0x350
++  10972c: e24bd01c     	sub	sp, r11, #28
++  109730: e8bd8ff0     	pop	{r4, r5, r6, r7, r8, r9, r10, r11, pc}
++  109734: 004d601c     	subeq	r6, sp, r12, lsl r0
++  109738: 004d6660     	subeq	r6, sp, r0, ror #12
++  10973c: 004d64a8     	subeq	r6, sp, r8, lsr #9
+--- /dev/null
++++ b/evidence/stage7/disasm/sha256-init.S
+@@ -0,0 +1,26 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++  109120: e92d48f0     	push	{r4, r5, r6, r7, r11, lr}
++  109124: e28db010     	add	r11, sp, #16
++  109128: e59f103c     	ldr	r1, [pc, #0x3c]         @ 0x10916c <.text+0xf906c>
++  10912c: e3a07000     	mov	r7, #0
++  109130: e79f1001     	ldr	r1, [pc, r1]
++  109134: e2816010     	add	r6, r1, #16
++  109138: e891500c     	ldm	r1, {r2, r3, r12, lr}
++  10913c: e8960070     	ldm	r6, {r4, r5, r6}
++  109140: e591101c     	ldr	r1, [r1, #0x1c]
++  109144: e5802088     	str	r2, [r0, #0x88]
++  109148: e2802098     	add	r2, r0, #152
++  10914c: e580308c     	str	r3, [r0, #0x8c]
++  109150: e580c090     	str	r12, [r0, #0x90]
++  109154: e580e094     	str	lr, [r0, #0x94]
++  109158: e8820070     	stm	r2, {r4, r5, r6}
++  10915c: e58010a4     	str	r1, [r0, #0xa4]
++  109160: e5807000     	str	r7, [r0]
++  109164: e5807004     	str	r7, [r0, #0x4]
++  109168: e8bd88f0     	pop	{r4, r5, r6, r7, r11, pc}
++  10916c: 004d651c     	subeq	r6, sp, r12, lsl r5
+--- /dev/null
++++ b/evidence/stage7/disasm/sha256-update.S
+@@ -0,0 +1,145 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++  109170: e92d4ff0     	push	{r4, r5, r6, r7, r8, r9, r10, r11, lr}
++  109174: e28db01c     	add	r11, sp, #28
++  109178: e24dd004     	sub	sp, sp, #4
++  10917c: e59f4204     	ldr	r4, [pc, #0x204]        @ 0x109388 <.text+0xf9288>
++  109180: e1a05000     	mov	r5, r0
++  109184: e1a06001     	mov	r6, r1
++  109188: e1a08002     	mov	r8, r2
++  10918c: e79f4004     	ldr	r4, [pc, r4]
++  109190: e5940000     	ldr	r0, [r4]
++  109194: e59f91f0     	ldr	r9, [pc, #0x1f0]        @ 0x10938c <.text+0xf928c>
++  109198: e2401001     	sub	r1, r0, #1
++  10919c: e0000190     	mul	r0, r0, r1
++  1091a0: e79f9009     	ldr	r9, [pc, r9]
++  1091a4: e3100001     	tst	r0, #1
++  1091a8: 0a000002     	beq	0x1091b8 <.text+0xf90b8> @ imm = #0x8
++  1091ac: e5990000     	ldr	r0, [r9]
++  1091b0: e3500009     	cmp	r0, #9
++  1091b4: ca000012     	bgt	0x109204 <.text+0xf9104> @ imm = #0x48
++  1091b8: e5950004     	ldr	r0, [r5, #0x4]
++  1091bc: e1a01006     	mov	r1, r6
++  1091c0: e2607040     	rsb	r7, r0, #64
++  1091c4: e0850000     	add	r0, r5, r0
++  1091c8: e1570008     	cmp	r7, r8
++  1091cc: e2800008     	add	r0, r0, #8
++  1091d0: 81a07008     	movhi	r7, r8
++  1091d4: e1a02007     	mov	r2, r7
++  1091d8: eb126742     	bl	0x5a2ee8 <.text+0x592de8> @ imm = #0x499d08
++  1091dc: e5940000     	ldr	r0, [r4]
++  1091e0: e2401001     	sub	r1, r0, #1
++  1091e4: e0010190     	mul	r1, r0, r1
++  1091e8: e5950004     	ldr	r0, [r5, #0x4]
++  1091ec: e0800008     	add	r0, r0, r8
++  1091f0: e3110001     	tst	r1, #1
++  1091f4: 0a00000b     	beq	0x109228 <.text+0xf9128> @ imm = #0x2c
++  1091f8: e5991000     	ldr	r1, [r9]
++  1091fc: e3510009     	cmp	r1, #9
++  109200: da000008     	ble	0x109228 <.text+0xf9128> @ imm = #0x20
++  109204: e5950004     	ldr	r0, [r5, #0x4]
++  109208: e1a01006     	mov	r1, r6
++  10920c: e2602040     	rsb	r2, r0, #64
++  109210: e0850000     	add	r0, r5, r0
++  109214: e1520008     	cmp	r2, r8
++  109218: e2800008     	add	r0, r0, #8
++  10921c: 81a02008     	movhi	r2, r8
++  109220: eb126730     	bl	0x5a2ee8 <.text+0x592de8> @ imm = #0x499cc0
++  109224: eaffffe3     	b	0x1091b8 <.text+0xf90b8> @ imm = #-0x74
++  109228: e350003f     	cmp	r0, #63
++  10922c: 8a000001     	bhi	0x109238 <.text+0xf9138> @ imm = #0x4
++  109230: e5850004     	str	r0, [r5, #0x4]
++  109234: ea000047     	b	0x109358 <.text+0xf9258> @ imm = #0x11c
++  109238: e5940000     	ldr	r0, [r4]
++  10923c: e58d6000     	str	r6, [sp]
++  109240: e2401001     	sub	r1, r0, #1
++  109244: e0000190     	mul	r0, r0, r1
++  109248: e3100001     	tst	r0, #1
++  10924c: 0a000004     	beq	0x109264 <.text+0xf9164> @ imm = #0x10
++  109250: e59f0138     	ldr	r0, [pc, #0x138]        @ 0x109390 <.text+0xf9290>
++  109254: e79f0000     	ldr	r0, [pc, r0]
++  109258: e5900000     	ldr	r0, [r0]
++  10925c: e3500009     	cmp	r0, #9
++  109260: ca000021     	bgt	0x1092ec <.text+0xf91ec> @ imm = #0x84
++  109264: e2859008     	add	r9, r5, #8
++  109268: e1a00005     	mov	r0, r5
++  10926c: e3a02001     	mov	r2, #1
++  109270: e1a01009     	mov	r1, r9
++  109274: ebfffe40     	bl	0x108b7c <.text+0xf8a7c> @ imm = #-0x700
++  109278: e0866007     	add	r6, r6, r7
++  10927c: e048a007     	sub	r10, r8, r7
++  109280: e1a00005     	mov	r0, r5
++  109284: e1a0232a     	lsr	r2, r10, #6
++  109288: e1a01006     	mov	r1, r6
++  10928c: ebfffe3a     	bl	0x108b7c <.text+0xf8a7c> @ imm = #-0x718
++  109290: e3ca003f     	bic	r0, r10, #63
++  109294: e0861000     	add	r1, r6, r0
++  109298: e20a603f     	and	r6, r10, #63
++  10929c: e1a00009     	mov	r0, r9
++  1092a0: e1a02006     	mov	r2, r6
++  1092a4: eb12670f     	bl	0x5a2ee8 <.text+0x592de8> @ imm = #0x499c3c
++  1092a8: e5856004     	str	r6, [r5, #0x4]
++  1092ac: e28a1040     	add	r1, r10, #64
++  1092b0: e5950000     	ldr	r0, [r5]
++  1092b4: e3c1103f     	bic	r1, r1, #63
++  1092b8: e59d6000     	ldr	r6, [sp]
++  1092bc: e0800001     	add	r0, r0, r1
++  1092c0: e5850000     	str	r0, [r5]
++  1092c4: e5940000     	ldr	r0, [r4]
++  1092c8: e2401001     	sub	r1, r0, #1
++  1092cc: e0000190     	mul	r0, r0, r1
++  1092d0: e3100001     	tst	r0, #1
++  1092d4: 0a00001f     	beq	0x109358 <.text+0xf9258> @ imm = #0x7c
++  1092d8: e59f00b4     	ldr	r0, [pc, #0xb4]         @ 0x109394 <.text+0xf9294>
++  1092dc: e79f0000     	ldr	r0, [pc, r0]
++  1092e0: e5900000     	ldr	r0, [r0]
++  1092e4: e3500009     	cmp	r0, #9
++  1092e8: da00001a     	ble	0x109358 <.text+0xf9258> @ imm = #0x68
++  1092ec: e2859008     	add	r9, r5, #8
++  1092f0: e1a00005     	mov	r0, r5
++  1092f4: e3a02001     	mov	r2, #1
++  1092f8: e1a01009     	mov	r1, r9
++  1092fc: ebfffe1e     	bl	0x108b7c <.text+0xf8a7c> @ imm = #-0x788
++  109300: e0866007     	add	r6, r6, r7
++  109304: e1a0a004     	mov	r10, r4
++  109308: e0484007     	sub	r4, r8, r7
++  10930c: e1a00005     	mov	r0, r5
++  109310: e1a01006     	mov	r1, r6
++  109314: e1a02324     	lsr	r2, r4, #6
++  109318: ebfffe17     	bl	0x108b7c <.text+0xf8a7c> @ imm = #-0x7a4
++  10931c: e3c4003f     	bic	r0, r4, #63
++  109320: e0861000     	add	r1, r6, r0
++  109324: e204603f     	and	r6, r4, #63
++  109328: e1a00009     	mov	r0, r9
++  10932c: e1a02006     	mov	r2, r6
++  109330: eb1266ec     	bl	0x5a2ee8 <.text+0x592de8> @ imm = #0x499bb0
++  109334: e5856004     	str	r6, [r5, #0x4]
++  109338: e2841040     	add	r1, r4, #64
++  10933c: e5950000     	ldr	r0, [r5]
++  109340: e3c1103f     	bic	r1, r1, #63
++  109344: e1a0400a     	mov	r4, r10
++  109348: e59d6000     	ldr	r6, [sp]
++  10934c: e0800001     	add	r0, r0, r1
++  109350: e5850000     	str	r0, [r5]
++  109354: eaffffc2     	b	0x109264 <.text+0xf9164> @ imm = #-0xf8
++  109358: e59f2038     	ldr	r2, [pc, #0x38]         @ 0x109398 <.text+0xf9298>
++  10935c: e79f2002     	ldr	r2, [pc, r2]
++  109360: e5940000     	ldr	r0, [r4]
++  109364: e2401001     	sub	r1, r0, #1
++  109368: e0000190     	mul	r0, r0, r1
++  10936c: e3100001     	tst	r0, #1
++  109370: 0a000002     	beq	0x109380 <.text+0xf9280> @ imm = #0x8
++  109374: e5920000     	ldr	r0, [r2]
++  109378: e3500009     	cmp	r0, #9
++  10937c: cafffff7     	bgt	0x109360 <.text+0xf9260> @ imm = #-0x24
++  109380: e24bd01c     	sub	sp, r11, #28
++  109384: e8bd8ff0     	pop	{r4, r5, r6, r7, r8, r9, r10, r11, pc}
++  109388: 004d54b8     	strheq	r5, [sp], #-72
++  10938c: 004d5bd8     	ldrdeq	r5, r6, [sp], #-184
++  109390: 004d5b24     	subeq	r5, sp, r4, lsr #22
++  109394: 004d5a9c     	umaaleq	r5, sp, r12, r10
++  109398: 004d5a1c     	subeq	r5, sp, r12, lsl r10
+--- /dev/null
++++ b/evidence/stage7/recovery-manifest.json
+@@ -0,0 +1,230 @@
++{
++  "stage": 7,
++  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
++  "reference_bytes": 6228004,
++  "slices": [
++    {
++      "name": "nonce-producer",
++      "start": "0x000c4480",
++      "end_exclusive": "0x000c4700",
++      "size": 640,
++      "original_bytes_sha256": "ad50ff9e6a8e4d79e92bd69328a6b81a69adfd365c3f5fa8574fdc0cadebc8a5",
++      "disassembly": "evidence/stage7/disasm/nonce-producer.S",
++      "disassembly_sha256": "ce125f536b39cf67889074b17b51062ea938eec74fd5c42b7a686fc625bcfc75",
++      "scope": "Execute from slot lookup through 0xc46fc exclusive with immutable injected job row and injected chip/core attribution; original SHA executes. Enqueue instruction at 0xc46fc recorded only.",
++      "validation_kind": "differential",
++      "hardware_verified": false
++    },
++    {
++      "name": "sha256-compression",
++      "start": "0x00108b7c",
++      "end_exclusive": "0x00108f38",
++      "size": 956,
++      "original_bytes_sha256": "45b23ebc7dd35da4ad40a67a36c01b3872386a8c0afa6c5dceb66f4fbf585b60",
++      "disassembly": "evidence/stage7/disasm/sha256-compression.S",
++      "disassembly_sha256": "bad4d3ce396d70da4cd2442526ed2bcd4f9102c3e9b068f68232c051117bcaa6",
++      "scope": "Original compression, one 64-byte block; standard and arbitrary initial state. Not an original streaming API port.",
++      "validation_kind": "differential",
++      "hardware_verified": false
++    },
++    {
++      "name": "sha256-init",
++      "start": "0x00109120",
++      "end_exclusive": "0x00109170",
++      "size": 80,
++      "original_bytes_sha256": "0b523442c071b6bf21ade985bb04bec19715f688db9f937c9d75234b713ebb46",
++      "disassembly": "evidence/stage7/disasm/sha256-init.S",
++      "disassembly_sha256": "53b8ba541fe32c3063fbe8e543a8a13b94ec8ef86739fd52790315006ac602de",
++      "scope": "Original state initialization in nonce preparation and SHA tests.",
++      "validation_kind": "differential",
++      "hardware_verified": false
++    },
++    {
++      "name": "sha256-update",
++      "start": "0x00109170",
++      "end_exclusive": "0x0010939c",
++      "size": 556,
++      "original_bytes_sha256": "51fc833d545fdbee5d08f91f89a31a5dafe6c86567ed96587c1e13d2f5d466ba",
++      "disassembly": "evidence/stage7/disasm/sha256-update.S",
++      "disassembly_sha256": "d536211e713b02a1089d2efb900cbdee613709e19b586e4fafc1b9353c7559cc",
++      "scope": "64-byte update with original compression. memcpy injected. Other streaming sizes not claimed reconstructed.",
++      "validation_kind": "differential",
++      "hardware_verified": false
++    },
++    {
++      "name": "sha256-final-for-oracle",
++      "start": "0x0010939c",
++      "end_exclusive": "0x00109740",
++      "size": 932,
++      "original_bytes_sha256": "6f2e80364c70451b167202e69fc54899b1204838e60e071c144373116256aa08",
++      "disassembly": "evidence/stage7/disasm/sha256-final-for-oracle.S",
++      "disassembly_sha256": "363540e63ea7e3e64bab7618388a1d2abb35ea9687c1ceb8be8816b831e481b3",
++      "scope": "Original finalization used only to verify 64-byte SHA against hashlib; not a reconstruction of the streaming/finalization API. memset injected.",
++      "validation_kind": "differential-oracle-only",
++      "hardware_verified": false
++    },
++    {
++      "name": "chip1398-core-helper",
++      "start": "0x000ed974",
++      "end_exclusive": "0x000ed9bc",
++      "size": 72,
++      "original_bytes_sha256": "58927e490f7894d2f23c5f505b04da29699c11b87b638a58b1d03b75fc454eb1",
++      "disassembly": "evidence/stage7/disasm/chip1398-core-helper.S",
++      "disassembly_sha256": "46e2181efc6fbf1ccdc2cacb4c6cb0ea339ee52f96ad558298773c0a78964ba7",
++      "scope": "Numeric model getter is an injected value. Not proof of T21 model selection.",
++      "validation_kind": "differential",
++      "hardware_verified": false
++    },
++    {
++      "name": "nonce-stack-context",
++      "start": "0x000c4114",
++      "end_exclusive": "0x000c4184",
++      "size": 112,
++      "original_bytes_sha256": "b09d5df6df7293cbd116db2457964058533aabaa0d0d3b2130b2874e8f996a64",
++      "disassembly": "evidence/stage7/disasm/nonce-stack-context.S",
++      "disassembly_sha256": "99380ffe926edb0894ee679a67217d2deef07b83e7b8faebf3cc42dad416ecbf",
++      "scope": "Local stack setup used to construct the bounded oracle. Full pthread receiver not run.",
++      "validation_kind": "context-only",
++      "hardware_verified": false
++    },
++    {
++      "name": "nonce-queue-init-context",
++      "start": "0x000fa5a4",
++      "end_exclusive": "0x000fa5e0",
++      "size": 60,
++      "original_bytes_sha256": "165f48c3cfd40df62afb13f948fae626870a2886ad2b8203fa5b1cef963ba5e0",
++      "disassembly": "evidence/stage7/disasm/nonce-queue-init-context.S",
++      "disassembly_sha256": "f53d0185d8cca223cd1f22da2d22903ee554bacefa0055db7f72aa686e73b606",
++      "scope": "Queue initialization declares 4096 elements of 72 bytes. Queue not reconstructed.",
++      "validation_kind": "context-only",
++      "hardware_verified": false
++    },
++    {
++      "name": "job-writer-context",
++      "start": "0x000c4d90",
++      "end_exclusive": "0x000c4dd8",
++      "size": 72,
++      "original_bytes_sha256": "3bc1de1ae7105dbeb1eaea3c1a240d75c5521a778ee63c272889a0bcad50d5f4",
++      "disassembly": "evidence/stage7/disasm/job-writer-context.S",
++      "disassembly_sha256": "7a85b3853709110c27cea408b40190f5f58f858bb0a0cb203cd3cd53df78d05a",
++      "scope": "168-byte memcpy and slot wrap at 31; job writer not reconstructed.",
++      "validation_kind": "context-only",
++      "hardware_verified": false
++    },
++    {
++      "name": "nonce-queue-push-context",
++      "start": "0x000fa5e0",
++      "end_exclusive": "0x000fa660",
++      "size": 128,
++      "original_bytes_sha256": "fbe68cda4330fcf988d7a735157c2b80ee62c98155e46256e506c254e2627b23",
++      "disassembly": "evidence/stage7/disasm/nonce-queue-push-context.S",
++      "disassembly_sha256": "6af4550164fa7b1870fc0455ef12c51ba1d6dbd760f928b2fa53311e8eff7f7d",
++      "scope": "Queue call context only, not executed by candidate tests and not reconstructed.",
++      "validation_kind": "context-only",
++      "hardware_verified": false
++    }
++  ],
++  "branch_edges": [
++    {
++      "pc": "0xc45ac",
++      "target": "0xd2760",
++      "instruction_hex": "eb00386b"
++    },
++    {
++      "pc": "0xc45bc",
++      "target": "0xd280c",
++      "instruction_hex": "eb003892"
++    },
++    {
++      "pc": "0xc46c8",
++      "target": "0x109120",
++      "instruction_hex": "eb011294"
++    },
++    {
++      "pc": "0xc46d8",
++      "target": "0x109170",
++      "instruction_hex": "eb0112a4"
++    },
++    {
++      "pc": "0xc46fc",
++      "target": "0xfa5e0",
++      "instruction_hex": "eb00d7b7"
++    },
++    {
++      "pc": "0x109274",
++      "target": "0x108b7c",
++      "instruction_hex": "ebfffe40"
++    },
++    {
++      "pc": "0x10928c",
++      "target": "0x108b7c",
++      "instruction_hex": "ebfffe3a"
++    },
++    {
++      "pc": "0xed980",
++      "target": "0xfdfcc",
++      "instruction_hex": "eb004191"
++    },
++    {
++      "pc": "0xfa5cc",
++      "target": "0xd19b0",
++      "instruction_hex": "ebff5cf7"
++    },
++    {
++      "pc": "0xc4db8",
++      "target": "0x5a2ee8",
++      "instruction_hex": "eb13784a"
++    }
++  ],
++  "literals": [
++    {
++      "address": "0xc4ad4",
++      "bytes_hex": "48ef5800",
++      "value_le": 5828424
++    },
++    {
++      "address": "0xc5068",
++      "bytes_hex": "a8e65800",
++      "value_le": 5826216
++    },
++    {
++      "address": "0xfa5dc",
++      "bytes_hex": "18a55500",
++      "value_le": 5612824
++    }
++  ],
++  "partial_observed_modules": [
++    "src/backend/work-gen/work-gen.c",
++    "libbitmain/src/chip/chip1398.c"
++  ],
++  "new_helpers": [
++    "reconstruction/support/sha256_midstate.c",
++    "reconstruction/support/work_nonce_pipeline.c"
++  ],
++  "job_table": {
++    "entry_base": "0x653460",
++    "entry_stride": 168,
++    "slot_range": [
++      0,
++      31
++    ],
++    "entry_snapshot_is_not_freshness_proof": true
++  },
++  "queue_boundary": {
++    "original_element_bytes": 72,
++    "producer_explicit_bytes": 68,
++    "trailing_bytes": 4,
++    "trailing_meaning": "unknown; padding only a hypothesis",
++    "new_compact_type_not_vendor_abi": true
++  },
++  "restored_scope": "Original nonce producer after frame classification, with externally supplied immutable job snapshot and injected chip/core attribution; SHA first-block midstate; one chip1398 core bit helper.",
++  "NOT_restored": [
++    "register CRC validation",
++    "full nonce double hash and target validation",
++    "job generation/lifetime management",
++    "queue insertion/consumer",
++    "complete chip/core dispatcher",
++    "T21 driver binding",
++    "physical runtime"
++  ]
++}
+--- a/include/xminer/recovery/chip1398.h
++++ b/include/xminer/recovery/chip1398.h
+@@ -23,6 +23,10 @@
+  */
+ int vn135_bm1398_set_config_packet(uint32_t mode, uint32_t chip_address,
+     uint32_t register_address, uint32_t value, uint8_t *out, size_t capacity);
++/* Original 0xed974..0xed9bc: explicit model getter instead of global state.
++ * model_id is compared literally with 0x1397/0x1398, NOT the 0..7 selector.
++ * All other IDs return zero as in the original, not a validated core index. */
++uint32_t vn135_bm1398_core_from_nonce(uint32_t model_id,uint32_t nonce);
+ /* Original table at 0x5ebea8; module association only, NOT a T21 profile. */
+ extern const vn135_pll_limits vn135_bm1398_pll_limits;
+ uint32_t vn135_bm1398_pll_parameter_word(uint32_t reference_divider, uint32_t feedback_divider,
+--- /dev/null
++++ b/include/xminer/recovery/sha256_midstate.h
+@@ -0,0 +1,20 @@
++/* SPDX-License-Identifier: GPL-3.0-only
++ * New integration helper, not an original vendor header name or ABI.
++ */
++#ifndef VN135_SHA256_MIDSTATE_H
++#define VN135_SHA256_MIDSTATE_H
++#include <stdint.h>
++#ifdef __cplusplus
++extern "C" {
++#endif
++/* Standard SHA-256 compression over exactly one 64-byte block. No padding.
++ * State words are numeric uint32_t, not serialized digest bytes.
++ * Invalid NULL inputs return -2 without changing the output/state.
++ * Input block and output/state must not overlap.
++ */
++int vn135_sha256_compress_block(uint32_t state[8], const uint8_t block[64]);
++int vn135_sha256_midstate64(const uint8_t block[64], uint32_t out[8]);
++#ifdef __cplusplus
++}
++#endif
++#endif
+--- /dev/null
++++ b/include/xminer/recovery/work_nonce.h
+@@ -0,0 +1,73 @@
++/* SPDX-License-Identifier: GPL-3.0-only
++ * New integration API for original work-gen RX nonce preparation.
++ * No hardware, queue send, full hash/target verification, or pool submission.
++ */
++#ifndef VN135_WORK_NONCE_H
++#define VN135_WORK_NONCE_H
++#include "xminer/recovery/work_rx.h"
++#ifdef __cplusplus
++extern "C" {
++#endif
++#define VN135_WORK_JOB_SNAPSHOT_SIZE 168u
++#define VN135_NONCE_CANDIDATE_DEFINED_SIZE 68u
++#define VN135_ORIGINAL_NONCE_QUEUE_ELEMENT_SIZE 72u
++/* Snapshot starts at 0x653460 + slot * 168 in the supplied ELF's memory layout.
++ * Caller supplies a consistent immutable copy; pointer fields are not followed.
++ * This is not a definition of the complete original job struct or lifecycle.
++ */
++typedef struct { uint8_t bytes[VN135_WORK_JOB_SNAPSHOT_SIZE]; } vn135_work_job_snapshot;
++/* 68 bytes explicitly written on the recovered producer path. The original
++ * queue is configured for 72 bytes at 0xfa5c4. The final four bytes are NOT
++ * written by this slice; padding is a hypothesis, not a recovered semantic.
++ * This compact structure MUST NOT be copied as a 72-byte vendor queue element.
++ * Use the new typed API; no binary drop-in ABI compatibility is claimed. */
++typedef struct {
++    uint32_t chain_id,chip_id,core_id;
++    uint32_t job_word_a4;    /* Copied raw job word; semantic name unproven. */
++    uint32_t job_slot,version_word;
++    uint32_t job_word_70,job_word_74; /* Raw job words; not renamed speculatively. */
++    uint32_t nonce;
++    uint32_t midstate[8];   /* Numeric SHA-256 state after exactly one block. */
++} vn135_nonce_candidate;
++typedef struct {
++    vn135_nonce_candidate candidate;
++    uint8_t compression_block[64]; /* Additional evidence output, not vendor queue ABI. */
++} vn135_work_nonce_result;
++typedef struct {
++    void *context;
++    uint32_t (*chip_from_nonce)(void *context,uint32_t nonce);
++    uint32_t (*core_from_nonce)(void *context,uint32_t nonce);
++} vn135_nonce_attribution;
++enum { VN135_NONCE_PREPARED=0,VN135_NONCE_NO_JOB=1,
++       VN135_NONCE_INVALID=-2,VN135_NONCE_LOOKUP_FAILED=-3 };
++/* Original 0xc4518..0xc4578 transformation: variant <2 uses sentinel 0xffff,
++ * not zero. variant=2 uses payload[6..7] in big-endian order. NOT a pool mask.
++ */
++int vn135_work_nonce_version_bits(uint32_t variant,const uint8_t *payload,
++                                 size_t size,uint32_t *out);
++/* Compute the 68 explicitly populated bytes at the queue boundary (0xc4480..0xc46fc).
++ * Job selection/generation validity and nonce-frame classification are the
++ * caller's responsibility. chip/core mapping remain injected operations.
++ * Both are called once, chip first. Sentinel IDs are preserved, NOT validated.
++ * On invalid arguments no callback runs and output stays unchanged.
++ * Input/output/context objects must not overlap. No automatic I/O or retries.
++ */
++int vn135_work_nonce_prepare(uint32_t chip_selector,uint32_t variant,uint32_t chain,
++    const uint8_t *payload,size_t size,const vn135_work_job_snapshot *job,
++    const vn135_nonce_attribution *attribution,vn135_work_nonce_result *out);
++/* Optional new adapter, NOT original runtime job-table code.
++ * lookup must return 1 and a consistent snapshot, 0 for unavailable, or <0 for
++ * failure. No retry, allocation, or generation guess. The 5-bit slot cannot
++ * prove freshness: the caller must manage job reuse/invalidation separately.
++ */
++typedef struct {
++    void *context;
++    int (*read_snapshot)(void *context,uint32_t slot,vn135_work_job_snapshot *out);
++} vn135_work_job_reader;
++int vn135_work_nonce_from_rx(const vn135_work_rx_policy *policy,
++    const vn135_work_rx_message *message,const vn135_work_job_reader *reader,
++    const vn135_nonce_attribution *attribution,vn135_work_nonce_result *out);
++#ifdef __cplusplus
++}
++#endif
++#endif
+--- a/libbitmain/src/chip/chip1398.c
++++ b/libbitmain/src/chip/chip1398.c
+@@ -104,3 +104,11 @@
+             chip ? chip->cache_index : 0, register_address, value);
+     return rc == 0 ? 0 : -1;
+ }
++
++/* Stage 7, original 0xed974..0xed9bc; not the complete chip dispatcher. */
++uint32_t vn135_bm1398_core_from_nonce(uint32_t model_id,uint32_t nonce)
++{
++    if(model_id==0x1398u)return nonce>>24;
++    if(model_id==0x1397u)return ((nonce>>21)&0x3feu)|(nonce>>31);
++    return 0;
++}
+--- a/reconstruction/cgminer-overlay.am
++++ b/reconstruction/cgminer-overlay.am
+@@ -2,7 +2,11 @@
+ # Only offline-verified modules are linked. This DOES NOT register a T21 driver.
+ cgminer_CFLAGS = $(AM_CFLAGS) -ffp-contract=off
+ cgminer_CPPFLAGS += -I$(top_srcdir)/include
+-cgminer_SOURCES += src/backend/work-gen/work-gen.c \
++cgminer_SOURCES += reconstruction/support/sha256_midstate.c \
++                   reconstruction/support/work_nonce_pipeline.c \
++                   include/xminer/recovery/work_nonce.h \
++                   include/xminer/recovery/sha256_midstate.h \
++                   src/backend/work-gen/work-gen.c \
+                    reconstruction/support/work_rx_stream.c \
+                    include/xminer/recovery/work_rx.h \
+                    libbitmain/src/uart.c \
+--- /dev/null
++++ b/reconstruction/support/sha256_midstate.c
+@@ -0,0 +1,54 @@
++/* SPDX-License-Identifier: GPL-3.0-only
++ * New portable SHA-256 helper. Original source file ownership is unknown.
++ * Compared against original 0x108b7c compression and 0x109120 initialization.
++ * The integration API is NOT the vendor's streaming context/ABI.
++ * Public cgminer's own sha2.c is not replaced by this helper.
++ */
++#include "xminer/recovery/sha256_midstate.h"
++static const uint32_t iv[8] = {
++    0x6a09e667u,0xbb67ae85u,0x3c6ef372u,0xa54ff53au,
++    0x510e527fu,0x9b05688cu,0x1f83d9abu,0x5be0cd19u
++};
++static const uint32_t k[64] = {
++    0x428a2f98u,0x71374491u,0xb5c0fbcfu,0xe9b5dba5u,0x3956c25bu,0x59f111f1u,0x923f82a4u,0xab1c5ed5u,
++    0xd807aa98u,0x12835b01u,0x243185beu,0x550c7dc3u,0x72be5d74u,0x80deb1feu,0x9bdc06a7u,0xc19bf174u,
++    0xe49b69c1u,0xefbe4786u,0x0fc19dc6u,0x240ca1ccu,0x2de92c6fu,0x4a7484aau,0x5cb0a9dcu,0x76f988dau,
++    0x983e5152u,0xa831c66du,0xb00327c8u,0xbf597fc7u,0xc6e00bf3u,0xd5a79147u,0x06ca6351u,0x14292967u,
++    0x27b70a85u,0x2e1b2138u,0x4d2c6dfcu,0x53380d13u,0x650a7354u,0x766a0abbu,0x81c2c92eu,0x92722c85u,
++    0xa2bfe8a1u,0xa81a664bu,0xc24b8b70u,0xc76c51a3u,0xd192e819u,0xd6990624u,0xf40e3585u,0x106aa070u,
++    0x19a4c116u,0x1e376c08u,0x2748774cu,0x34b0bcb5u,0x391c0cb3u,0x4ed8aa4au,0x5b9cca4fu,0x682e6ff3u,
++    0x748f82eeu,0x78a5636fu,0x84c87814u,0x8cc70208u,0x90befffau,0xa4506cebu,0xbef9a3f7u,0xc67178f2u
++};
++static uint32_t rr(uint32_t x,unsigned n){return (x>>n)|(x<<(32u-n));}
++static uint32_t be32(const uint8_t *p){
++    return ((uint32_t)p[0]<<24)|((uint32_t)p[1]<<16)|((uint32_t)p[2]<<8)|p[3];
++}
++int vn135_sha256_compress_block(uint32_t state[8],const uint8_t block[64])
++{
++    uint32_t w[64],a,b,c,d,e,f,g,h;
++    if(!state||!block)return -2;
++    for(unsigned i=0;i<16;++i)w[i]=be32(block+4u*i);
++    for(unsigned i=16;i<64;++i){
++        uint32_t x=w[i-15],y=w[i-2];
++        w[i]=(rr(x,7)^rr(x,18)^(x>>3))+w[i-16]+w[i-7]+(rr(y,17)^rr(y,19)^(y>>10));
++    }
++    a=state[0];b=state[1];c=state[2];d=state[3];
++    e=state[4];f=state[5];g=state[6];h=state[7];
++    for(unsigned i=0;i<64;++i){
++        uint32_t t1=h+(rr(e,6)^rr(e,11)^rr(e,25))+((e&f)^(~e&g))+k[i]+w[i];
++        uint32_t t2=(rr(a,2)^rr(a,13)^rr(a,22))+((a&b)^(a&c)^(b&c));
++        h=g;g=f;f=e;e=d+t1;d=c;c=b;b=a;a=t1+t2;
++    }
++    state[0]+=a;state[1]+=b;state[2]+=c;state[3]+=d;
++    state[4]+=e;state[5]+=f;state[6]+=g;state[7]+=h;
++    return 0;
++}
++int vn135_sha256_midstate64(const uint8_t block[64],uint32_t out[8])
++{
++    uint32_t state[8];
++    if(!block||!out)return -2;
++    for(unsigned i=0;i<8;++i)state[i]=iv[i];
++    (void)vn135_sha256_compress_block(state,block);
++    for(unsigned i=0;i<8;++i)out[i]=state[i];
++    return 0;
++}
+--- /dev/null
++++ b/reconstruction/support/work_nonce_pipeline.c
+@@ -0,0 +1,29 @@
++/* SPDX-License-Identifier: GPL-3.0-only
++ * New integration adapter: Stage 6 RX -> external consistent snapshot ->
++ * recovered Stage 7 candidate. NOT the original job-table/thread implementation.
++ */
++#include "xminer/recovery/work_nonce.h"
++int vn135_work_nonce_from_rx(const vn135_work_rx_policy *p,
++    const vn135_work_rx_message *m,const vn135_work_job_reader *reader,
++    const vn135_nonce_attribution *attribution,vn135_work_nonce_result *out)
++{
++    vn135_work_rx_policy check;
++    vn135_work_job_snapshot job;
++    uint32_t slot;
++    int rc;
++    if(!p||!m||!reader||!reader->read_snapshot||!attribution||
++       !attribution->chip_from_nonce||!attribution->core_from_nonce||!out)
++        return VN135_NONCE_INVALID;
++    (void)vn135_work_rx_policy_init(&check,p->board_selector,p->chip_selector,p->special_mode);
++    if(p->special_mode||p->variant!=check.variant||p->payload_size!=check.payload_size||
++       p->frame_size!=check.frame_size||m->kind!=VN135_RX_NONCE_RAW||
++       m->payload_size!=check.payload_size||m->consumed!=check.frame_size||
++       !(m->payload[check.payload_size-1]&0x80u))return VN135_NONCE_INVALID;
++    rc=vn135_work_rx_job_slot(p->chip_selector,p->variant,m->payload,m->payload_size,&slot);
++    if(rc||slot!=m->job_slot)return VN135_NONCE_INVALID;
++    rc=reader->read_snapshot(reader->context,slot,&job);
++    if(rc==0)return VN135_NONCE_NO_JOB;
++    if(rc!=1)return VN135_NONCE_LOOKUP_FAILED;
++    return vn135_work_nonce_prepare(p->chip_selector,p->variant,m->chain_id,
++                                   m->payload,m->payload_size,&job,attribution,out);
++}
+--- a/src/backend/work-gen/work-gen.c
++++ b/src/backend/work-gen/work-gen.c
+@@ -97,3 +97,60 @@
+     *out = r;
+     return (int)r.kind;
+ }
++
++/* Stage 7: original candidate materialization, not a complete share verifier.
++ * Entry row is selected externally. Raw row word names avoid asserting an
++ * unrecovered complete job type. Original 0xc4480..0xc46fc, including the
++ * original first-block SHA-256 computation, is compared in nonce_oracle.py.
++ */
++#include "xminer/recovery/work_nonce.h"
++#include "xminer/recovery/sha256_midstate.h"
++_Static_assert(sizeof(vn135_nonce_candidate)==VN135_NONCE_CANDIDATE_DEFINED_SIZE,
++               "Candidate has 17 contiguous 32-bit words");
++_Static_assert(offsetof(vn135_nonce_candidate,midstate)==36u,"Candidate midstate offset");
++static uint32_t nonce_le32(const uint8_t *p){
++    return p[0]|((uint32_t)p[1]<<8)|((uint32_t)p[2]<<16)|((uint32_t)p[3]<<24);
++}
++static uint32_t nonce_be32(const uint8_t *p){
++    return ((uint32_t)p[0]<<24)|((uint32_t)p[1]<<16)|((uint32_t)p[2]<<8)|p[3];
++}
++static void nonce_store_be32(uint8_t *p,uint32_t n){
++    p[0]=(uint8_t)(n>>24);p[1]=(uint8_t)(n>>16);p[2]=(uint8_t)(n>>8);p[3]=(uint8_t)n;
++}
++int vn135_work_nonce_version_bits(uint32_t variant,const uint8_t *payload,
++                                 size_t size,uint32_t *out)
++{
++    uint32_t v;
++    if(!payload||!out||variant>2u||size<7u+variant)return VN135_NONCE_INVALID;
++    v=variant==2u?((uint32_t)payload[6]<<8)|payload[7]:0xffffu;
++    *out=(v>>11)|((v&7u)<<21)|((v&0x7f8u)<<5);
++    return 0;
++}
++int vn135_work_nonce_prepare(uint32_t chip_selector,uint32_t variant,uint32_t chain,
++    const uint8_t *payload,size_t size,const vn135_work_job_snapshot *job,
++    const vn135_nonce_attribution *attribution,vn135_work_nonce_result *out)
++{
++    vn135_work_nonce_result r={0};
++    uint32_t bits;
++    if(!payload||!job||!attribution||!attribution->chip_from_nonce||
++       !attribution->core_from_nonce||!out||variant>2u||size!=7u+variant)
++        return VN135_NONCE_INVALID;
++    (void)vn135_work_rx_job_slot(chip_selector,variant,payload,size,&r.candidate.job_slot);
++    (void)vn135_work_nonce_version_bits(variant,payload,size,&bits);
++    r.candidate.chain_id=chain;
++    r.candidate.job_word_a4=nonce_le32(job->bytes+0xa4);
++    r.candidate.version_word=nonce_le32(job->bytes+0x78)|bits;
++    r.candidate.job_word_70=nonce_le32(job->bytes+0x70);
++    r.candidate.job_word_74=nonce_le32(job->bytes+0x74);
++    r.candidate.nonce=nonce_be32(payload+(variant==1u?1u:0u));
++    r.candidate.chip_id=attribution->chip_from_nonce(attribution->context,r.candidate.nonce);
++    r.candidate.core_id=attribution->core_from_nonce(attribution->context,r.candidate.nonce);
++    nonce_store_be32(r.compression_block,r.candidate.version_word);
++    for(unsigned i=0;i<8;++i)
++        nonce_store_be32(r.compression_block+4u+4u*i,nonce_le32(job->bytes+0x84u+4u*i));
++    for(unsigned i=0;i<7;++i)
++        nonce_store_be32(r.compression_block+36u+4u*i,nonce_le32(job->bytes+0x50u+4u*i));
++    (void)vn135_sha256_midstate64(r.compression_block,r.candidate.midstate);
++    *out=r;
++    return VN135_NONCE_PREPARED;
++}
+--- /dev/null
++++ b/tests/arm32_stage7_instructions.S
+@@ -0,0 +1,28 @@
++.syntax unified
++.arm
++.text
++.global stage7_uxth0
++stage7_uxth0:
++    uxth r0,r0
++    bx lr
++.global stage7_uxth8
++stage7_uxth8:
++    uxth r0,r0,ror #8
++    bx lr
++.global stage7_uxth16
++stage7_uxth16:
++    uxth r0,r0,ror #16
++    bx lr
++.global stage7_uxth24
++stage7_uxth24:
++    uxth r0,r0,ror #24
++    bx lr
++.global stage7_smlabb
++stage7_smlabb:
++    smlabb r0,r0,r1,r2
++    bx lr
++.global stage7_conditional
++stage7_conditional:
++    cmp r3,#0
++    smlabbeq r0,r0,r1,r2
++    bx lr
+--- /dev/null
++++ b/tests/nonce_oracle.py
+@@ -0,0 +1,73 @@
++"""Execute the original RX nonce preparation including real original SHA-256.
++Injected: chip/core attribution (downstream helpers), memcpy. Queue boundary
++0xc46fc is NOT executed. Selected job rows are immutable test data in the original
++32 x 168-byte table. This does not validate a share or job freshness.
++"""
++from pathlib import Path
++import hashlib,struct,sys
++ROOT=Path(__file__).resolve().parents[1]
++sys.path.insert(0,str(ROOT/'tools'))
++from elf32 import ELF32
++from arm32_nonce_subset import ARM32Nonce
++SHA='b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9'
++
++class NonceOracle:
++    def __init__(self):
++        self.elf=ELF32(ROOT/'reference/cgminer.vendor.elf')
++        assert hashlib.sha256(self.elf.data).hexdigest()==SHA
++        self.m=ARM32Nonce(self.elf)
++    @staticmethod
++    def copy(m):
++        dst,src,n=m.r[:3];m.check(dst,n);m.check(src,n)
++        m.mem[dst:dst+n]=bytes(m.mem[src:src+n]);m.r[0]=dst
++    @staticmethod
++    def fill(m):
++        dst,value,n=m.r[:3];m.check(dst,n)
++        m.mem[dst:dst+n]=bytes([value&255])*n;m.r[0]=dst
++    def prepare(self,variant,chip_selector,chain,payload,record,chip_result,core_result):
++        assert variant in (0,1,2) and len(payload)==7+variant and len(record)==168
++        m=self.m;m.reset();sp=m.STACK_TOP-0x1000;fp=sp+504
++        m.r[13]=sp;m.r[11]=fp;m.r[8]=fp-104;m.r[2]=variant
++        m.r[10]=m.DATA_BASE;m.write(m.DATA_BASE,0)
++        m.r[9]=m.DATA_BASE+0x4000;m.write(m.r[9]-768,chain)
++        m.mem[fp-104:fp-104+len(payload)]=payload
++        tail=bytes.fromhex('a1b2c3d4');m.mem[fp-180:fp-176]=tail
++        # Run original slot bits and table calculation BEFORE inserting a row.
++        for off,value in ((0x10,chip_selector|1),(0x4c,variant),(0x30,fp-103),
++                          (4,fp-224),(8,fp-212),(12,sp+224)):
++            m.write(sp+off,value)
++        m.run(0xc4480,stop=0xc4518,max_steps=1000)
++        slot=m.r[1];row=m.r[10]+8
++        assert row==0x653460+slot*168
++        m.check(row,len(record));m.mem[row:row+168]=record
++        calls=[]
++        def chip_id(m):calls.append(('chip',m.r[0]));m.r[0]=chip_result&0xffffffff
++        def core_id(m):calls.append(('core',m.r[0]));m.r[0]=core_result&0xffffffff
++        m.run(0xc4518,stop=0xc46fc,hooks={0xd2760:chip_id,0xd280c:core_id,
++              0x5a2ee8:self.copy},max_steps=30000)
++        assert m.r[0]==fp-248
++        assert bytes(m.mem[fp-180:fp-176])==tail, 'Undocumented tail write'
++        return {'slot':slot,'candidate':bytes(m.mem[fp-248:fp-180]),
++                'prefix':bytes(m.mem[fp-172:fp-108]),'calls':calls,'steps':m.steps}
++    def sha_midstate(self,block,initial=None):
++        assert len(block)==64
++        m=self.m;a=m.DATA_BASE;p=a+0x1000
++        m.reset((a,));m.run(0x109120,max_steps=500)
++        if initial is not None:m.mem[a+136:a+168]=struct.pack('<8I',*initial)
++        m.mem[p:p+64]=block;m.reset((a,p,1))
++        m.run(0x108b7c,max_steps=20000)
++        return tuple(struct.unpack('<8I',m.mem[a+136:a+168]))
++    def digest64(self,block):
++        assert len(block)==64
++        m=self.m;a=m.DATA_BASE;p=a+0x1000;out=p+256
++        m.reset((a,));m.run(0x109120,max_steps=500)
++        m.mem[p:p+64]=block;m.reset((a,p,64))
++        m.run(0x109170,hooks={0x5a2ee8:self.copy},max_steps=30000)
++        m.reset((a,out));m.run(0x10939c,hooks={0x5a348c:self.fill},max_steps=30000)
++        return bytes(m.mem[out:out+32])
++
++if __name__=='__main__':
++    o=NonceOracle()
++    for v in range(3):
++        x=o.prepare(v,2,3,bytes(range(7+v)),bytes(range(168)),7,9)
++        print(v,x['slot'],struct.unpack('<17I',x['candidate']),x['prefix'].hex(),x['calls'])
+--- /dev/null
++++ b/tests/test_stage7_differential.py
+@@ -0,0 +1,110 @@
++#!/usr/bin/env python3
++"""Original instructions vs new C. Each bounded group writes its own results.
++Only memcpy and chip/core attribution are injected in candidate preparation.
++Original SHA initialization, block compression and update execute, not hooks.
++"""
++import argparse,ctypes as C,hashlib,json,random,struct,time
++from nonce_oracle import NonceOracle,ROOT,SHA
++U=C.c_uint32;B=C.c_uint8;Z=C.c_size_t;P=C.POINTER(B)
++ID=C.CFUNCTYPE(U,C.c_void_p,U)
++class Attr(C.Structure):_fields_=[('context',C.c_void_p),('chip',ID),('core',ID)]
++class Job(C.Structure):_fields_=[('bytes',B*168)]
++class Candidate(C.Structure):
++    _fields_=[(n,U) for n in ('chain_id','chip_id','core_id','job_word_a4','job_slot','version_word','job_word_70','job_word_74','nonce')]+[('midstate',U*8)]
++class Result(C.Structure):_fields_=[('candidate',Candidate),('compression_block',B*64)]
++def load(path):
++    lib=C.CDLL(str(path))
++    lib.vn135_work_nonce_prepare.argtypes=[U,U,U,P,Z,C.POINTER(Job),C.POINTER(Attr),C.POINTER(Result)];lib.vn135_work_nonce_prepare.restype=C.c_int
++    lib.vn135_work_nonce_version_bits.argtypes=[U,P,Z,C.POINTER(U)];lib.vn135_work_nonce_version_bits.restype=C.c_int
++    lib.vn135_sha256_midstate64.argtypes=[P,C.POINTER(U)];lib.vn135_sha256_midstate64.restype=C.c_int
++    lib.vn135_sha256_compress_block.argtypes=[C.POINTER(U),P];lib.vn135_sha256_compress_block.restype=C.c_int
++    lib.vn135_bm1398_core_from_nonce.argtypes=[U,U];lib.vn135_bm1398_core_from_nonce.restype=U
++    return lib
++
++def main():
++    ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('group',choices=['prepare','version','sha','core'])
++    ap.add_argument('--library',type=str,default=str(ROOT/'build/libvn135_recovered.so'))
++    ap.add_argument('--tag',default='gcc');args=ap.parse_args()
++    lib=load(args.library);o=NonceOracle();rng=random.Random(0x1350707);counts={};samples=[];t0=time.monotonic()
++    def rec(key):counts[key]=counts.get(key,0)+1
++    if args.group=='prepare':
++        callback_errors=[]
++        for variant in range(3):
++            for chip in list(range(8))+[0xffffffff]:
++                for i in range(32):
++                    payload=bytearray(rng.randbytes(7+variant))
++                    # Cover every encoded slot for ordinary selectors.
++                    payload[6 if variant==1 else 5]=(i<<3)|(payload[6 if variant==1 else 5]&7)
++                    payload[-1]|=0x80
++                    job=rng.randbytes(168);chain=rng.getrandbits(32);chipid=rng.getrandbits(32);coreid=rng.getrandbits(32)
++                    original=o.prepare(variant,chip,chain,bytes(payload),job,chipid,coreid)
++                    events=[]
++                    @ID
++                    def chipfn(ctx,n):
++                        try:events.append(('chip',n));return chipid
++                        except BaseException as e:callback_errors.append(str(e));return 0xffffffff
++                    @ID
++                    def corefn(ctx,n):
++                        try:events.append(('core',n));return coreid
++                        except BaseException as e:callback_errors.append(str(e));return 0xffffffff
++                    attr=Attr(None,chipfn,corefn);j=Job.from_buffer_copy(job);buf=(B*len(payload)).from_buffer_copy(payload);out=Result()
++                    assert lib.vn135_work_nonce_prepare(chip,variant,chain,buf,len(payload),C.byref(j),C.byref(attr),C.byref(out))==0
++                    assert bytes(out.candidate)==original['candidate'],(variant,chip,i,bytes(out.candidate).hex(),original['candidate'].hex())
++                    assert bytes(out.compression_block)==original['prefix']
++                    assert events==original['calls'] and not callback_errors
++                    assert bytes(j)==job and bytes(buf)==payload
++                    rec('nonce_candidate_68bytes_prefix64_and_call_order')
++                    if len(samples)<4:samples.append({'variant':variant,'chip_selector':chip,'payload':payload.hex(),'job_hex':job.hex(),'candidate_hex':bytes(out.candidate).hex(),'prefix_hex':bytes(out.compression_block).hex()})
++    elif args.group=='version':
++        m=o.m;sp=m.STACK_TOP-0x1000;fp=sp+504
++        # All 65,536 possible two-byte inputs to the variant=2 transformation.
++        # Low formats also exercise all values of the otherwise ignored bytes.
++        def check(variant,value):
++            payload=bytearray(9);payload[6]=value>>8;payload[7]=value&255
++            m.reset();m.r[13]=sp;m.r[11]=fp;m.r[10]=m.DATA_BASE+0x1000;m.r[9]=m.DATA_BASE+0x4000
++            m.write(sp+0x4c,variant);m.mem[fp-104:fp-95]=payload
++            m.run(0xc4518,stop=0xc457c,max_steps=100)
++            want=m.read(sp+0x2c);got=U(0);buf=(B*9).from_buffer_copy(payload)
++            assert lib.vn135_work_nonce_version_bits(variant,buf,7+variant,C.byref(got))==0
++            assert got.value==want,(variant,value,hex(got.value),hex(want))
++        for value in range(65536):check(2,value);rec('version_variant2_exhaustive_uint16')
++        for variant in (0,1):
++            for value in (0,1,0x7fff,0x8000,0xffff)+tuple(rng.randrange(65536) for _ in range(128)):
++                check(variant,value);rec('version_legacy_sentinel')
++    elif args.group=='sha':
++        iv=[0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19]
++        blocks=[bytes(64),b'\xff'*64,bytes(range(64)),b'\x80'+bytes(63)]+[rng.randbytes(64) for _ in range(128)]
++        for block in blocks:
++            buf=(B*64).from_buffer_copy(block);out=(U*8)()
++            assert lib.vn135_sha256_midstate64(buf,out)==0
++            assert tuple(out)==o.sha_midstate(block);rec('sha_midstate_original_iv')
++            initial=[rng.getrandbits(32) for _ in range(8)];state=(U*8)(*initial)
++            assert lib.vn135_sha256_compress_block(state,buf)==0
++            assert tuple(state)==o.sha_midstate(block,initial);rec('sha_compression_arbitrary_state')
++        def hash_with_new_compression(message):
++            data=message+b'\x80';data+=b'\0'*((56-len(data))%64)+(len(message)*8).to_bytes(8,'big')
++            state=(U*8)(*iv)
++            for off in range(0,len(data),64):assert lib.vn135_sha256_compress_block(state,(B*64).from_buffer_copy(data[off:off+64]))==0
++            return struct.pack('>8I',*state)
++        lengths=[0,1,2,3,7,31,32,55,56,57,63,64,65,79,80,81,119,120,127,128,129,255,256,511,512,1024]
++        for length in lengths:
++            for _ in range(4):
++                message=rng.randbytes(length)
++                assert hash_with_new_compression(message)==hashlib.sha256(message).digest();rec('independent_hashlib_padded_messages')
++        for block in blocks[:20]:
++            expected=hashlib.sha256(block).digest()
++            assert o.digest64(block)==expected==hash_with_new_compression(block);rec('original_full_sha_and_hashlib64')
++    else:
++        m=o.m
++        for model in (0,0x1397,0x1398,0x1368,0xffffffff):
++            for nonce in [0,1,0xffffffff,0x80000000,0x7fffffff]+[rng.getrandbits(32) for _ in range(256)]:
++                m.reset((nonce,));m.run(0xed974,hooks={0xfdfcc:lambda a:setattr0(a,model)},max_steps=100)
++                assert lib.vn135_bm1398_core_from_nonce(model,nonce)==m.r[0];rec('chip1398_core_bit_helper')
++    out={'status':'PASS','group':args.group,'build_tag':args.tag,'reference_sha256':SHA,'cases':counts,
++         'total_cases':sum(counts.values()),'seconds':round(time.monotonic()-t0,3),'samples':samples,
++         'injected':['chip/core attribution in preparation only','memcpy','memset in original SHA finalization oracle only','numeric model getter for core helper'],
++         'original_sha_replaced_by_hook':False,'valid_share_or_hardware_test':False}
++    path=ROOT/'build'/f'stage7-{args.group}-{args.tag}-results.json';path.write_text(json.dumps(out,indent=2)+'\n')
++    print(json.dumps({k:v for k,v in out.items() if k!='samples'},indent=2))
++def setattr0(m,x):m.r[0]=x&0xffffffff
++if __name__=='__main__':main()
+--- /dev/null
++++ b/tests/test_stage7_interpreter.py
+@@ -0,0 +1,39 @@
++#!/usr/bin/env python3
++"""Synthetic instruction tests, separate from reconstruction comparisons."""
++from pathlib import Path
++import json,random,sys
++ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'tools'))
++from elf32 import ELF32
++from arm32_nonce_subset import ARM32Nonce
++m=ARM32Nonce(ELF32(ROOT/'reference/cgminer.vendor.elf'))
++code=ELF32(ROOT/'tests/fixtures/arm32_stage7_instructions.o').section('.text')
++a=m.DATA_BASE;m.mem[a:a+len(code)]=code
++rng=random.Random(0x7135);count=0
++values=[0,1,0xffffffff,0x80000000,0x7fffffff,0x00008000,0x80010000,0x12345678]+[rng.getrandbits(32) for _ in range(256)]
++for n in values:
++    for i,rot in enumerate((0,8,16,24)):
++        m.reset((n,));got=m.run(a+8*i,max_steps=10)
++        want=((n>>rot)|(n<<(32-rot) if rot else 0))&0xffff
++        assert got==want;(count:=count+1)
++def signed16(x):return ((x&0xffff)^0x8000)-0x8000
++def signed32(x):return (x^0x80000000)-0x80000000
++cases=[(x,y,z) for x in (0,1,0x7fff,0x8000,0xffff) for y in (0,1,0x7fff,0x8000,0xffff) for z in (0,0x7fffffff,0x80000000,0xffffffff)]
++cases += [(rng.getrandbits(32),rng.getrandbits(32),rng.getrandbits(32)) for _ in range(512)]
++for x,y,z in cases:
++    total=signed16(x)*signed16(y)+signed32(z)
++    for sticky in (False,True):
++        m.reset((x,y,z));m.q=sticky
++        assert m.run(a+32,max_steps=10)==total&0xffffffff
++        assert m.q==(sticky or not -2**31<=total<2**31);count+=1
++    for cond in (0,1):
++        m.reset((x,y,z,cond));got=m.run(a+40,max_steps=10)
++        assert got==(total&0xffffffff if cond==0 else x);count+=1
++# Exercise the exact SMLABB form in table lookup: smlabb r10,r1,r2,r0.
++m.write(a,0xe10a0281);m.write(a+4,0xe12fff1e)
++for slot in range(32):
++    m.reset((0x653458,slot,168));m.run(a,max_steps=10)
++    assert m.r[10]==0x653458+slot*168;count+=1
++out={'status':'PASS','synthetic_instruction_cases':count,'opcodes':['UXTH','SMLABB'],
++     'Q_modeled':True,'independent_emulator_certification':False}
++(ROOT/'build').mkdir(exist_ok=True);(ROOT/'build/stage7-interpreter-results.json').write_text(json.dumps(out,indent=2)+'\n')
++print(json.dumps(out))
+--- /dev/null
++++ b/tests/test_work_nonce.c
+@@ -0,0 +1,98 @@
++/* New integration and guard tests, not physical-device or vendor-runtime tests. */
++#include "xminer/recovery/work_nonce.h"
++#include "xminer/recovery/sha256_midstate.h"
++#include "xminer/recovery/chip1398.h"
++#include <assert.h>
++#include <stdio.h>
++#include <string.h>
++
++typedef struct { unsigned calls,reads; uint32_t nonce,slot; int lookup; } ctx_t;
++static uint32_t chipfn(void *p,uint32_t n){ctx_t *c=p;assert(c->calls==0);c->nonce=n;c->calls++;return 7;}
++static uint32_t corefn(void *p,uint32_t n){ctx_t *c=p;assert(c->calls==1&&n==c->nonce);c->calls++;return 9;}
++static int reader(void *p,uint32_t slot,vn135_work_job_snapshot *out){
++    ctx_t *c=p;c->reads++;c->slot=slot;
++    if(c->lookup==1)for(unsigned i=0;i<168;++i)out->bytes[i]=(uint8_t)i;
++    return c->lookup;
++}
++static void set_be(uint8_t *p,uint32_t x){p[0]=(uint8_t)(x>>24);p[1]=(uint8_t)(x>>16);p[2]=(uint8_t)(x>>8);p[3]=(uint8_t)x;}
++int main(void)
++{
++    uint8_t block[64]={0};uint32_t state[8],bits=0;
++    static const uint32_t abc[8]={0xba7816bf,0x8f01cfea,0x414140de,0x5dae2223,0xb00361a3,0x96177a9c,0xb410ff61,0xf20015ad};
++    block[0]='a';block[1]='b';block[2]='c';block[3]=0x80;block[63]=24;
++    assert(vn135_sha256_midstate64(block,state)==0);assert(!memcmp(state,abc,sizeof abc));
++    assert(vn135_sha256_midstate64(NULL,state)==-2&&!memcmp(state,abc,sizeof abc));
++    assert(vn135_sha256_compress_block(state,NULL)==-2&&!memcmp(state,abc,sizeof abc));
++    assert(vn135_sha256_midstate64(block,NULL)==-2);
++    ctx_t context={0,0,0,0,1};vn135_nonce_attribution ops={&context,chipfn,corefn};
++    vn135_work_job_reader jobs={&context,reader};vn135_work_job_snapshot job;
++    for(unsigned i=0;i<168;++i)job.bytes[i]=(uint8_t)i;
++    uint8_t payload[9]={0,1,2,3,4,5,6,7,8};
++    vn135_work_nonce_result out,old;
++    memset(&out,0xa5,sizeof out);old=out;
++    assert(vn135_work_nonce_prepare(2,3,3,payload,9,&job,&ops,&out)==-2);
++    assert(!memcmp(&out,&old,sizeof out)&&context.calls==0);
++    assert(vn135_work_nonce_prepare(2,2,3,payload,8,&job,&ops,&out)==-2);
++    assert(vn135_work_nonce_prepare(2,2,3,NULL,9,&job,&ops,&out)==-2);
++    assert(vn135_work_nonce_prepare(2,2,3,payload,9,NULL,&ops,&out)==-2);
++    assert(vn135_work_nonce_prepare(2,2,3,payload,9,&job,NULL,&out)==-2);
++    assert(vn135_work_nonce_prepare(2,2,3,payload,9,&job,&ops,NULL)==-2);
++    vn135_nonce_attribution broken={&context,chipfn,NULL};
++    assert(vn135_work_nonce_prepare(2,2,3,payload,9,&job,&broken,&out)==-2);
++    assert(!memcmp(&out,&old,sizeof out)&&context.calls==0);
++    assert(vn135_work_nonce_version_bits(0,payload,7,&bits)==0&&bits==0xe0ff1fu);
++    assert(vn135_work_nonce_version_bits(1,payload,8,&bits)==0&&bits==0xe0ff1fu);
++    assert(vn135_work_nonce_version_bits(2,payload,9,&bits)==0&&bits==0xe0c000u);
++    assert(vn135_work_nonce_version_bits(2,NULL,9,&bits)==-2&&bits==0xe0c000u);
++    assert(vn135_work_nonce_prepare(2,2,3,payload,9,&job,&ops,&out)==0);
++    static const uint32_t want[17]={3,7,9,2812716452u,0,2080045432u,1936879984u,2004252020u,66051,
++          837076293,2986030553u,3835568078u,3925925976u,382719371,3983599598u,2309560156u,2009331404};
++    assert(!memcmp(&out.candidate,want,sizeof want));assert(context.calls==2);
++    assert(vn135_bm1398_core_from_nonce(0x1398,0xabffffff)==0xab);
++    assert(vn135_bm1398_core_from_nonce(0x1397,0xffffffff)==1023);
++    assert(vn135_bm1398_core_from_nonce(0x1368,0xffffffff)==0);
++    unsigned streams=0;
++    for(unsigned board=0;board<2;++board)for(unsigned chip=0;chip<8;++chip)for(size_t chunk=1;chunk<=11;++chunk){
++        vn135_work_rx_stream stream;vn135_work_rx_message message={0};
++        assert(vn135_work_rx_stream_init(&stream,3,board,chip,0)==0);
++        uint8_t frame[11]={0xaa,0x55,0,1,2,3,4,5,6,7,8};
++        size_t len=stream.policy.frame_size,offset=0;frame[len-1]|=0x80;
++        context.calls=context.reads=0;context.lookup=1;
++        int rc=0;
++        while(offset<len){size_t n=len-offset,used=0;if(n>chunk)n=chunk;
++            rc=vn135_work_rx_stream_feed(&stream,frame+offset,n,&used,&message);
++            assert(used>0&&used<=n);offset+=used;
++            assert(rc==(offset<len?VN135_RX_NEED_MORE:VN135_RX_NONCE_RAW));
++        }
++        assert(rc==VN135_RX_NONCE_RAW);
++        assert(vn135_work_nonce_from_rx(&stream.policy,&message,&jobs,&ops,&out)==0);
++        assert(context.calls==2&&context.reads==1&&context.slot==message.job_slot);
++        assert(out.candidate.chain_id==3&&out.candidate.job_slot==message.job_slot);
++        vn135_work_nonce_result direct;context.calls=0;
++        assert(vn135_work_nonce_prepare(chip,stream.policy.variant,3,message.payload,message.payload_size,&job,&ops,&direct)==0);
++        assert(!memcmp(&out,&direct,sizeof out));++streams;
++        old=out;context.calls=context.reads=0;context.lookup=0;
++        assert(vn135_work_nonce_from_rx(&stream.policy,&message,&jobs,&ops,&out)==VN135_NONCE_NO_JOB);
++        assert(context.reads==1&&context.calls==0&&!memcmp(&out,&old,sizeof out));
++        context.lookup=-1;context.reads=0;
++        assert(vn135_work_nonce_from_rx(&stream.policy,&message,&jobs,&ops,&out)==VN135_NONCE_LOOKUP_FAILED);
++        assert(context.reads==1&&context.calls==0&&!memcmp(&out,&old,sizeof out));
++        context.lookup=2;
++        assert(vn135_work_nonce_from_rx(&stream.policy,&message,&jobs,&ops,&out)==VN135_NONCE_LOOKUP_FAILED);
++        context.lookup=1;context.reads=0;message.job_slot^=1;
++        assert(vn135_work_nonce_from_rx(&stream.policy,&message,&jobs,&ops,&out)==VN135_NONCE_INVALID);
++        assert(context.reads==0&&context.calls==0&&!memcmp(&out,&old,sizeof out));
++        message.job_slot^=1;message.kind=VN135_RX_REGISTER;
++        assert(vn135_work_nonce_from_rx(&stream.policy,&message,&jobs,&ops,&out)==VN135_NONCE_INVALID);
++        message.kind=VN135_RX_NONCE_RAW;message.payload_size=99;
++        assert(vn135_work_nonce_from_rx(&stream.policy,&message,&jobs,&ops,&out)==VN135_NONCE_INVALID);
++    }
++    /* Additional empty-message KAT through an explicit standard padding block. */
++    memset(block,0,sizeof block);block[0]=0x80;
++    assert(vn135_sha256_midstate64(block,state)==0);
++    uint8_t digest[32];for(unsigned i=0;i<8;++i)set_be(digest+4*i,state[i]);
++    const uint8_t empty[32]={0xe3,0xb0,0xc4,0x42,0x98,0xfc,0x1c,0x14,0x9a,0xfb,0xf4,0xc8,0x99,0x6f,0xb9,0x24,0x27,0xae,0x41,0xe4,0x64,0x9b,0x93,0x4c,0xa4,0x95,0x99,0x1b,0x78,0x52,0xb8,0x55};
++    assert(!memcmp(digest,empty,sizeof empty));
++    printf("Stage7 native: SHA KATs, candidate fixture, guards, %u fragment streams and lookup failure cases PASS\n",streams);
++    return 0;
++}
+--- /dev/null
++++ b/tools/arm32_nonce_subset.py
+@@ -0,0 +1,26 @@
++"""A32 nonce-slice extension: UXTH and SMLABB only.
++SMLABB updates sticky Q for synthetic tests; original slice never reads Q.
++No hardware, syscalls, or ELF process execution.
++"""
++from arm32_rx_subset import ARM32RX
++from arm32_subset import MASK, signed, ror
++
++class ARM32Nonce(ARM32RX):
++    def reset(self,args=()):
++        super().reset(args)
++        self.q=False
++    def extra_instruction(self,w,pc):
++        if w & 0x0fff03f0 == 0x06ff0070:  # UXTH Rd,Rm{,ROR #0/8/16/24}
++            d=(w>>12)&15;n=w&15
++            if d==15 or n==15:raise ValueError('UXTH PC operands unsupported')
++            self.r[d]=ror(self.get(n,pc),((w>>10)&3)*8)&0xffff
++            return True
++        if w & 0x0ff000f0 == 0x01000080:  # SMLABB Rd,Rm,Rs,Rn
++            d=(w>>16)&15;n=(w>>12)&15;s=(w>>8)&15;a=w&15
++            if 15 in (d,n,s,a):raise ValueError('SMLABB PC operands unsupported')
++            def s16(x):return (x&0xffff)-0x10000 if x&0x8000 else x&0xffff
++            result=s16(self.get(a,pc))*s16(self.get(s,pc))+signed(self.get(n,pc))
++            self.r[d]=result&MASK
++            self.q=self.q or not (-0x80000000<=result<=0x7fffffff)
++            return True
++        return super().extra_instruction(w,pc)
+--- /dev/null
++++ b/tools/check_stage7_evidence.py
+@@ -0,0 +1,42 @@
++#!/usr/bin/env python3
++"""Read-only byte/branch validation for nonce preparation. No device access."""
++from pathlib import Path
++import hashlib,json
++from elf32 import ELF32
++ROOT=Path(__file__).resolve().parents[1]
++m=json.loads((ROOT/'evidence/stage7/recovery-manifest.json').read_text())
++elf=ELF32(ROOT/'reference/cgminer.vendor.elf')
++def digest(data):return hashlib.sha256(data).hexdigest()
++def word(addr):return int.from_bytes(elf.read(addr,4),'little')
++assert digest(elf.data)==m['reference_sha256'] and len(elf.data)==m['reference_bytes']
++for s in m['slices']:
++    a=int(s['start'],16);b=int(s['end_exclusive'],16)
++    assert b-a==s['size'] and digest(elf.read(a,b-a))==s['original_bytes_sha256']
++    assert digest((ROOT/s['disassembly']).read_bytes())==s['disassembly_sha256']
++for edge in m['branch_edges']:
++    pc=int(edge['pc'],16);w=word(pc)
++    assert w>>24==0xeb and f'{w:08x}'==edge['instruction_hex']
++    d=w&0xffffff
++    if d&0x800000:d-=1<<24
++    assert (pc+8+4*d)&0xffffffff==int(edge['target'],16)
++for row in m['literals']:
++    b=elf.read(int(row['address'],16),4)
++    assert b.hex()==row['bytes_hex'] and int.from_bytes(b,'little')==row['value_le']
++# Producer and writer use the same adjusted table base, then +8 to first row.
++assert (0xc4508+8+word(0xc4ad4))&0xffffffff==0x653458
++assert (0xc4da8+8+word(0xc5068))&0xffffffff==0x653458
++assert word(0xc450c)==0xe10a0281  # smlabb r10,r1,r2,r0
++assert word(0xc4d94)==0xe3a000a8 and word(0xc4d9c)==0xe3a020a8
++assert word(0xc4dc8)==0xe350001f  # cmp r0,#31
++# Queue size is NOT equal to the explicit output prefix length of 68.
++assert word(0xfa5c0)==0xe3a01a01 and word(0xfa5c4)==0xe3a02048
++assert (0xfa5c8+8+word(0xfa5dc))&0xffffffff==0x654ae8
++hdr=(ROOT/'include/xminer/recovery/work_nonce.h').read_text()
++assert '#define VN135_NONCE_CANDIDATE_DEFINED_SIZE 68u' in hdr
++assert '#define VN135_ORIGINAL_NONCE_QUEUE_ELEMENT_SIZE 72u' in hdr
++assert 'MUST NOT be copied as a 72-byte vendor queue element' in hdr
++# Ensure no new helper is falsely described as an original source path.
++status=json.loads((ROOT/'evidence/source-tree.json').read_text())
++am=(ROOT/'reconstruction/cgminer-overlay.am').read_text()
++for path in m['new_helpers']:assert path in am
++print('Stage7 evidence: 10 bounded slices (4 context-only), 10 call edges, table stride/base and 72-vs-68 boundary PASS')
+--- /dev/null
++++ b/tools/verify_stage7.py
+@@ -0,0 +1,55 @@
++#!/usr/bin/env python3
++"""Run a verification group with checked exit codes and persistent per-command logs.
++All groups must pass in order after 'build' to validate a fresh extraction.
++Splitting groups is for execution environments with short command time budgets.
++Does not execute vendor ELF as a process and does not connect to miners/pools.
++"""
++from pathlib import Path
++import argparse, datetime, hashlib, json, subprocess, sys, time
++ROOT=Path(__file__).resolve().parents[1]
++PY=sys.executable
++GROUPS={
++ 'build':[
++  ['make','-f','Makefile.recovery','clean'],
++  ['make','-f','Makefile.recovery','all','build/libvn135_recovered.so','build/test-chip1398','build/test-pll-aml','build/test-reg-cache','build/test-uart','build/test-work-rx','build/test-work-nonce','arm']],
++ 'core':[
++  ['./build/test-chip1398'],['./build/test-pll-aml'],['./build/test-reg-cache'],['./build/test-uart'],
++  [PY,'tests/test_arm_subset.py'],[PY,'tests/test_arm_differential.py'],
++  [PY,'tests/test_stage3_interpreter.py'],[PY,'tests/test_stage3_differential.py']],
++ 'cache':[[PY,'tests/test_stage4_cache_differential.py'],[PY,'tests/test_stage4_config_differential.py']],
++ 'uart':[[PY,'tests/test_stage5_uart_differential.py'],[PY,'tests/test_stage5_aml_uart_differential.py'],['make','-f','Makefile.recovery','linux-pty']],
++ 'rx':[['./build/test-work-rx'],[PY,'tests/test_stage6_interpreter.py'],[PY,'tests/test_stage6_rx_differential.py'],[PY,'tests/test_stage6_stream_differential.py'],['make','-f','Makefile.recovery','linux-pty-rx']],
++ 'nonce':[
++  ['./build/test-work-nonce'],[PY,'tests/test_stage7_interpreter.py'],
++  [PY,'tests/test_stage7_differential.py','version'],
++  [PY,'tests/test_stage7_differential.py','prepare'],
++  [PY,'tests/test_stage7_differential.py','sha'],
++  [PY,'tests/test_stage7_differential.py','core']],
++ 'clang-nonce':[['make','-f','Makefile.recovery','stage7-clang']],
++ 'sanitizers':[['make','-f','Makefile.recovery','sanitize','sanitize-linux-pty','sanitize-linux-pty-rx']],
++ 'evidence':[['make','-f','Makefile.recovery','evidence-check'],[PY,'tests/test_tree.py'],[PY,'tests/test_assembler.py'],[PY,'tools/update_overlay_inventory.py','--check']],
++ 'full-runtime-blocked':[['make','-f','Makefile.recovery','full-runtime']]
++}
++def main():
++    p=argparse.ArgumentParser(description=__doc__)
++    p.add_argument('group',choices=GROUPS)
++    p.add_argument('--logs',type=Path,required=True,help='Use a directory outside the source tree (source inventory must stay unchanged).')
++    args=p.parse_args();directory=args.logs.resolve()
++    if directory.is_relative_to(ROOT):p.error('--logs must be outside the source tree')
++    directory.mkdir(parents=True,exist_ok=True);records=[]
++    for i,cmd in enumerate(GROUPS[args.group]):
++        start=time.monotonic();log=directory/f'{args.group}-{i:02d}.log'
++        expected=2 if args.group=='full-runtime-blocked' else 0
++        with log.open('w') as out:
++            out.write('COMMAND: '+repr(cmd)+'\n');out.flush()
++            result=subprocess.run(cmd,cwd=ROOT,stdout=out,stderr=subprocess.STDOUT,check=False)
++        record={'command':cmd,'returncode':result.returncode,'expected_returncode':expected,'log':log.name,
++                'seconds':round(time.monotonic()-start,3),'sha256':hashlib.sha256(log.read_bytes()).hexdigest()}
++        records.append(record)
++        summary={'group':args.group,'status':'PASS' if all(r['returncode']==r['expected_returncode'] for r in records) else 'FAIL',
++                 'complete':len(records)==len(GROUPS[args.group]),'records':records}
++        (directory/(args.group+'.json')).write_text(json.dumps(summary,indent=2)+'\n')
++        print(f'{args.group} {i+1}/{len(GROUPS[args.group])}: return={result.returncode} expected={expected} ({record["seconds"]}s)',flush=True)
++        if result.returncode!=expected:return 1
++    return 0
++if __name__=='__main__':raise SystemExit(main())

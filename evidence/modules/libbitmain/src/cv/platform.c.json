@@ -1,0 +1,99 @@
+{
+  "path": "libbitmain/src/cv/platform.c",
+  "observed_as": "/tmp/build/libbitmain/src/cv/platform.c",
+  "status": "pending-not-implemented",
+  "evidence": [
+    {
+      "address": "0x5ef027",
+      "xor": 98,
+      "decoded_length": 40,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x001230f8",
+      "end_exclusive": "0x00123498",
+      "path_references": [
+        {
+          "insn": "0x123318",
+          "string": "0x5ef027",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/platform.c"
+        },
+        {
+          "insn": "0x12334c",
+          "string": "0x5ef027",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/platform.c"
+        },
+        {
+          "insn": "0x123394",
+          "string": "0x5ef027",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/platform.c"
+        },
+        {
+          "insn": "0x1233d0",
+          "string": "0x5ef027",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/platform.c"
+        },
+        {
+          "insn": "0x12341c",
+          "string": "0x5ef027",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/platform.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00123498",
+      "end_exclusive": "0x0012366c",
+      "path_references": [
+        {
+          "insn": "0x123524",
+          "string": "0x5ef027",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/platform.c"
+        },
+        {
+          "insn": "0x123574",
+          "string": "0x5ef027",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/platform.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0012366c",
+      "end_exclusive": "0x00123728",
+      "path_references": [
+        {
+          "insn": "0x123698",
+          "string": "0x5ef027",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/platform.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00123c90",
+      "end_exclusive": "0x00123f80",
+      "path_references": [
+        {
+          "insn": "0x123d38",
+          "string": "0x5ef027",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/cv/platform.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": []
+}

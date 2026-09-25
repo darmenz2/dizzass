@@ -1,0 +1,20 @@
+{
+  "group": "clang-storage",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "make",
+        "-f",
+        "Makefile.recovery",
+        "stage11-clang"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "clang-storage-00.log",
+      "seconds": 11.667,
+      "sha256": "7b7892109eb74de1f80151e2a01a3efb519e455f3137ef73bdd275de3d392a92"
+    }
+  ]
+}

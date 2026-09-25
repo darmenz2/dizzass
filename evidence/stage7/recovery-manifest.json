@@ -1,0 +1,230 @@
+{
+  "stage": 7,
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "reference_bytes": 6228004,
+  "slices": [
+    {
+      "name": "nonce-producer",
+      "start": "0x000c4480",
+      "end_exclusive": "0x000c4700",
+      "size": 640,
+      "original_bytes_sha256": "ad50ff9e6a8e4d79e92bd69328a6b81a69adfd365c3f5fa8574fdc0cadebc8a5",
+      "disassembly": "evidence/stage7/disasm/nonce-producer.S",
+      "disassembly_sha256": "ce125f536b39cf67889074b17b51062ea938eec74fd5c42b7a686fc625bcfc75",
+      "scope": "Execute from slot lookup through 0xc46fc exclusive with immutable injected job row and injected chip/core attribution; original SHA executes. Enqueue instruction at 0xc46fc recorded only.",
+      "validation_kind": "differential",
+      "hardware_verified": false
+    },
+    {
+      "name": "sha256-compression",
+      "start": "0x00108b7c",
+      "end_exclusive": "0x00108f38",
+      "size": 956,
+      "original_bytes_sha256": "45b23ebc7dd35da4ad40a67a36c01b3872386a8c0afa6c5dceb66f4fbf585b60",
+      "disassembly": "evidence/stage7/disasm/sha256-compression.S",
+      "disassembly_sha256": "bad4d3ce396d70da4cd2442526ed2bcd4f9102c3e9b068f68232c051117bcaa6",
+      "scope": "Original compression, one 64-byte block; standard and arbitrary initial state. Not an original streaming API port.",
+      "validation_kind": "differential",
+      "hardware_verified": false
+    },
+    {
+      "name": "sha256-init",
+      "start": "0x00109120",
+      "end_exclusive": "0x00109170",
+      "size": 80,
+      "original_bytes_sha256": "0b523442c071b6bf21ade985bb04bec19715f688db9f937c9d75234b713ebb46",
+      "disassembly": "evidence/stage7/disasm/sha256-init.S",
+      "disassembly_sha256": "53b8ba541fe32c3063fbe8e543a8a13b94ec8ef86739fd52790315006ac602de",
+      "scope": "Original state initialization in nonce preparation and SHA tests.",
+      "validation_kind": "differential",
+      "hardware_verified": false
+    },
+    {
+      "name": "sha256-update",
+      "start": "0x00109170",
+      "end_exclusive": "0x0010939c",
+      "size": 556,
+      "original_bytes_sha256": "51fc833d545fdbee5d08f91f89a31a5dafe6c86567ed96587c1e13d2f5d466ba",
+      "disassembly": "evidence/stage7/disasm/sha256-update.S",
+      "disassembly_sha256": "d536211e713b02a1089d2efb900cbdee613709e19b586e4fafc1b9353c7559cc",
+      "scope": "64-byte update with original compression. memcpy injected. Other streaming sizes not claimed reconstructed.",
+      "validation_kind": "differential",
+      "hardware_verified": false
+    },
+    {
+      "name": "sha256-final-for-oracle",
+      "start": "0x0010939c",
+      "end_exclusive": "0x00109740",
+      "size": 932,
+      "original_bytes_sha256": "6f2e80364c70451b167202e69fc54899b1204838e60e071c144373116256aa08",
+      "disassembly": "evidence/stage7/disasm/sha256-final-for-oracle.S",
+      "disassembly_sha256": "363540e63ea7e3e64bab7618388a1d2abb35ea9687c1ceb8be8816b831e481b3",
+      "scope": "Original finalization used only to verify 64-byte SHA against hashlib; not a reconstruction of the streaming/finalization API. memset injected.",
+      "validation_kind": "differential-oracle-only",
+      "hardware_verified": false
+    },
+    {
+      "name": "chip1398-core-helper",
+      "start": "0x000ed974",
+      "end_exclusive": "0x000ed9bc",
+      "size": 72,
+      "original_bytes_sha256": "58927e490f7894d2f23c5f505b04da29699c11b87b638a58b1d03b75fc454eb1",
+      "disassembly": "evidence/stage7/disasm/chip1398-core-helper.S",
+      "disassembly_sha256": "46e2181efc6fbf1ccdc2cacb4c6cb0ea339ee52f96ad558298773c0a78964ba7",
+      "scope": "Numeric model getter is an injected value. Not proof of T21 model selection.",
+      "validation_kind": "differential",
+      "hardware_verified": false
+    },
+    {
+      "name": "nonce-stack-context",
+      "start": "0x000c4114",
+      "end_exclusive": "0x000c4184",
+      "size": 112,
+      "original_bytes_sha256": "b09d5df6df7293cbd116db2457964058533aabaa0d0d3b2130b2874e8f996a64",
+      "disassembly": "evidence/stage7/disasm/nonce-stack-context.S",
+      "disassembly_sha256": "99380ffe926edb0894ee679a67217d2deef07b83e7b8faebf3cc42dad416ecbf",
+      "scope": "Local stack setup used to construct the bounded oracle. Full pthread receiver not run.",
+      "validation_kind": "context-only",
+      "hardware_verified": false
+    },
+    {
+      "name": "nonce-queue-init-context",
+      "start": "0x000fa5a4",
+      "end_exclusive": "0x000fa5e0",
+      "size": 60,
+      "original_bytes_sha256": "165f48c3cfd40df62afb13f948fae626870a2886ad2b8203fa5b1cef963ba5e0",
+      "disassembly": "evidence/stage7/disasm/nonce-queue-init-context.S",
+      "disassembly_sha256": "f53d0185d8cca223cd1f22da2d22903ee554bacefa0055db7f72aa686e73b606",
+      "scope": "Queue initialization declares 4096 elements of 72 bytes. Queue not reconstructed.",
+      "validation_kind": "context-only",
+      "hardware_verified": false
+    },
+    {
+      "name": "job-writer-context",
+      "start": "0x000c4d90",
+      "end_exclusive": "0x000c4dd8",
+      "size": 72,
+      "original_bytes_sha256": "3bc1de1ae7105dbeb1eaea3c1a240d75c5521a778ee63c272889a0bcad50d5f4",
+      "disassembly": "evidence/stage7/disasm/job-writer-context.S",
+      "disassembly_sha256": "7a85b3853709110c27cea408b40190f5f58f858bb0a0cb203cd3cd53df78d05a",
+      "scope": "168-byte memcpy and slot wrap at 31; job writer not reconstructed.",
+      "validation_kind": "context-only",
+      "hardware_verified": false
+    },
+    {
+      "name": "nonce-queue-push-context",
+      "start": "0x000fa5e0",
+      "end_exclusive": "0x000fa660",
+      "size": 128,
+      "original_bytes_sha256": "fbe68cda4330fcf988d7a735157c2b80ee62c98155e46256e506c254e2627b23",
+      "disassembly": "evidence/stage7/disasm/nonce-queue-push-context.S",
+      "disassembly_sha256": "6af4550164fa7b1870fc0455ef12c51ba1d6dbd760f928b2fa53311e8eff7f7d",
+      "scope": "Queue call context only, not executed by candidate tests and not reconstructed.",
+      "validation_kind": "context-only",
+      "hardware_verified": false
+    }
+  ],
+  "branch_edges": [
+    {
+      "pc": "0xc45ac",
+      "target": "0xd2760",
+      "instruction_hex": "eb00386b"
+    },
+    {
+      "pc": "0xc45bc",
+      "target": "0xd280c",
+      "instruction_hex": "eb003892"
+    },
+    {
+      "pc": "0xc46c8",
+      "target": "0x109120",
+      "instruction_hex": "eb011294"
+    },
+    {
+      "pc": "0xc46d8",
+      "target": "0x109170",
+      "instruction_hex": "eb0112a4"
+    },
+    {
+      "pc": "0xc46fc",
+      "target": "0xfa5e0",
+      "instruction_hex": "eb00d7b7"
+    },
+    {
+      "pc": "0x109274",
+      "target": "0x108b7c",
+      "instruction_hex": "ebfffe40"
+    },
+    {
+      "pc": "0x10928c",
+      "target": "0x108b7c",
+      "instruction_hex": "ebfffe3a"
+    },
+    {
+      "pc": "0xed980",
+      "target": "0xfdfcc",
+      "instruction_hex": "eb004191"
+    },
+    {
+      "pc": "0xfa5cc",
+      "target": "0xd19b0",
+      "instruction_hex": "ebff5cf7"
+    },
+    {
+      "pc": "0xc4db8",
+      "target": "0x5a2ee8",
+      "instruction_hex": "eb13784a"
+    }
+  ],
+  "literals": [
+    {
+      "address": "0xc4ad4",
+      "bytes_hex": "48ef5800",
+      "value_le": 5828424
+    },
+    {
+      "address": "0xc5068",
+      "bytes_hex": "a8e65800",
+      "value_le": 5826216
+    },
+    {
+      "address": "0xfa5dc",
+      "bytes_hex": "18a55500",
+      "value_le": 5612824
+    }
+  ],
+  "partial_observed_modules": [
+    "src/backend/work-gen/work-gen.c",
+    "libbitmain/src/chip/chip1398.c"
+  ],
+  "new_helpers": [
+    "reconstruction/support/sha256_midstate.c",
+    "reconstruction/support/work_nonce_pipeline.c"
+  ],
+  "job_table": {
+    "entry_base": "0x653460",
+    "entry_stride": 168,
+    "slot_range": [
+      0,
+      31
+    ],
+    "entry_snapshot_is_not_freshness_proof": true
+  },
+  "queue_boundary": {
+    "original_element_bytes": 72,
+    "producer_explicit_bytes": 68,
+    "trailing_bytes": 4,
+    "trailing_meaning": "unknown; padding only a hypothesis",
+    "new_compact_type_not_vendor_abi": true
+  },
+  "restored_scope": "Original nonce producer after frame classification, with externally supplied immutable job snapshot and injected chip/core attribution; SHA first-block midstate; one chip1398 core bit helper.",
+  "NOT_restored": [
+    "register CRC validation",
+    "full nonce double hash and target validation",
+    "job generation/lifetime management",
+    "queue insertion/consumer",
+    "complete chip/core dispatcher",
+    "T21 driver binding",
+    "physical runtime"
+  ]
+}

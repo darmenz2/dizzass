@@ -1,0 +1,2204 @@
+diff --git a/Makefile.recovery b/Makefile.recovery
+index 030a91d..ea3d292 100644
+--- a/Makefile.recovery
++++ b/Makefile.recovery
+@@ -7,8 +7,8 @@ PYTHON ?= python3
+ CPPFLAGS += -Iinclude
+ CFLAGS ?= -O2 -g
+ STRICT = -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror
+-SOURCES = reconstruction/support/work_difficulty_pipeline.c reconstruction/support/sha256_bytes.c reconstruction/support/work_rebuild_pipeline.c src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c
+-HEADERS = include/xminer/recovery/difficulty.h include/xminer/recovery/work_rebuild.h include/xminer/recovery/nonce_verify.h include/xminer/recovery/work_nonce.h include/xminer/recovery/sha256_midstate.h include/xminer/recovery/work_rx.h include/xminer/recovery/uart.h include/xminer/recovery/chip1398.h include/xminer/recovery/pll.h include/xminer/recovery/aml_chip.h include/xminer/recovery/reg_cache.h reconstruction/data/reg_cache_defaults.inc
++SOURCES = reconstruction/support/work_storage_pipeline.c reconstruction/support/work_difficulty_pipeline.c reconstruction/support/sha256_bytes.c reconstruction/support/work_rebuild_pipeline.c src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c
++HEADERS = include/xminer/recovery/work_storage.h include/xminer/recovery/difficulty.h include/xminer/recovery/work_rebuild.h include/xminer/recovery/nonce_verify.h include/xminer/recovery/work_nonce.h include/xminer/recovery/sha256_midstate.h include/xminer/recovery/work_rx.h include/xminer/recovery/uart.h include/xminer/recovery/chip1398.h include/xminer/recovery/pll.h include/xminer/recovery/aml_chip.h include/xminer/recovery/reg_cache.h reconstruction/data/reg_cache_defaults.inc
+ OBJECTS = $(patsubst %.c,build/host/%.o,$(SOURCES))
+ ARM_OBJECTS = $(patsubst %.c,build/arm/%.o,$(SOURCES))
+ .PHONY: all test linux-pty arm sanitize sanitize-linux-pty evidence-check clean full-runtime
+@@ -272,3 +272,37 @@ evidence-stage10:
+ test: stage10
+ sanitize: sanitize-stage10
+ evidence-check: evidence-stage10
++
++# Stage11: owned text, zero-roll cloning, clear/delete and metadata slices.
++.PHONY: stage11 stage11-clang sanitize-stage11 evidence-stage11
++build/test-work-storage: $(SOURCES) tests/test_work_storage.c tests/fixtures/genesis_work.h $(HEADERS)
++	mkdir -p build
++	$(CC) $(CPPFLAGS) $(CFLAGS) $(STRICT) $(SOURCES) tests/test_work_storage.c -o $@
++build/vn135-work-lifecycle: $(SOURCES) examples/work_clone_lifecycle.c tests/fixtures/genesis_work.h $(HEADERS)
++	mkdir -p build
++	$(CC) $(CPPFLAGS) $(CFLAGS) $(STRICT) $(SOURCES) examples/work_clone_lifecycle.c -o $@
++stage11: build/libvn135_recovered.so build/test-work-storage build/vn135-work-lifecycle
++	./build/test-work-storage
++	./build/vn135-work-lifecycle
++	$(PYTHON) tests/test_stage11_differential.py metadata
++	$(PYTHON) tests/test_stage11_differential.py clone
++	$(PYTHON) tests/test_stage11_differential.py cleanup
++	$(PYTHON) tests/test_stage11_differential.py fields
++sanitize-stage11:
++	mkdir -p build
++	$(CC) $(CPPFLAGS) -O1 -g $(STRICT) -fsanitize=address,undefined -fno-omit-frame-pointer $(SOURCES) tests/test_work_storage.c -o build/test-work-storage-sanitized
++	ASAN_OPTIONS=detect_leaks=1 ./build/test-work-storage-sanitized
++stage11-clang: build/libvn135_recovered-clang.so
++	$(CLANG) $(CPPFLAGS) $(CFLAGS) $(STRICT) $(SOURCES) tests/test_work_storage.c -o build/test-work-storage-clang
++	./build/test-work-storage-clang
++	VN135_TEST_LIBRARY=./build/libvn135_recovered-clang.so $(PYTHON) tests/test_stage11_differential.py metadata
++	VN135_TEST_LIBRARY=./build/libvn135_recovered-clang.so $(PYTHON) tests/test_stage11_differential.py clone
++	VN135_TEST_LIBRARY=./build/libvn135_recovered-clang.so $(PYTHON) tests/test_stage11_differential.py cleanup
++	VN135_TEST_LIBRARY=./build/libvn135_recovered-clang.so $(PYTHON) tests/test_stage11_differential.py fields
++	$(CLANG) $(CPPFLAGS) -O1 -g $(STRICT) -fsanitize=address,undefined -fno-omit-frame-pointer $(SOURCES) tests/test_work_storage.c -o build/test-work-storage-clang-sanitized
++	ASAN_OPTIONS=detect_leaks=1 ./build/test-work-storage-clang-sanitized
++evidence-stage11:
++	$(PYTHON) tools/check_stage11_evidence.py
++test: stage11
++sanitize: sanitize-stage11
++evidence-check: evidence-stage11
+diff --git a/RECONSTRUCTION_README_RU.md b/RECONSTRUCTION_README_RU.md
+index 8bec743..81c0185 100644
+--- a/RECONSTRUCTION_README_RU.md
++++ b/RECONSTRUCTION_README_RU.md
+@@ -1,79 +1,64 @@
+-# VNishNet T21 AML 1.3.5 — Stage 10, модульная реконструкция
++# VNishNet T21 AML 1.3.5 — Stage 11, модульная реконструкция
+ 
+ **Исходники и проверочные библиотеки. Не готовый cgminer и не установочная прошивка.**
+ 
+ ## Текущее состояние
+ 
+-| Показатель | Stage 10 |
++| Показатель | Stage 11 |
+ |---|---:|
+-| Наблюдаемые оригинальные исходные пути | 46 |
++| Наблюдаемые оригинальные пути | 46 |
+ | Частично восстановлено / исключено из сборки | 7 / 39 |
+-| C-модули: 7 наблюдаемых + 10 новых helper/adapter | 17 |
+-| Основные сравнительные случаи в текущем наборе | 104 777 |
+-| Реальный T21, аппаратный запуск и полный автотюн | Не подтверждены |
++| C-модули: 7 наблюдаемых + 11 новых helper/adapter | 18 |
++| Сравнительные случаи нового этапа | 2 086 |
++| Состав основного набора Stage 2–11 | 106 863 |
++| Полный work ABI / живой consumer / T21 | Не восстановлены полностью |
+ 
+-Подробный текущий отчёт — [STAGE10_CHANGELOG_RU.md](STAGE10_CHANGELOG_RU.md).
+-Исторические отчёты предыдущих этапов сохранены; их ограничения относятся к указанному этапу.
+-Числа файлов и тестов не являются процентом восстановления всей прошивки.
++Подробный отчёт — [STAGE11_CHANGELOG_RU.md](STAGE11_CHANGELOG_RU.md). Предыдущие отчёты
++сохранены как исторические этапы. Количество файлов/тестов не является процентом готовности.
+ 
+-## Новое на этом этапе
++## Новое
+ 
+-В `src/frontend/cgminer.c` восстановлены difficulty → target, обратный числовой участок
+-и расчёт midstate/target при сборке work. Новый отдельный адаптер
+-`reconstruction/support/work_difficulty_pipeline.c` подключает расчёт target из сложности
+-к уже проверенной связке кандидата и сохранённого задания.
++В `src/frontend/cgminer.c` добавлены копирование строк метаданных, копия work **без
++изменения времени**, очистка строк/объекта и два ограниченных участка присваиваний.
++Все известные строки дублируются независимо. Частичные отказы выделения имеют явный
++статус. Отдельный новый адаптер откатывает неполную копию и не публикует её.
+ 
+-```
+-синтетический RX → кандидат + снимок задания → coinbase/Merkle → заголовок
+-     → target из difficulty → SHA256d / пороговое сравнение
+-```
+-
+-Это офлайн-связка с явно переданными входами. Она не подтверждает свежесть задания,
+-аппаратную исправность, правильность difficulty от пула или сетевое принятие шары.
+-Снимок и сложность должны принадлежать одному удерживаемому заданию.
+-
+-Сохранены оригинальные округления binary64, нулевая difficulty заменяется на 1.
+-Селектор `1` выбирает базовую константу в 65 536 раз больше обычной; привязка селектора
+-к T21 или имени алгоритма не установлена. Новый API отклоняет NaN/Inf/отрицательные
+-входы и выход за 256-битный диапазон. Эти ограничения не приписываются оригиналу.
+-Обычный round-to-nearest-even — предусловие API, не переключаемый им режим.
++`vn135_work_storage` хранит 632 непрозрачных байта и четыре нативных указателя отдельно.
++Четыре исходных 32-битных указательных слота нормализованы в нули. **Это не исходный
++бинарный ABI и не полный конструктор work.** Неизвестные поля остаются неизвестными.
++Пулы, шаблоны и иные внешние ссылки этим слоем не удерживаются и не освобождаются.
+ 
+-## Файлы
++Новые файлы: `include/xminer/recovery/work_storage.h` и
++`reconstruction/support/work_storage_pipeline.c`. Их имена интеграционные, не vendor.
++Старые SHA/target/coinbase/драйверные модули сохранены. Остальные 39 наблюдаемых файлов
++содержат явный `#error` и исключены из сборки. Нет фиктивного майнера или монолита.
+ 
+-Наблюдаемые пути с частично восстановленным содержимым:
+-
+-- `libbitmain/src/chip/chip1398.c`, `libbitmain/src/pll.c`, `libbitmain/src/aml/chip.c`;
+-- `libbitmain/src/reg_cache.c`, `libbitmain/src/uart.c`;
+-- `src/backend/work-gen/work-gen.c`, `src/frontend/cgminer.c`.
+-
+-`reconstruction/support/` и `include/xminer/recovery/` — явно новые интеграционные
+-файлы, их имена не выдаются за исходные имена VNish. Остальные 39 наблюдаемых путей
+-содержат `#error` и не включены в сборку. Нет симулятора, выдаваемого за майнер,
+-монолитного исходника или заглушек с фиктивным успехом.
+-
+-## Сборка
++## Проверка
+ 
+ ```sh
+-make -f Makefile.recovery all arm stage10
+-make -f Makefile.recovery stage10-clang sanitize-stage10
+-./build/vn135-rebuild-genesis-difficulty
++make -f Makefile.recovery all arm stage11
++make -f Makefile.recovery stage11-clang sanitize-stage11
++./build/vn135-work-lifecycle
+ ```
+ 
+-Результаты — host `.a`/`.so`, ARMv7-A/A32 hard-float freestanding `.a`, нативные тесты и
+-офлайн-примеры. ARM-библиотека без Linux sysroot, не ELF исполняемого T21 майнера.
+-Требуются Python 3.10+, GCC/Clang, llvm-ar/llvm-objdump, Git; для полной проверки
+-Automake/Autoconf и Linux для PTY-тестов. Устанавливать сторонние Python-пакеты не нужно.
++Новые сравнения с ARM прошли на GCC и Clang. 1 200 нативных сценариев (12 220 утверждений)
++прошли с настоящим malloc/free и ASan/UBSan, включая частичные отказы и откат.
++В ограниченном эталоне исполняются оригинальные инструкции strdup, но внешние
++allocator/libc/mutex подменены. Нет аппаратных испытаний и проверки всех возможных входов.
+ 
+-Полный прогон именно из чистой распаковки, логи вне исходного дерева:
++Проверка полной поставки **из чистой распаковки**, логи вне дерева:
+ 
+ ```sh
+-python3 tools/verify_stage10_all.py --logs /absolute/path/stage10-logs --workers 2
++python3 tools/verify_stage11_all.py --logs /absolute/path/stage11-logs --workers 2
+ ```
+ 
+-Набор содержит 28 групп и 61 команду верхнего уровня. Протокол фактического прогона
+-архива передаётся отдельно; дизайн тестов не заменяет его. `full-runtime` намеренно
+-возвращает 2. Ограниченный локальный ARM-интерпретатор не моделирует физическую периферию,
+-потоки, полную прошивку или все режимы VFP. ASan/UBSan относятся к нативным C-наборам.
++34 группы. Результат фактического прогона ZIP передаётся отдельными финальными логом
++и JSON. Само наличие runner не является успешным прогоном. `full-runtime` ожидаемо
++возвращает 2. Требуются Python 3.10+, GCC/Clang, llvm-ar/llvm-objdump, Git;
++Automake/Autoconf для теста overlay и Linux для PTY. Сторонние Python-пакеты не нужны.
++
++Выход — host `.a`/`.so`, freestanding ARMv7-A/A32 hard-float `.a` и офлайн-утилиты.
++**Ни библиотеки, ни fixture-утилита не заменяют `/usr/bin/cgminer`.**
+ 
+ ## Поверх настоящего public cgminer
+ 
+@@ -98,12 +83,13 @@ Automake-фикстуры не равна полной сборке настоя
+ 
+ `reference/cgminer.vendor.elf` сохранён неизменным, SHA-256:
+ `b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9`.
+-Новые адреса/байты/связи — `evidence/stage10/recovery-manifest.json`;
+-листинги — `evidence/stage10/disasm/`. Исторические карты и тесты не удалены.
++Новые адреса/байты/связи — `evidence/stage11/recovery-manifest.json`;
++листинги — `evidence/stage11/disasm/`. Исторические карты и тесты не удалены.
+ `tools/update_overlay_inventory.py --check` проверяет файлы архива, кроме build.
+ 
+-112-байтный префикс и математические поля — не весь 632-байтный work. Остаются
+-метаданные, владение/жизненный цикл заданий, полный consumer и очередь, CRC ответов,
++Копирование непрозрачных байтов, строк и математических полей — не полная семантика
++632-байтного work. Остаются другие метаданные, владение/жизненный цикл заданий,
++ненулевой time-roll, полный consumer и очередь, CRC ответов,
+ выбор драйвера T21, запуск цепей, PSU/датчики/защиты, runtime-интеграция и автотюн.
+ 
+ **Не устанавливать эту библиотеку вместо штатного `/usr/bin/cgminer`.**
+diff --git a/RECONSTRUCTION_STATUS.json b/RECONSTRUCTION_STATUS.json
+index fbb6bb2..96b88f0 100644
+--- a/RECONSTRUCTION_STATUS.json
++++ b/RECONSTRUCTION_STATUS.json
+@@ -1,16 +1,16 @@
+ {
+-  "artifact": "modular-source-overlay-stage10",
++  "artifact": "modular-source-overlay-stage11",
+   "reference": "VNishNet T21 AML 1.3.5 cgminer",
+   "observed_source_paths": 46,
+   "partially_reconstructed_observed_files": 7,
+   "pending_observed_files": 39,
+-  "compiled_c_translation_units": 17,
+-  "public_reconstruction_c_functions": 57,
++  "compiled_c_translation_units": 18,
++  "public_reconstruction_c_functions": 64,
+   "public_functions_are_not_a_count_of_recovered_original_functions": true,
+   "original_data_records_verified": 9,
+   "stage2_differential_cases_repeated": 2546,
+   "stage3_differential_cases_passed": 3219,
+-  "cumulative_distinct_test_cases": 104777,
++  "cumulative_distinct_test_cases": 106863,
+   "stage3_cases_repeated_with_clang": 3219,
+   "separate_synthetic_interpreter_checks": 1318,
+   "full_vendor_tree_recovered": false,
+@@ -165,5 +165,25 @@
+   "stage10_full632byte_work_implemented": false,
+   "stage10_full_nonce_consumer_implemented": false,
+   "stage10_scope": "Original finite-domain difficulty/target math, original numeric inverse slice and work midstate/target slice; new explicit candidate integration adapter with saved snapshot; no full producer/consumer.",
+-  "stage10_remaining": "Full work metadata, ownership/lifecycle and complete consumer/queue, CRC validation, T21 model dispatch/startup, hardware safeguards, runtime upstream driver and autotune"
++  "stage10_remaining": "Full work metadata, ownership/lifecycle and complete consumer/queue, CRC validation, T21 model dispatch/startup, hardware safeguards, runtime upstream driver and autotune",
++  "stage11_original_instruction_comparisons": 2086,
++  "stage11_counts": {
++    "metadata": 576,
++    "clone": 486,
++    "cleanup": 384,
++    "fields": 640
++  },
++  "stage11_native_scenarios": 1200,
++  "stage11_native_assertions": 12220,
++  "stage11_cases_repeated_with_clang": 2086,
++  "stage11_native_gcc_clang_sanitizers_passed": true,
++  "stage11_original_strdup_body_executed": true,
++  "stage11_normalized_image_bytes": 632,
++  "stage11_vendor_abi_compatible": false,
++  "stage11_full_work_semantics_recovered": false,
++  "stage11_time_roll_branch_recovered": false,
++  "stage11_live_reference_ownership_recovered": false,
++  "stage11_atomic_adapter_is_new": true,
++  "stage11_full_archive_verification": "See separately supplied final verification log and JSON; new focused suites already passed.",
++  "stage11_scope": "Owned metadata text, unrolled clone, clear/delete and bounded field assignments. Opaque image with four pointer slots normalized to sidecars. New rollback adapter; not full runtime lifecycle."
+ }
+diff --git a/STAGE11_CHANGELOG_RU.md b/STAGE11_CHANGELOG_RU.md
+new file mode 100644
+index 0000000..6d799c2
+--- /dev/null
++++ b/STAGE11_CHANGELOG_RU.md
+@@ -0,0 +1,117 @@
++# Stage 11 — строки, копирование и освобождение work
++
++**Модульная реконструкция, не готовый T21 cgminer.** Физические ASIC, пулы и серверы не подключались. Исходный ELF сохранён:
++`b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9`.
++
++Продолжение Stage 10, ZIP SHA-256
++`c2a3b670ef9bea63ea65e3db744787cb1216457bb90285493ae171f1f5962acb`.
++
++## 1. Что добавлено в C
++
++В существующем `src/frontend/cgminer.c` реализованы следующие исследованные участки. Размещение во frontend — интеграционный выбор внутри уже обнаруженного кластера, а не отдельное доказательство исходного имени каждой процедуры.
++
++| Участок оригинала | Восстановленная часть |
++|---|---|
++| `0x30a6c–0x30a9c` | Копирование 64 бит difficulty и трёх строк шаблона в независимые выделенные буферы |
++| `0x2ce84–0x2d108` | Копирование work, **только ветвь с нулевым аргументом изменения времени** |
++| `0x2a1bc–0x2a328` | Освобождение четырёх строк и обнуление 632 байт самого work |
++| `0x2a330–0x2a4a0` | Освобождение строк, затем объекта и обнуление указателя вызывающего кода |
++| `0x30d90–0x30db8` | Ограниченный набор записей в поля builder |
++| `0x303e8–0x3043c` | Ограниченный набор записей wrapper и инкремент слова `reference + 0x98` |
++
++Конечные адреса в таблице не включаются. Новые имена API и заголовок `include/xminer/recovery/work_storage.h` не являются восстановленными именами/ABI VNish.
++
++### Метаданные
++
++Три строки копируются в порядке `work + 0x18c`, `+0x1a8`, `+0x19c`. Источники — указатели `template + 0x3d0`, `+0x3ec` и встроенная строка по `+0x396`. Difficulty переносится побитно с `template + 0x3a8` в `work + 0x1a0`; эта процедура не проверяет её числовую допустимость. Даже тестовые NaN-битовые комбинации сохраняются как данные, без арифметики.
++
++**Отказ выделения одной строки не прекращает следующие вызовы копирования в этом участке.** В новом интерфейсе введены `PARTIAL` и маска отсутствующих строк. Это новые диагностические результаты, не обнаруженный код возврата оригинальной процедуры. Частичные выделения остаются собственностью объекта и доступны для очистки. Это наблюдение ограниченного участка, не заключение об обработке ENOMEM во всей прошивке.
++
++### Копия work без изменения времени
++
++Оригинал выделяет 632 байта, получает значение сериализованного глобального счётчика и увеличивает его, копирует изображение исходного work, заменяет поле `+0x1bc` и независимо дублирует четыре присутствующие строки. Порядок копирования: `18c → 1a8 → 19c → 1b0`.
++
++В новом API идентификатор передаётся явно. Оригинальная глобальная таблица, mutex и выделение уникальных номеров в многопоточном runtime не создаются. В эталоне проверены исходные инструкции изменения счётчика и успешные lock/unlock; это не проверка реальной конкурентности.
++
++Ненулевая ветвь изменения времени (`r1 != 0`) **не восстановлена**. Нельзя применять новый API как реализацию полного оригинального clone/roll-work для любых аргументов.
++
++### Очистка и удаление различаются
++
++Порядок освобождения строк: `18c → 19c → 1b0 → 1a8` — он отличается от порядка копирования. `clear` затем обнуляет 632 байта и сохраняет внешний объект. `delete` дополнительно освобождает сам объект и записывает NULL в указатель вызывающего кода. Диагностика оригинального delete(NULL) отмечена в тесте, но не воспроизводится в библиотеке.
++
++Другие поля-ссылки этими процедурами не освобождаются. Следовательно, этот этап **не восстанавливает полное владение pool/template/job и не доказывает их актуальность**. Очистка не заявляется криптографически гарантированным стиранием памяти.
++
++### Два небольших участка присваиваний
++
++Builder записывает `0x53` по `+0x250`, сырую ссылку по `+0x16c`, `60` по `+0x15c`, ноль по `+0x160` и глобальное слово по `+0x1b8`.
++
++Wrapper записывает несколько сырых полей, байт `1` по `+0x180` и увеличивает `reference + 0x98` по модулю 2^32. Назначение этого счётчика **не объявлено refcount** без анализа всей работы с ним. Указатели представлены явными 32-битными cookies; они не разыменовываются новым API.
++
++## 2. Представление памяти: не подмена оригинального ABI
++
++`vn135_work_storage` содержит:
++
++- массив из **632 байт** с непрозрачными полями;
++- отдельно четыре нативных указателя на принадлежащие объекту строки и их длины.
++
++Четыре известных 32-битных указательных слота `18c/19c/1a8/1b0` в массиве **всегда нулевые**. В сравнениях оригинальные ARM-указатели нормализуются в эти нулевые слоты, а строки сравниваются отдельно. Все остальные байты изображения сверяются побайтно — это подтверждение копирования, а не понимание смысла каждого поля.
++
++**Этот тип не совместим с исходным бинарным ABI.** Его нельзя приводить к указателю оригинального work, отправлять в оригинальную очередь или сериализовать как готовый объект VNish. Существующие противоречия 68/72 байта очереди не решены этим этапом.
++
++Неизвестные поля не получают выдуманного смысла. Нового полного конструктора из нулей и полной замены 632-байтного work нет. Для тестов используются явно синтетические изображения, строки и cookies.
++
++## 3. Новый адаптер с откатом неполной копии
++
++`reconstruction/support/work_storage_pipeline.c` содержит отдельный `vn135_work_clone_atomic`:
++
++1. вызывает восстановленный вариант копирования;
++2. при частичном отказе освобождает все успешно выделенные строки и саму неполную копию;
++3. не публикует выходной указатель, пока копия не готова.
++
++Это **новая транзакционная политика, не найденная в VNish**. Слово atomic означает «не публиковать неполный результат», а не lock-free, аппаратную атомарность или потокобезопасность. Отказ выделения внешнего объекта также обработан новым guard; эталон оригинала для этого события не объявляется проверенным.
++
++Новые проверки интерфейса отклоняют неверные указатели/размеры, встроенный NUL, отсутствующие обязательные строки, занятый выход и нарушенную нормализацию указателей до побочных эффектов. Однако API не проверяет действительность произвольного адреса. Буферы должны быть доступны в указанном размере; принадлежащие объекту строки — отдельными выделениями той же пары allocator/free. Общие объекты требуют внешней синхронизации. Входы, выходы и маски ошибок не должны опасно перекрываться.
++
++## 4. Выполненные новые проверки
++
++| Сравнение нового C с оригинальными ARM-инструкциями | Случаев |
++|---|---:|
++| Метаданные, три строки, все варианты отказа их выделения | 576 |
++| Копия без изменения времени, комбинации отсутствующих строк/отказов | 486 |
++| Clear и delete, порядок освобождения и состояние объекта | 384 |
++| Поля builder и wrapper; неизменность остальных байтов | 640 |
++| **Основные новые сравнения Stage 11** | **2 086** |
++
++Все четыре набора прошли на GCC и Clang. Повтор на другом компиляторе не добавляется к числу уникальных входов. Прежний основной набор содержит 104 777 сравнительных случаев; вместе набор содержит **106 863**. Факт повторного полного прогона поставленного ZIP подтверждается отдельными финальными логом и JSON, не одним существованием тестов.
++
++Дополнительно выполнены **1 200 нативных сценариев / 12 220 утверждений** с настоящими `malloc/free`, включая отказы внешнего выделения, частичные строки, откат нового адаптера, повторную очистку, NULL/границы и независимость копии. Этот набор прошёл GCC/Clang, ASan/UBSan с `detect_leaks=1`. Санитайзеры относятся к нативному C-набору, не ко всем Python/ctypes сравнениям.
++
++В офлайн-сценарии соединены метаданные, копирование, очистка оригинала и хеширование заголовка из сохранившейся копии. Получен известный SHA256d fixture первого блока Bitcoin, ранее проверенной в Stage 9. **Это фиксированные исторические данные, не живая шара, не найденный блок и не проверка lifecycle реального пула.**
++
++### Как устроен эталон
++
++Исходные ARM-инструкции выполняются в прежнем локальном ограниченном интерпретаторе. На этом этапе его набор инструкций не менялся. Исходное тело `strdup` (`0x5a38a0`) исполняется, а `strlen`, `malloc/calloc/free`, memcpy/memset, mutex и диагностика заменены явными ограниченными обработчиками. Для clone внешнее выделение в эталоне успешно; отказы копирования строк инъецируются отдельно. Исключения ctypes-callbacks считаются ошибками теста.
++
++Проверяются состояние, порядок внешних событий, содержимое строк, идентификатор, счётчик, неизменность источника и нормализованные байты. Интерпретатор не является независимо сертифицированным CPU и не запускает полный ELF как процесс. Нет проверки гонок, всей прошивки, физического ARM или оборудования.
++
++## 5. Доказательства, сборка и продолжение
++
++`evidence/stage11/recovery-manifest.json` фиксирует **7 диапазонов кода, 5 блоков литералов и 20 рёбер переходов** с исходными адресами, SHA-256 и листингами. Количество диапазонов не равно числу полностью восстановленных функций.
++
++```sh
++make -f Makefile.recovery all arm stage11
++make -f Makefile.recovery stage11-clang sanitize-stage11
++./build/vn135-work-lifecycle
++python3 tools/check_stage11_evidence.py
++python3 tools/verify_stage11_all.py --logs /absolute/path/outside-source --workers 2
++```
++
++Компилируются **18 C-модулей**: 7 на наблюдаемых путях и 11 явно новых helper/adapter. Всего наблюдались 46 путей, 39 по-прежнему исключены. Это не процент восстановления. Монолитных файлов и успешных заглушек нет.
++
++Полное дерево public cgminer в архив не включено, полная совместная сборка upstream не заявляется. Механизм additive-overlay и защита от перезаписи исходных файлов сохранены. ARMv7-библиотека freestanding, без Linux sysroot; не исполняемый майнер.
++
++**Остаются:** ненулевая ветвь time-roll, полная семантика/метаданные work, владение внешними ссылками и полный consumer, очередь 72/68 и актуальность заданий, CRC ответов, выбор драйвера моделью T21, запуск цепей, PSU/датчики/охлаждение/защиты, runtime-интеграция cgminer и автотюн.
++
++**Не заменять штатный `/usr/bin/cgminer` этим комплектом.** `full-runtime` должен возвращать отказ, а не создавать фиктивную готовую прошивку.
++
++Патч Stage 10 → Stage 11 не включает собственную копию и самоссылочный инвентарь. После применения нужно выполнить `python3 tools/update_overlay_inventory.py --write`. Полный ZIP — основной самодостаточный комплект.
+diff --git a/evidence/stage11/disasm/builder_fields.S b/evidence/stage11/disasm/builder_fields.S
+new file mode 100644
+index 0000000..f2fb5e3
+--- /dev/null
++++ b/evidence/stage11/disasm/builder_fields.S
+@@ -0,0 +1,16 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   30d90: e3a00053     	mov	r0, #83
++   30d94: e3a0203c     	mov	r2, #60
++   30d98: e5c40250     	strb	r0, [r4, #0x250]
++   30d9c: e3a00000     	mov	r0, #0
++   30da0: e584916c     	str	r9, [r4, #0x16c]
++   30da4: e59f1500     	ldr	r1, [pc, #0x500]        @ 0x312ac <.text+0x211ac>
++   30da8: e79f1001     	ldr	r1, [pc, r1]
++   30dac: e584215c     	str	r2, [r4, #0x15c]
++   30db0: e5840160     	str	r0, [r4, #0x160]
++   30db4: e58411b8     	str	r1, [r4, #0x1b8]
+diff --git a/evidence/stage11/disasm/metadata_copy.S b/evidence/stage11/disasm/metadata_copy.S
+new file mode 100644
+index 0000000..f6158d0
+--- /dev/null
++++ b/evidence/stage11/disasm/metadata_copy.S
+@@ -0,0 +1,18 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   30a6c: ed990bea     	vldr	d0, [r9, #936]
++   30a70: ed840b68     	vstr	d0, [r4, #416]
++   30a74: e59903d0     	ldr	r0, [r9, #0x3d0]
++   30a78: eb15cb88     	bl	0x5a38a0 <.text+0x5937a0> @ imm = #0x572e20
++   30a7c: e584018c     	str	r0, [r4, #0x18c]
++   30a80: e59903ec     	ldr	r0, [r9, #0x3ec]
++   30a84: eb15cb85     	bl	0x5a38a0 <.text+0x5937a0> @ imm = #0x572e14
++   30a88: e58401a8     	str	r0, [r4, #0x1a8]
++   30a8c: e3000396     	movw	r0, #0x396
++   30a90: e0890000     	add	r0, r9, r0
++   30a94: eb15cb81     	bl	0x5a38a0 <.text+0x5937a0> @ imm = #0x572e04
++   30a98: e584019c     	str	r0, [r4, #0x19c]
+diff --git a/evidence/stage11/disasm/strdup.S b/evidence/stage11/disasm/strdup.S
+new file mode 100644
+index 0000000..b45a128
+--- /dev/null
++++ b/evidence/stage11/disasm/strdup.S
+@@ -0,0 +1,22 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++  5a38a0: e92d4007     	push	{r0, r1, r2, lr}
++  5a38a4: e58d0004     	str	r0, [sp, #0x4]
++  5a38a8: eb000066     	bl	0x5a3a48 <.text+0x593948> @ imm = #0x198
++  5a38ac: e2802001     	add	r2, r0, #1
++  5a38b0: e1a00002     	mov	r0, r2
++  5a38b4: e58d2000     	str	r2, [sp]
++  5a38b8: ebffc20b     	bl	0x5940ec <.text+0x583fec> @ imm = #-0xf7d4
++  5a38bc: e3500000     	cmp	r0, #0
++  5a38c0: 0a000004     	beq	0x5a38d8 <.text+0x5937d8> @ imm = #0x10
++  5a38c4: e59d2000     	ldr	r2, [sp]
++  5a38c8: e59d1004     	ldr	r1, [sp, #0x4]
++  5a38cc: e28dd00c     	add	sp, sp, #12
++  5a38d0: e49de004     	ldr	lr, [sp], #4
++  5a38d4: eafffd83     	b	0x5a2ee8 <.text+0x592de8> @ imm = #-0x9f4
++  5a38d8: e28dd00c     	add	sp, sp, #12
++  5a38dc: e49df004     	ldr	pc, [sp], #4
+diff --git a/evidence/stage11/disasm/work_clear.S b/evidence/stage11/disasm/work_clear.S
+new file mode 100644
+index 0000000..de73df5
+--- /dev/null
++++ b/evidence/stage11/disasm/work_clear.S
+@@ -0,0 +1,97 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   2a1bc: e92d48f0     	push	{r4, r5, r6, r7, r11, lr}
++   2a1c0: e28db010     	add	r11, sp, #16
++   2a1c4: e1a04000     	mov	r4, r0
++   2a1c8: e590018c     	ldr	r0, [r0, #0x18c]
++   2a1cc: e3500000     	cmp	r0, #0
++   2a1d0: 0a000002     	beq	0x2a1e0 <.text+0x1a0e0> @ imm = #0x8
++   2a1d4: eb15a6ac     	bl	0x593c8c <.text+0x583b8c> @ imm = #0x569ab0
++   2a1d8: e3a00000     	mov	r0, #0
++   2a1dc: e584018c     	str	r0, [r4, #0x18c]
++   2a1e0: e594019c     	ldr	r0, [r4, #0x19c]
++   2a1e4: e3500000     	cmp	r0, #0
++   2a1e8: 0a000002     	beq	0x2a1f8 <.text+0x1a0f8> @ imm = #0x8
++   2a1ec: eb15a6a6     	bl	0x593c8c <.text+0x583b8c> @ imm = #0x569a98
++   2a1f0: e3a00000     	mov	r0, #0
++   2a1f4: e584019c     	str	r0, [r4, #0x19c]
++   2a1f8: e59401b0     	ldr	r0, [r4, #0x1b0]
++   2a1fc: e3500000     	cmp	r0, #0
++   2a200: 0a000002     	beq	0x2a210 <.text+0x1a110> @ imm = #0x8
++   2a204: eb15a6a0     	bl	0x593c8c <.text+0x583b8c> @ imm = #0x569a80
++   2a208: e3a00000     	mov	r0, #0
++   2a20c: e58401b0     	str	r0, [r4, #0x1b0]
++   2a210: e59f6110     	ldr	r6, [pc, #0x110]        @ 0x2a328 <.text+0x1a228>
++   2a214: e79f6006     	ldr	r6, [pc, r6]
++   2a218: e5960000     	ldr	r0, [r6]
++   2a21c: e2401001     	sub	r1, r0, #1
++   2a220: e0000190     	mul	r0, r0, r1
++   2a224: e3100001     	tst	r0, #1
++   2a228: e5960000     	ldr	r0, [r6]
++   2a22c: e59f70f8     	ldr	r7, [pc, #0xf8]         @ 0x2a32c <.text+0x1a22c>
++   2a230: e2401001     	sub	r1, r0, #1
++   2a234: e0000190     	mul	r0, r0, r1
++   2a238: e79f7007     	ldr	r7, [pc, r7]
++   2a23c: e59451a8     	ldr	r5, [r4, #0x1a8]
++   2a240: e3100001     	tst	r0, #1
++   2a244: 0a000002     	beq	0x2a254 <.text+0x1a154> @ imm = #0x8
++   2a248: e5970000     	ldr	r0, [r7]
++   2a24c: e3500009     	cmp	r0, #9
++   2a250: cafffff4     	bgt	0x2a228 <.text+0x1a128> @ imm = #-0x30
++   2a254: e3550000     	cmp	r5, #0
++   2a258: 0a000018     	beq	0x2a2c0 <.text+0x1a1c0> @ imm = #0x60
++   2a25c: e5960000     	ldr	r0, [r6]
++   2a260: e2401001     	sub	r1, r0, #1
++   2a264: e0000190     	mul	r0, r0, r1
++   2a268: e3100001     	tst	r0, #1
++   2a26c: 0a000002     	beq	0x2a27c <.text+0x1a17c> @ imm = #0x8
++   2a270: e5970000     	ldr	r0, [r7]
++   2a274: e3500009     	cmp	r0, #9
++   2a278: ca00000b     	bgt	0x2a2ac <.text+0x1a1ac> @ imm = #0x2c
++   2a27c: e1a00005     	mov	r0, r5
++   2a280: eb15a681     	bl	0x593c8c <.text+0x583b8c> @ imm = #0x569a04
++   2a284: e3a00000     	mov	r0, #0
++   2a288: e58401a8     	str	r0, [r4, #0x1a8]
++   2a28c: e5960000     	ldr	r0, [r6]
++   2a290: e2401001     	sub	r1, r0, #1
++   2a294: e0000190     	mul	r0, r0, r1
++   2a298: e3100001     	tst	r0, #1
++   2a29c: 0a000007     	beq	0x2a2c0 <.text+0x1a1c0> @ imm = #0x1c
++   2a2a0: e5970000     	ldr	r0, [r7]
++   2a2a4: e3500009     	cmp	r0, #9
++   2a2a8: da000004     	ble	0x2a2c0 <.text+0x1a1c0> @ imm = #0x10
++   2a2ac: e1a00005     	mov	r0, r5
++   2a2b0: eb15a675     	bl	0x593c8c <.text+0x583b8c> @ imm = #0x5699d4
++   2a2b4: e3a00000     	mov	r0, #0
++   2a2b8: e58401a8     	str	r0, [r4, #0x1a8]
++   2a2bc: eaffffee     	b	0x2a27c <.text+0x1a17c> @ imm = #-0x48
++   2a2c0: e5960000     	ldr	r0, [r6]
++   2a2c4: e2401001     	sub	r1, r0, #1
++   2a2c8: e0000190     	mul	r0, r0, r1
++   2a2cc: e3100001     	tst	r0, #1
++   2a2d0: 0a000002     	beq	0x2a2e0 <.text+0x1a1e0> @ imm = #0x8
++   2a2d4: e5970000     	ldr	r0, [r7]
++   2a2d8: e3500009     	cmp	r0, #9
++   2a2dc: ca00000b     	bgt	0x2a310 <.text+0x1a210> @ imm = #0x2c
++   2a2e0: e1a00004     	mov	r0, r4
++   2a2e4: e3a01000     	mov	r1, #0
++   2a2e8: e3a02f9e     	mov	r2, #632
++   2a2ec: eb15e466     	bl	0x5a348c <.text+0x59338c> @ imm = #0x579198
++   2a2f0: e5960000     	ldr	r0, [r6]
++   2a2f4: e2401001     	sub	r1, r0, #1
++   2a2f8: e0000190     	mul	r0, r0, r1
++   2a2fc: e3100001     	tst	r0, #1
++   2a300: 0a000007     	beq	0x2a324 <.text+0x1a224> @ imm = #0x1c
++   2a304: e5970000     	ldr	r0, [r7]
++   2a308: e3500009     	cmp	r0, #9
++   2a30c: da000004     	ble	0x2a324 <.text+0x1a224> @ imm = #0x10
++   2a310: e1a00004     	mov	r0, r4
++   2a314: e3a01000     	mov	r1, #0
++   2a318: e3a02f9e     	mov	r2, #632
++   2a31c: eb15e45a     	bl	0x5a348c <.text+0x59338c> @ imm = #0x579168
++   2a320: eaffffee     	b	0x2a2e0 <.text+0x1a1e0> @ imm = #-0x48
++   2a324: e8bd88f0     	pop	{r4, r5, r6, r7, r11, pc}
+diff --git a/evidence/stage11/disasm/work_clone.S b/evidence/stage11/disasm/work_clone.S
+new file mode 100644
+index 0000000..c9314c4
+--- /dev/null
++++ b/evidence/stage11/disasm/work_clone.S
+@@ -0,0 +1,167 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   2ce84: e92d4bf0     	push	{r4, r5, r6, r7, r8, r9, r11, lr}
++   2ce88: e28db018     	add	r11, sp, #24
++   2ce8c: e24dd010     	sub	sp, sp, #16
++   2ce90: e1a08001     	mov	r8, r1
++   2ce94: e1a09000     	mov	r9, r0
++   2ce98: e3a00001     	mov	r0, #1
++   2ce9c: e3a01f9e     	mov	r1, #632
++   2cea0: eb159b43     	bl	0x593bb4 <.text+0x583ab4> @ imm = #0x566d0c
++   2cea4: e59f725c     	ldr	r7, [pc, #0x25c]        @ 0x2d108 <.text+0x1d008>
++   2cea8: e1a05000     	mov	r5, r0
++   2ceac: e79f7007     	ldr	r7, [pc, r7]
++   2ceb0: e1a00007     	mov	r0, r7
++   2ceb4: eb15e493     	bl	0x5a6108 <.text+0x596008> @ imm = #0x57924c
++   2ceb8: e59f024c     	ldr	r0, [pc, #0x24c]        @ 0x2d10c <.text+0x1d00c>
++   2cebc: e59f424c     	ldr	r4, [pc, #0x24c]        @ 0x2d110 <.text+0x1d010>
++   2cec0: e08f0000     	add	r0, pc, r0
++   2cec4: e79f4004     	ldr	r4, [pc, r4]
++   2cec8: e2841001     	add	r1, r4, #1
++   2cecc: e5801000     	str	r1, [r0]
++   2ced0: e1a00007     	mov	r0, r7
++   2ced4: eb15e5fa     	bl	0x5a66c4 <.text+0x5965c4> @ imm = #0x5797e8
++   2ced8: e1a00005     	mov	r0, r5
++   2cedc: e3a01000     	mov	r1, #0
++   2cee0: e3a02f9e     	mov	r2, #632
++   2cee4: eb15d968     	bl	0x5a348c <.text+0x59338c> @ imm = #0x5765a0
++   2cee8: e59f3224     	ldr	r3, [pc, #0x224]        @ 0x2d114 <.text+0x1d014>
++   2ceec: e3001874     	movw	r1, #0x874
++   2cef0: e59f0220     	ldr	r0, [pc, #0x220]        @ 0x2d118 <.text+0x1d018>
++   2cef4: e3a02f9e     	mov	r2, #632
++   2cef8: e08f3003     	add	r3, pc, r3
++   2cefc: e08f0000     	add	r0, pc, r0
++   2cf00: e88d0003     	stm	sp, {r0, r1}
++   2cf04: e1a00005     	mov	r0, r5
++   2cf08: e1a01009     	mov	r1, r9
++   2cf0c: ebff939a     	bl	0x11d7c <.text+0x1c7c>  @ imm = #-0x1b198
++   2cf10: e58541bc     	str	r4, [r5, #0x1bc]
++   2cf14: e599018c     	ldr	r0, [r9, #0x18c]
++   2cf18: e3500000     	cmp	r0, #0
++   2cf1c: 0a000001     	beq	0x2cf28 <.text+0x1ce28> @ imm = #0x4
++   2cf20: eb15da5e     	bl	0x5a38a0 <.text+0x5937a0> @ imm = #0x576978
++   2cf24: e585018c     	str	r0, [r5, #0x18c]
++   2cf28: e59971a8     	ldr	r7, [r9, #0x1a8]
++   2cf2c: e3570000     	cmp	r7, #0
++   2cf30: 0a00001a     	beq	0x2cfa0 <.text+0x1cea0> @ imm = #0x68
++   2cf34: e59f61e0     	ldr	r6, [pc, #0x1e0]        @ 0x2d11c <.text+0x1d01c>
++   2cf38: e79f6006     	ldr	r6, [pc, r6]
++   2cf3c: e5960000     	ldr	r0, [r6]
++   2cf40: e59f41d8     	ldr	r4, [pc, #0x1d8]        @ 0x2d120 <.text+0x1d020>
++   2cf44: e2401001     	sub	r1, r0, #1
++   2cf48: e0000190     	mul	r0, r0, r1
++   2cf4c: e79f4004     	ldr	r4, [pc, r4]
++   2cf50: e3100001     	tst	r0, #1
++   2cf54: 0a000002     	beq	0x2cf64 <.text+0x1ce64> @ imm = #0x8
++   2cf58: e5940000     	ldr	r0, [r4]
++   2cf5c: e3500009     	cmp	r0, #9
++   2cf60: ca00000a     	bgt	0x2cf90 <.text+0x1ce90> @ imm = #0x28
++   2cf64: e1a00007     	mov	r0, r7
++   2cf68: eb15da4c     	bl	0x5a38a0 <.text+0x5937a0> @ imm = #0x576930
++   2cf6c: e58501a8     	str	r0, [r5, #0x1a8]
++   2cf70: e5960000     	ldr	r0, [r6]
++   2cf74: e2401001     	sub	r1, r0, #1
++   2cf78: e0000190     	mul	r0, r0, r1
++   2cf7c: e3100001     	tst	r0, #1
++   2cf80: 0a000006     	beq	0x2cfa0 <.text+0x1cea0> @ imm = #0x18
++   2cf84: e5940000     	ldr	r0, [r4]
++   2cf88: e3500009     	cmp	r0, #9
++   2cf8c: da000003     	ble	0x2cfa0 <.text+0x1cea0> @ imm = #0xc
++   2cf90: e1a00007     	mov	r0, r7
++   2cf94: eb15da41     	bl	0x5a38a0 <.text+0x5937a0> @ imm = #0x576904
++   2cf98: e58501a8     	str	r0, [r5, #0x1a8]
++   2cf9c: eafffff0     	b	0x2cf64 <.text+0x1ce64> @ imm = #-0x40
++   2cfa0: e599119c     	ldr	r1, [r9, #0x19c]
++   2cfa4: e59f0178     	ldr	r0, [pc, #0x178]        @ 0x2d124 <.text+0x1d024>
++   2cfa8: e3510000     	cmp	r1, #0
++   2cfac: e79f0000     	ldr	r0, [pc, r0]
++   2cfb0: 0a00001d     	beq	0x2d02c <.text+0x1cf2c> @ imm = #0x74
++   2cfb4: e59f216c     	ldr	r2, [pc, #0x16c]        @ 0x2d128 <.text+0x1d028>
++   2cfb8: e79f2002     	ldr	r2, [pc, r2]
++   2cfbc: e5903000     	ldr	r3, [r0]
++   2cfc0: e2437001     	sub	r7, r3, #1
++   2cfc4: e0030793     	mul	r3, r3, r7
++   2cfc8: e3130001     	tst	r3, #1
++   2cfcc: 0a000002     	beq	0x2cfdc <.text+0x1cedc> @ imm = #0x8
++   2cfd0: e5923000     	ldr	r3, [r2]
++   2cfd4: e3530009     	cmp	r3, #9
++   2cfd8: cafffff7     	bgt	0x2cfbc <.text+0x1cebc> @ imm = #-0x24
++   2cfdc: e3580000     	cmp	r8, #0
++   2cfe0: 0a000022     	beq	0x2d070 <.text+0x1cf70> @ imm = #0x88
++   2cfe4: e5950044     	ldr	r0, [r5, #0x44]
++   2cfe8: e28d700c     	add	r7, sp, #12
++   2cfec: e3a02004     	mov	r2, #4
++   2cff0: e6bf0f30     	rev	r0, r0
++   2cff4: e0800008     	add	r0, r0, r8
++   2cff8: e6bf0f30     	rev	r0, r0
++   2cffc: e5850044     	str	r0, [r5, #0x44]
++   2d000: e1a00007     	mov	r0, r7
++   2d004: ebff8de9     	bl	0x107b0 <.text+0x6b0>   @ imm = #-0x1c85c
++   2d008: e59d000c     	ldr	r0, [sp, #0xc]
++   2d00c: e3a01004     	mov	r1, #4
++   2d010: e6bf0f30     	rev	r0, r0
++   2d014: e0800008     	add	r0, r0, r8
++   2d018: e6bf0f30     	rev	r0, r0
++   2d01c: e58d000c     	str	r0, [sp, #0xc]
++   2d020: e1a00007     	mov	r0, r7
++   2d024: ebff8d98     	bl	0x1068c <.text+0x58c>   @ imm = #-0x1c9a0
++   2d028: ea000012     	b	0x2d078 <.text+0x1cf78> @ imm = #0x48
++   2d02c: e59f10f8     	ldr	r1, [pc, #0xf8]         @ 0x2d12c <.text+0x1d02c>
++   2d030: e79f1001     	ldr	r1, [pc, r1]
++   2d034: e5902000     	ldr	r2, [r0]
++   2d038: e2423001     	sub	r3, r2, #1
++   2d03c: e0020392     	mul	r2, r2, r3
++   2d040: e3120001     	tst	r2, #1
++   2d044: 0a000002     	beq	0x2d054 <.text+0x1cf54> @ imm = #0x8
++   2d048: e5912000     	ldr	r2, [r1]
++   2d04c: e3520009     	cmp	r2, #9
++   2d050: cafffff7     	bgt	0x2d034 <.text+0x1cf34> @ imm = #-0x24
++   2d054: e3580000     	cmp	r8, #0
++   2d058: 15950044     	ldrne	r0, [r5, #0x44]
++   2d05c: 16bf0f30     	revne	r0, r0
++   2d060: 10800008     	addne	r0, r0, r8
++   2d064: 16bf0f30     	revne	r0, r0
++   2d068: 15850044     	strne	r0, [r5, #0x44]
++   2d06c: ea000002     	b	0x2d07c <.text+0x1cf7c> @ imm = #0x8
++   2d070: e1a00001     	mov	r0, r1
++   2d074: eb15da09     	bl	0x5a38a0 <.text+0x5937a0> @ imm = #0x576824
++   2d078: e585019c     	str	r0, [r5, #0x19c]
++   2d07c: e59961b0     	ldr	r6, [r9, #0x1b0]
++   2d080: e3560000     	cmp	r6, #0
++   2d084: 0a00001a     	beq	0x2d0f4 <.text+0x1cff4> @ imm = #0x68
++   2d088: e59f70a0     	ldr	r7, [pc, #0xa0]         @ 0x2d130 <.text+0x1d030>
++   2d08c: e79f7007     	ldr	r7, [pc, r7]
++   2d090: e5970000     	ldr	r0, [r7]
++   2d094: e59f4098     	ldr	r4, [pc, #0x98]         @ 0x2d134 <.text+0x1d034>
++   2d098: e2401001     	sub	r1, r0, #1
++   2d09c: e0000190     	mul	r0, r0, r1
++   2d0a0: e79f4004     	ldr	r4, [pc, r4]
++   2d0a4: e3100001     	tst	r0, #1
++   2d0a8: 0a000002     	beq	0x2d0b8 <.text+0x1cfb8> @ imm = #0x8
++   2d0ac: e5940000     	ldr	r0, [r4]
++   2d0b0: e3500009     	cmp	r0, #9
++   2d0b4: ca00000a     	bgt	0x2d0e4 <.text+0x1cfe4> @ imm = #0x28
++   2d0b8: e1a00006     	mov	r0, r6
++   2d0bc: eb15d9f7     	bl	0x5a38a0 <.text+0x5937a0> @ imm = #0x5767dc
++   2d0c0: e58501b0     	str	r0, [r5, #0x1b0]
++   2d0c4: e5970000     	ldr	r0, [r7]
++   2d0c8: e2401001     	sub	r1, r0, #1
++   2d0cc: e0000190     	mul	r0, r0, r1
++   2d0d0: e3100001     	tst	r0, #1
++   2d0d4: 0a000006     	beq	0x2d0f4 <.text+0x1cff4> @ imm = #0x18
++   2d0d8: e5940000     	ldr	r0, [r4]
++   2d0dc: e3500009     	cmp	r0, #9
++   2d0e0: da000003     	ble	0x2d0f4 <.text+0x1cff4> @ imm = #0xc
++   2d0e4: e1a00006     	mov	r0, r6
++   2d0e8: eb15d9ec     	bl	0x5a38a0 <.text+0x5937a0> @ imm = #0x5767b0
++   2d0ec: e58501b0     	str	r0, [r5, #0x1b0]
++   2d0f0: eafffff0     	b	0x2d0b8 <.text+0x1cfb8> @ imm = #-0x40
++   2d0f4: e5990254     	ldr	r0, [r9, #0x254]
++   2d0f8: e5850254     	str	r0, [r5, #0x254]
++   2d0fc: e1a00005     	mov	r0, r5
++   2d100: e24bd018     	sub	sp, r11, #24
++   2d104: e8bd8bf0     	pop	{r4, r5, r6, r7, r8, r9, r11, pc}
+diff --git a/evidence/stage11/disasm/work_delete.S b/evidence/stage11/disasm/work_delete.S
+new file mode 100644
+index 0000000..c554053
+--- /dev/null
++++ b/evidence/stage11/disasm/work_delete.S
+@@ -0,0 +1,98 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   2a330: e92d4df0     	push	{r4, r5, r6, r7, r8, r10, r11, lr}
++   2a334: e28db018     	add	r11, sp, #24
++   2a338: e24dd018     	sub	sp, sp, #24
++   2a33c: e59f815c     	ldr	r8, [pc, #0x15c]        @ 0x2a4a0 <.text+0x1a3a0>
++   2a340: e1a04000     	mov	r4, r0
++   2a344: e79f8008     	ldr	r8, [pc, r8]
++   2a348: e5980000     	ldr	r0, [r8]
++   2a34c: e2407001     	sub	r7, r0, #1
++   2a350: e0000790     	mul	r0, r0, r7
++   2a354: e3100001     	tst	r0, #1
++   2a358: e5980000     	ldr	r0, [r8]
++   2a35c: e2407001     	sub	r7, r0, #1
++   2a360: e0000790     	mul	r0, r0, r7
++   2a364: e59f7138     	ldr	r7, [pc, #0x138]        @ 0x2a4a4 <.text+0x1a3a4>
++   2a368: e79f7007     	ldr	r7, [pc, r7]
++   2a36c: e5945000     	ldr	r5, [r4]
++   2a370: e3100001     	tst	r0, #1
++   2a374: 0a000002     	beq	0x2a384 <.text+0x1a284> @ imm = #0x8
++   2a378: e5970000     	ldr	r0, [r7]
++   2a37c: e3500009     	cmp	r0, #9
++   2a380: cafffff4     	bgt	0x2a358 <.text+0x1a258> @ imm = #-0x30
++   2a384: e3550000     	cmp	r5, #0
++   2a388: 0a000017     	beq	0x2a3ec <.text+0x1a2ec> @ imm = #0x5c
++   2a38c: e595018c     	ldr	r0, [r5, #0x18c]
++   2a390: e3500000     	cmp	r0, #0
++   2a394: 0a000002     	beq	0x2a3a4 <.text+0x1a2a4> @ imm = #0x8
++   2a398: eb15a63b     	bl	0x593c8c <.text+0x583b8c> @ imm = #0x5698ec
++   2a39c: e3a00000     	mov	r0, #0
++   2a3a0: e585018c     	str	r0, [r5, #0x18c]
++   2a3a4: e595019c     	ldr	r0, [r5, #0x19c]
++   2a3a8: e3500000     	cmp	r0, #0
++   2a3ac: 0a000002     	beq	0x2a3bc <.text+0x1a2bc> @ imm = #0x8
++   2a3b0: eb15a635     	bl	0x593c8c <.text+0x583b8c> @ imm = #0x5698d4
++   2a3b4: e3a00000     	mov	r0, #0
++   2a3b8: e585019c     	str	r0, [r5, #0x19c]
++   2a3bc: e59561b0     	ldr	r6, [r5, #0x1b0]
++   2a3c0: e3560000     	cmp	r6, #0
++   2a3c4: 0a00002b     	beq	0x2a478 <.text+0x1a378> @ imm = #0xac
++   2a3c8: e5980000     	ldr	r0, [r8]
++   2a3cc: e2401001     	sub	r1, r0, #1
++   2a3d0: e0000190     	mul	r0, r0, r1
++   2a3d4: e3100001     	tst	r0, #1
++   2a3d8: 0a000015     	beq	0x2a434 <.text+0x1a334> @ imm = #0x54
++   2a3dc: e5970000     	ldr	r0, [r7]
++   2a3e0: e3500009     	cmp	r0, #9
++   2a3e4: ca00001e     	bgt	0x2a464 <.text+0x1a364> @ imm = #0x78
++   2a3e8: ea000011     	b	0x2a434 <.text+0x1a334> @ imm = #0x44
++   2a3ec: e59f00b4     	ldr	r0, [pc, #0xb4]         @ 0x2a4a8 <.text+0x1a3a8>
++   2a3f0: e3a04001     	mov	r4, #1
++   2a3f4: e59f60b0     	ldr	r6, [pc, #0xb0]         @ 0x2a4ac <.text+0x1a3ac>
++   2a3f8: e28dc008     	add	r12, sp, #8
++   2a3fc: e59f50ac     	ldr	r5, [pc, #0xac]         @ 0x2a4b0 <.text+0x1a3b0>
++   2a400: e08f0000     	add	r0, pc, r0
++   2a404: e59f70a8     	ldr	r7, [pc, #0xa8]         @ 0x2a4b4 <.text+0x1a3b4>
++   2a408: e08f6006     	add	r6, pc, r6
++   2a40c: e08f5005     	add	r5, pc, r5
++   2a410: e08f7007     	add	r7, pc, r7
++   2a414: e88d0090     	stm	sp, {r4, r7}
++   2a418: e88c000e     	stm	r12, {r1, r2, r3}
++   2a41c: e1a01006     	mov	r1, r6
++   2a420: e1a02005     	mov	r2, r5
++   2a424: e300317d     	movw	r3, #0x17d
++   2a428: eb033f25     	bl	0xfa0c4 <.text+0xe9fc4> @ imm = #0xcfc94
++   2a42c: e24bd018     	sub	sp, r11, #24
++   2a430: e8bd8df0     	pop	{r4, r5, r6, r7, r8, r10, r11, pc}
++   2a434: e1a00006     	mov	r0, r6
++   2a438: eb15a613     	bl	0x593c8c <.text+0x583b8c> @ imm = #0x56984c
++   2a43c: e3a00000     	mov	r0, #0
++   2a440: e58501b0     	str	r0, [r5, #0x1b0]
++   2a444: e5980000     	ldr	r0, [r8]
++   2a448: e2401001     	sub	r1, r0, #1
++   2a44c: e0000190     	mul	r0, r0, r1
++   2a450: e3100001     	tst	r0, #1
++   2a454: 0a000007     	beq	0x2a478 <.text+0x1a378> @ imm = #0x1c
++   2a458: e5970000     	ldr	r0, [r7]
++   2a45c: e3500009     	cmp	r0, #9
++   2a460: da000004     	ble	0x2a478 <.text+0x1a378> @ imm = #0x10
++   2a464: e1a00006     	mov	r0, r6
++   2a468: eb15a607     	bl	0x593c8c <.text+0x583b8c> @ imm = #0x56981c
++   2a46c: e3a00000     	mov	r0, #0
++   2a470: e58501b0     	str	r0, [r5, #0x1b0]
++   2a474: eaffffee     	b	0x2a434 <.text+0x1a334> @ imm = #-0x48
++   2a478: e59501a8     	ldr	r0, [r5, #0x1a8]
++   2a47c: e3500000     	cmp	r0, #0
++   2a480: 0a000000     	beq	0x2a488 <.text+0x1a388> @ imm = #0x0
++   2a484: eb15a600     	bl	0x593c8c <.text+0x583b8c> @ imm = #0x569800
++   2a488: e1a00005     	mov	r0, r5
++   2a48c: eb15a5fe     	bl	0x593c8c <.text+0x583b8c> @ imm = #0x5697f8
++   2a490: e3a00000     	mov	r0, #0
++   2a494: e5840000     	str	r0, [r4]
++   2a498: e24bd018     	sub	sp, r11, #24
++   2a49c: e8bd8df0     	pop	{r4, r5, r6, r7, r8, r10, r11, pc}
+diff --git a/evidence/stage11/disasm/wrapper_fields.S b/evidence/stage11/disasm/wrapper_fields.S
+new file mode 100644
+index 0000000..9ee622d
+--- /dev/null
++++ b/evidence/stage11/disasm/wrapper_fields.S
+@@ -0,0 +1,27 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   303e8: e5960000     	ldr	r0, [r6]
++   303ec: e580516c     	str	r5, [r0, #0x16c]
++   303f0: e5960000     	ldr	r0, [r6]
++   303f4: e5808168     	str	r8, [r0, #0x168]
++   303f8: e5960000     	ldr	r0, [r6]
++   303fc: e59f1130     	ldr	r1, [pc, #0x130]        @ 0x30534 <.text+0x20434>
++   30400: e79f1001     	ldr	r1, [pc, r1]
++   30404: e58011b8     	str	r1, [r0, #0x1b8]
++   30408: e5960000     	ldr	r0, [r6]
++   3040c: e590016c     	ldr	r0, [r0, #0x16c]
++   30410: e5901098     	ldr	r1, [r0, #0x98]
++   30414: e2811001     	add	r1, r1, #1
++   30418: e5801098     	str	r1, [r0, #0x98]
++   3041c: e5960000     	ldr	r0, [r6]
++   30420: e3a01001     	mov	r1, #1
++   30424: e5804160     	str	r4, [r0, #0x160]
++   30428: e5960000     	ldr	r0, [r6]
++   3042c: e5c01180     	strb	r1, [r0, #0x180]
++   30430: e5960000     	ldr	r0, [r6]
++   30434: e5971000     	ldr	r1, [r7]
++   30438: e5801254     	str	r1, [r0, #0x254]
+diff --git a/evidence/stage11/recovery-manifest.json b/evidence/stage11/recovery-manifest.json
+new file mode 100644
+index 0000000..3133b5c
+--- /dev/null
++++ b/evidence/stage11/recovery-manifest.json
+@@ -0,0 +1,309 @@
++{
++  "stage": 11,
++  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
++  "reference_bytes": 6228004,
++  "slices": [
++    {
++      "name": "metadata_copy",
++      "start": "0x30a6c",
++      "end_exclusive": "0x30a9c",
++      "bytes": 48,
++      "sha256": "5f8ab4e2eb3e1df5bd9ba6af7d049a8de0227ab3af1f4ff98c4cb110ba8b30ba",
++      "disassembly": "evidence/stage11/disasm/metadata_copy.S",
++      "disassembly_sha256": "be91eeeda7600f77fdafeb4a789a03e9aadf4b5193466c6060d29c1954fc7149",
++      "scope": "Bounded three strdup calls and raw binary64 copy; no subsequent builder tail."
++    },
++    {
++      "name": "work_clone",
++      "start": "0x2ce84",
++      "end_exclusive": "0x2d108",
++      "bytes": 644,
++      "sha256": "ce93b4868dfadf7f72cef35ad99a93f9ed203b939f745eda342d509c39c6f579",
++      "disassembly": "evidence/stage11/disasm/work_clone.S",
++      "disassembly_sha256": "81908ac8c92679560013fc2645d391cd9b15b5c6c14236ec506bee972b526dfe",
++      "scope": "Only original r1=0 time-roll branch is reconstructed and compared; other branches are context only."
++    },
++    {
++      "name": "work_clear",
++      "start": "0x2a1bc",
++      "end_exclusive": "0x2a328",
++      "bytes": 364,
++      "sha256": "6c98c89666bc496b7dd14e750ad9aa31d42eaf838b34a11de9afe0a65883bad0",
++      "disassembly": "evidence/stage11/disasm/work_clear.S",
++      "disassembly_sha256": "f8fae047b6eb8b89c24323d4b1453394e69daaee0b7f2d9579452a9f877b88b8",
++      "scope": "Owned string releases and zeroing 632 image bytes; diagnostics/obfuscation omitted in C."
++    },
++    {
++      "name": "work_delete",
++      "start": "0x2a330",
++      "end_exclusive": "0x2a4a0",
++      "bytes": 368,
++      "sha256": "8c34255816a200e86dbb7aa61bd771a5e822443387bc21e7a81481a8894a0b37",
++      "disassembly": "evidence/stage11/disasm/work_delete.S",
++      "disassembly_sha256": "928a578dc8c3acca69883f8a92baae6c9dcc5f23106fc1b447428a64b45563f6",
++      "scope": "Owned strings then outer object free and caller pointer NULL. Null diagnostic omitted in C."
++    },
++    {
++      "name": "builder_fields",
++      "start": "0x30d90",
++      "end_exclusive": "0x30db8",
++      "bytes": 40,
++      "sha256": "e483a8a0e8c29a9ab31ddd19a003c8363cf1da13fc360e792e72fd337f8cc565",
++      "disassembly": "evidence/stage11/disasm/builder_fields.S",
++      "disassembly_sha256": "f2d284c5ad8b47b35801f1d7e23ebd80136d6d961dde6c69547bea137d00e9a9",
++      "scope": "Bounded scalar assignments; meanings remain offsets/cookies."
++    },
++    {
++      "name": "wrapper_fields",
++      "start": "0x303e8",
++      "end_exclusive": "0x3043c",
++      "bytes": 84,
++      "sha256": "620a22b8b434b5dc2cfdc89ec9a8a567815f40315f4bba99dd22ec55f53f4f74",
++      "disassembly": "evidence/stage11/disasm/wrapper_fields.S",
++      "disassembly_sha256": "ef97a94fe4445d30d7ae3bf3dbf151475d48eb860f56f87276cafb2b83491467",
++      "scope": "Bounded scalar assignments and raw reference+0x98 increment; not full wrapper."
++    },
++    {
++      "name": "strdup",
++      "start": "0x5a38a0",
++      "end_exclusive": "0x5a38e0",
++      "bytes": 64,
++      "sha256": "479ea17d39a1750e431e11b82f457d2c40b4b3b9c502f0e062919cfc5121358f",
++      "disassembly": "evidence/stage11/disasm/strdup.S",
++      "disassembly_sha256": "dfe5d456d5f446c90fd93c6c8fa48c1fb70f5a4c62a69bbb356e4c0bfc0817b0",
++      "scope": "Original instructions execute in oracle. strlen/malloc/memcpy are injected."
++    }
++  ],
++  "literals": [
++    {
++      "name": "clone_literals",
++      "address": "0x2d108",
++      "bytes": 48,
++      "bytes_hex": "b02b5b0040395e003c395e0094525b00b2525b00dc2d5b00542d5b00682d5b00e82c5b00702c5b00882c5b00002c5b00",
++      "sha256": "cfc078449170b87554d453e2ab513f87f6f7fd8ffbded5b8352b23fed6458725"
++    },
++    {
++      "name": "clear_literals",
++      "address": "0x2a328",
++      "bytes": 8,
++      "bytes_hex": "f05a5b00c84a5b00",
++      "sha256": "c101b01ceac8578c3498c042f0d36727b2086998e585e9bea27790ff0179686f"
++    },
++    {
++      "name": "delete_literals",
++      "address": "0x2a4a0",
++      "bytes": 24,
++      "bytes_hex": "884d5b0074565b00b77d5b00847d5b00b17d5b00b87d5b00",
++      "sha256": "31f6f78c72252a0ceee5ae94e98bd5004c1f26dd8a23269006aca599717fec39"
++    },
++    {
++      "name": "builder_global_literal",
++      "address": "0x312ac",
++      "bytes": 4,
++      "bytes_hex": "d8f95d00",
++      "sha256": "1e017c80cd754f52685f6b9996712ffe70fa9fc8924bb61591ca2fc1c2f05a47"
++    },
++    {
++      "name": "wrapper_global_literal",
++      "address": "0x30534",
++      "bytes": 4,
++      "bytes_hex": "80035e00",
++      "sha256": "ef8fded867ab91cccdb0cec0a6d61628838aa7df6deb599830c3f42c0fa0af2e"
++    }
++  ],
++  "branch_edges": [
++    {
++      "pc": "0x30a78",
++      "instruction_hex": "eb15cb88",
++      "target": "0x5a38a0",
++      "link": true,
++      "scope": "observed-boundary"
++    },
++    {
++      "pc": "0x30a84",
++      "instruction_hex": "eb15cb85",
++      "target": "0x5a38a0",
++      "link": true,
++      "scope": "observed-boundary"
++    },
++    {
++      "pc": "0x30a94",
++      "instruction_hex": "eb15cb81",
++      "target": "0x5a38a0",
++      "link": true,
++      "scope": "observed-boundary"
++    },
++    {
++      "pc": "0x2cea0",
++      "instruction_hex": "eb159b43",
++      "target": "0x593bb4",
++      "link": true,
++      "scope": "observed-boundary"
++    },
++    {
++      "pc": "0x2ceb4",
++      "instruction_hex": "eb15e493",
++      "target": "0x5a6108",
++      "link": true,
++      "scope": "observed-boundary"
++    },
++    {
++      "pc": "0x2ced4",
++      "instruction_hex": "eb15e5fa",
++      "target": "0x5a66c4",
++      "link": true,
++      "scope": "observed-boundary"
++    },
++    {
++      "pc": "0x2cee4",
++      "instruction_hex": "eb15d968",
++      "target": "0x5a348c",
++      "link": true,
++      "scope": "observed-boundary"
++    },
++    {
++      "pc": "0x2cf0c",
++      "instruction_hex": "ebff939a",
++      "target": "0x11d7c",
++      "link": true,
++      "scope": "observed-boundary"
++    },
++    {
++      "pc": "0x2cf20",
++      "instruction_hex": "eb15da5e",
++      "target": "0x5a38a0",
++      "link": true,
++      "scope": "observed-boundary"
++    },
++    {
++      "pc": "0x2cf68",
++      "instruction_hex": "eb15da4c",
++      "target": "0x5a38a0",
++      "link": true,
++      "scope": "observed-boundary"
++    },
++    {
++      "pc": "0x2d074",
++      "instruction_hex": "eb15da09",
++      "target": "0x5a38a0",
++      "link": true,
++      "scope": "observed-boundary"
++    },
++    {
++      "pc": "0x2d0bc",
++      "instruction_hex": "eb15d9f7",
++      "target": "0x5a38a0",
++      "link": true,
++      "scope": "observed-boundary"
++    },
++    {
++      "pc": "0x2a2ec",
++      "instruction_hex": "eb15e466",
++      "target": "0x5a348c",
++      "link": true,
++      "scope": "observed-boundary"
++    },
++    {
++      "pc": "0x2a428",
++      "instruction_hex": "eb033f25",
++      "target": "0xfa0c4",
++      "link": true,
++      "scope": "observed-boundary"
++    },
++    {
++      "pc": "0x2a438",
++      "instruction_hex": "eb15a613",
++      "target": "0x593c8c",
++      "link": true,
++      "scope": "observed-boundary"
++    },
++    {
++      "pc": "0x2a484",
++      "instruction_hex": "eb15a600",
++      "target": "0x593c8c",
++      "link": true,
++      "scope": "observed-boundary"
++    },
++    {
++      "pc": "0x2a48c",
++      "instruction_hex": "eb15a5fe",
++      "target": "0x593c8c",
++      "link": true,
++      "scope": "observed-boundary"
++    },
++    {
++      "pc": "0x5a38a8",
++      "instruction_hex": "eb000066",
++      "target": "0x5a3a48",
++      "link": true,
++      "scope": "observed-boundary"
++    },
++    {
++      "pc": "0x5a38b8",
++      "instruction_hex": "ebffc20b",
++      "target": "0x5940ec",
++      "link": true,
++      "scope": "observed-boundary"
++    },
++    {
++      "pc": "0x5a38d4",
++      "instruction_hex": "eafffd83",
++      "target": "0x5a2ee8",
++      "link": false,
++      "scope": "observed-boundary"
++    }
++  ],
++  "modified_observed_source": "src/frontend/cgminer.c",
++  "source_placement": "Integration within observed frontend cluster; individual original source paths not independently proven.",
++  "new_api": "include/xminer/recovery/work_storage.h",
++  "new_helper": "reconstruction/support/work_storage_pipeline.c",
++  "original_image_bytes": 632,
++  "normalized_pointer_slots": [
++    "0x18c",
++    "0x19c",
++    "0x1a8",
++    "0x1b0"
++  ],
++  "copy_order": [
++    "0x18c",
++    "0x1a8",
++    "0x19c",
++    "0x1b0"
++  ],
++  "release_order": [
++    "0x18c",
++    "0x19c",
++    "0x1b0",
++    "0x1a8"
++  ],
++  "original_allocations_injected": true,
++  "original_strdup_body_executed": true,
++  "outer_clone_allocation_failure_is_new_guard": true,
++  "new_atomic_rollback_is_not_vendor_behavior": true,
++  "full_work_semantics_recovered": false,
++  "vendor_binary_abi_compatible": false,
++  "time_roll_branch_recovered": false,
++  "live_reference_ownership_recovered": false,
++  "physical_hardware_tested": false,
++  "comparison_counts": {
++    "metadata": 576,
++    "clone": 486,
++    "cleanup": 384,
++    "fields": 640
++  },
++  "oracle": "tests/work_storage_oracle.py",
++  "differential_tests": "tests/test_stage11_differential.py",
++  "native_tests": "tests/test_work_storage.c",
++  "oracle_injected_calls": {
++    "0x5a3a48": "strlen",
++    "0x5940ec": "malloc",
++    "0x593bb4": "calloc (success condition)",
++    "0x593c8c": "free",
++    "0x5a2ee8": "memcpy",
++    "0x11d7c": "debug memcpy boundary",
++    "0x5a348c": "memset",
++    "0x5a6108": "mutex lock",
++    "0x5a66c4": "mutex unlock",
++    "0xfa0c4": "logging"
++  }
++}
+diff --git a/evidence/validation/stage11/focused-gcc-clang-native-arm.log b/evidence/validation/stage11/focused-gcc-clang-native-arm.log
+new file mode 100644
+index 0000000..d3c1ab4
+--- /dev/null
++++ b/evidence/validation/stage11/focused-gcc-clang-native-arm.log
+@@ -0,0 +1,33 @@
++./build/test-work-storage
++{"stage":11,"native_scenarios":1200,"assertions":12220,"real_malloc_free":true,"hardware_tested":false}
++./build/vn135-work-lifecycle
++{"independent_clone_after_source_clear":true,"hash_matches_fixture":true,"vendor_abi_compatible":false,"job_freshness_checked":false,"submitted":false,"hardware_tested":false}
++python3 tests/test_stage11_differential.py metadata
++{"stage": 11, "group": "metadata", "status": "PASS", "comparisons": 576, "original_strdup_body_executed": true, "all_three_fail_patterns": true}
++python3 tests/test_stage11_differential.py clone
++{"stage": 11, "group": "clone", "status": "PASS", "comparisons": 486, "unrolled_only": true, "outer_allocation_success_precondition": true, "compared_all_opaque_image_bytes_after_known_pointer_normalization": true}
++python3 tests/test_stage11_differential.py cleanup
++{"stage": 11, "group": "cleanup", "status": "PASS", "comparisons": 384, "clear": 192, "delete": 192, "null_original_diagnostic_observed_separately": true, "repeated_clear_checked": 192}
++python3 tests/test_stage11_differential.py fields
++{"stage": 11, "group": "fields", "status": "PASS", "comparisons": 640, "builder": 320, "wrapper": 320, "all_other_image_bytes_unchanged": true}
++mkdir -p build
++clang -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -shared -fPIC reconstruction/support/work_storage_pipeline.c reconstruction/support/work_difficulty_pipeline.c reconstruction/support/sha256_bytes.c reconstruction/support/work_rebuild_pipeline.c src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c -o build/libvn135_recovered-clang.so
++clang -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror reconstruction/support/work_storage_pipeline.c reconstruction/support/work_difficulty_pipeline.c reconstruction/support/sha256_bytes.c reconstruction/support/work_rebuild_pipeline.c src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_work_storage.c -o build/test-work-storage-clang
++./build/test-work-storage-clang
++{"stage":11,"native_scenarios":1200,"assertions":12220,"real_malloc_free":true,"hardware_tested":false}
++VN135_TEST_LIBRARY=./build/libvn135_recovered-clang.so python3 tests/test_stage11_differential.py metadata
++{"stage": 11, "group": "metadata", "status": "PASS", "comparisons": 576, "original_strdup_body_executed": true, "all_three_fail_patterns": true}
++VN135_TEST_LIBRARY=./build/libvn135_recovered-clang.so python3 tests/test_stage11_differential.py clone
++{"stage": 11, "group": "clone", "status": "PASS", "comparisons": 486, "unrolled_only": true, "outer_allocation_success_precondition": true, "compared_all_opaque_image_bytes_after_known_pointer_normalization": true}
++VN135_TEST_LIBRARY=./build/libvn135_recovered-clang.so python3 tests/test_stage11_differential.py cleanup
++{"stage": 11, "group": "cleanup", "status": "PASS", "comparisons": 384, "clear": 192, "delete": 192, "null_original_diagnostic_observed_separately": true, "repeated_clear_checked": 192}
++VN135_TEST_LIBRARY=./build/libvn135_recovered-clang.so python3 tests/test_stage11_differential.py fields
++{"stage": 11, "group": "fields", "status": "PASS", "comparisons": 640, "builder": 320, "wrapper": 320, "all_other_image_bytes_unchanged": true}
++clang -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer reconstruction/support/work_storage_pipeline.c reconstruction/support/work_difficulty_pipeline.c reconstruction/support/sha256_bytes.c reconstruction/support/work_rebuild_pipeline.c src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_work_storage.c -o build/test-work-storage-clang-sanitized
++ASAN_OPTIONS=detect_leaks=1 ./build/test-work-storage-clang-sanitized
++{"stage":11,"native_scenarios":1200,"assertions":12220,"real_malloc_free":true,"hardware_tested":false}
++mkdir -p build
++cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer reconstruction/support/work_storage_pipeline.c reconstruction/support/work_difficulty_pipeline.c reconstruction/support/sha256_bytes.c reconstruction/support/work_rebuild_pipeline.c src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_work_storage.c -o build/test-work-storage-sanitized
++ASAN_OPTIONS=detect_leaks=1 ./build/test-work-storage-sanitized
++{"stage":11,"native_scenarios":1200,"assertions":12220,"real_malloc_free":true,"hardware_tested":false}
++llvm-ar rcs build/libvn135_recovered-armv7.a build/arm/reconstruction/support/work_storage_pipeline.o build/arm/reconstruction/support/work_difficulty_pipeline.o build/arm/reconstruction/support/sha256_bytes.o build/arm/reconstruction/support/work_rebuild_pipeline.o build/arm/src/frontend/cgminer.o build/arm/reconstruction/support/sha256d80.o build/arm/reconstruction/support/target256.o build/arm/reconstruction/support/nonce_job_window.o build/arm/reconstruction/support/sha256_midstate.o build/arm/reconstruction/support/work_nonce_pipeline.o build/arm/src/backend/work-gen/work-gen.o build/arm/reconstruction/support/work_rx_stream.o build/arm/libbitmain/src/uart.o build/arm/libbitmain/src/chip/chip1398.o build/arm/libbitmain/src/pll.o build/arm/libbitmain/src/aml/chip.o build/arm/reconstruction/support/crc5.o build/arm/libbitmain/src/reg_cache.o
+diff --git a/evidence/validation/stage11/stage11-cleanup-clang-results.json b/evidence/validation/stage11/stage11-cleanup-clang-results.json
+new file mode 100644
+index 0000000..965781f
+--- /dev/null
++++ b/evidence/validation/stage11/stage11-cleanup-clang-results.json
+@@ -0,0 +1,10 @@
++{
++  "stage": 11,
++  "group": "cleanup",
++  "status": "PASS",
++  "comparisons": 384,
++  "clear": 192,
++  "delete": 192,
++  "null_original_diagnostic_observed_separately": true,
++  "repeated_clear_checked": 192
++}
+diff --git a/evidence/validation/stage11/stage11-cleanup-gcc-results.json b/evidence/validation/stage11/stage11-cleanup-gcc-results.json
+new file mode 100644
+index 0000000..965781f
+--- /dev/null
++++ b/evidence/validation/stage11/stage11-cleanup-gcc-results.json
+@@ -0,0 +1,10 @@
++{
++  "stage": 11,
++  "group": "cleanup",
++  "status": "PASS",
++  "comparisons": 384,
++  "clear": 192,
++  "delete": 192,
++  "null_original_diagnostic_observed_separately": true,
++  "repeated_clear_checked": 192
++}
+diff --git a/evidence/validation/stage11/stage11-clone-clang-results.json b/evidence/validation/stage11/stage11-clone-clang-results.json
+new file mode 100644
+index 0000000..01cb9a2
+--- /dev/null
++++ b/evidence/validation/stage11/stage11-clone-clang-results.json
+@@ -0,0 +1,9 @@
++{
++  "stage": 11,
++  "group": "clone",
++  "status": "PASS",
++  "comparisons": 486,
++  "unrolled_only": true,
++  "outer_allocation_success_precondition": true,
++  "compared_all_opaque_image_bytes_after_known_pointer_normalization": true
++}
+diff --git a/evidence/validation/stage11/stage11-clone-gcc-results.json b/evidence/validation/stage11/stage11-clone-gcc-results.json
+new file mode 100644
+index 0000000..01cb9a2
+--- /dev/null
++++ b/evidence/validation/stage11/stage11-clone-gcc-results.json
+@@ -0,0 +1,9 @@
++{
++  "stage": 11,
++  "group": "clone",
++  "status": "PASS",
++  "comparisons": 486,
++  "unrolled_only": true,
++  "outer_allocation_success_precondition": true,
++  "compared_all_opaque_image_bytes_after_known_pointer_normalization": true
++}
+diff --git a/evidence/validation/stage11/stage11-fields-clang-results.json b/evidence/validation/stage11/stage11-fields-clang-results.json
+new file mode 100644
+index 0000000..4d72057
+--- /dev/null
++++ b/evidence/validation/stage11/stage11-fields-clang-results.json
+@@ -0,0 +1,9 @@
++{
++  "stage": 11,
++  "group": "fields",
++  "status": "PASS",
++  "comparisons": 640,
++  "builder": 320,
++  "wrapper": 320,
++  "all_other_image_bytes_unchanged": true
++}
+diff --git a/evidence/validation/stage11/stage11-fields-gcc-results.json b/evidence/validation/stage11/stage11-fields-gcc-results.json
+new file mode 100644
+index 0000000..4d72057
+--- /dev/null
++++ b/evidence/validation/stage11/stage11-fields-gcc-results.json
+@@ -0,0 +1,9 @@
++{
++  "stage": 11,
++  "group": "fields",
++  "status": "PASS",
++  "comparisons": 640,
++  "builder": 320,
++  "wrapper": 320,
++  "all_other_image_bytes_unchanged": true
++}
+diff --git a/evidence/validation/stage11/stage11-metadata-clang-results.json b/evidence/validation/stage11/stage11-metadata-clang-results.json
+new file mode 100644
+index 0000000..792e58a
+--- /dev/null
++++ b/evidence/validation/stage11/stage11-metadata-clang-results.json
+@@ -0,0 +1,8 @@
++{
++  "stage": 11,
++  "group": "metadata",
++  "status": "PASS",
++  "comparisons": 576,
++  "original_strdup_body_executed": true,
++  "all_three_fail_patterns": true
++}
+diff --git a/evidence/validation/stage11/stage11-metadata-gcc-results.json b/evidence/validation/stage11/stage11-metadata-gcc-results.json
+new file mode 100644
+index 0000000..792e58a
+--- /dev/null
++++ b/evidence/validation/stage11/stage11-metadata-gcc-results.json
+@@ -0,0 +1,8 @@
++{
++  "stage": 11,
++  "group": "metadata",
++  "status": "PASS",
++  "comparisons": 576,
++  "original_strdup_body_executed": true,
++  "all_three_fail_patterns": true
++}
+diff --git a/examples/work_clone_lifecycle.c b/examples/work_clone_lifecycle.c
+new file mode 100644
+index 0000000..4135415
+--- /dev/null
++++ b/examples/work_clone_lifecycle.c
+@@ -0,0 +1,24 @@
++/* Offline fixture: no raw vendor ABI, pool connection or actual live jobs. */
++#include "xminer/recovery/work_storage.h"
++#include "xminer/recovery/nonce_verify.h"
++#include "../tests/fixtures/genesis_work.h"
++#include <stdlib.h>
++#include <stdio.h>
++#include <string.h>
++static void *alloc_mem(void *ctx,size_t bytes){(void)ctx;return malloc(bytes);}
++static void free_mem(void *ctx,void *p){(void)ctx;free(p);}
++int main(void){
++    vn135_work_storage source={0},*copy=NULL;vn135_work_memory m={NULL,alloc_mem,free_mem};
++    const uint8_t a[]="fixture-job",b[]="fixture-counter",c[]="fixture-time";
++    vn135_work_metadata_view v={UINT64_C(0x3ff0000000000000),{a,sizeof(a)-1},{b,sizeof(b)-1},{c,sizeof(c)-1}};
++    uint32_t failed=0;uint8_t digest[32];int result=1;
++    memcpy(source.image,fixture_words,112);
++    if(vn135_frontend_work_metadata_copy_legacy(&source,&v,&m,&failed))goto cleanup;
++    if(vn135_work_clone_atomic(&source,1,&m,&copy))goto cleanup;
++    if(vn135_frontend_work_storage_clear(&source,&m))goto cleanup;
++    if(strcmp(copy->text[0],(const char *)a)||vn135_frontend_hash_words80(copy->image,digest)||memcmp(digest,fixture_hash,32))goto cleanup;
++    printf("{\"independent_clone_after_source_clear\":true,\"hash_matches_fixture\":true,\"vendor_abi_compatible\":false,\"job_freshness_checked\":false,\"submitted\":false,\"hardware_tested\":false}\n");result=0;
++cleanup:
++    (void)vn135_frontend_work_storage_clear(&source,&m);
++    (void)vn135_frontend_work_storage_delete(&copy,&m);return result;
++}
+diff --git a/include/xminer/recovery/work_storage.h b/include/xminer/recovery/work_storage.h
+new file mode 100644
+index 0000000..8db5faa
+--- /dev/null
++++ b/include/xminer/recovery/work_storage.h
+@@ -0,0 +1,91 @@
++#ifndef VN135_RECOVERY_WORK_STORAGE_H
++#define VN135_RECOVERY_WORK_STORAGE_H
++#include <stddef.h>
++#include <stdint.h>
++#ifdef __cplusplus
++extern "C" {
++#endif
++/* New integration API, NOT the native 632-byte vendor work ABI.
++ * image preserves opaque bytes; the four KNOWN owned string pointer slots are
++ * ALWAYS zero. Their native pointers live in text[]. Other original pointer-like
++ * words are opaque cookies: this API never dereferences or owns them.
++ * Do not serialize this type, cast it to vendor work or insert it in its queue.
++ * Copying opaque bytes does NOT reconstruct the meaning/lifetime of every field.
++ * All inputs, outputs, failure masks and mutable storage are distinct accessible
++ * objects; caller excludes concurrent use and allocator reentry.
++ */
++#define VN135_WORK_IMAGE_BYTES 632u
++#define VN135_WORK_TEXT_COUNT 4u
++enum { VN135_TEXT_18C=0, VN135_TEXT_19C=1, VN135_TEXT_1A8=2, VN135_TEXT_1B0=3 };
++enum { VN135_STORAGE_OK=0, VN135_STORAGE_PARTIAL=1,
++       VN135_STORAGE_INVALID=-2, VN135_STORAGE_NOMEM=-3 };
++typedef struct { const uint8_t *data; size_t size; } vn135_text_view;
++typedef struct {
++    uint8_t image[VN135_WORK_IMAGE_BYTES];
++    char *text[VN135_WORK_TEXT_COUNT];
++    size_t text_size[VN135_WORK_TEXT_COUNT];
++} vn135_work_storage;
++typedef struct {
++    void *context;
++    void *(*allocate)(void *context,size_t bytes);
++    void (*release)(void *context,void *allocation);
++} vn135_work_memory;
++typedef struct {
++    uint64_t difficulty_bits; /* Bit-preserving copy, not validation of difficulty. */
++    vn135_text_view text_3d0;
++    vn135_text_view text_3ec;
++    vn135_text_view text_396;
++} vn135_work_metadata_view;
++/* Views exclude NUL, have no embedded NUL and refer to accessible bytes.
++ * NULL,size=0 is ABSENT; non-NULL,size=0 is an empty string. Metadata requires
++ * all three strings present, as the observed original calls strdup unchecked.
++ * out must have its three target text fields NULL and all four image pointer
++ * slots zero. The fourth native text field is not modified.
++ * Attempts all three copies in original order (18c,1a8,19c), even on allocation
++ * failure. PARTIAL leaves already allocated strings owned by out. failed_mask
++ * bits use the VN135_TEXT_* indices. The new status is NOT a vendor return code.
++ */
++int vn135_frontend_work_metadata_copy_legacy(vn135_work_storage *out,
++    const vn135_work_metadata_view *view,const vn135_work_memory *memory,
++    uint32_t *failed_mask);
++/* Original 0x2ce84 copy route ONLY with time-roll argument == 0.
++ * Fresh id substitutes the original serialized global ID allocator; no global
++ * state/locks are reproduced. All nonpointer image bytes are copied verbatim
++ * except +0x1bc. Only the four observed strings are deep-copied.
++ * out must point to NULL. Allocation of the outer object failing is handled by
++ * a NEW guard. String allocation failure preserves the original partial clone
++ * and attempts later copies. Input remains immutable. No retain of pool/job.
++ */
++int vn135_frontend_work_clone_unrolled(const vn135_work_storage *source,
++    uint32_t fresh_id,const vn135_work_memory *memory,vn135_work_storage **out,
++    uint32_t *failed_mask);
++/* Free order from original: 18c,19c,1b0,1a8. clear zeros the whole image after
++ * releasing strings and retains the storage object. delete additionally frees
++ * the object, then NULLs the caller pointer; the object must be allocated by
++ * clone using the SAME allocator. Neither function releases opaque references.
++ * All strings must be distinct owned allocations. No concurrent users/reentry.
++ * These functions are NOT secure erasure and NOT full job lifetime management.
++ */
++int vn135_frontend_work_storage_clear(vn135_work_storage *work,
++    const vn135_work_memory *memory);
++int vn135_frontend_work_storage_delete(vn135_work_storage **work,
++    const vn135_work_memory *memory);
++/* NEW transactional adapter: destroys a partial legacy clone and does not
++ * publish it. This rollback is NOT claimed to exist in the vendor firmware.
++ * Atomic here means publication/rollback policy, NOT thread-safe or lock-free. */
++int vn135_work_clone_atomic(const vn135_work_storage *source,uint32_t fresh_id,
++    const vn135_work_memory *memory,vn135_work_storage **out);
++/* Two bounded scalar-write slices. Cookies/word names deliberately retain
++ * offsets: they are not native pointers or independently proven field names.
++ * image must be accessible, unshared, and not alias the reference counter.
++ * Increment of reference_word_98 is modulo 2^32, not proof of refcount semantics.
++ */
++int vn135_frontend_work_builder_fields(uint8_t image[VN135_WORK_IMAGE_BYTES],
++    uint32_t template_cookie,uint32_t global_cookie);
++int vn135_frontend_work_wrapper_fields(uint8_t image[VN135_WORK_IMAGE_BYTES],
++    uint32_t reference_cookie,uint32_t word_168,uint32_t global_cookie,
++    uint32_t *reference_word_98,uint32_t word_160,uint32_t word_254);
++#ifdef __cplusplus
++}
++#endif
++#endif
+diff --git a/reconstruction/cgminer-overlay.am b/reconstruction/cgminer-overlay.am
+index ff45d16..5c51032 100644
+--- a/reconstruction/cgminer-overlay.am
++++ b/reconstruction/cgminer-overlay.am
+@@ -4,7 +4,9 @@
+ AUTOMAKE_OPTIONS = subdir-objects
+ cgminer_CFLAGS = $(AM_CFLAGS) -ffp-contract=off
+ cgminer_CPPFLAGS += -I$(top_srcdir)/include
+-cgminer_SOURCES += reconstruction/support/work_difficulty_pipeline.c \
++cgminer_SOURCES += reconstruction/support/work_storage_pipeline.c \
++                   include/xminer/recovery/work_storage.h \
++                   reconstruction/support/work_difficulty_pipeline.c \
+                    include/xminer/recovery/difficulty.h \
+                    reconstruction/support/sha256_bytes.c \
+                    reconstruction/support/work_rebuild_pipeline.c \
+diff --git a/reconstruction/support/work_storage_pipeline.c b/reconstruction/support/work_storage_pipeline.c
+new file mode 100644
+index 0000000..94aeac2
+--- /dev/null
++++ b/reconstruction/support/work_storage_pipeline.c
+@@ -0,0 +1,15 @@
++/* New rollback adapter around a verified legacy copy route; not vendor code.
++ * Does not publish a partial clone, change the original, acquire live jobs,
++ * deduplicate shares, send work or claim a complete 632-byte work constructor. */
++#include "xminer/recovery/work_storage.h"
++int vn135_work_clone_atomic(const vn135_work_storage *source,uint32_t fresh_id,
++    const vn135_work_memory *memory,vn135_work_storage **out) {
++    vn135_work_storage *candidate=0;uint32_t failed=0;
++    if(!out||*out)return VN135_STORAGE_INVALID;
++    int rc=vn135_frontend_work_clone_unrolled(source,fresh_id,memory,&candidate,&failed);
++    if(rc!=VN135_STORAGE_OK){
++        if(candidate)(void)vn135_frontend_work_storage_delete(&candidate,memory);
++        return rc==VN135_STORAGE_PARTIAL?VN135_STORAGE_NOMEM:rc;
++    }
++    *out=candidate;return VN135_STORAGE_OK;
++}
+diff --git a/src/frontend/cgminer.c b/src/frontend/cgminer.c
+index 003ca72..6e7ecc7 100644
+--- a/src/frontend/cgminer.c
++++ b/src/frontend/cgminer.c
+@@ -151,3 +151,116 @@ int vn135_frontend_work_math(const uint8_t words112[112],double difficulty,
+     *out=result;
+     return 0;
+ }
++
++/* Stage11: owned strings, opaque work copy (zero time-roll only), clear/delete,
++ * and bounded builder/wrapper field writes. Source placement is an integration
++ * choice in the existing frontend cluster. See evidence/stage11. */
++#include "xminer/recovery/work_storage.h"
++static const size_t work_text_offsets[4]={0x18cu,0x19cu,0x1a8u,0x1b0u};
++static int storage_memory_ok(const vn135_work_memory *m) {
++    return m && m->allocate && m->release;
++}
++static int storage_view_ok(vn135_text_view s) {
++    if(!s.data)return s.size==0u;
++    if(s.size>=UINT32_MAX || s.size==SIZE_MAX)return 0;
++    for(size_t i=0;i<s.size;++i)if(s.data[i]==0u)return 0;
++    return 1;
++}
++static int storage_image_ok(const vn135_work_storage *w) {
++    if(!w)return 0;
++    for(size_t i=0;i<4u;++i){
++        if(load_le(w->image+work_text_offsets[i])!=0u)return 0;
++        if(!w->text[i] && w->text_size[i])return 0;
++    }
++    return 1;
++}
++static char *storage_duplicate(vn135_text_view view,const vn135_work_memory *m) {
++    char *p=(char *)m->allocate(m->context,view.size+1u);
++    if(!p)return 0;
++    for(size_t i=0;i<view.size;++i)p[i]=(char)view.data[i];
++    p[view.size]='\0';return p;
++}
++int vn135_frontend_work_metadata_copy_legacy(vn135_work_storage *out,
++    const vn135_work_metadata_view *view,const vn135_work_memory *m,uint32_t *failed) {
++    vn135_text_view inputs[3];
++    static const unsigned order[3]={0u,2u,1u};
++    uint32_t mask=0;
++    if(!out||!view||!failed||!storage_memory_ok(m)||!storage_image_ok(out))
++        return VN135_STORAGE_INVALID;
++    inputs[0]=view->text_3d0;inputs[1]=view->text_3ec;inputs[2]=view->text_396;
++    for(size_t i=0;i<3u;++i)
++        if(!inputs[i].data||!storage_view_ok(inputs[i])||out->text[order[i]])
++            return VN135_STORAGE_INVALID;
++    store_le(out->image+0x1a0u,(uint32_t)view->difficulty_bits);
++    store_le(out->image+0x1a4u,(uint32_t)(view->difficulty_bits>>32));
++    for(size_t i=0;i<3u;++i){
++        unsigned slot=order[i];char *p=storage_duplicate(inputs[i],m);
++        out->text[slot]=p;out->text_size[slot]=p?inputs[i].size:0u;
++        if(!p)mask|=UINT32_C(1)<<slot;
++    }
++    *failed=mask;return mask?VN135_STORAGE_PARTIAL:VN135_STORAGE_OK;
++}
++int vn135_frontend_work_clone_unrolled(const vn135_work_storage *source,
++    uint32_t fresh_id,const vn135_work_memory *m,vn135_work_storage **out,uint32_t *failed) {
++    static const unsigned order[4]={0u,2u,1u,3u};
++    vn135_work_storage *copy;uint32_t mask=0;
++    if(!out||*out||!failed||!storage_memory_ok(m)||!storage_image_ok(source))
++        return VN135_STORAGE_INVALID;
++    for(size_t i=0;i<4u;++i){
++        vn135_text_view v={(const uint8_t *)source->text[i],source->text_size[i]};
++        if(!storage_view_ok(v))return VN135_STORAGE_INVALID;
++        /* Extent through the terminator is a precondition for owned strings. */
++        if(source->text[i] && source->text[i][source->text_size[i]]!='\0')
++            return VN135_STORAGE_INVALID;
++    }
++    copy=(vn135_work_storage *)m->allocate(m->context,sizeof(*copy));
++    if(!copy)return VN135_STORAGE_NOMEM; /* Added, not a vendor guarantee. */
++    for(size_t i=0;i<VN135_WORK_IMAGE_BYTES;++i)copy->image[i]=source->image[i];
++    for(size_t i=0;i<4u;++i){copy->text[i]=0;copy->text_size[i]=0;}
++    store_le(copy->image+0x1bcu,fresh_id);
++    for(size_t i=0;i<4u;++i){
++        unsigned slot=order[i];
++        if(source->text[slot]){
++            vn135_text_view v={(const uint8_t *)source->text[slot],source->text_size[slot]};
++            char *p=storage_duplicate(v,m);copy->text[slot]=p;
++            copy->text_size[slot]=p?v.size:0u;
++            if(!p)mask|=UINT32_C(1)<<slot;
++        }
++    }
++    *out=copy;*failed=mask;return mask?VN135_STORAGE_PARTIAL:VN135_STORAGE_OK;
++}
++static void storage_release_strings(vn135_work_storage *work,const vn135_work_memory *m) {
++    static const unsigned order[4]={0u,1u,3u,2u};
++    for(size_t i=0;i<4u;++i){
++        unsigned slot=order[i];
++        if(work->text[slot])m->release(m->context,work->text[slot]);
++        work->text[slot]=0;work->text_size[slot]=0;
++    }
++}
++int vn135_frontend_work_storage_clear(vn135_work_storage *work,const vn135_work_memory *m) {
++    if(!work||!storage_memory_ok(m))return VN135_STORAGE_INVALID;
++    storage_release_strings(work,m);
++    for(size_t i=0;i<VN135_WORK_IMAGE_BYTES;++i)work->image[i]=0;
++    return VN135_STORAGE_OK;
++}
++int vn135_frontend_work_storage_delete(vn135_work_storage **work,const vn135_work_memory *m) {
++    if(!work||!storage_memory_ok(m))return VN135_STORAGE_INVALID;
++    if(*work){storage_release_strings(*work,m);m->release(m->context,*work);*work=0;}
++    return VN135_STORAGE_OK;
++}
++int vn135_frontend_work_builder_fields(uint8_t image[VN135_WORK_IMAGE_BYTES],
++    uint32_t template_cookie,uint32_t global_cookie) {
++    if(!image)return VN135_STORAGE_INVALID;
++    image[0x250u]=0x53u;store_le(image+0x16cu,template_cookie);
++    store_le(image+0x15cu,60u);store_le(image+0x160u,0u);
++    store_le(image+0x1b8u,global_cookie);return VN135_STORAGE_OK;
++}
++int vn135_frontend_work_wrapper_fields(uint8_t image[VN135_WORK_IMAGE_BYTES],
++    uint32_t reference_cookie,uint32_t word168,uint32_t global_cookie,
++    uint32_t *reference_word98,uint32_t word160,uint32_t word254) {
++    if(!image||!reference_word98)return VN135_STORAGE_INVALID;
++    store_le(image+0x16cu,reference_cookie);store_le(image+0x168u,word168);
++    store_le(image+0x1b8u,global_cookie);*reference_word98+=UINT32_C(1);
++    store_le(image+0x160u,word160);image[0x180u]=1u;
++    store_le(image+0x254u,word254);return VN135_STORAGE_OK;
++}
+diff --git a/tests/test_stage11_differential.py b/tests/test_stage11_differential.py
+new file mode 100644
+index 0000000..05e2efb
+--- /dev/null
++++ b/tests/test_stage11_differential.py
+@@ -0,0 +1,143 @@
++#!/usr/bin/env python3
++"""Compare Stage11 C with original ARM ranges, including original strdup body.
++Known ARM pointer slots are normalized to native sidecar strings, not truncated
++host pointers. Opaque nonpointer bytes are compared, not declared understood.
++"""
++from pathlib import Path
++import argparse,ctypes as C,json,os,random,struct,sys
++ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'tests'))
++from work_storage_oracle import StorageOracle,normalize,OFFSETS
++U8=C.c_uint8;U32=C.c_uint32;P=C.c_void_p
++class Work(C.Structure):
++    _fields_=[('image',U8*632),('text',P*4),('text_size',C.c_size_t*4)]
++class View(C.Structure):_fields_=[('data',P),('size',C.c_size_t)]
++class Metadata(C.Structure):_fields_=[('bits',C.c_uint64),('a',View),('b',View),('c',View)]
++ALLOC=C.CFUNCTYPE(P,P,C.c_size_t);FREE=C.CFUNCTYPE(None,P,P)
++class Memory(C.Structure):_fields_=[('context',P),('allocate',ALLOC),('release',FREE)]
++WP=C.POINTER(Work)
++class Arena:
++    def __init__(self,fail=0):
++        self.fail=fail;self.attempt=0;self.blocks={};self.keep=[];self.events=[];self.errors=[]
++        self.alloc=ALLOC(self._allocate);self.free=FREE(self._free);self.ops=Memory(None,self.alloc,self.free)
++    def block(self,data,kind):
++        b=C.create_string_buffer(data,len(data));self.keep.append(b);p=C.addressof(b)
++        self.blocks[p]=(b,kind);return p
++    def _allocate(self,ctx,n):
++        try:
++            if n==C.sizeof(Work):
++                self.events.append(('object',632,True));return self.block(b'\xcd'*n,'object')
++            ok=not(self.fail&(1<<self.attempt));self.attempt+=1
++            self.events.append(('alloc',n,ok))
++            return self.block(b'\xcd'*n,'text') if ok else None
++        except BaseException as e:self.errors.append(repr(e));return None
++    def _free(self,ctx,p):
++        try:
++            b,kind=self.blocks.pop(p)
++            self.events.append(('free-object',) if kind=='object' else ('free',C.string_at(p)))
++        except BaseException as e:self.errors.append(repr(e))
++    def source(self,image,texts):
++        w=Work();w.image[:]=normalize(image)
++        for i,s in enumerate(texts):
++            if s is not None:w.text[i]=self.block(s+b'\0','text');w.text_size[i]=len(s)
++        return w
++    def guard(self):assert not self.errors,self.errors
++
++def texts(w):return [None if not p else C.string_at(p,w.text_size[i]) for i,p in enumerate(w.text)]
++def load():
++    lib=C.CDLL(str(Path(os.environ.get('VN135_TEST_LIBRARY',ROOT/'build/libvn135_recovered.so')).resolve()))
++    lib.vn135_frontend_work_metadata_copy_legacy.argtypes=[WP,C.POINTER(Metadata),C.POINTER(Memory),C.POINTER(U32)]
++    lib.vn135_frontend_work_clone_unrolled.argtypes=[WP,U32,C.POINTER(Memory),C.POINTER(WP),C.POINTER(U32)]
++    lib.vn135_frontend_work_storage_clear.argtypes=[WP,C.POINTER(Memory)]
++    lib.vn135_frontend_work_storage_delete.argtypes=[C.POINTER(WP),C.POINTER(Memory)]
++    lib.vn135_work_clone_atomic.argtypes=[WP,U32,C.POINTER(Memory),C.POINTER(WP)]
++    lib.vn135_frontend_work_builder_fields.argtypes=[P,U32,U32]
++    lib.vn135_frontend_work_wrapper_fields.argtypes=[P,U32,U32,U32,C.POINTER(U32),U32,U32]
++    lib.vn135_frontend_hash_words80.argtypes=[P,P]
++    return lib
++
++def octets(r,n):return bytes(r.randrange(1,256) for _ in range(n))
++def metadata_tests(lib):
++    o=StorageOracle();r=random.Random(11001);count=0
++    for case in range(72):
++        strings=[octets(r,case%130),octets(r,(case*7)%240),octets(r,case%17)]
++        image=normalize(r.randbytes(632));bits=r.getrandbits(64)
++        for fail in range(8):
++            expected=o.metadata(image,strings,bits,fail);a=Arena(fail);w=a.source(image,[None]*4)
++            buffers=[C.create_string_buffer(s+b'\0') for s in strings]
++            v=Metadata(bits,*[View(C.addressof(b),len(s)) for b,s in zip(buffers,strings)])
++            mask=U32(0xeeeeeeee);before=bytes(v)
++            rc=lib.vn135_frontend_work_metadata_copy_legacy(C.byref(w),C.byref(v),C.byref(a.ops),C.byref(mask))
++            expected_mask=sum((1<<i) for i in (0,1,2) if expected['texts'][i] is None)
++            assert rc==(1 if expected_mask else 0) and mask.value==expected_mask
++            assert bytes(w.image)==expected['image'] and texts(w)==expected['texts']
++            assert a.events==expected['events'],(a.events,expected['events'])
++            assert bytes(v)==before and [b.raw[:len(s)+1] for b,s in zip(buffers,strings)]==[s+b'\0' for s in strings]
++            assert lib.vn135_frontend_work_storage_clear(C.byref(w),C.byref(a.ops))==0
++            a.guard();assert not a.blocks;count+=1
++    return {'comparisons':count,'original_strdup_body_executed':True,'all_three_fail_patterns':True}
++
++def clone_tests(lib):
++    o=StorageOracle();r=random.Random(11002);count=0
++    for present in range(16):
++        for case in range(6):
++            strings=[(octets(r,(case*59+i*13)%310) if case else b'') if present&(1<<i) else None for i in range(4)]
++            image=normalize(r.randbytes(632));fresh=[0,1,0x7fffffff,0x80000000,0xfffffffe,0xffffffff][case]
++            for fail in range(1<<present.bit_count()):
++                expected=o.clone(image,strings,fresh,fail);a=Arena(fail);src=a.source(image,strings)
++                before=bytes(src);srcblocks=set(a.blocks);out=WP();mask=U32(0xdddddddd)
++                rc=lib.vn135_frontend_work_clone_unrolled(C.byref(src),fresh,C.byref(a.ops),C.byref(out),C.byref(mask))
++                expected_mask=sum(1<<i for i in range(4) if strings[i] is not None and expected['texts'][i] is None)
++                assert rc==(1 if expected_mask else 0) and mask.value==expected_mask and out
++                assert bytes(out.contents.image)==expected['image'] and texts(out.contents)==expected['texts']
++                assert a.events==expected['events'] and bytes(src)==before
++                for i,s in enumerate(strings):
++                    if out.contents.text[i]:assert out.contents.text[i]!=src.text[i]
++                assert lib.vn135_frontend_work_storage_delete(C.byref(out),C.byref(a.ops))==0 and not out
++                assert set(a.blocks)==srcblocks
++                assert lib.vn135_frontend_work_storage_clear(C.byref(src),C.byref(a.ops))==0
++                a.guard();assert not a.blocks;count+=1
++    return {'comparisons':count,'unrolled_only':True,'outer_allocation_success_precondition':True,
++            'compared_all_opaque_image_bytes_after_known_pointer_normalization':True}
++
++def cleanup_tests(lib):
++    o=StorageOracle();r=random.Random(11003);clear_count=delete_count=0
++    for present in range(16):
++        for case in range(12):
++            strings=[(octets(r,case*7+i) if case else b'') if present&(1<<i) else None for i in range(4)]
++            image=normalize(r.randbytes(632));expected=o.clear(image,strings);a=Arena();w=a.source(image,strings)
++            assert lib.vn135_frontend_work_storage_clear(C.byref(w),C.byref(a.ops))==0
++            assert bytes(w.image)==expected['image']==bytes(632) and texts(w)==expected['texts']==[None]*4
++            assert a.events==expected['events'];a.guard();assert not a.blocks;clear_count+=1
++            # Repeated clear: no allocations/frees, full zero image retained.
++            oldevents=a.events[:];assert lib.vn135_frontend_work_storage_clear(C.byref(w),C.byref(a.ops))==0
++            assert a.events==oldevents
++            expected=o.delete(image,strings);a=Arena();w=a.source(image,strings)
++            addr=a.block(bytes(w),'object');out=C.cast(addr,WP)
++            assert lib.vn135_frontend_work_storage_delete(C.byref(out),C.byref(a.ops))==0 and not out
++            assert a.events==expected['events'];a.guard();assert not a.blocks;delete_count+=1
++    expected=o.delete(bytes(632),[None]*4,False);assert expected['events']==[('null-work-log',)]
++    a=Arena();out=WP();assert lib.vn135_frontend_work_storage_delete(C.byref(out),C.byref(a.ops))==0
++    assert not a.events # Diagnostic deliberately omitted in the new API.
++    return {'comparisons':clear_count+delete_count,'clear':clear_count,'delete':delete_count,
++            'null_original_diagnostic_observed_separately':True,'repeated_clear_checked':clear_count}
++
++def fields_tests(lib):
++    o=StorageOracle();r=random.Random(11004);count=0
++    for i in range(320):
++        image=normalize(r.randbytes(632));template=r.getrandbits(32);global_cookie=r.getrandbits(32)
++        expected=o.builder(image,template,global_cookie);out=(U8*632).from_buffer_copy(image)
++        assert lib.vn135_frontend_work_builder_fields(out,template,global_cookie)==0 and bytes(out)==expected
++        count+=1
++        args=[r.getrandbits(32),global_cookie,([0,1,0x7fffffff,0xffffffff][i%4] if i<16 else r.getrandbits(32)),r.getrandbits(32),r.getrandbits(32)]
++        expected=o.wrapper(image,*args);out=(U8*632).from_buffer_copy(image);counter=U32(args[2])
++        assert lib.vn135_frontend_work_wrapper_fields(out,expected['reference'],args[0],args[1],C.byref(counter),args[3],args[4])==0
++        assert bytes(out)==expected['image'] and counter.value==expected['counter'];count+=1
++    return {'comparisons':count,'builder':320,'wrapper':320,'all_other_image_bytes_unchanged':True}
++
++def main():
++    p=argparse.ArgumentParser(description=__doc__);p.add_argument('group',choices=['metadata','clone','cleanup','fields']);a=p.parse_args()
++    lib=load();result={'stage':11,'group':a.group,'status':'PASS',**{'metadata':metadata_tests,'clone':clone_tests,'cleanup':cleanup_tests,'fields':fields_tests}[a.group](lib)}
++    tag='clang' if 'clang' in os.environ.get('VN135_TEST_LIBRARY','') else 'gcc'
++    (ROOT/f'build/stage11-{a.group}-{tag}-results.json').write_text(json.dumps(result,indent=2)+'\n')
++    print(json.dumps(result),flush=True)
++if __name__=='__main__':main()
+diff --git a/tests/test_work_storage.c b/tests/test_work_storage.c
+new file mode 100644
+index 0000000..2b68a89
+--- /dev/null
++++ b/tests/test_work_storage.c
+@@ -0,0 +1,166 @@
++/* Native allocation/failure/lifetime tests. All work/strings are fixtures.
++ * No vendor work ABI cast, hardware, network or production job ownership. */
++#include "xminer/recovery/work_storage.h"
++#include "xminer/recovery/nonce_verify.h"
++#include "xminer/recovery/difficulty.h"
++#include "fixtures/genesis_work.h"
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++
++static unsigned checks,scenarios;
++#define CHECK(x) do { ++checks; if(!(x)) { fprintf(stderr,"FAIL %s:%d: %s\n",__FILE__,__LINE__,#x);return 1; } } while(0)
++typedef struct {void *p;size_t n;int live;} allocation;
++typedef struct {
++    allocation blocks[32];size_t count,calls,live,free_count;
++    void *released[32];uint32_t fail_mask;int error;
++} arena;
++static void *tracked_allocate(void *context,size_t n) {
++    arena *a=context;size_t call=a->calls++;
++    if(call<32u && (a->fail_mask&(UINT32_C(1)<<call)))return NULL;
++    if(a->count>=32u || !n){a->error=1;return NULL;}
++    void *p=malloc(n);if(!p){a->error=2;return NULL;}
++    memset(p,0xcd,n);a->blocks[a->count++]=(allocation){p,n,1};++a->live;return p;
++}
++static void tracked_release(void *context,void *p) {
++    arena *a=context;
++    for(size_t i=0;i<a->count;++i)if(a->blocks[i].live&&a->blocks[i].p==p){
++        if(a->free_count>=32u){a->error=3;return;}
++        a->released[a->free_count++]=p;a->blocks[i].live=0;--a->live;free(p);return;
++    }
++    a->error=4;
++}
++static vn135_work_memory memory(arena *a){vn135_work_memory m={a,tracked_allocate,tracked_release};return m;}
++static uint32_t get32(const uint8_t *p){return (uint32_t)p[0]|((uint32_t)p[1]<<8)|((uint32_t)p[2]<<16)|((uint32_t)p[3]<<24);}
++static void put32(uint8_t *p,uint32_t v){for(size_t i=0;i<4u;++i)p[i]=(uint8_t)(v>>(8u*i));}
++static const size_t slots[4]={0x18c,0x19c,0x1a8,0x1b0};
++static void image_init(vn135_work_storage *w,unsigned seed){
++    memset(w,0,sizeof(*w));for(size_t i=0;i<632u;++i)w->image[i]=(uint8_t)(i*37u+seed);
++    for(size_t i=0;i<4u;++i)memset(w->image+slots[i],0,4);
++}
++static int image_zero(const vn135_work_storage *w){
++    for(size_t i=0;i<632u;++i)if(w->image[i])return 0;
++    for(size_t i=0;i<4u;++i)if(w->text[i]||w->text_size[i])return 0;
++    return 1;
++}
++static int metadata_cases(void){
++    static const unsigned order[3]={0,2,1};
++    for(unsigned n=0;n<21u;++n)for(unsigned fail=0;fail<8u;++fail){
++        ++scenarios;arena a={0};a.fail_mask=fail;vn135_work_memory m=memory(&a);
++        vn135_work_storage w;image_init(&w,n);uint8_t before[632];memcpy(before,w.image,632);
++        uint8_t strings[3][160];size_t lengths[3]={n*3u,n*7u,n%17u};
++        for(size_t s=0;s<3u;++s)for(size_t j=0;j<160u;++j)strings[s][j]=(uint8_t)(1+(j+13*s)%255u);
++        vn135_work_metadata_view v={UINT64_C(0x7ff80000000000ab),{strings[0],lengths[0]},
++            {strings[1],lengths[1]},{strings[2],lengths[2]}};
++        uint32_t mask=0xeeeeeeeeu,expected=0;
++        int rc=vn135_frontend_work_metadata_copy_legacy(&w,&v,&m,&mask);
++        CHECK(a.calls==3u);CHECK(rc==(fail?VN135_STORAGE_PARTIAL:0));CHECK(!a.error);
++        for(size_t i=0;i<3u;++i){unsigned s=order[i];if(fail&(1u<<i)){expected|=1u<<s;CHECK(!w.text[s]);CHECK(!w.text_size[s]);}
++            else {CHECK(w.text[s]);CHECK(w.text_size[s]==lengths[i]);CHECK(!memcmp(w.text[s],strings[i],lengths[i]));CHECK(w.text[s][lengths[i]]=='\0');}}
++        CHECK(mask==expected);CHECK(w.text[3]==NULL);
++        put32(before+0x1a0,(uint32_t)v.difficulty_bits);put32(before+0x1a4,(uint32_t)(v.difficulty_bits>>32));
++        CHECK(!memcmp(before,w.image,632));CHECK(vn135_frontend_work_storage_clear(&w,&m)==0);
++        CHECK(image_zero(&w));CHECK(a.live==0u && !a.error);
++        size_t freed=a.free_count;CHECK(vn135_frontend_work_storage_clear(&w,&m)==0);CHECK(a.free_count==freed);
++    }
++    return 0;
++}
++static int clone_cases(void){
++    static const unsigned order[4]={0,2,1,3};
++    char s0[]="job/alpha",s1[]="",s2[]="extranonce:abcdef",s3[]="ntime:old";
++    char *texts[4]={s0,s1,s2,s3};
++    for(unsigned present=0;present<16u;++present)for(unsigned fail=0;fail<32u;++fail){
++        ++scenarios;vn135_work_storage src;image_init(&src,present);
++        for(size_t i=0;i<4u;++i)if(present&(1u<<i)){src.text[i]=texts[i];src.text_size[i]=strlen(texts[i]);}
++        vn135_work_storage before=src;arena a={0};a.fail_mask=fail;vn135_work_memory m=memory(&a);
++        vn135_work_storage *copy=NULL;uint32_t failed=0xabcdef12u;
++        int rc=vn135_frontend_work_clone_unrolled(&src,0xfeedbabeu,&m,&copy,&failed);
++        CHECK(!memcmp(&src,&before,sizeof(src)));CHECK(!a.error);
++        if(fail&1u){CHECK(rc==VN135_STORAGE_NOMEM);CHECK(!copy);CHECK(failed==0xabcdef12u);CHECK(a.live==0u);}
++        else{
++            unsigned attempt=1,mask=0;CHECK(copy);uint8_t image[632];memcpy(image,src.image,632);put32(image+0x1bc,0xfeedbabeu);
++            CHECK(!memcmp(copy->image,image,632));
++            for(size_t k=0;k<4u;++k){unsigned i=order[k];
++                if(!(present&(1u<<i))){CHECK(!copy->text[i]&&!copy->text_size[i]);continue;}
++                if(fail&(1u<<attempt)){mask|=1u<<i;CHECK(!copy->text[i]&&!copy->text_size[i]);}
++                else {CHECK(copy->text[i]!=src.text[i]);CHECK(!strcmp(copy->text[i],src.text[i]));CHECK(copy->text_size[i]==src.text_size[i]);}
++                ++attempt;
++            }
++            CHECK(a.calls==attempt);CHECK(failed==mask);CHECK(rc==(mask?VN135_STORAGE_PARTIAL:0));
++            CHECK(vn135_frontend_work_storage_delete(&copy,&m)==0);CHECK(copy==NULL);CHECK(a.live==0u&&!a.error);
++            size_t count=a.free_count;CHECK(vn135_frontend_work_storage_delete(&copy,&m)==0);CHECK(a.free_count==count);
++        }
++        /* New rollback policy is tested independently from legacy behavior. */
++        ++scenarios;arena b={0};b.fail_mask=fail;vn135_work_memory mb=memory(&b);vn135_work_storage *atomic=NULL;
++        rc=vn135_work_clone_atomic(&src,23,&mb,&atomic);
++        CHECK(!memcmp(&src,&before,sizeof(src)));CHECK(!b.error);
++        if(rc){CHECK(rc==VN135_STORAGE_NOMEM);CHECK(atomic==NULL);CHECK(b.live==0u);}
++        else{CHECK(atomic);CHECK(get32(atomic->image+0x1bc)==23u);CHECK(vn135_frontend_work_storage_delete(&atomic,&mb)==0);CHECK(!b.live&&!b.error);}
++    }
++    return 0;
++}
++static int guards_and_lifetime(void){
++    arena a={0};vn135_work_memory m=memory(&a),bad={0};vn135_work_storage w;image_init(&w,7);
++    uint8_t empty[]={0},embed[]={1,0,2},noterm[]={'x','y'};
++    vn135_work_metadata_view good={UINT64_C(0x3ff0000000000000),{empty,0},{empty,0},{empty,0}};
++    vn135_work_metadata_view v=good;vn135_work_storage saved=w;uint32_t failed=0xdeadbeef;
++    for(unsigned i=0;i<6u;++i){++scenarios;v=good;
++        if(i==0u)v.text_3d0=(vn135_text_view){NULL,0};
++        if(i==1u)v.text_3ec=(vn135_text_view){embed,3};
++        if(i==2u)v.text_396=(vn135_text_view){empty,SIZE_MAX};
++        if(i==3u)v.text_396=(vn135_text_view){NULL,2};
++        if(i==4u)v.text_3d0=(vn135_text_view){empty,UINT32_MAX};
++        if(i==5u)put32(w.image+0x18c,1);
++        vn135_work_storage snapshot=w;
++        CHECK(vn135_frontend_work_metadata_copy_legacy(&w,&v,&m,&failed)==VN135_STORAGE_INVALID);
++        CHECK(!memcmp(&w,&snapshot,sizeof(w)));CHECK(!a.calls);CHECK(failed==0xdeadbeef);w=saved;
++    }
++    ++scenarios;
++    CHECK(vn135_frontend_work_metadata_copy_legacy(NULL,&good,&m,&failed)==-2);
++    CHECK(vn135_frontend_work_metadata_copy_legacy(&w,NULL,&m,&failed)==-2);
++    CHECK(vn135_frontend_work_metadata_copy_legacy(&w,&good,&bad,&failed)==-2);
++    CHECK(vn135_frontend_work_metadata_copy_legacy(&w,&good,&m,NULL)==-2);
++    vn135_work_storage *out=NULL;
++    CHECK(vn135_frontend_work_clone_unrolled(NULL,0,&m,&out,&failed)==-2);
++    CHECK(vn135_frontend_work_clone_unrolled(&w,0,&m,NULL,&failed)==-2);
++    CHECK(vn135_frontend_work_clone_unrolled(&w,0,&m,&out,NULL)==-2);
++    out=&w;CHECK(vn135_work_clone_atomic(&w,0,&m,&out)==-2);CHECK(out==&w);out=NULL;
++    w.text[0]=(char *)noterm;w.text_size[0]=1;
++    CHECK(vn135_frontend_work_clone_unrolled(&w,0,&m,&out,&failed)==-2);CHECK(!out&&!a.calls);
++    w=saved;w.text_size[1]=1;CHECK(vn135_frontend_work_clone_unrolled(&w,0,&m,&out,&failed)==-2);w=saved;
++    CHECK(vn135_frontend_work_storage_clear(NULL,&m)==-2);
++    CHECK(vn135_frontend_work_storage_delete(NULL,&m)==-2);
++    CHECK(vn135_frontend_work_storage_clear(&w,&bad)==-2);CHECK(!memcmp(&w,&saved,sizeof(w)));
++    uint32_t counter=UINT32_MAX;
++    CHECK(vn135_frontend_work_builder_fields(NULL,1,2)==-2);
++    CHECK(vn135_frontend_work_wrapper_fields(NULL,1,2,3,&counter,4,5)==-2);
++    CHECK(vn135_frontend_work_wrapper_fields(w.image,1,2,3,NULL,4,5)==-2);
++    CHECK(counter==UINT32_MAX);CHECK(!memcmp(&w,&saved,sizeof(w)));
++    CHECK(vn135_frontend_work_wrapper_fields(w.image,1,2,3,&counter,4,5)==0);
++    CHECK(counter==0);CHECK(w.image[0x180]==1u);CHECK(get32(w.image+0x254)==5);
++    CHECK(vn135_frontend_work_storage_clear(&w,&m)==0);
++    /* Metadata -> independent clone -> clear original -> preserved header hash. */
++    ++scenarios;memcpy(w.image,fixture_words,112);
++    const uint8_t job[]="synthetic-genesis",en[]="offline-only",tm[]="00000000";
++    good.text_3d0=(vn135_text_view){job,sizeof(job)-1};good.text_3ec=(vn135_text_view){en,sizeof(en)-1};good.text_396=(vn135_text_view){tm,sizeof(tm)-1};
++    CHECK(vn135_frontend_work_metadata_copy_legacy(&w,&good,&m,&failed)==0);CHECK(failed==0);
++    vn135_work_math math;
++    CHECK(vn135_frontend_work_math(w.image,1.0,0,&math)==0);
++    memcpy(w.image+0x100,math.target_le,32);
++    CHECK(vn135_frontend_work_builder_fields(w.image,0x12345678,0xabcdef)==0);
++    CHECK(vn135_work_clone_atomic(&w,700,&m,&out)==0);CHECK(out);
++    for(unsigned i=0;i<3u;++i){CHECK(out->text[i]!=w.text[i]);CHECK(!strcmp(out->text[i],w.text[i]));}
++    void *old[3]={w.text[0],w.text[1],w.text[2]};size_t freed=a.free_count;
++    CHECK(vn135_frontend_work_storage_clear(&w,&m)==0);CHECK(image_zero(&w));CHECK(a.free_count==freed+3u);
++    for(unsigned i=0;i<3u;++i)CHECK(a.released[freed+i]==old[i]);
++    CHECK(!strcmp(out->text[0],(const char *)job));CHECK(!strcmp(out->text[2],(const char *)en));
++    uint8_t digest[32];CHECK(vn135_frontend_hash_words80(out->image,digest)==0);
++    CHECK(!memcmp(digest,fixture_hash,32));CHECK(vn135_target256_check_le(digest,out->image+0x100)==1);
++    CHECK(vn135_frontend_work_storage_delete(&out,&m)==0);CHECK(!out&&!a.live&&!a.error);
++    return 0;
++}
++int main(void){
++    if(metadata_cases()||clone_cases()||guards_and_lifetime())return 1;
++    printf("{\"stage\":11,\"native_scenarios\":%u,\"assertions\":%u,\"real_malloc_free\":true,\"hardware_tested\":false}\n",scenarios,checks);
++    return 0;
++}
+diff --git a/tests/work_storage_oracle.py b/tests/work_storage_oracle.py
+new file mode 100644
+index 0000000..c56bd32
+--- /dev/null
++++ b/tests/work_storage_oracle.py
+@@ -0,0 +1,120 @@
++"""Original ARM metadata/copy/clear/delete, with explicit allocator/libc hooks.
++The original strdup wrapper executes; strlen/malloc/memcpy/free/calloc/locks are
++injected. No full ELF process, live objects, threads, network or hardware.
++"""
++from pathlib import Path
++import hashlib,struct,sys
++ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'tools'))
++from elf32 import ELF32
++from arm32_difficulty_subset import ARM32Difficulty
++from nonce_oracle import NonceOracle,SHA
++OFFSETS=(0x18c,0x19c,0x1a8,0x1b0)
++
++def normalize(image):
++    b=bytearray(image)
++    for off in OFFSETS:b[off:off+4]=bytes(4)
++    return bytes(b)
++
++class StorageOracle:
++    def __init__(self):
++        self.elf=ELF32(ROOT/'reference/cgminer.vendor.elf')
++        assert hashlib.sha256(self.elf.data).hexdigest()==SHA
++        self.m=ARM32Difficulty(self.elf)
++    def prepare(self,image,texts,fail=0):
++        assert len(image)==632 and len(texts)==4
++        m=self.m;a=m.DATA_BASE;m.mem[a:a+0x10000]=bytes(0x10000)
++        self.work=a+0x1000;self.new=a+0x4000;self.heap=a+0x6000
++        self.ptrslot=a+0x1400;self.events=[];self.locks=[];self.allocations={}
++        self.attempt=0;self.fail=fail
++        b=bytearray(normalize(image))
++        for i,s in enumerate(texts):
++            p=a+0x2000+i*0x500 if s is not None else 0
++            assert s is None or (len(s)<0x4ff and b'\0' not in s)
++            if p:m.mem[p:p+len(s)+1]=s+b'\0';self.allocations[p]=('input',i)
++            struct.pack_into('<I',b,OFFSETS[i],p)
++        m.mem[self.work:self.work+632]=b;self.source_before=bytes(b)
++        return b
++    def text(self,p):
++        if not p:return None
++        out=bytearray()
++        for _ in range(0x1000):
++            n=self.m.read(p,1);p+=1
++            if not n:return bytes(out)
++            out.append(n)
++        raise AssertionError('Unterminated oracle string')
++    def hooks(self):
++        def length(m):m.r[0]=len(self.text(m.r[0]))
++        def allocate(m):
++            n=m.r[0];assert 1<=n<=0x500
++            ok=not(self.fail&(1<<self.attempt));self.attempt+=1
++            self.events.append(('alloc',n,ok))
++            if not ok:m.r[0]=0;return
++            p=self.heap;self.heap+=(n+15)&~15;assert self.heap<self.m.DATA_BASE+0xf000
++            self.allocations[p]=('new',self.attempt-1);m.mem[p:p+n]=b'\xcd'*n;m.r[0]=p
++        def calloc(m):
++            assert m.r[:2]==[1,632];self.events.append(('object',632,True))
++            m.mem[self.new:self.new+632]=bytes(632);m.r[0]=self.new
++            self.allocations[self.new]=('object',)
++        def free(m):
++            p=m.r[0];assert p in self.allocations,('unexpected/double free',hex(p))
++            what=self.allocations.pop(p)
++            if p in (self.work,self.new):self.events.append(('free-object',))
++            else:self.events.append(('free',self.text(p)))
++            m.r[0]=0
++        def lock(m):self.locks.append(('lock',m.r[0]));m.r[0]=0
++        def unlock(m):self.locks.append(('unlock',m.r[0]));m.r[0]=0
++        def log(m):self.events.append(('null-work-log',));m.r[0]=0
++        return {0x5a3a48:length,0x5940ec:allocate,0x593bb4:calloc,0x593c8c:free,
++                0x5a2ee8:NonceOracle.copy,0x11d7c:NonceOracle.copy,0x5a348c:NonceOracle.fill,
++                0x5a6108:lock,0x5a66c4:unlock,0xfa0c4:log}
++    def result(self,p):
++        image=bytes(self.m.mem[p:p+632]);texts=[self.text(self.m.read(p+o)) for o in OFFSETS]
++        return {'image':normalize(image),'texts':texts,'events':self.events[:],'locks':self.locks[:],
++                'steps':self.m.steps}
++    def metadata(self,image,strings,bits,fail=0):
++        assert len(strings)==3
++        self.prepare(image,[None]*4,fail);m=self.m;t=m.DATA_BASE
++        ptrs=[m.DATA_BASE+0x2000+i*0x500 for i in range(3)]
++        for p,s in zip(ptrs,strings):m.mem[p:p+len(s)+1]=s+b'\0'
++        m.write(t+0x3d0,ptrs[0]);m.write(t+0x3ec,ptrs[1])
++        m.mem[t+0x396:t+0x396+len(strings[2])+1]=strings[2]+b'\0'
++        # +0x396 text must not overlap +0x3a8 double: real ntime is eight chars.
++        assert len(strings[2])<18
++        m.write(t+0x3a8,bits,8);m.reset();m.r[4]=self.work;m.r[9]=t
++        m.run(0x30a6c,stop=0x30a9c,hooks=self.hooks(),max_steps=20000)
++        return self.result(self.work)
++    def clone(self,image,texts,fresh_id,fail=0):
++        self.prepare(image,texts,fail);m=self.m
++        g=(0x2cec4+8+m.read(0x2d110))&0xffffffff
++        assert g==(0x2cec0+8+m.read(0x2d10c))&0xffffffff
++        m.write(g,fresh_id);m.reset((self.work,0))
++        m.run(0x2ce84,hooks=self.hooks(),max_steps=50000)
++        assert m.r[0]==self.new and m.read(g)==(fresh_id+1)&0xffffffff
++        assert bytes(m.mem[self.work:self.work+632])==self.source_before
++        assert len(self.locks)==2 and self.locks[0][1]==self.locks[1][1]
++        return self.result(self.new)
++    def clear(self,image,texts):
++        self.prepare(image,texts);m=self.m;m.reset((self.work,))
++        m.run(0x2a1bc,hooks=self.hooks(),max_steps=20000)
++        return self.result(self.work)
++    def delete(self,image,texts,present=True):
++        self.prepare(image,texts);m=self.m
++        self.allocations[self.work]=('object',)
++        m.write(self.ptrslot,self.work if present else 0);m.reset((self.ptrslot,1,2,3))
++        m.run(0x2a330,hooks=self.hooks(),max_steps=20000)
++        assert m.read(self.ptrslot)==0
++        return {'events':self.events[:],'steps':m.steps}
++    def builder(self,image,template,global_cookie):
++        self.prepare(image,[None]*4);m=self.m
++        g=(0x30da8+8+m.read(0x312ac))&0xffffffff;m.write(g,global_cookie)
++        m.reset();m.r[4]=self.work;m.r[9]=template
++        m.run(0x30d90,stop=0x30db8,max_steps=1000)
++        return bytes(m.mem[self.work:self.work+632])
++    def wrapper(self,image,word168,global_cookie,counter,word160,word254):
++        self.prepare(image,[None]*4);m=self.m;a=m.DATA_BASE
++        reference=a+0x400;thread=a+0x900
++        m.write(reference+0x98,counter);m.write(thread,word254);m.write(self.ptrslot,self.work)
++        g=(0x30400+8+m.read(0x30534))&0xffffffff;m.write(g,global_cookie)
++        m.reset();m.r[6]=self.ptrslot;m.r[5]=reference;m.r[8]=word168;m.r[4]=word160;m.r[7]=thread
++        m.run(0x303e8,stop=0x3043c,max_steps=1000)
++        return {'image':bytes(m.mem[self.work:self.work+632]),'counter':m.read(reference+0x98),'reference':reference}
+diff --git a/tools/check_stage11_evidence.py b/tools/check_stage11_evidence.py
+new file mode 100644
+index 0000000..7088b16
+--- /dev/null
++++ b/tools/check_stage11_evidence.py
+@@ -0,0 +1,39 @@
++#!/usr/bin/env python3
++"""Check preserved Stage11 machine bytes, call boundaries and explicit scope.
++This verifies artifact integrity, not correctness for every possible input.
++"""
++from pathlib import Path
++import hashlib,json
++from elf32 import ELF32
++ROOT=Path(__file__).resolve().parents[1]
++e=ELF32(ROOT/'reference/cgminer.vendor.elf')
++m=json.loads((ROOT/'evidence/stage11/recovery-manifest.json').read_text())
++sha=lambda b:hashlib.sha256(b).hexdigest()
++assert len(e.data)==m['reference_bytes'] and sha(e.data)==m['reference_sha256']
++for s in m['slices']:
++ a,b=int(s['start'],16),int(s['end_exclusive'],16)
++ assert b-a==s['bytes'] and sha(e.read(a,b-a))==s['sha256']
++ assert sha((ROOT/s['disassembly']).read_bytes())==s['disassembly_sha256']
++for s in m['literals']:
++ raw=e.read(int(s['address'],16),s['bytes'])
++ assert raw.hex()==s['bytes_hex'] and sha(raw)==s['sha256']
++for b in m['branch_edges']:
++ pc=int(b['pc'],16);w=int.from_bytes(e.read(pc,4),'little')
++ assert (w&0x0e000000)==0x0a000000 and f'{w:08x}'==b['instruction_hex']
++ d=w&0xffffff;d=d-(1<<24) if d&(1<<23) else d
++ assert pc+8+4*d==int(b['target'],16) and bool(w&0x01000000)==b['link']
++assert e.read(0x2ce9c,4).hex()=='9e1fa0e3'  # calloc extent 632
++assert e.read(0x2cf10,4).hex()=='bc4185e5'  # copy ID at +0x1bc
++assert e.read(0x2cfdc,4).hex()=='000058e3'  # time-roll branch boundary
++assert e.read(0x30414,4).hex()=='011081e2'  # raw +0x98 word increment
++assert m['copy_order']==['0x18c','0x1a8','0x19c','0x1b0']
++assert m['release_order']==['0x18c','0x19c','0x1b0','0x1a8']
++assert m['original_image_bytes']==632 and sum(m['comparison_counts'].values())==2086
++for key in ('full_work_semantics_recovered','vendor_binary_abi_compatible','time_roll_branch_recovered','live_reference_ownership_recovered','physical_hardware_tested'):
++ assert m[key] is False
++h=(ROOT/m['new_api']).read_text()
++for marker in ('NOT the native 632-byte vendor work ABI','time-roll argument == 0','rollback is NOT claimed','not proof of refcount semantics'):
++ assert marker in h
++am=(ROOT/'reconstruction/cgminer-overlay.am').read_text()
++assert m['new_api'] in am and m['new_helper'] in am
++print('Stage11 evidence: 7 code ranges, 5 literal blocks, 20 branch edges; normalized ABI/scope PASS')
+diff --git a/tools/verify_stage11.py b/tools/verify_stage11.py
+new file mode 100644
+index 0000000..a544085
+--- /dev/null
++++ b/tools/verify_stage11.py
+@@ -0,0 +1,40 @@
++#!/usr/bin/env python3
++"""Checked per-group verification of a fresh Stage11 extraction.
++Logs MUST be outside source tree. No vendor ELF process or external network.
++"""
++from pathlib import Path
++import argparse,hashlib,json,subprocess,sys,time
++from verify_stage10 import GROUPS as PRIOR
++ROOT=Path(__file__).resolve().parents[1];PY=sys.executable
++GROUPS={name:[list(cmd) for cmd in cmds] for name,cmds in PRIOR.items()}
++GROUPS['build'][-1]+=['build/test-work-storage','build/vn135-work-lifecycle']
++GROUPS.update({
++ 'storage-metadata':[[PY,'tests/test_stage11_differential.py','metadata']],
++ 'storage-clone':[[PY,'tests/test_stage11_differential.py','clone']],
++ 'storage-cleanup':[[PY,'tests/test_stage11_differential.py','cleanup']],
++ 'storage-fields':[[PY,'tests/test_stage11_differential.py','fields']],
++ 'storage-native':[['./build/test-work-storage'],['./build/vn135-work-lifecycle']],
++ 'clang-storage':[['make','-f','Makefile.recovery','stage11-clang']]
++})
++
++def main():
++    p=argparse.ArgumentParser(description=__doc__);p.add_argument('group',choices=GROUPS)
++    p.add_argument('--logs',type=Path,required=True);a=p.parse_args();directory=a.logs.resolve()
++    if directory.is_relative_to(ROOT):p.error('--logs must be outside source tree')
++    directory.mkdir(parents=True,exist_ok=True);records=[]
++    for i,cmd in enumerate(GROUPS[a.group]):
++        expected=2 if a.group=='full-runtime-blocked' else 0
++        log=directory/f'{a.group}-{i:02d}.log';start=time.monotonic()
++        with log.open('w') as out:
++            out.write('COMMAND: '+repr(cmd)+'\n');out.flush()
++            result=subprocess.run(cmd,cwd=ROOT,stdout=out,stderr=subprocess.STDOUT,check=False)
++        row={'command':cmd,'returncode':result.returncode,'expected_returncode':expected,'log':log.name,
++             'seconds':round(time.monotonic()-start,3),'sha256':hashlib.sha256(log.read_bytes()).hexdigest()}
++        records.append(row)
++        summary={'group':a.group,'status':'PASS' if all(x['returncode']==x['expected_returncode'] for x in records) else 'FAIL',
++                 'complete':len(records)==len(GROUPS[a.group]),'records':records}
++        (directory/(a.group+'.json')).write_text(json.dumps(summary,indent=2)+'\n')
++        print(f'{a.group} {i+1}/{len(GROUPS[a.group])}: return={result.returncode} expected={expected} ({row["seconds"]}s)',flush=True)
++        if result.returncode!=expected:return 1
++    return 0
++if __name__=='__main__':raise SystemExit(main())
+diff --git a/tools/verify_stage11_all.py b/tools/verify_stage11_all.py
+new file mode 100644
+index 0000000..0f3c665
+--- /dev/null
++++ b/tools/verify_stage11_all.py
+@@ -0,0 +1,46 @@
++#!/usr/bin/env python3
++"""Full local check with isolated per-command logs and bounded parallel groups.
++Use on a fresh extraction. Source files stay unchanged; build outputs are local.
++No network, firmware install, ASIC access or original ELF process execution.
++"""
++from pathlib import Path
++from concurrent.futures import ThreadPoolExecutor,as_completed
++import argparse,hashlib,json,subprocess,sys,time
++from verify_stage11 import GROUPS
++ROOT=Path(__file__).resolve().parents[1]
++def main():
++    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--logs',type=Path,required=True)
++    p.add_argument('--workers',type=int,default=2,choices=[1,2]);a=p.parse_args();logs=a.logs.resolve()
++    if logs.is_relative_to(ROOT):p.error('Logs must be outside the source tree')
++    logs.mkdir(parents=True,exist_ok=True);started=time.monotonic();done={};supplemental=[]
++    def run(group):
++        with (logs/(group+'-driver.log')).open('w') as f:
++            rc=subprocess.run([sys.executable,'tools/verify_stage11.py',group,'--logs',str(logs)],cwd=ROOT,stdout=f,stderr=subprocess.STDOUT).returncode
++        file=logs/(group+'.json')
++        row=json.loads(file.read_text()) if file.exists() else {'group':group,'status':'FAIL','complete':False,'records':[]}
++        row['driver_returncode']=rc
++        print(group,row['status'],'complete='+str(row['complete']),flush=True)
++        return group,row
++    group,row=run('build');done[group]=row
++    if row['status']=='PASS':
++        # Build shared Clang library once before independent Clang groups.
++        with (logs/'clang-library-prebuild.log').open('w') as f:
++            rc=subprocess.run(['make','-f','Makefile.recovery','build/libvn135_recovered-clang.so'],cwd=ROOT,stdout=f,stderr=subprocess.STDOUT).returncode
++        supplemental.append({'command':['make','-f','Makefile.recovery','build/libvn135_recovered-clang.so'],'returncode':rc,'log':'clang-library-prebuild.log','sha256':hashlib.sha256((logs/'clang-library-prebuild.log').read_bytes()).hexdigest()})
++        if rc:print('Clang library build failed',flush=True);return rc
++        pending=[g for g in GROUPS if g not in ('build','evidence','full-runtime-blocked')]
++        with ThreadPoolExecutor(max_workers=a.workers) as pool:
++            for f in as_completed([pool.submit(run,g) for g in pending]):
++                group,row=f.result();done[group]=row
++        for group in ('evidence','full-runtime-blocked'):
++            g,row=run(group);done[g]=row
++    success=len(done)==len(GROUPS) and all(x['status']=='PASS' and x['complete'] and x['driver_returncode']==0 for x in done.values())
++    result={'status':'PASS' if success else 'FAIL','complete':len(done)==len(GROUPS),
++       'groups_expected':len(GROUPS),'groups_run':len(done),'command_count':sum(len(x['records']) for x in done.values())+len(supplemental),'supplemental_commands':supplemental,
++       'seconds':round(time.monotonic()-started,3),'group_results':done,
++       'elf_sha256':hashlib.sha256((ROOT/'reference/cgminer.vendor.elf').read_bytes()).hexdigest(),
++       'hardware_tested':False,'full_upstream_build_tested':False,'full_runtime_expected_to_fail':True}
++    (logs/'ALL_GROUPS.json').write_text(json.dumps(result,indent=2)+'\n')
++    print('ALL_GROUPS',result['status'],result['groups_run'],result['command_count'],flush=True)
++    return 0 if success else 1
++if __name__=='__main__':raise SystemExit(main())

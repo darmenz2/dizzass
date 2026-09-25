@@ -1,0 +1,19 @@
+{
+  "group": "verify-prefilter",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "tests/test_stage8_differential.py",
+        "prefilter"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "verify-prefilter-00.log",
+      "seconds": 6.334,
+      "sha256": "ca2731f021f2953c807a3cf440c9e9c99fcb64618b443c7e3f9faa9e2d95731c"
+    }
+  ]
+}

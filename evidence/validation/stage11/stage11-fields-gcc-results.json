@@ -1,0 +1,9 @@
+{
+  "stage": 11,
+  "group": "fields",
+  "status": "PASS",
+  "comparisons": 640,
+  "builder": 320,
+  "wrapper": 320,
+  "all_other_image_bytes_unchanged": true
+}

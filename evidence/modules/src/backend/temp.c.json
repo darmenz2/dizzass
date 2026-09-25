@@ -1,0 +1,152 @@
+{
+  "path": "src/backend/temp.c",
+  "observed_as": "/tmp/build/src/backend/temp.c",
+  "status": "pending-not-implemented",
+  "evidence": [
+    {
+      "address": "0x5e9167",
+      "xor": 73,
+      "decoded_length": 30,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x000b5f40",
+      "end_exclusive": "0x000b71a8",
+      "path_references": [
+        {
+          "insn": "0xb6aac",
+          "string": "0x5e9167",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/temp.c"
+        },
+        {
+          "insn": "0xb6afc",
+          "string": "0x5e9167",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/temp.c"
+        },
+        {
+          "insn": "0xb6cd0",
+          "string": "0x5e9167",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/temp.c"
+        },
+        {
+          "insn": "0xb6d38",
+          "string": "0x5e9167",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/temp.c"
+        },
+        {
+          "insn": "0xb6f60",
+          "string": "0x5e9167",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/temp.c"
+        },
+        {
+          "insn": "0xb6fc8",
+          "string": "0x5e9167",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/temp.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000b7798",
+      "end_exclusive": "0x000b80a8",
+      "path_references": [
+        {
+          "insn": "0xb78f4",
+          "string": "0x5e9167",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/temp.c"
+        },
+        {
+          "insn": "0xb7a30",
+          "string": "0x5e9167",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/temp.c"
+        },
+        {
+          "insn": "0xb7a94",
+          "string": "0x5e9167",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/temp.c"
+        },
+        {
+          "insn": "0xb7ce4",
+          "string": "0x5e9167",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/temp.c"
+        },
+        {
+          "insn": "0xb7d4c",
+          "string": "0x5e9167",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/temp.c"
+        },
+        {
+          "insn": "0xb7d8c",
+          "string": "0x5e9167",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/temp.c"
+        },
+        {
+          "insn": "0xb7df4",
+          "string": "0x5e9167",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/temp.c"
+        },
+        {
+          "insn": "0xb7e38",
+          "string": "0x5e9167",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/temp.c"
+        },
+        {
+          "insn": "0xb7ea0",
+          "string": "0x5e9167",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/temp.c"
+        },
+        {
+          "insn": "0xb7ee4",
+          "string": "0x5e9167",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/temp.c"
+        },
+        {
+          "insn": "0xb7f4c",
+          "string": "0x5e9167",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/temp.c"
+        },
+        {
+          "insn": "0xb7f90",
+          "string": "0x5e9167",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/temp.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000b80a8",
+      "end_exclusive": "0x000b86d0",
+      "path_references": [
+        {
+          "insn": "0xb80e8",
+          "string": "0x5e9167",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/temp.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": []
+}

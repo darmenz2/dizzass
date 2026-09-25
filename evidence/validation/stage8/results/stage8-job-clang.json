@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "group": "job",
+  "compiler_tag": "clang",
+  "original_comparison_cases": 1024,
+  "library_sha256": "e281603d0616051b1fc16ec1a4b24597e12b33bff49376cc956b573ea9217454",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "details": {
+    "original_selection_slices": 1024,
+    "original_final_policy_injected": true,
+    "coherent_snapshot_only": true,
+    "first_match_no_fallback": true
+  },
+  "hardware_tested": false,
+  "job_freshness_proven": false
+}

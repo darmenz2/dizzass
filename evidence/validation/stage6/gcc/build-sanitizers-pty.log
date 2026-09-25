@@ -1,0 +1,60 @@
+mkdir -p build/arm/src/backend/work-gen/
+clang --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -ffreestanding -Iinclude -O2 -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c src/backend/work-gen/work-gen.c -o build/arm/src/backend/work-gen/work-gen.o
+mkdir -p build/arm/reconstruction/support/
+clang --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -ffreestanding -Iinclude -O2 -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c reconstruction/support/work_rx_stream.c -o build/arm/reconstruction/support/work_rx_stream.o
+mkdir -p build/arm/libbitmain/src/
+clang --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -ffreestanding -Iinclude -O2 -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c libbitmain/src/uart.c -o build/arm/libbitmain/src/uart.o
+mkdir -p build/arm/libbitmain/src/chip/
+clang --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -ffreestanding -Iinclude -O2 -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c libbitmain/src/chip/chip1398.c -o build/arm/libbitmain/src/chip/chip1398.o
+mkdir -p build/arm/libbitmain/src/
+clang --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -ffreestanding -Iinclude -O2 -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c libbitmain/src/pll.c -o build/arm/libbitmain/src/pll.o
+mkdir -p build/arm/libbitmain/src/aml/
+clang --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -ffreestanding -Iinclude -O2 -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c libbitmain/src/aml/chip.c -o build/arm/libbitmain/src/aml/chip.o
+mkdir -p build/arm/reconstruction/support/
+clang --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -ffreestanding -Iinclude -O2 -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c reconstruction/support/crc5.c -o build/arm/reconstruction/support/crc5.o
+mkdir -p build/arm/libbitmain/src/
+clang --target=armv7-none-eabihf -marm -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard -ffreestanding -Iinclude -O2 -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -c libbitmain/src/reg_cache.c -o build/arm/libbitmain/src/reg_cache.o
+llvm-ar rcs build/libvn135_recovered-armv7.a build/arm/src/backend/work-gen/work-gen.o build/arm/reconstruction/support/work_rx_stream.o build/arm/libbitmain/src/uart.o build/arm/libbitmain/src/chip/chip1398.o build/arm/libbitmain/src/pll.o build/arm/libbitmain/src/aml/chip.o build/arm/reconstruction/support/crc5.o build/arm/libbitmain/src/reg_cache.o
+python3 tools/check_evidence.py
+evidence: PASS; 40 code slices, 9 data records, 46 observed paths
+python3 tools/extract_reg_cache_defaults.py
+cache defaults: 8 selectors, 512 bytes each, PASS
+python3 tools/check_stage5_evidence.py
+Stage 5 evidence: constructor length/path and AML -> UART call: PASS
+python3 tools/check_stage6_evidence.py
+Stage6 original slices and RX->ring/filter/enqueue call edges: PASS
+mkdir -p build
+cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c tests/test_work_rx.c -o build/test-work-rx-sanitized
+ASAN_OPTIONS=detect_leaks=1 ./build/test-work-rx-sanitized
+Stage 6 C safety and stream chunk-invariance: PASS (3600 stream replays)
+mkdir -p build
+cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_chip1398.c -o build/test-sanitized
+ASAN_OPTIONS=detect_leaks=0 ./build/test-sanitized
+host unit tests: PASS (no hardware)
+cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_pll_aml.c -o build/test-pll-aml-sanitized
+ASAN_OPTIONS=detect_leaks=0 ./build/test-pll-aml-sanitized
+PLL/AML host guards and flow tests: PASS (no hardware)
+cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_reg_cache.c -o build/test-reg-cache-sanitized
+ASAN_OPTIONS=detect_leaks=1 ./build/test-reg-cache-sanitized
+Stage 4 cache/transaction native assertions: PASS
+cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer libbitmain/src/uart.c tests/test_uart.c -o build/test-uart-sanitized
+ASAN_OPTIONS=detect_leaks=1 ./build/test-uart-sanitized
+UART native API guards, legacy retry and lifecycle: PASS
+mkdir -p build
+cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror libbitmain/src/uart.c libbitmain/src/aml/chip.c tests/test_uart_linux_pty.c -pthread -o build/test-uart-pty
+./build/test-uart-pty
+Linux PTY: open/termios2/arbitrary baud/fragmented RX/TX frame/flush/destroy: PASS
+No physical UART, chip protocol, timings, init, mining or autotune tested.
+mkdir -p build
+cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer libbitmain/src/uart.c libbitmain/src/aml/chip.c tests/test_uart_linux_pty.c -pthread -o build/test-uart-pty-sanitized
+ASAN_OPTIONS=detect_leaks=1 ./build/test-uart-pty-sanitized
+Linux PTY: open/termios2/arbitrary baud/fragmented RX/TX frame/flush/destroy: PASS
+No physical UART, chip protocol, timings, init, mining or autotune tested.
+mkdir -p build
+cc -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror libbitmain/src/uart.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c tests/test_work_rx_linux_pty.c -pthread -o build/test-work-rx-pty
+./build/test-work-rx-pty
+Stage 6 real Linux PTY -> UART -> RX: PASS (88 decoded messages)
+mkdir -p build
+cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer libbitmain/src/uart.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c tests/test_work_rx_linux_pty.c -pthread -o build/test-work-rx-pty-sanitized
+ASAN_OPTIONS=detect_leaks=1 ./build/test-work-rx-pty-sanitized
+Stage 6 real Linux PTY -> UART -> RX: PASS (88 decoded messages)

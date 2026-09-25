@@ -1,0 +1,19 @@
+{
+  "group": "storage-cleanup",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage11_differential.py",
+        "cleanup"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "storage-cleanup-00.log",
+      "seconds": 1.225,
+      "sha256": "c4aa1de63e1860e45d25851a27c87116747869f11da6a894f6c46aff637b28ae"
+    }
+  ]
+}

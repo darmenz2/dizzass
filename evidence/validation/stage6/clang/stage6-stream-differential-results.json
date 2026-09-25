@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "distinct_byte_streams": 96,
+  "original_parser_events": 2994,
+  "chunking_replays": 672,
+  "new_adapter_not_vendor_function": true,
+  "wall_seconds": 2.209
+}

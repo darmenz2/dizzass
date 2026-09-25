@@ -1,0 +1,2 @@
+COMMAND: ['./build/test-nonce-fifo-threads']
+{"status":"PASS","produced":50000,"received":50000,"dropped_oldest":0,"tail_bytes_checked":true,"hardware_tested":false}

@@ -1,0 +1,2332 @@
+[
+  {
+    "path": ".",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "run",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "bin",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "bin/sed",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/true",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/login",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/base64",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/chgrp",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/getopt",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/date",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/chown",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/dmesg",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/false",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/kill",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/su",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/mknod",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/mktemp",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/uname",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/grep",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/pwd",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/touch",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/run-parts",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/echo",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/pidof",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/vi",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/ps",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/ls",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/umount",
+    "size": 25840,
+    "mode": "0o100755"
+  },
+  {
+    "path": "bin/mkdir",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/sync",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/ln",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/mv",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/dd",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/gzip",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/sh",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/usleep",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/cp",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/tar",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/more",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/netstat",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/rm",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/sleep",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/cat",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/rmdir",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/hostname",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/ping",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/df",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/busybox",
+    "size": 738564,
+    "mode": "0o104755"
+  },
+  {
+    "path": "bin/ash",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/chmod",
+    "size": 7,
+    "mode": "0o120777"
+  },
+  {
+    "path": "bin/mount",
+    "size": 42280,
+    "mode": "0o100755"
+  },
+  {
+    "path": "sys",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "linuxrc",
+    "size": 11,
+    "mode": "0o120777"
+  },
+  {
+    "path": "var",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "var/www",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "var/spool",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "var/spool/cron",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "var/spool/cron/crontabs",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "var/spool/cron/crontabs/root",
+    "size": 0,
+    "mode": "0o100644"
+  },
+  {
+    "path": "var/lib",
+    "size": 19,
+    "mode": "0o120777"
+  },
+  {
+    "path": "var/tmp",
+    "size": 6,
+    "mode": "0o120777"
+  },
+  {
+    "path": "var/lock",
+    "size": 11,
+    "mode": "0o120777"
+  },
+  {
+    "path": "var/log",
+    "size": 19,
+    "mode": "0o120777"
+  },
+  {
+    "path": "var/cache",
+    "size": 6,
+    "mode": "0o120777"
+  },
+  {
+    "path": "var/run",
+    "size": 6,
+    "mode": "0o120777"
+  },
+  {
+    "path": "opt",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "usr",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "usr/bin",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "usr/bin/report_ip",
+    "size": 9296,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/bin/blink",
+    "size": 791,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/bin/monitor",
+    "size": 102,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/bin/openssl",
+    "size": 559216,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/bin/agent-monitor.sh",
+    "size": 875,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/bin/updater",
+    "size": 3329556,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/bin/chronyc",
+    "size": 83148,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/bin/id",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/tty",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/passwd",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/find",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/traceroute",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/crontab",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/tftp",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/md5sum",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/printf",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/yes",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/expr",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/nproc",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/du",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/seq",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/readlink",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/head",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/top",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/xxd",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/wget",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/scp",
+    "size": 16,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/tsort",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/cut",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/dbclient",
+    "size": 16,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/lsof",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/ssh",
+    "size": 16,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/clear",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/tree",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/time",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/nslookup",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/nohup",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/mkpasswd",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/dirname",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/env",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/dropbearkey",
+    "size": 16,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/netcat",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/wc",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/dropbearconvert",
+    "size": 16,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/who",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/test",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/less",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/which",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/w",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/[[",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/reset",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/diff",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/unzip",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/tail",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/awk",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/realpath",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/[",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/free",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/uniq",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/logger",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/sha512sum",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/sort",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/hostid",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/uptime",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/tr",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/xargs",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/killall",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/sha256sum",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/mkfifo",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/unlink",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/basename",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/whoami",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/tee",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/logname",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/bin/cgminer",
+    "size": 6228004,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/bin/hwscan",
+    "size": 4883216,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/bin/dashd",
+    "size": 2760036,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/libexec",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "usr/libexec/lzo",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "usr/libexec/lzo/examples",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "usr/libexec/lzo/examples/testmini",
+    "size": 13392,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/libexec/lzo/examples/lzotest",
+    "size": 42188,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/libexec/lzo/examples/simple",
+    "size": 9296,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/libexec/lzo/examples/lzopack",
+    "size": 13392,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/lib32",
+    "size": 3,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/share",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "usr/share/udhcpc",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "usr/share/udhcpc/default.script",
+    "size": 2052,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/share/udhcpc/default.script.d",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "usr/share/dashd",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "usr/share/dashd/ui",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/404-CQAVbA5k.js",
+    "size": 640,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/BoardStockInfo-BPCJhMHW.css",
+    "size": 116,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/BoardStockInfo-BngAx7Xu.js",
+    "size": 1604,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/Dashboard-KTWciE1a.js",
+    "size": 28903,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/ResetChangeDialog-BuEgPwPq.js",
+    "size": 1069,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/Dashboard-8Llpe07a.css",
+    "size": 12617,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/pools-B8fMJ1ek.js",
+    "size": 103933,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/index-uEZu-XYZ.css",
+    "size": 1113,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/security-C0daAXvO.js",
+    "size": 7020,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/roboto-flex-vietnamese-standard-normal-IAAQxRhd.woff2",
+    "size": 69816,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/system-CLVKH7EJ.js",
+    "size": 534,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/cooling-Cr48hhGG.js",
+    "size": 7380,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/index-DoAQWjNy.js",
+    "size": 1143,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/vendor-CQRpyfkO.js",
+    "size": 1006367,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/general-Cy4-4iOb.js",
+    "size": 6289,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/apexcharts.ssr.esm-fe46cd2d-sY2PFZfn.js",
+    "size": 517985,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/performance-Cx1RpNnX.js",
+    "size": 41153,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/network-BmUsHxF6.css",
+    "size": 104,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/network-BsUori9d.js",
+    "size": 9062,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/roboto-flex-latin-standard-normal-DjIUbrK2.woff2",
+    "size": 249700,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/mining-zmQjzeUn.js",
+    "size": 662,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/roboto-flex-latin-ext-standard-normal-CKp_IXiX.woff2",
+    "size": 185704,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/pools-BJ7RYw3n.css",
+    "size": 656,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/index-C9wItIgE.js",
+    "size": 716038,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/autocomplete-CFtsFoqe.css",
+    "size": 2931,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/utils-d2i6XfKV.js",
+    "size": 64993,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/index-JtnyHuT9.css",
+    "size": 516646,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/advanced-DhF1MQSR.js",
+    "size": 20819,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/roboto-flex-cyrillic-ext-standard-normal-B3qYX64q.woff2",
+    "size": 88700,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/charts-DOpluHwd.js",
+    "size": 528725,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/maintenance-BxlgK0Aj.js",
+    "size": 9229,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/roboto-flex-greek-standard-normal-IEWWrrDA.woff2",
+    "size": 89628,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/performance-BuI6_CmS.css",
+    "size": 21276,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/assets/roboto-flex-cyrillic-standard-normal-BL8ZtmVe.woff2",
+    "size": 136008,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/android-chrome-192x192.png",
+    "size": 6624,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/android-chrome-512x512.png",
+    "size": 22632,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/apple-touch-icon.png",
+    "size": 5895,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/docs",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "usr/share/dashd/ui/docs/swagger-ui-dist",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "usr/share/dashd/ui/docs/swagger-ui-dist/oauth2-redirect.html",
+    "size": 2715,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/docs/swagger-ui-dist/swagger-ui.css.map",
+    "size": 260554,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/docs/swagger-ui-dist/swagger-ui-standalone-preset.js",
+    "size": 246462,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/docs/swagger-ui-dist/swagger-ui.js",
+    "size": 389991,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/docs/swagger-ui-dist/NOTICE",
+    "size": 55,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/docs/swagger-ui-dist/package.json",
+    "size": 526,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/docs/swagger-ui-dist/swagger-ui-es-bundle.js.map",
+    "size": 2073782,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/docs/swagger-ui-dist/absolute-path.js",
+    "size": 530,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/docs/swagger-ui-dist/swagger-ui.js.map",
+    "size": 423876,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/docs/swagger-ui-dist/swagger-initializer.js",
+    "size": 539,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/docs/swagger-ui-dist/swagger-ui-es-bundle.js",
+    "size": 1444583,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/docs/swagger-ui-dist/favicon-16x16.png",
+    "size": 665,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/docs/swagger-ui-dist/README.md",
+    "size": 860,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/docs/swagger-ui-dist/swagger-ui-es-bundle-core.js",
+    "size": 504771,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/docs/swagger-ui-dist/swagger-ui-standalone-preset.js.map",
+    "size": 398316,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/docs/swagger-ui-dist/favicon-32x32.png",
+    "size": 628,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/docs/swagger-ui-dist/swagger-ui-bundle.js.map",
+    "size": 2083021,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/docs/swagger-ui-dist/swagger-ui-bundle.js",
+    "size": 1444793,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/docs/swagger-ui-dist/index.js",
+    "size": 813,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/docs/swagger-ui-dist/LICENSE",
+    "size": 11358,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/docs/swagger-ui-dist/index.html",
+    "size": 734,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/docs/swagger-ui-dist/index.css",
+    "size": 202,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/docs/swagger-ui-dist/swagger-ui-es-bundle-core.js.map",
+    "size": 1652205,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/docs/swagger-ui-dist/swagger-ui.css",
+    "size": 151076,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/docs/api-doc.json",
+    "size": 117079,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/docs/index.html",
+    "size": 582,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/favicons",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "usr/share/dashd/ui/favicons/favicon_Danger.ico",
+    "size": 15406,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/favicons/favicon_Autotune.ico",
+    "size": 15406,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/favicons/favicon.ico",
+    "size": 15406,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/favicons/favicon_Disconnect.ico",
+    "size": 15406,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/favicons/favicon_Stopped.ico",
+    "size": 15406,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/favicons/favicon_Warning.ico",
+    "size": 15406,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/favicons/favicon_Init.ico",
+    "size": 15406,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/favicon.ico",
+    "size": 15406,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/favicon-16x16.png",
+    "size": 438,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/favicon-32x32.png",
+    "size": 823,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/img",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "usr/share/dashd/ui/img/pools",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "usr/share/dashd/ui/img/pools/nicehash.svg",
+    "size": 887,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/img/pools/powerpool.png",
+    "size": 16612,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/img/pools/poolin.svg",
+    "size": 897,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/img/pools/antpool.svg",
+    "size": 1769,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/img/pools/viabtc.svg",
+    "size": 6421,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/img/pools/f2pool.svg",
+    "size": 2857,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/img/pools/btc.svg",
+    "size": 6528,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/img/pools/trustpool.svg",
+    "size": 734,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/img/pools/vnish-pool.svg",
+    "size": 4492,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/img/pools/emcd.svg",
+    "size": 1125,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/img/pools/binance.svg",
+    "size": 1095,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/img/logo-dark.svg",
+    "size": 227923,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/img/logo-light.svg",
+    "size": 230576,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/site.webmanifest",
+    "size": 316,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/share/dashd/ui/index.html",
+    "size": 1562,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/lib",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "usr/lib/libssl.so",
+    "size": 13,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/lib/libpsx.so.2",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/lib/liblzo2.so",
+    "size": 12,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/lib/libcap.so.2",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/lib/libunwind-ptrace.so.0",
+    "size": 25,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/lib/libunwind-coredump.so",
+    "size": 27,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/lib/libunwind.so.8",
+    "size": 18,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/lib/libpsx.so.2.69",
+    "size": 13388,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/lib/libunwind-ptrace.so",
+    "size": 25,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/lib/libcap.so",
+    "size": 11,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/lib/liblzo2.so.2.0.0",
+    "size": 103504,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/lib/libpsx.so",
+    "size": 11,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/lib/libunwind-setjmp.so",
+    "size": 25,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/lib/libunwind-generic.so",
+    "size": 16,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/lib/libz.so.1",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/lib/libcrypto.so.1.1",
+    "size": 2035992,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/lib/libunwind-arm.so.8",
+    "size": 22,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/lib/liblzo2.so.2",
+    "size": 16,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/lib/libstdc++.so.6.0.28-gdb.py",
+    "size": 2518,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/lib/libz.so.1.2.13",
+    "size": 70896,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/lib/libunwind-coredump.so.0",
+    "size": 27,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/lib/libcap.so.2.69",
+    "size": 33944,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/lib/libstdc++.so.6.0.28",
+    "size": 1202348,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/lib/libz.so",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/lib/libunwind-ptrace.so.0.0.0",
+    "size": 13584,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/lib/libstdc++.so.6",
+    "size": 19,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/lib/os-release",
+    "size": 101,
+    "mode": "0o100644"
+  },
+  {
+    "path": "usr/lib/libcrypto.so",
+    "size": 16,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/lib/libunwind.so.8.0.1",
+    "size": 54368,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/lib/libunwind-arm.so.8.0.1",
+    "size": 58468,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/lib/libunwind.so",
+    "size": 18,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/lib/libunwind-setjmp.so.0",
+    "size": 25,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/lib/libunwind-setjmp.so.0.0.0",
+    "size": 9116,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/lib/libunwind-arm.so",
+    "size": 22,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/lib/libunwind-coredump.so.0.0.0",
+    "size": 13292,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/lib/libssl.so.1.1",
+    "size": 438492,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/lib/libuuid.so",
+    "size": 26,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/lib/libblkid.so",
+    "size": 27,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/lib/libmount.so",
+    "size": 27,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/sbin",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "usr/sbin/remove_firmware",
+    "size": 754,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/sbin/ubinfo",
+    "size": 29900,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/sbin/ubirmvol",
+    "size": 25744,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/sbin/chronyd",
+    "size": 210316,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/sbin/ubiformat",
+    "size": 66812,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/sbin/ubiattach",
+    "size": 29904,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/sbin/flash_erase",
+    "size": 33980,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/sbin/export_tz",
+    "size": 75,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/sbin/factory_reset",
+    "size": 463,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/sbin/ubihealthd",
+    "size": 25740,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/sbin/nanddump",
+    "size": 38076,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/sbin/nandwrite",
+    "size": 38076,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/sbin/flash_unlock",
+    "size": 9352,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/sbin/fw_printenv",
+    "size": 74932,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/sbin/ubimkvol",
+    "size": 29924,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/sbin/ubidetach",
+    "size": 25748,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/sbin/ubinize",
+    "size": 34024,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/sbin/dropbear",
+    "size": 280472,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/sbin/flash_lock",
+    "size": 9348,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/sbin/update_firmware",
+    "size": 1285,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/sbin/mtdinfo",
+    "size": 42168,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/sbin/fw_setenv",
+    "size": 74932,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/sbin/mkfs.ubifs",
+    "size": 87380,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/sbin/ubiupdatevol",
+    "size": 25732,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/sbin/mkfs.jffs2",
+    "size": 38596,
+    "mode": "0o100755"
+  },
+  {
+    "path": "usr/sbin/crond",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/sbin/nologin",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/sbin/partprobe",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/sbin/seedrng",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/sbin/adduser",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/sbin/addgroup",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/sbin/deluser",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/sbin/delgroup",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "usr/sbin/chroot",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "dev",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "dev/shm",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "dev/pts",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "dev/stderr",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "dev/log",
+    "size": 10,
+    "mode": "0o120777"
+  },
+  {
+    "path": "dev/stdin",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "dev/fd",
+    "size": 15,
+    "mode": "0o120777"
+  },
+  {
+    "path": "dev/stdout",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "etc",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "etc/shells",
+    "size": 17,
+    "mode": "0o100644"
+  },
+  {
+    "path": "etc/protocols",
+    "size": 2744,
+    "mode": "0o100644"
+  },
+  {
+    "path": "etc/hosts",
+    "size": 40,
+    "mode": "0o100644"
+  },
+  {
+    "path": "etc/services",
+    "size": 10873,
+    "mode": "0o100644"
+  },
+  {
+    "path": "etc/chrony.conf",
+    "size": 196,
+    "mode": "0o100644"
+  },
+  {
+    "path": "etc/profile",
+    "size": 299,
+    "mode": "0o100644"
+  },
+  {
+    "path": "etc/zlog",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "etc/zlog/hwscan.conf",
+    "size": 416,
+    "mode": "0o100644"
+  },
+  {
+    "path": "etc/zlog/miner.conf",
+    "size": 909,
+    "mode": "0o100644"
+  },
+  {
+    "path": "etc/fw_env.config",
+    "size": 25,
+    "mode": "0o100644"
+  },
+  {
+    "path": "etc/fstab",
+    "size": 334,
+    "mode": "0o100644"
+  },
+  {
+    "path": "etc/group",
+    "size": 334,
+    "mode": "0o100644"
+  },
+  {
+    "path": "etc/network",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "etc/network/if-post-down.d",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "etc/network/if-pre-up.d",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "etc/network/if-pre-up.d/wait_iface",
+    "size": 576,
+    "mode": "0o100755"
+  },
+  {
+    "path": "etc/network/nfs_check",
+    "size": 846,
+    "mode": "0o100755"
+  },
+  {
+    "path": "etc/network/if-up.d",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "etc/network/if-down.d",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "etc/network/interfaces",
+    "size": 180,
+    "mode": "0o100644"
+  },
+  {
+    "path": "etc/profile.d",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "etc/profile.d/umask.sh",
+    "size": 10,
+    "mode": "0o100644"
+  },
+  {
+    "path": "etc/profile.d/timezone.sh",
+    "size": 19,
+    "mode": "0o120777"
+  },
+  {
+    "path": "etc/shadow",
+    "size": 166,
+    "mode": "0o100600"
+  },
+  {
+    "path": "etc/keys",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "etc/keys/master-public.pem",
+    "size": 800,
+    "mode": "0o100644"
+  },
+  {
+    "path": "etc/factory",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "etc/factory/password",
+    "size": 60,
+    "mode": "0o100644"
+  },
+  {
+    "path": "etc/factory/ssh.conf",
+    "size": 20,
+    "mode": "0o100644"
+  },
+  {
+    "path": "etc/factory/system.conf",
+    "size": 12,
+    "mode": "0o100644"
+  },
+  {
+    "path": "etc/factory/network.conf",
+    "size": 27,
+    "mode": "0o100644"
+  },
+  {
+    "path": "etc/factory/dashd.conf",
+    "size": 72,
+    "mode": "0o100644"
+  },
+  {
+    "path": "etc/init.d",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "etc/init.d/S50dropbear",
+    "size": 1056,
+    "mode": "0o100755"
+  },
+  {
+    "path": "etc/init.d/S49chrony",
+    "size": 430,
+    "mode": "0o100755"
+  },
+  {
+    "path": "etc/init.d/S03mount",
+    "size": 1858,
+    "mode": "0o100755"
+  },
+  {
+    "path": "etc/init.d/rcS",
+    "size": 420,
+    "mode": "0o100755"
+  },
+  {
+    "path": "etc/init.d/S40network",
+    "size": 1737,
+    "mode": "0o100755"
+  },
+  {
+    "path": "etc/init.d/S13restore",
+    "size": 1116,
+    "mode": "0o100755"
+  },
+  {
+    "path": "etc/init.d/S71monitor",
+    "size": 527,
+    "mode": "0o100755"
+  },
+  {
+    "path": "etc/init.d/S16crond",
+    "size": 583,
+    "mode": "0o100755"
+  },
+  {
+    "path": "etc/init.d/S02klogd",
+    "size": 1004,
+    "mode": "0o100755"
+  },
+  {
+    "path": "etc/init.d/S70miner",
+    "size": 1083,
+    "mode": "0o100755"
+  },
+  {
+    "path": "etc/init.d/S12hwscan",
+    "size": 412,
+    "mode": "0o100755"
+  },
+  {
+    "path": "etc/init.d/conf-functions",
+    "size": 669,
+    "mode": "0o100644"
+  },
+  {
+    "path": "etc/init.d/S20seedrng",
+    "size": 1243,
+    "mode": "0o100755"
+  },
+  {
+    "path": "etc/init.d/S99agent",
+    "size": 2680,
+    "mode": "0o100755"
+  },
+  {
+    "path": "etc/init.d/S02sysctl",
+    "size": 2804,
+    "mode": "0o100755"
+  },
+  {
+    "path": "etc/init.d/S11board",
+    "size": 2928,
+    "mode": "0o100755"
+  },
+  {
+    "path": "etc/init.d/S15timezone",
+    "size": 743,
+    "mode": "0o100755"
+  },
+  {
+    "path": "etc/init.d/S49dashd",
+    "size": 1286,
+    "mode": "0o100755"
+  },
+  {
+    "path": "etc/init.d/S04syslogd",
+    "size": 1012,
+    "mode": "0o100755"
+  },
+  {
+    "path": "etc/init.d/rcK",
+    "size": 423,
+    "mode": "0o100755"
+  },
+  {
+    "path": "etc/issue",
+    "size": 22,
+    "mode": "0o100644"
+  },
+  {
+    "path": "etc/hostname",
+    "size": 10,
+    "mode": "0o100644"
+  },
+  {
+    "path": "etc/inittab",
+    "size": 1283,
+    "mode": "0o100644"
+  },
+  {
+    "path": "etc/ssl",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "etc/ssl/ct_log_list.cnf",
+    "size": 412,
+    "mode": "0o100644"
+  },
+  {
+    "path": "etc/ssl/openssl.cnf.dist",
+    "size": 10909,
+    "mode": "0o100644"
+  },
+  {
+    "path": "etc/ssl/openssl.cnf",
+    "size": 10909,
+    "mode": "0o100644"
+  },
+  {
+    "path": "etc/ssl/certs",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "etc/ssl/misc",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "etc/ssl/misc/tsget.pl",
+    "size": 6575,
+    "mode": "0o100755"
+  },
+  {
+    "path": "etc/ssl/private",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "etc/ssl/ct_log_list.cnf.dist",
+    "size": 412,
+    "mode": "0o100644"
+  },
+  {
+    "path": "etc/passwd",
+    "size": 441,
+    "mode": "0o100644"
+  },
+  {
+    "path": "etc/resolv.conf",
+    "size": 18,
+    "mode": "0o120777"
+  },
+  {
+    "path": "etc/dropbear",
+    "size": 24,
+    "mode": "0o120777"
+  },
+  {
+    "path": "etc/mtab",
+    "size": 19,
+    "mode": "0o120777"
+  },
+  {
+    "path": "etc/os-release",
+    "size": 21,
+    "mode": "0o120777"
+  },
+  {
+    "path": "etc/fw-info.json",
+    "size": 233,
+    "mode": "0o100644"
+  },
+  {
+    "path": "etc/fw-info",
+    "size": 233,
+    "mode": "0o100644"
+  },
+  {
+    "path": "etc/components.json",
+    "size": 206,
+    "mode": "0o100644"
+  },
+  {
+    "path": "lib32",
+    "size": 3,
+    "mode": "0o120777"
+  },
+  {
+    "path": "media",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "tmp",
+    "size": 0,
+    "mode": "0o41777"
+  },
+  {
+    "path": "init",
+    "size": 118,
+    "mode": "0o100755"
+  },
+  {
+    "path": "mnt",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "mnt/data",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "mnt/config",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "root",
+    "size": 0,
+    "mode": "0o40700"
+  },
+  {
+    "path": "root/.ssh",
+    "size": 0,
+    "mode": "0o40700"
+  },
+  {
+    "path": "root/.ssh/authorized_keys",
+    "size": 972,
+    "mode": "0o100644"
+  },
+  {
+    "path": "root/.profile",
+    "size": 47,
+    "mode": "0o100644"
+  },
+  {
+    "path": "root/.motd",
+    "size": 1744,
+    "mode": "0o100755"
+  },
+  {
+    "path": "lib",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "lib/libuuid.so.1",
+    "size": 16,
+    "mode": "0o120777"
+  },
+  {
+    "path": "lib/libmount.so.1",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "lib/libc.so",
+    "size": 640580,
+    "mode": "0o100755"
+  },
+  {
+    "path": "lib/libblkid.so.1.1.0",
+    "size": 284420,
+    "mode": "0o100755"
+  },
+  {
+    "path": "lib/libmount.so.1.1.0",
+    "size": 325252,
+    "mode": "0o100755"
+  },
+  {
+    "path": "lib/libatomic.so.1",
+    "size": 18,
+    "mode": "0o120777"
+  },
+  {
+    "path": "lib/libgcc_s.so.1",
+    "size": 120248,
+    "mode": "0o100755"
+  },
+  {
+    "path": "lib/libblkid.so.1",
+    "size": 17,
+    "mode": "0o120777"
+  },
+  {
+    "path": "lib/libatomic.so.1.2.0",
+    "size": 13508,
+    "mode": "0o100755"
+  },
+  {
+    "path": "lib/libuuid.so.1.3.0",
+    "size": 25880,
+    "mode": "0o100755"
+  },
+  {
+    "path": "lib/ld-musl-armhf.so.1",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "home",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "home/miner",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "proc",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "sbin",
+    "size": 0,
+    "mode": "0o40755"
+  },
+  {
+    "path": "sbin/ifdown",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "sbin/rmmod",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "sbin/iprule",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "sbin/lsmod",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "sbin/route",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "sbin/iptunnel",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "sbin/sysctl",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "sbin/reboot",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "sbin/init",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "sbin/ifup",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "sbin/klogd",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "sbin/fsck",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "sbin/start-stop-daemon",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "sbin/runlevel",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "sbin/insmod",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "sbin/getty",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "sbin/devmem",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "sbin/ifconfig",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "sbin/iplink",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "sbin/watchdog",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "sbin/ipneigh",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "sbin/syslogd",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "sbin/udhcpc",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "sbin/losetup",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "sbin/ipaddr",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "sbin/ip",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "sbin/iproute",
+    "size": 14,
+    "mode": "0o120777"
+  },
+  {
+    "path": "config",
+    "size": 11,
+    "mode": "0o120777"
+  }
+]

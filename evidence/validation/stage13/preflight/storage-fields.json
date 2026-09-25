@@ -1,0 +1,19 @@
+{
+  "group": "storage-fields",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage11_differential.py",
+        "fields"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "storage-fields-00.log",
+      "seconds": 1.134,
+      "sha256": "2c4b9592faf14985c462d20c6b80a20c03533c0a8aba9ee613845cbd8ee052e6"
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+COMMAND: ['/opt/pyvenv/bin/python3', 'tests/test_stage9_differential.py', 'prefix']
+{"stage": 9, "group": "prefix", "status": "PASS", "comparisons": 198, "original_sha_calls": 2376, "compared_work_bytes": 112, "full_632byte_work_reconstructed": false}

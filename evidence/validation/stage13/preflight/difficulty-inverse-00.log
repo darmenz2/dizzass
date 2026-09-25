@@ -1,0 +1,2 @@
+COMMAND: ['/opt/pyvenv/bin/python3', 'tests/test_stage10_differential.py', 'inverse']
+{"stage": 10, "group": "inverse", "status": "PASS", "comparisons": 950, "compared_all_binary64_bits": true, "zero_target_denominator_is_one": true}

@@ -1,0 +1,20 @@
+{
+  "group": "full-runtime-blocked",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "make",
+        "-f",
+        "Makefile.recovery",
+        "full-runtime"
+      ],
+      "returncode": 2,
+      "expected_returncode": 2,
+      "log": "full-runtime-blocked-00.log",
+      "seconds": 0.004,
+      "sha256": "fb8e38b958839327a351a4c966de43e19d42ce8a2b231851f21468fb035bb7e6"
+    }
+  ]
+}

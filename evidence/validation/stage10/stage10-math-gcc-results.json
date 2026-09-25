@@ -1,0 +1,8 @@
+{
+  "stage": 10,
+  "group": "math",
+  "status": "PASS",
+  "comparisons": 256,
+  "original_sha_and_target_execute_together": true,
+  "all_other_632byte_work_bytes_checked_unchanged": true
+}

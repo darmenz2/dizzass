@@ -1,0 +1,295 @@
+{
+  "path": "libbitmain/src/reg_cache.c",
+  "observed_as": "/tmp/build/libbitmain/src/reg_cache.c",
+  "status": "partial-verified-slices",
+  "evidence": [
+    {
+      "address": "0x5ed472",
+      "xor": 167,
+      "decoded_length": 38,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x00106a58",
+      "end_exclusive": "0x00107188",
+      "path_references": [
+        {
+          "insn": "0x106c64",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x106c9c",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x106ce8",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x106d18",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x106d70",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x106efc",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x1070ac",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x1070e0",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00107188",
+      "end_exclusive": "0x00107648",
+      "path_references": [
+        {
+          "insn": "0x107340",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x1073b8",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x107404",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x107430",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x107480",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x1074b0",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x107500",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x107530",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x10757c",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00107648",
+      "end_exclusive": "0x001079f0",
+      "path_references": [
+        {
+          "insn": "0x107724",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x107860",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x107898",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x1078e4",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x107910",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x107960",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x001079f0",
+      "end_exclusive": "0x00107ed0",
+      "path_references": [
+        {
+          "insn": "0x107a50",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x107ac0",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x107c28",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x107c7c",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x107cc8",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x107cf4",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x107d44",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x107d74",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x107dc4",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00107ed0",
+      "end_exclusive": "0x001082b4",
+      "path_references": [
+        {
+          "insn": "0x107fa8",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x108008",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x1080e8",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x108120",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x108180",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        },
+        {
+          "insn": "0x1081cc",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x001083e4",
+      "end_exclusive": "0x001087cc",
+      "path_references": [
+        {
+          "insn": "0x1084bc",
+          "string": "0x5ed472",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/reg_cache.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": [
+    "libbitmain/src/reg_cache.c"
+  ]
+}

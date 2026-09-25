@@ -1,0 +1,2 @@
+COMMAND: ['/opt/pyvenv/bin/python3', 'tests/test_stage9_differential.py', 'sha']
+{"stage": 9, "group": "sha", "status": "PASS", "comparisons": 212, "alias_api_checks": 212, "original_sha_executed": true}

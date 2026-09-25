@@ -1,0 +1,1131 @@
+{
+  "path": "src/backend/tuner/tuner_base.c",
+  "observed_as": "/tmp/build/src/backend/tuner/tuner_base.c",
+  "status": "pending-not-implemented",
+  "evidence": [
+    {
+      "address": "0x5e6e59",
+      "xor": 131,
+      "decoded_length": 42,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x00081f68",
+      "end_exclusive": "0x00081fd8",
+      "path_references": [
+        {
+          "insn": "0x81f98",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0008223c",
+      "end_exclusive": "0x00082534",
+      "path_references": [
+        {
+          "insn": "0x823a4",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x82408",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00083080",
+      "end_exclusive": "0x000840d4",
+      "path_references": [
+        {
+          "insn": "0x83260",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x832a0",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x833c4",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8340c",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x83bf0",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x83c38",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x83cfc",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x83d54",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x83d88",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x83dec",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x83e2c",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x83e90",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x83ed4",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000840d4",
+      "end_exclusive": "0x00086780",
+      "path_references": [
+        {
+          "insn": "0x84218",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x84548",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8458c",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x84f68",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x84fec",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x85580",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x855dc",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x85630",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x85694",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x85b40",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x85c84",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x85f7c",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00086868",
+      "end_exclusive": "0x000881ac",
+      "path_references": [
+        {
+          "insn": "0x86cec",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x86d60",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x86db0",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x86f24",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x86f74",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8705c",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x87138",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x873f8",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8749c",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x87544",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x88024",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x88090",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000882a0",
+      "end_exclusive": "0x00088474",
+      "path_references": [
+        {
+          "insn": "0x882c8",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8836c",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x883c8",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000886f0",
+      "end_exclusive": "0x00089118",
+      "path_references": [
+        {
+          "insn": "0x887d4",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x88b1c",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x88d54",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x88dd4",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x88e40",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x88f68",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00089118",
+      "end_exclusive": "0x000896d8",
+      "path_references": [
+        {
+          "insn": "0x8947c",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x894f0",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x89524",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x89578",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000896d8",
+      "end_exclusive": "0x00089c98",
+      "path_references": [
+        {
+          "insn": "0x89730",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x89764",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x899fc",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00089c98",
+      "end_exclusive": "0x0008af50",
+      "path_references": [
+        {
+          "insn": "0x8a0bc",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8a228",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0008af50",
+      "end_exclusive": "0x00094090",
+      "path_references": [
+        {
+          "insn": "0x8aff0",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8b684",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8be58",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8bebc",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8c224",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8c614",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8c814",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8c850",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8c890",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8c92c",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8d17c",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8d228",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8d270",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8d2b8",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8d308",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8d634",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8d7ec",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8d840",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8d980",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8d9d8",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8da14",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8da70",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8daf0",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8dba4",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8dd8c",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8defc",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8df50",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8e248",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8e324",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8e380",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8e428",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8e480",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8e678",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8e6e0",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8e9ec",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8ea3c",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8eb60",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8effc",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8f064",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8f494",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8f50c",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8f6cc",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8f720",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8faa8",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8fd70",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8fdc4",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8fe58",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8fec8",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x8ff34",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x900d8",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x90124",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x9061c",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x90670",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x906e8",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x90828",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x90864",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x908bc",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x90a70",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x90ac8",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x90d3c",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x90db4",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x91130",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x91198",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x91210",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x91974",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x919ec",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x92184",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x921e8",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x92524",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x92764",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x927b8",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x929a8",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x92b04",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x92be8",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x92c4c",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x92cac",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x92de0",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x92e40",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x92ee8",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x9307c",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x930d0",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x931b8",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x93224",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x9333c",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x9363c",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x93750",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x93798",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x93954",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x93a18",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x93a6c",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00094090",
+      "end_exclusive": "0x00094744",
+      "path_references": [
+        {
+          "insn": "0x94148",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x9425c",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x9429c",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x94530",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x9456c",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x945c4",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00094744",
+      "end_exclusive": "0x00094b68",
+      "path_references": [
+        {
+          "insn": "0x9492c",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x94974",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00094c5c",
+      "end_exclusive": "0x00095b28",
+      "path_references": [
+        {
+          "insn": "0x94d0c",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x94d58",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x94f14",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x94f68",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x951ac",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x95214",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x95618",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x95994",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        },
+        {
+          "insn": "0x959ec",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00095b28",
+      "end_exclusive": "0x00097568",
+      "path_references": [
+        {
+          "insn": "0x97228",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00098d7c",
+      "end_exclusive": "0x0009b1e0",
+      "path_references": [
+        {
+          "insn": "0x98dbc",
+          "string": "0x5e6e59",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/tuner/tuner_base.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": []
+}

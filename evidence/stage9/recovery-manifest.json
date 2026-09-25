@@ -1,0 +1,224 @@
+{
+  "stage": 9,
+  "reference_bytes": 6228004,
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "slices": [
+    {
+      "name": "consumer_argument_mapping",
+      "start": "0x74f14",
+      "end_exclusive": "0x74f50",
+      "size": 60,
+      "scope": "original-executed-caller-prefix",
+      "original_bytes_sha256": "8182ccc6af8da94f32d1dbd412bd8aeee174a50f7372512bd01f6d6969ebcb31",
+      "disassembly": "evidence/stage9/disasm/consumer_argument_mapping.S",
+      "disassembly_sha256": "2e99a64d6a686793b43c6d1e95fe15e65edf25aa4b8f8950c1e133301163349c"
+    },
+    {
+      "name": "work_wrapper_context",
+      "start": "0x300ac",
+      "end_exclusive": "0x30550",
+      "size": 1188,
+      "scope": "original-wrapper-tested-to-core-prefix-not-full-C-port",
+      "original_bytes_sha256": "961d430a860264ba58116089edb21d990ee5a92a164b19bdfebc969d33093aa5",
+      "disassembly": "evidence/stage9/disasm/work_wrapper_context.S",
+      "disassembly_sha256": "8a51c334f24c594f90fec7d9070abc4562e7f31a1dd5ef8558ddf7f4f7e74dc4"
+    },
+    {
+      "name": "work_header_materialization",
+      "start": "0x30550",
+      "end_exclusive": "0x30a6c",
+      "size": 1308,
+      "scope": "recovered-prefix",
+      "original_bytes_sha256": "39d15ddb1880ed7b4bcd8cc48a1603125025d0b5a41a8c3c231d532defb129b2",
+      "disassembly": "evidence/stage9/disasm/work_header_materialization.S",
+      "disassembly_sha256": "153b2c1cc2687fd28d667a7894d15203075064c9a0e2d276b004b658aec02930"
+    },
+    {
+      "name": "metadata_suffix_context",
+      "start": "0x30a6c",
+      "end_exclusive": "0x3122c",
+      "size": 1984,
+      "scope": "context-only-not-recovered",
+      "original_bytes_sha256": "cd90279d4a48f68450458bf24039420cf24edd0686ecec4432befbdf24d163d1",
+      "disassembly": "evidence/stage9/disasm/metadata_suffix_context.S",
+      "disassembly_sha256": "edfb4dd5a531dd7da5ae4b57a5ab8ccc35b54b91504578725d898be5460cb3ce"
+    },
+    {
+      "name": "sha_oneshot",
+      "start": "0x108f38",
+      "end_exclusive": "0x109120",
+      "size": 488,
+      "scope": "original-reference-with-new-one-shot-API",
+      "original_bytes_sha256": "8d4ae18bfe64e96a84f4cf5b3b4280978e0457d78a599b041687bd9506775885",
+      "disassembly": "evidence/stage9/disasm/sha_oneshot.S",
+      "disassembly_sha256": "e6580aebdcd213a952cda68d8e87271e4c97aa8b0d5eadc67350751ae9dda76e"
+    },
+    {
+      "name": "consumer_nonce_to_prefilter",
+      "start": "0x7511c",
+      "end_exclusive": "0x7515c",
+      "size": 64,
+      "scope": "context-only-call-mapping",
+      "original_bytes_sha256": "9da2c2f3c3c3beca339c780033c77c12ca3aea1c97958bc180099b023d64ec79",
+      "disassembly": "evidence/stage9/disasm/consumer_nonce_to_prefilter.S",
+      "disassembly_sha256": "309622fbd8dffc0d2a907349b0e571c8b0d6cda0fd1c88e27e00352f27ff237d"
+    }
+  ],
+  "branch_edges": [
+    {
+      "pc": "0x74f4c",
+      "instruction_hex": "ebfeec56",
+      "target": "0x300ac"
+    },
+    {
+      "pc": "0x30248",
+      "instruction_hex": "ebff86cb",
+      "target": "0x11d7c"
+    },
+    {
+      "pc": "0x303e4",
+      "instruction_hex": "eb000059",
+      "target": "0x30550"
+    },
+    {
+      "pc": "0x30628",
+      "instruction_hex": "ebff85d3",
+      "target": "0x11d7c"
+    },
+    {
+      "pc": "0x30804",
+      "instruction_hex": "eb0361cb",
+      "target": "0x108f38"
+    },
+    {
+      "pc": "0x30818",
+      "instruction_hex": "eb0361c6",
+      "target": "0x108f38"
+    },
+    {
+      "pc": "0x30878",
+      "instruction_hex": "eb0361ae",
+      "target": "0x108f38"
+    },
+    {
+      "pc": "0x3088c",
+      "instruction_hex": "eb0361a9",
+      "target": "0x108f38"
+    },
+    {
+      "pc": "0x30a48",
+      "instruction_hex": "ebff84cb",
+      "target": "0x11d7c"
+    },
+    {
+      "pc": "0x30a68",
+      "instruction_hex": "ebff84c3",
+      "target": "0x11d7c"
+    }
+  ],
+  "field_offsets": {
+    "header_template": "0x298",
+    "coinbase_pointer": "0x3b4",
+    "coinbase_size": "0x3b8",
+    "counter_low": "0x3c0",
+    "counter_high": "0x3c4",
+    "counter_offset": "0x3c8",
+    "counter_width": "0x3cc",
+    "branch_pointer_list": "0x3d4",
+    "signed_branch_count": "0x3e8",
+    "work_counter": "0x190",
+    "work_counter_width": "0x198"
+  },
+  "instruction_assertions": [
+    {
+      "address": "0x74f18",
+      "word_hex": "e59d0054"
+    },
+    {
+      "address": "0x74f20",
+      "word_hex": "e1c220d0"
+    },
+    {
+      "address": "0x74f24",
+      "word_hex": "e6bf0f30"
+    },
+    {
+      "address": "0x74f28",
+      "word_hex": "e58d2008"
+    },
+    {
+      "address": "0x74f3c",
+      "word_hex": "e58d300c"
+    },
+    {
+      "address": "0x74f44",
+      "word_hex": "e58d0010"
+    },
+    {
+      "address": "0x30220",
+      "word_hex": "e58a53c0"
+    },
+    {
+      "address": "0x30224",
+      "word_hex": "e58a93c4"
+    },
+    {
+      "address": "0x30228",
+      "word_hex": "e6bf1f31"
+    },
+    {
+      "address": "0x30294",
+      "word_hex": "e2900001"
+    },
+    {
+      "address": "0x302a0",
+      "word_hex": "e2a91000"
+    },
+    {
+      "address": "0x30a38",
+      "word_hex": "e3a02070"
+    },
+    {
+      "address": "0x30a44",
+      "word_hex": "e2891fa6"
+    },
+    {
+      "address": "0x30a58",
+      "word_hex": "e2840024"
+    },
+    {
+      "address": "0x30a5c",
+      "word_hex": "e3a02020"
+    }
+  ],
+  "new_helpers": [
+    "reconstruction/support/sha256_bytes.c",
+    "reconstruction/support/work_rebuild_pipeline.c"
+  ],
+  "scope": "112-byte header prefix and consumer argument mapping, explicit saved snapshot integration; not full 632-byte work, queue or T21 runtime",
+  "test_boundaries": {
+    "core_entry": "0x30550",
+    "core_stop_exclusive": "0x30a6c",
+    "caller_entry": "0x74f14",
+    "injected": [
+      "memcpy/memset",
+      "successful calloc(1,632) in caller-wrapper tests",
+      "successful mutex/rwlock calls"
+    ],
+    "actual_original_sha": "0x108f38 and original compression/finalizer, not a constant hash"
+  },
+  "new_API_restrictions": [
+    "coinbase size <= UINT32_MAX",
+    "counter copy width 0..8 and inside coinbase",
+    "nonnegative merkle count <= INT32_MAX and multiplication safe",
+    "caller supplies valid nonoverlapping arrays and exclusive access; snapshot pinned externally"
+  ],
+  "not_reconstructed": [
+    "difficulty-to-target suffix",
+    "strings and reference ownership",
+    "full wrapper allocation/lifetime/error paths",
+    "job invalidation, duplicate policy across jobs",
+    "original queue72-byte ABI",
+    "T21 mapping/hardware initialization"
+  ]
+}

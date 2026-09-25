@@ -1,0 +1,154 @@
+{
+  "status": "PASS",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "cases": {
+    "layout_selection": 364,
+    "register_filter_dispatch": 141,
+    "nonce_job_slot_bits": 1248,
+    "frame_incomplete": 351,
+    "register_filtered": 454,
+    "register_enqueued": 2110,
+    "nonce_raw": 1276,
+    "frame_noise": 144
+  },
+  "new_differential_cases": 6088,
+  "wall_seconds": 5.979,
+  "sample_cases": [
+    {
+      "config": [
+        0,
+        0,
+        0
+      ],
+      "bytes": "",
+      "kind": 0,
+      "consumed": 0
+    },
+    {
+      "config": [
+        0,
+        0,
+        0
+      ],
+      "bytes": "",
+      "kind": 0,
+      "consumed": 0
+    },
+    {
+      "config": [
+        0,
+        0,
+        0
+      ],
+      "bytes": "",
+      "kind": 0,
+      "consumed": 0
+    },
+    {
+      "config": [
+        0,
+        0,
+        0
+      ],
+      "bytes": "aa",
+      "kind": 0,
+      "consumed": 0
+    },
+    {
+      "config": [
+        0,
+        0,
+        0
+      ],
+      "bytes": "aa",
+      "kind": 0,
+      "consumed": 0
+    },
+    {
+      "config": [
+        0,
+        0,
+        0
+      ],
+      "bytes": "00",
+      "kind": 0,
+      "consumed": 0
+    },
+    {
+      "config": [
+        0,
+        0,
+        0
+      ],
+      "bytes": "aa55",
+      "kind": 0,
+      "consumed": 0
+    },
+    {
+      "config": [
+        0,
+        0,
+        0
+      ],
+      "bytes": "aaaa",
+      "kind": 0,
+      "consumed": 0
+    },
+    {
+      "config": [
+        0,
+        0,
+        0
+      ],
+      "bytes": "0055",
+      "kind": 0,
+      "consumed": 0
+    },
+    {
+      "config": [
+        0,
+        0,
+        0
+      ],
+      "bytes": "aa557c",
+      "kind": 0,
+      "consumed": 0
+    },
+    {
+      "config": [
+        0,
+        0,
+        0
+      ],
+      "bytes": "aaaa2c",
+      "kind": 0,
+      "consumed": 0
+    },
+    {
+      "config": [
+        0,
+        0,
+        0
+      ],
+      "bytes": "0055f8",
+      "kind": 0,
+      "consumed": 0
+    }
+  ],
+  "scope": "Stable-selector RX layout; original prefix/pop/normal+special register paths, filter dispatcher/callees and job-slot bit extraction. Actual original ring pops execute.",
+  "injected": [
+    "board/chip/special getter values",
+    "memcpy",
+    "mutex unlock",
+    "register enqueue"
+  ],
+  "not_verified": [
+    "model name mapping",
+    "CRC verification",
+    "actual job lookup",
+    "nonce validation",
+    "threading",
+    "UART device",
+    "accepted shares"
+  ]
+}

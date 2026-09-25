@@ -1,0 +1,50 @@
+{
+  "group": "rebuild-native",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "./build/test-work-rebuild"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "rebuild-native-00.log",
+      "seconds": 0.002,
+      "sha256": "1df97101aeed30a7bfc84f3839db5f90a19cae0df378577e340fb434ee1b83ec"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage9_interpreter.py"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "rebuild-native-01.log",
+      "seconds": 0.894,
+      "sha256": "0056bd8e5db3af5368046c0699c556504786a81c314d71d02021d05299b94925"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage9_genesis.py"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "rebuild-native-02.log",
+      "seconds": 1.167,
+      "sha256": "18990428ff304615063ef9477f937174a02944b6a36f194760979681413d404b"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tools/generate_genesis_fixture.py"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "rebuild-native-03.log",
+      "seconds": 0.805,
+      "sha256": "afbd237f24c359cec6b2b713ca666392a8bd389e747a9db30c035f76483cae81"
+    }
+  ]
+}

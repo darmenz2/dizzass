@@ -1,0 +1,2 @@
+COMMAND: ['/opt/pyvenv/bin/python3', 'tests/test_stage8_differential.py', 'target']
+{"status": "PASS", "group": "target", "compiler_tag": "gcc", "original_comparison_cases": 2340, "library_sha256": "e8cc7ad071d722f14643fed8ea9363b238a26137eb81b7d51fdc24d26165c9ad", "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9", "details": {"original_compare_calls": 2340, "all_eight_decisive_limbs": true, "equality_accepted": true}, "hardware_tested": false, "job_freshness_proven": false}

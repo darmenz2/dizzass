@@ -1,0 +1,39 @@
+{
+  "group": "verify-native",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "./build/test-nonce-verify"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "verify-native-00.log",
+      "seconds": 0.001,
+      "sha256": "08799f61ad68975e238c0a556f9f50affb5353b7ebe362c539c7f2e60a579594"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "tests/test_stage8_interpreter.py"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "verify-native-01.log",
+      "seconds": 0.628,
+      "sha256": "ba1b8439ed441e1e8a891eee847a666b256dd42d4a118b83731f302f8347ea9a"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "tests/test_verify_header_cli.py"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "verify-native-02.log",
+      "seconds": 0.695,
+      "sha256": "f8846fdf2e28524e8f05814d5381975a9e8606250770ad1658a4aa090459340f"
+    }
+  ]
+}

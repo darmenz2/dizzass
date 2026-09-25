@@ -1,0 +1,21 @@
+COMMAND: ['/opt/pyvenv/bin/python3', 'tests/test_stage7_differential.py', 'version']
+{
+  "status": "PASS",
+  "group": "version",
+  "build_tag": "gcc",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "cases": {
+    "version_variant2_exhaustive_uint16": 65536,
+    "version_legacy_sentinel": 266
+  },
+  "total_cases": 65802,
+  "seconds": 6.32,
+  "injected": [
+    "chip/core attribution in preparation only",
+    "memcpy",
+    "memset in original SHA finalization oracle only",
+    "numeric model getter for core helper"
+  ],
+  "original_sha_replaced_by_hook": false,
+  "valid_share_or_hardware_test": false
+}

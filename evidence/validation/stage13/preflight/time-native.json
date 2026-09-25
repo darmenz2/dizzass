@@ -1,0 +1,40 @@
+{
+  "group": "time-native",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "./build/test-work-time"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "time-native-00.log",
+      "seconds": 0.004,
+      "sha256": "15fbc427f99cb57096d785648389eeaebcd1bf3677d5676b76ddfbdc3c740630"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tools/generate_time_fixture.py"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "time-native-01.log",
+      "seconds": 0.821,
+      "sha256": "bf4b1073c09841aefc9494dcdad337c89c733a6fab4a47afcb20030f36f9b133"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage12_differential.py",
+        "composition"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "time-native-02.log",
+      "seconds": 8.605,
+      "sha256": "cef901d2afb8e5c97d04802c477b6047a2bd29947e2828badefd30b98c1275d2"
+    }
+  ]
+}

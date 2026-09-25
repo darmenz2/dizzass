@@ -1,0 +1,2 @@
+COMMAND: ['./build/test-pll-aml']
+PLL/AML host guards and flow tests: PASS (no hardware)

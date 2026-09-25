@@ -1,0 +1,31 @@
+{
+  "group": "verify-job",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "tests/test_stage8_differential.py",
+        "job"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "verify-job-00.log",
+      "seconds": 0.749,
+      "sha256": "1a8147e2006e6c3c6838bbc585218bb92be836dccc42e5dae2a041be0e78900b"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "tests/test_stage8_differential.py",
+        "registry"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "verify-job-01.log",
+      "seconds": 0.849,
+      "sha256": "c41b07d1c5e438d90874c024098ea1298394323fff06a5baa5fb2c8741d68f03"
+    }
+  ]
+}

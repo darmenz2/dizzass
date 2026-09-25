@@ -1,0 +1,2 @@
+COMMAND: ['/opt/pyvenv/bin/python3', 'tests/test_stage11_differential.py', 'clone']
+{"stage": 11, "group": "clone", "status": "PASS", "comparisons": 486, "unrolled_only": true, "outer_allocation_success_precondition": true, "compared_all_opaque_image_bytes_after_known_pointer_normalization": true}

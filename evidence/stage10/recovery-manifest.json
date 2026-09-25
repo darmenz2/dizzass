@@ -1,0 +1,234 @@
+{
+  "stage": 10,
+  "reference_bytes": 6228004,
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "slices": [
+    {
+      "name": "difficulty_target",
+      "start": "0x2fe60",
+      "end_exclusive": "0x300ac",
+      "size": 588,
+      "role": "Original target routine plus literals; new API adds domain validation",
+      "original_bytes_sha256": "e5c96056a04a2f6a8f485e3d7ef11f9b8109c15d3081c157d84aef5095e5cb91",
+      "disassembly": "evidence/stage10/disasm/difficulty_target.S",
+      "disassembly_sha256": "6c412ceb6987dec85a7b62c8ba07e8ec365ff3fcff7e1f1d21743a620305a1f8"
+    },
+    {
+      "name": "target_inverse",
+      "start": "0x31070",
+      "end_exclusive": "0x31100",
+      "size": 144,
+      "role": "Original numeric slice; not full work accounting",
+      "original_bytes_sha256": "fc70328b846b6da0d092442f259ba32955021afdab30e32f30ee853cb905d4bc",
+      "disassembly": "evidence/stage10/disasm/target_inverse.S",
+      "disassembly_sha256": "214c18be37df7843e07b83c75391e8da1612ef03bb3697f8d857680529a453ad"
+    },
+    {
+      "name": "work_math",
+      "start": "0x30c9c",
+      "end_exclusive": "0x30d90",
+      "size": 244,
+      "role": "Original midstate/target slice, stop before later metadata",
+      "original_bytes_sha256": "5b99b0b338dfac59a8b061d720bd879fc168a6dbd05304e997e5bb456a90e834",
+      "disassembly": "evidence/stage10/disasm/work_math.S",
+      "disassembly_sha256": "03f9d7b001632b70eb93143f638d616a1a9015e0af742b0ef143829457e90d7f"
+    },
+    {
+      "name": "uint64_double",
+      "start": "0x591338",
+      "end_exclusive": "0x5913ac",
+      "size": 116,
+      "role": "Executed original conversion helper; not a new C module",
+      "original_bytes_sha256": "2b81af0d195e8043b0226b691dae401a546244af82e69545c268443465ede330",
+      "disassembly": "evidence/stage10/disasm/uint64_double.S",
+      "disassembly_sha256": "4b8f5e9273363b221696ccdc4e8427c57882b7ae5fb1a4ebc4552c1798f174b7"
+    },
+    {
+      "name": "uint64_double_normalize",
+      "start": "0x5910e4",
+      "end_exclusive": "0x5911f0",
+      "size": 268,
+      "role": "Executed original helper continuation",
+      "original_bytes_sha256": "47eb6b5a2f5cb1844096aac0aacc3db33fe791145ee77fc2066fa73e710e452e",
+      "disassembly": "evidence/stage10/disasm/uint64_double_normalize.S",
+      "disassembly_sha256": "06d99eb3542252daeab74ae2ca0aca82edcb9d81d6f5a36246689fa19fdb03bf"
+    },
+    {
+      "name": "double_uint64",
+      "start": "0x591508",
+      "end_exclusive": "0x591548",
+      "size": 64,
+      "role": "Executed original VFP conversion helper with literals",
+      "original_bytes_sha256": "fc527ff037623f7808d0f83970ab0e4f53d88a91ba08c7c2ad013a841d956adf",
+      "disassembly": "evidence/stage10/disasm/double_uint64.S",
+      "disassembly_sha256": "fba0eafea6592c8596aa5befa54158c14fdbac4b781ea5323aca3b36437e6fca"
+    }
+  ],
+  "constants": [
+    {
+      "address": "0x30038",
+      "bytes_hex": "000000000000f03f",
+      "ieee754_bits_hex": "3ff0000000000000",
+      "double_hex": "0x1.0000000000000p+0"
+    },
+    {
+      "address": "0x30040",
+      "bytes_hex": "00000000e0ffef4d",
+      "ieee754_bits_hex": "4defffe000000000",
+      "double_hex": "0x1.fffe000000000p+223"
+    },
+    {
+      "address": "0x30048",
+      "bytes_hex": "00000000e0ffef4e",
+      "ieee754_bits_hex": "4eefffe000000000",
+      "double_hex": "0x1.fffe000000000p+239"
+    },
+    {
+      "address": "0x30050",
+      "bytes_hex": "000000000000f033",
+      "ieee754_bits_hex": "33f0000000000000",
+      "double_hex": "0x1.0000000000000p-192"
+    },
+    {
+      "address": "0x30058",
+      "bytes_hex": "000000000000f0cb",
+      "ieee754_bits_hex": "cbf0000000000000",
+      "double_hex": "-0x1.0000000000000p+192"
+    },
+    {
+      "address": "0x30060",
+      "bytes_hex": "000000000000f037",
+      "ieee754_bits_hex": "37f0000000000000",
+      "double_hex": "0x1.0000000000000p-128"
+    },
+    {
+      "address": "0x30068",
+      "bytes_hex": "000000000000f0c7",
+      "ieee754_bits_hex": "c7f0000000000000",
+      "double_hex": "-0x1.0000000000000p+128"
+    },
+    {
+      "address": "0x30070",
+      "bytes_hex": "000000000000f03b",
+      "ieee754_bits_hex": "3bf0000000000000",
+      "double_hex": "0x1.0000000000000p-64"
+    },
+    {
+      "address": "0x30078",
+      "bytes_hex": "000000000000f0c3",
+      "ieee754_bits_hex": "c3f0000000000000",
+      "double_hex": "-0x1.0000000000000p+64"
+    }
+  ],
+  "branch_edges": [
+    {
+      "pc": "0x2fe80",
+      "instruction_hex": "ebffe4ec",
+      "target": "0x29238"
+    },
+    {
+      "pc": "0x2fec4",
+      "instruction_hex": "eb15858f",
+      "target": "0x591508"
+    },
+    {
+      "pc": "0x2fed0",
+      "instruction_hex": "eb158518",
+      "target": "0x591338"
+    },
+    {
+      "pc": "0x2feec",
+      "instruction_hex": "eb158585",
+      "target": "0x591508"
+    },
+    {
+      "pc": "0x2fef8",
+      "instruction_hex": "eb15850e",
+      "target": "0x591338"
+    },
+    {
+      "pc": "0x2ff14",
+      "instruction_hex": "eb15857b",
+      "target": "0x591508"
+    },
+    {
+      "pc": "0x2ff20",
+      "instruction_hex": "eb158504",
+      "target": "0x591338"
+    },
+    {
+      "pc": "0x2ff34",
+      "instruction_hex": "eb158573",
+      "target": "0x591508"
+    },
+    {
+      "pc": "0x2ff74",
+      "instruction_hex": "ebff8780",
+      "target": "0x11d7c"
+    },
+    {
+      "pc": "0x31074",
+      "instruction_hex": "eb1580af",
+      "target": "0x591338"
+    },
+    {
+      "pc": "0x31084",
+      "instruction_hex": "eb1580ab",
+      "target": "0x591338"
+    },
+    {
+      "pc": "0x310ac",
+      "instruction_hex": "eb1580a1",
+      "target": "0x591338"
+    },
+    {
+      "pc": "0x310c4",
+      "instruction_hex": "eb15809b",
+      "target": "0x591338"
+    },
+    {
+      "pc": "0x30d44",
+      "instruction_hex": "eb0360f5",
+      "target": "0x109120"
+    },
+    {
+      "pc": "0x30d54",
+      "instruction_hex": "eb036105",
+      "target": "0x109170"
+    },
+    {
+      "pc": "0x30d80",
+      "instruction_hex": "ebff83fd",
+      "target": "0x11d7c"
+    },
+    {
+      "pc": "0x30d8c",
+      "instruction_hex": "ebfffc33",
+      "target": "0x2fe60"
+    }
+  ],
+  "injected_external_operations": [
+    "model/algorithm lookup",
+    "memcpy",
+    "zero-difficulty logging"
+  ],
+  "instructions_not_stubbed": [
+    "SHA init/update/compression",
+    "uint64->binary64 helper and normalization",
+    "binary64->uint64 helper",
+    "target VFP arithmetic"
+  ],
+  "source_placement": "src/frontend/cgminer.c is integration placement within frontend cluster, not independent filename proof for every slice",
+  "new_helpers": [
+    "reconstruction/support/work_difficulty_pipeline.c"
+  ],
+  "new_api": "include/xminer/recovery/difficulty.h",
+  "arithmetic_domain": "binary64 default round-to-nearest/even, no fast-math/contraction/extended intermediates; forward quotient <2^256; negative and nonfinite difficulty rejected",
+  "target_fields": {
+    "midstate_offset": "0x80",
+    "target_offset": "0x100",
+    "input_difficulty_offset": "0x1a0"
+  },
+  "full_work_or_consumer_implemented": false,
+  "hardware_tested": false
+}

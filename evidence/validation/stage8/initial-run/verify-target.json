@@ -1,0 +1,19 @@
+{
+  "group": "verify-target",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "/opt/pyvenv/bin/python",
+        "tests/test_stage8_differential.py",
+        "target"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "verify-target-00.log",
+      "seconds": 0.993,
+      "sha256": "f2cdebe34b81b03242b121c484b9899e12592e12202ca30fc5fdc3bcd5584732"
+    }
+  ]
+}

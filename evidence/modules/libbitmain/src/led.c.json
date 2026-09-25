@@ -1,0 +1,62 @@
+{
+  "path": "libbitmain/src/led.c",
+  "observed_as": "/tmp/build/libbitmain/src/led.c",
+  "status": "pending-not-implemented",
+  "evidence": [
+    {
+      "address": "0x5ecefa",
+      "xor": 71,
+      "decoded_length": 32,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x000235c0",
+      "end_exclusive": "0x000239a0",
+      "path_references": [
+        {
+          "insn": "0x23784",
+          "string": "0x5ecefa",
+          "kind": "literal-abs",
+          "text": "/tmp/build/libbitmain/src/led.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000f96a0",
+      "end_exclusive": "0x000f9840",
+      "path_references": [
+        {
+          "insn": "0xf96f8",
+          "string": "0x5ecefa",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/led.c"
+        },
+        {
+          "insn": "0xf975c",
+          "string": "0x5ecefa",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/led.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000f9a88",
+      "end_exclusive": "0x000f9cf0",
+      "path_references": [
+        {
+          "insn": "0xf9b70",
+          "string": "0x5ecefa",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/led.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": []
+}

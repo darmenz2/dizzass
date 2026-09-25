@@ -1,0 +1,4 @@
+exit_code=1
+libbitmain/src/pll.c:14:2: error: #error "Recovered PLL searches require strict floating-point semantics, not fast-math"
+   14 | #error "Recovered PLL searches require strict floating-point semantics, not fast-math"
+      |  ^~~~~

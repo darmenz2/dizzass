@@ -1,0 +1,80 @@
+{
+  "path": "libbitmain/src/xil/i2c.c",
+  "observed_as": "/tmp/build/libbitmain/src/xil/i2c.c",
+  "status": "pending-not-implemented",
+  "evidence": [
+    {
+      "address": "0x5edf7d",
+      "xor": 187,
+      "decoded_length": 36,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x00114ac8",
+      "end_exclusive": "0x00114c54",
+      "path_references": [
+        {
+          "insn": "0x114b6c",
+          "string": "0x5edf7d",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/i2c.c"
+        },
+        {
+          "insn": "0x114ba4",
+          "string": "0x5edf7d",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/i2c.c"
+        },
+        {
+          "insn": "0x114bf0",
+          "string": "0x5edf7d",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/i2c.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00114e20",
+      "end_exclusive": "0x00115088",
+      "path_references": [
+        {
+          "insn": "0x114ee8",
+          "string": "0x5edf7d",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/i2c.c"
+        },
+        {
+          "insn": "0x114f40",
+          "string": "0x5edf7d",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/i2c.c"
+        },
+        {
+          "insn": "0x114ff0",
+          "string": "0x5edf7d",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/i2c.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00115180",
+      "end_exclusive": "0x00115488",
+      "path_references": [
+        {
+          "insn": "0x11522c",
+          "string": "0x5edf7d",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/i2c.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": []
+}

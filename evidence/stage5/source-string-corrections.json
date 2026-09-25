@@ -1,0 +1,15 @@
+[
+  {
+    "constructor_context": "0x10eb14",
+    "xor": 170,
+    "base": "0x5edbbf",
+    "length": 33,
+    "text": "/tmp/build/libbitmain/src/uart.c",
+    "previous_length": 11,
+    "method": "Constructor loop compares count to 33 at 0x10eae4, XOR 170 at 0x10eb14; base from pc-relative literal at 0x10ead8/0x10ed14.",
+    "original_bytes_sha256": "7922c5ea5ebc8dbe71364e176b1d89988f6c5d7711a4e0dd58cd28cbf4227cef",
+    "constructor_slice_start": "0x0010ead8",
+    "constructor_slice_end_exclusive": "0x0010eb50",
+    "constructor_slice_sha256": "5ef6631ef4107d538d73b123793d8f7831813087cddcfe25e05a8389ed27d3db"
+  }
+]

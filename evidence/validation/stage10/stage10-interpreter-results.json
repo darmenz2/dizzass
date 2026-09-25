@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "synthetic_instruction_checks": 1302,
+  "original_conversion_helper_checks": 660,
+  "fused_vs_unfused_distinguished": true,
+  "default_rounding_only": true,
+  "hardware_tested": false
+}

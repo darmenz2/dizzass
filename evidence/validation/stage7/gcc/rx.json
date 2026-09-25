@@ -1,0 +1,63 @@
+{
+  "group": "rx",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "./build/test-work-rx"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "rx-00.log",
+      "seconds": 0.067,
+      "sha256": "a9fa345fd8960e67f0cd4f0f9dc2bf9f3f1e5d43597719c0b24574c871a0bd5d"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage6_interpreter.py"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "rx-01.log",
+      "seconds": 0.742,
+      "sha256": "f61a1cc456ceda4056ec07b96955700aa61d606e5224a1ce2b446c7fa41b1035"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage6_rx_differential.py"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "rx-02.log",
+      "seconds": 6.667,
+      "sha256": "cf0102d5feef371048baab5cba8e548a5cbf0158a631154c73ded062a04cee6c"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage6_stream_differential.py"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "rx-03.log",
+      "seconds": 2.644,
+      "sha256": "f79bd9bba34f7b8ab6b9812045a4d1a878e6d6181033a4dedb22db9505dea47f"
+    },
+    {
+      "command": [
+        "make",
+        "-f",
+        "Makefile.recovery",
+        "linux-pty-rx"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "rx-04.log",
+      "seconds": 0.303,
+      "sha256": "4e1529363d9d4b5c9e2ee15517f717cc6a25029e2ad5abf452cba3a2421ed447"
+    }
+  ]
+}

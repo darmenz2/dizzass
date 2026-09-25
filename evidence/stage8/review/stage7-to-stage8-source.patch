@@ -1,0 +1,3303 @@
+diff --git a/Makefile.recovery b/Makefile.recovery
+index f9cde6c..2f4eac9 100644
+--- a/Makefile.recovery
++++ b/Makefile.recovery
+@@ -7,8 +7,8 @@ PYTHON ?= python3
+ CPPFLAGS += -Iinclude
+ CFLAGS ?= -O2 -g
+ STRICT = -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror
+-SOURCES = reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c
+-HEADERS = include/xminer/recovery/work_nonce.h include/xminer/recovery/sha256_midstate.h include/xminer/recovery/work_rx.h include/xminer/recovery/uart.h include/xminer/recovery/chip1398.h include/xminer/recovery/pll.h include/xminer/recovery/aml_chip.h include/xminer/recovery/reg_cache.h reconstruction/data/reg_cache_defaults.inc
++SOURCES = src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c
++HEADERS = include/xminer/recovery/nonce_verify.h include/xminer/recovery/work_nonce.h include/xminer/recovery/sha256_midstate.h include/xminer/recovery/work_rx.h include/xminer/recovery/uart.h include/xminer/recovery/chip1398.h include/xminer/recovery/pll.h include/xminer/recovery/aml_chip.h include/xminer/recovery/reg_cache.h reconstruction/data/reg_cache_defaults.inc
+ OBJECTS = $(patsubst %.c,build/host/%.o,$(SOURCES))
+ ARM_OBJECTS = $(patsubst %.c,build/arm/%.o,$(SOURCES))
+ .PHONY: all test linux-pty arm sanitize sanitize-linux-pty evidence-check clean full-runtime
+@@ -156,3 +156,44 @@ stage7-clang: build/libvn135_recovered-clang.so build/test-work-nonce-clang
+ 	$(PYTHON) tests/test_stage7_differential.py core --library ./build/libvn135_recovered-clang.so --tag clang
+ 	$(CLANG) $(CPPFLAGS) -O1 -g $(STRICT) -fsanitize=address,undefined -fno-omit-frame-pointer $(SOURCES) tests/test_work_nonce.c -o build/test-work-nonce-clang-sanitized
+ 	ASAN_OPTIONS=detect_leaks=1 ./build/test-work-nonce-clang-sanitized
++
++# Stage 8: full header hash, target, bounded prefilter and recent-job selection.
++.PHONY: stage8 stage8-clang sanitize-stage8 fixtures-stage8
++build/test-nonce-verify: $(SOURCES) tests/test_nonce_verify.c $(HEADERS)
++	mkdir -p build
++	$(CC) $(CPPFLAGS) $(CFLAGS) $(STRICT) $(SOURCES) tests/test_nonce_verify.c -o $@
++build/vn135-verify-header: $(SOURCES) examples/verify_header.c $(HEADERS)
++	mkdir -p build
++	$(CC) $(CPPFLAGS) $(CFLAGS) $(STRICT) $(SOURCES) examples/verify_header.c -o $@
++fixtures-stage8:
++	$(CLANG) --target=armv7-none-eabihf -marm -march=armv7-a -c tests/arm32_stage8_instructions.S -o tests/fixtures/arm32_stage8_instructions.o
++stage8: build/libvn135_recovered.so build/test-nonce-verify build/vn135-verify-header
++	./build/test-nonce-verify
++	$(PYTHON) tests/test_stage8_interpreter.py
++	$(PYTHON) tests/test_stage8_differential.py hash
++	$(PYTHON) tests/test_stage8_differential.py target
++	$(PYTHON) tests/test_stage8_differential.py prefilter
++	$(PYTHON) tests/test_stage8_differential.py job
++	$(PYTHON) tests/test_stage8_differential.py registry
++	$(PYTHON) tests/test_verify_header_cli.py
++	$(PYTHON) tools/check_stage8_evidence.py
++test: stage8
++sanitize: sanitize-stage8
++sanitize-stage8:
++	mkdir -p build
++	$(CC) $(CPPFLAGS) -O1 -g $(STRICT) -fsanitize=address,undefined -fno-omit-frame-pointer $(SOURCES) tests/test_nonce_verify.c -o build/test-nonce-verify-sanitized
++	ASAN_OPTIONS=detect_leaks=1 ./build/test-nonce-verify-sanitized
++stage8-clang: build/libvn135_recovered-clang.so
++	$(CLANG) $(CPPFLAGS) $(CFLAGS) $(STRICT) $(SOURCES) tests/test_nonce_verify.c -o build/test-nonce-verify-clang
++	./build/test-nonce-verify-clang
++	$(PYTHON) tests/test_stage8_differential.py hash --library ./build/libvn135_recovered-clang.so --tag clang
++	$(PYTHON) tests/test_stage8_differential.py target --library ./build/libvn135_recovered-clang.so --tag clang
++	$(PYTHON) tests/test_stage8_differential.py prefilter --library ./build/libvn135_recovered-clang.so --tag clang
++	$(PYTHON) tests/test_stage8_differential.py job --library ./build/libvn135_recovered-clang.so --tag clang
++	$(PYTHON) tests/test_stage8_differential.py registry --library ./build/libvn135_recovered-clang.so --tag clang
++	$(CLANG) $(CPPFLAGS) -O1 -g $(STRICT) -fsanitize=address,undefined -fno-omit-frame-pointer $(SOURCES) tests/test_nonce_verify.c -o build/test-nonce-verify-clang-sanitized
++	ASAN_OPTIONS=detect_leaks=1 ./build/test-nonce-verify-clang-sanitized
++evidence-check: evidence-stage8
++.PHONY: evidence-stage8
++evidence-stage8:
++	$(PYTHON) tools/check_stage8_evidence.py
+diff --git a/RECONSTRUCTION_README_RU.md b/RECONSTRUCTION_README_RU.md
+index 8c8c552..e64b3de 100644
+--- a/RECONSTRUCTION_README_RU.md
++++ b/RECONSTRUCTION_README_RU.md
+@@ -1,192 +1,106 @@
+-# VNishNet T21 AML 1.3.5 — Stage 7, модульная реконструкция
++# VNishNet T21 AML 1.3.5 — Stage 8, модульная реконструкция
+ 
+-**Исходники и библиотеки, не готовая прошивка и не заменяющий cgminer бинарник.**
+-Восстанавливаются отдельные проверенные участки оригинального ARM-кода на
+-наблюдаемых путях исходников. Нет монолитного `.c`, симулятора майнера или
+-тысяч функций, которые притворяются восстановленными и всегда возвращают успех.
++**Исходники и проверочные библиотеки, не установочная прошивка.**
+ 
+ ## Текущее состояние
+ 
+-| Показатель | Stage 7 |
++| Показатель | Stage 8 |
+ |---|---:|
+-| Наблюдаемых исходных путей | 46 |
+-| Частично восстановленных наблюдаемых файлов | 6 |
+-| Невосстановленных, исключённых из сборки | 40 |
+-| Единиц трансляции, включая четыре новых helper/adapter-файла | 10 |
+-| Сравнительных случаев, совокупный набор | 96 439 |
+-| Реальный T21 майнинг, hardware acceptance, полный автотюн | Не выполнены |
+-
+-Количество файлов/тестов **не является процентом готовности** и не доказывает
+-полноту всех ветвей или входных условий. Из нового набора 65 536 случаев —
+-полный перебор входов одного 16-битного преобразования, не тысячи новых функций.
+-
+-### Восстановленные части на исходных путях
+-
+-- `libbitmain/src/chip/chip1398.c`: отдельные битовые преобразования регистров,
+-  пакет SET_CONFIG, его исследованный управляющий путь, связь с кэшем и helper
+-  определения core по nonce и числовому model ID.
+-- `libbitmain/src/pll.c`: два расчёта делителей PLL, не замена всего физического
+-  программирования PLL.
+-- `libbitmain/src/aml/chip.c`: префикс `55 AA`, оболочка вызова UART-helper,
+-  освобождение ресурсов и отдельное преобразование маски цепи.
+-- `libbitmain/src/reg_cache.c`: семь процедур программного кэша, восемь таблиц,
+-  контекст вместо оригинального глобального состояния.
+-- `libbitmain/src/uart.c`: шесть процедур open/baud/read/write/flush/destroy
+-  с явными callbacks вместо оригинальных внешних Linux/libc/mutex функций.
+-
+-- `src/backend/work-gen/work-gen.c`: форматы и преамбула входящих кадров, разбор
+-  ответов регистров, фильтрация, индекс задания и подготовка nonce-кандидата
+-  со снимком задания, битами версии и SHA-256 midstate (не проверка самой шары).
+-
+-Новые support-файлы, заголовки API, тесты и инструменты находятся отдельно.
+-Они не выдаются за оригинальные имена/сигнатуры VNish. Невосстановленные исходные
+-пути сохраняют явный `#error` и не включены в сборку. Автотюн и frontend НЕ реализованы; в work-gen восстановлены только RX-участки,
+-а не полный майнинговый тракт.
+-
+-Новый путь `uart.c` найден исправлением доказуемо обрезанной XOR-строки Stage 1.
+-Исходная запись Stage 1 сохранена, длина 33 проверяется настоящим участком
+-ARM-конструктора в локальном интерпретаторе. Все 46 путей не обязательно
+-составляют весь оригинальный проект.
+-
+-Подробности текущего этапа: **`STAGE7_CHANGELOG_RU.md`**. Отчёты Stage 3/4/5/6
+-сохранены как исторические; исправление значения «одна запись AML» находится
+-в Stage 5: один вызов helper может содержать до пяти системных записей.
+-
+-## Важная граница Stage 7
+-
+-Оригинальный producer заполняет 68 байт; очередь настроена на 72 байта.
+-Назначение последних четырёх байт не установлено. Новый компактный тип
+-**не является полным исходным ABI очереди** и не передаётся в неё автоматически.
+-Слот задания 0–31 не доказывает его актуальность. Чтение согласованного снимка,
+-chip/core attribution и управление поколениями остаются внешними задачами.
+-Готовый кандидат не означает корректный SHA256d, выполненный target или accepted share.
+-
+-## Сборка и тесты
++| Наблюдаемых оригинальных исходных путей | 46 |
++| Частично восстановлено / исключено из сборки | 7 / 39 |
++| C-единиц трансляции: 7 наблюдаемых + 7 новых helper/adapter | 14 |
++| Сравнительных случаев, старые и новые | 101 852 |
++| Работа реального T21 / аппаратный стенд / полный автотюн | Не подтверждены |
++
++Подробный текущий отчёт: **[STAGE8_CHANGELOG_RU.md](STAGE8_CHANGELOG_RU.md)**.
++Исторические отчёты Stage 3–7 сохранены без перезаписи.
++
++## Основные модули
++
++`chip1398.c`, `pll.c`, `aml/chip.c`, `reg_cache.c`, `uart.c`,
++`src/backend/work-gen/work-gen.c` и теперь `src/frontend/cgminer.c` содержат
++проверенные части логики, а не полное содержимое оригинальных файлов.
++`reconstruction/support/` содержит явно новые файлы и интеграционные API.
++Остальные 39 путей имеют `#error` и не включены в сборку. Монолита и фиктивных
++успешных заглушек нет. Количество файлов/тестов не означает процент готовности.
++
++Новый этап: полный SHA256d известного 80-байтного заголовка, исходное сравнение
++с target, префильтр дубликата/high-word, выбор первого совпадения в трёх
++сохранённых записях и проверка ссылки по списку. Подробности границ — в отчёте.
++**Нельзя автоматически подать сюда 68-байтный кандидат Stage 7 вместо полного
++заголовка. Восстановление work из сохранённого шаблона ещё не реализовано.**
++
++## Сборка
+ 
+ ```sh
+-make -f Makefile.recovery clean all test arm evidence-check sanitize
+-make -f Makefile.recovery stage7-clang
++make -f Makefile.recovery all arm stage8
++make -f Makefile.recovery test evidence-check sanitize
++make -f Makefile.recovery stage8-clang
+ make -f Makefile.recovery linux-pty sanitize-linux-pty
+ make -f Makefile.recovery linux-pty-rx sanitize-linux-pty-rx
+ python3 tests/test_assembler.py
+-python3 tools/update_overlay_inventory.py --check
++python3 tests/test_overlay_automake.py
+ ```
+ 
+-Нужны Python 3.10+ для инструмента сборки, **Python 3.10+ с randbytes** для тестов,
+-C11-компилятор, Clang и llvm-ar для ARM-цели. Linux PTY-тесту также нужны заголовки
+-ядра Linux, pthread и рабочий `/dev/ptmx`. Проверенное окружение: Python 3.13.5,
+-GCC 14.2.0, Clang 17.0.0, Linux x86-64.
+-
+-Выходные файлы:
++Результат: host `.a`/`.so`, ARMv7 freestanding `.a`, native тесты и отдельная
++офлайн-утилита `build/vn135-verify-header`. Последняя не майнит, не передаёт шары
++и не проверяет актуальность задания. Target передаётся 32 байтами little-endian,
++заголовок — 80 сериализованными байтами, оба аргумента в hex.
+ 
+-```text
+-build/libvn135_recovered.a          host-библиотека
+-build/libvn135_recovered-armv7.a    ARMv7-A/A32 freestanding библиотека
+-build/*results.json               машинные протоколы сравнений
+-```
+-
+-ARM собирается с `--target=armv7-none-eabihf`, hard-float calling convention,
+-без Linux sysroot. Это **не ARM Linux executable**. Совпадение исходных структур
+-на 64-битном host и original ARM ABI не предполагается.
+-
+-Совокупный набор: 28 184 прежних случаев + 68 255 сравнений Stage 7.
+-Из новых 65 536 относятся к исчерпывающей проверке одного 16-битного поля,
+-остальные 2 719 — к другим проверенным входам. Новые случаи повторены на Clang;
+-повтор не увеличивает сумму. Отдельно: 104 проверки SHA против hashlib,
+-3 536 новых синтетических тестов интерпретатора и 176 нативных потоков
+-RX → snapshot → candidate. Прежние RX/PTY проверки повторены.
+-ASan/UBSan проверяют native C-тесты, не заявляются для всех ctypes случаев.
+-
+-Сравнение выполняет исходные инструкции в ограниченном локальном A32/VFP-
+-интерпретаторе, с явно подменёнными внешними вызовами. Диагностика пропускается.
+-Неизвестная инструкция, выход за память, превышение лимита шагов или исключение
+-callback останавливают проверку. Это не независимый CPU-эмулятор и не доказательство
+-многопоточности/таймингов/поведения железа.
+-
+-Linux PTY-тест отдельно вызывает настоящее ядро для созданной им виртуальной
+-пары. Проверены скорость/атрибуты, фрагменты RX и байты TX; он не воспроизводит
+-физический интерфейс или ответы ASIC. Оригинальный ELF не запускается как процесс.
+-
+-## Ограничения UART, которые нельзя потерять при интеграции
+-
+-`vn135_uart_write_legacy` сохраняет оригинальные повторы **всего** буфера.
+-Неполный результат со старым `errno == EAGAIN` тоже может привести к повтору.
+-Это не безопасный write-all. У `vn135_uart_read` ошибка FIONREAD возвращает 0,
+-как пустая очередь. Ошибки позднего open требуют явного destroy. В оригинале
+-результаты mutex-init/strdup не являются немедленным условием отказа; безопасный
+-производственный адаптер должен определить отдельную политику.
+-
+-Внешний mutex AML и внутренний UART mutex не следует без анализа объединять.
+-Новая библиотека не подключена по умолчанию к физическим устройствам. Для
+-производственного запуска необходимы законченные аппаратные протоколы и стенд.
+-
+-## Поверх обычного cgminer
+-
+-Зафиксирован public upstream `ckolivas/cgminer`, commit
+-`b8491c66e7e22f23a9edf095dd1337ee581e88bd` в `reconstruction/upstream.lock.json`.
+-Это выбранная основа, **не доказанный точный предок** VNish.
+-Полная база пока не включена; повторное скачивание Stage 5 остановилось на ошибке
+-DNS. Полная сборка upstream с overlay здесь не проводилась.
++## Наложение на неизменённую публичную основу
+ 
+ ```sh
+ python3 tools/assemble_on_cgminer.py --fetch --output ../cgminer-vnish135
+-# либо уже имеющийся чистый checkout зафиксированного commit:
++# или собственный чистый checkout зафиксированного commit:
+ python3 tools/assemble_on_cgminer.py --source /path/to/cgminer --output ../cgminer-vnish135
+ ```
+ 
+-Сборщик создаёт новую папку, проверяет commit/tree/Makefile.am и контрольные суммы
+-всех файлов overlay. Существующий checkout не изменяется. Совпадения файлов
+-вызывают отказ, не скрытую перезапись. В Makefile.am добавляется один include;
+-исходные `cgminer.c`, `api.c`, Stratum, старые драйверы и авторство не заменяются.
+-
+-Это подключение вспомогательных модулей на этапе линковки, **не регистрация
+-рабочего T21-драйвера**. Проверка сборщика на локальной Git-фикстуре не равна
+-сборке самого upstream.
++Пин: `ckolivas/cgminer`, `b8491c66e7e22f23a9edf095dd1337ee581e88bd`.
++Он выбран как интеграционная база, не доказан как точный предок VNish. Полная
++база не включена; совместная сборка настоящего upstream не выполнена. Сборщик
++создаёт новую папку, проверяет commit/tree/инвентарь и отказывается перезаписывать
++совпадающие исходные файлы. Root `cgminer.c` не заменяется.
+ 
+-## Доказательства
++Исправлен воспроизведённый конфликт имён объектов root/frontend `cgminer.c`:
++в overlay включён `subdir-objects`. Локальная Automake-фикстура собирает все
++восстановленные модули с отдельным тестовым main, но это не сборка самого upstream.
+ 
+-- `reference/cgminer.vendor.elf`: неизменённые 6 228 004 байта.
+-- SHA-256: `b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9`.
+-- `evidence/source-tree.json` и `evidence/modules/`: пути, статусы и ссылки.
+-- `evidence/verified-slices.json`: историческая карта до Stage 6: 40 участков и 9 записей данных.
+-- `evidence/stage7/recovery-manifest.json`: новые nonce/SHA-участки, контекст и граница 68/72.
+-- `evidence/validation/stage7/`: протоколы новых проверок GCC/Clang.
+-- `evidence/stage5/`: листинги UART, поправка длины исходной строки и примечания.
+-- `evidence/validation/stage5/`: исторические GCC/Clang протоколы.
+-- `evidence/stage6/`: границы, листинги и условия прежних RX-сравнений.
+-- `evidence/validation/stage6/`: исторические GCC/Clang протоколы.
+-- `evidence/ehabi-ranges.json`: 1 570 unwind-записей, **не список всех функций**.
++## Проверки и границы
+ 
+-Извлечение reference из пользовательского образа:
+-
+-```sh
+-python3 tools/extract_reference.py /path/to/vnishnet-t21-aml-nand-v1.3.5.tar.gz
+-```
++Новый набор: 5 413 сравнительных случаев, повторён на GCC и Clang. Исторические
++96 439 повторены. Большая часть прежнего числа — 65 536 входов небольшой
++перестановки, а не десятки тысяч функций. Native ASan/UBSan не означает, что
++все ctypes/интерпретаторные сравнения запущены под санитайзером.
+ 
+-## Осталось
++Сравнение использует ограниченный локальный ARM-интерпретатор и явные внешние
++обработчики. Оригинальный ELF как Linux-процесс не запускается. PTY — виртуальная
++пара, не электрический UART. Точные границы и источники доступны в
++`evidence/stage8/recovery-manifest.json` и прошлых картах. Реальный SHA и поиск
++по исходному массиву указателей исполняются в соответствующих тестах, не
++подменяются ожидаемыми ответами.
+ 
+-Связь модели T21 с конкретным chip-драйвером, аппаратная инициализация, полный приём с
+-проверкой CRC/nonce и очередями живых заданий, управление PLL/baud на двух концах, PSU/датчики/защиты,
+-работа → nonce → подтверждённая пулом шара, адаптер драйвера cgminer и автотюн.
+-`dashd`, `hwscan`, `updater`, WebUI и ядро не восстанавливаются этим overlay целиком.
++Сохраняются важные ограничения: UART legacy может повторять весь буфер, Stage 6
++извлекает CRC без полной проверки, producer Stage 7 заполняет 68 из 72 байт
++очереди, слот 0–31 не доказывает свежесть. Новый prefilter помнит nonce даже при
++последующем отказе и не заменяет полный target/submit path.
+ 
+-## Важное ограничение RX Stage 6
++## Эталон и готовый архив
+ 
+-`VN135_RX_REGISTER` — декодированный ответ, не аппаратно подтверждённое значение.
+-`VN135_RX_NONCE_RAW` — сырое сообщение, не принятая шара. Младшие пять бит CRC
+-извлекаются без проверки на этом участке; отдельные последующие проверки не
+-восстановлены. Стабильность внутренних селекторов во время потока — явное
+-условие нового интерфейса. Новый bounded-адаптер не выдаётся за оригинальный
+-кольцевой буфер/потоковый диспетчер VNish.
++`reference/cgminer.vendor.elf`: 6 228 004 байта, SHA-256
++`b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9`.
++`evidence/source-tree.json` связывает 46 путей с исходными байтами. Статусы
++частичного восстановления не утверждают восстановление оригинальных имён/API.
++Полные функции нельзя считать по EHABI: 1 570 записей не являются таблицей всех функций.
+ 
+-**Не устанавливать библиотеку вместо `/usr/bin/cgminer`. `full-runtime`
+-намеренно выдаёт ошибку: полноценный майнер ещё не реализован.**
++Группы чистой проверки: `python3 tools/verify_stage8.py GROUP --logs /outside/path`.
++Начать с `build`, остальные перечислены в текущем отчёте. Логи вне дерева, чтобы
++не изменять инвентарь. Финальные лог и JSON распакованного ZIP поставляются отдельно.
+ 
+-## Проверка группами из чистой копии
++## Не выполнено
+ 
+-`python3 tools/verify_stage7.py GROUP --logs /absolute/path/outside-source`
++T21→driver binding, запуск хешплат, аппаратные PLL/baud/PSU/защиты, полный work
++lifecycle и очередь, принятие шар, upstream-драйвер и автотюн. `dashd`, `hwscan`,
++`updater`, WebUI и ядро не реконструируются этим overlay целиком.
+ 
+-Сначала `build`, затем `core`, `cache`, `uart`, `rx`, `nonce`, `clang-nonce`,
+-`sanitizers`, `evidence`, `full-runtime-blocked`. Последняя группа ожидает отказ
+-полной сборки майнера, а не успех. Финальная сводка и лог проверки именно
+-поставленного ZIP находятся в отдельных файлах `VNish135_Stage7_Final_Verification.*`.
++**Не устанавливать библиотеки вместо `/usr/bin/cgminer`. `full-runtime` специально
++возвращает ошибку; готовый майнер не выдаётся.**
+diff --git a/RECONSTRUCTION_STATUS.json b/RECONSTRUCTION_STATUS.json
+index 479eb1e..6b3798b 100644
+--- a/RECONSTRUCTION_STATUS.json
++++ b/RECONSTRUCTION_STATUS.json
+@@ -1,17 +1,16 @@
+ {
+-  "artifact": "modular-source-overlay-stage7",
++  "artifact": "modular-source-overlay-stage8",
+   "reference": "VNishNet T21 AML 1.3.5 cgminer",
+   "observed_source_paths": 46,
+-  "partially_reconstructed_observed_files": 6,
+-  "pending_observed_files": 40,
+-  "compiled_c_translation_units": 10,
+-  "public_reconstruction_c_functions": 40,
++  "partially_reconstructed_observed_files": 7,
++  "pending_observed_files": 39,
++  "compiled_c_translation_units": 14,
++  "public_reconstruction_c_functions": 49,
+   "public_functions_are_not_a_count_of_recovered_original_functions": true,
+-  "original_code_slices_tested": 46,
+   "original_data_records_verified": 9,
+   "stage2_differential_cases_repeated": 2546,
+   "stage3_differential_cases_passed": 3219,
+-  "cumulative_distinct_test_cases": 96439,
++  "cumulative_distinct_test_cases": 101852,
+   "stage3_cases_repeated_with_clang": 3219,
+   "separate_synthetic_interpreter_checks": 1318,
+   "full_vendor_tree_recovered": false,
+@@ -46,7 +45,7 @@
+   "source_path_count_increased_by_correcting_truncated_string": true,
+   "stage5_scope": "Common UART routines and combined original AML/UART TX with injected external calls, plus separate Linux PTY test",
+   "stage3_one_write_claim_corrected": "One UART helper invocation in AML, up to five OS write attempts inside UART helper",
+-  "archive_verification_record": "Delivered separately: VNish135_Stage7_Final_Verification.json",
++  "archive_verification_record": "Delivered separately: VNish135_Stage8_Final_Verification.json",
+   "stage6_rx_differential_cases_passed": 6088,
+   "stage6_cases_repeated_with_clang": 6088,
+   "stage6_distinct_streams_compared": 96,
+@@ -85,5 +84,34 @@
+   "stage7_explicitly_populated_candidate_bytes": 68,
+   "stage7_remaining_queue_bytes_semantics": "Unproven: not written in tested producer slice. Padding is a hypothesis.",
+   "stage7_binary_drop_in_abi_compatible": false,
+-  "stage7_scope": "Bounded original RX nonce producer with supplied immutable 168-byte job snapshot, injected chip/core attribution and original-equivalent SHA first-block midstate; new bounded integration adapter; one core bit helper."
++  "stage7_scope": "Bounded original RX nonce producer with supplied immutable 168-byte job snapshot, injected chip/core attribution and original-equivalent SHA first-block midstate; new bounded integration adapter; one core bit helper.",
++  "legacy_stage7_original_code_slices_tested": 46,
++  "stage8_manifest_ranges": 10,
++  "stage8_context_or_data_only_ranges": 4,
++  "stage8_original_instruction_comparisons": 5413,
++  "stage8_counts": {
++    "hash": 305,
++    "target": 2340,
++    "prefilter": 883,
++    "job": 1024,
++    "registry": 861
++  },
++  "stage8_cases_repeated_with_clang": 5413,
++  "stage8_native_cases": 198,
++  "stage8_interpreter_cases": 3779,
++  "stage8_separate_cli_cases": 166,
++  "stage8_full_header_sha256d_implemented": true,
++  "stage8_target_comparison_implemented": true,
++  "stage8_bounded_nonce_prefilter_implemented": true,
++  "stage8_three_record_selector_implemented": true,
++  "stage8_reference_membership_implemented": true,
++  "stage8_full_job_lifecycle_implemented": false,
++  "stage8_full_nonce_consumer_implemented": false,
++  "stage8_pool_share_acceptance_tested": false,
++  "stage8_native_gcc_clang_sanitizers_passed": true,
++  "stage8_overlay_object_collision_reproduced_and_fixed": true,
++  "stage8_automake_fixture_passed": true,
++  "stage8_actual_upstream_build_tested": false,
++  "stage8_fullwork_rebuild_0x300ac_implemented": false,
++  "stage8_scope": "Bounded hash/prefilter/target/recent-record/reference-list logic; new explicit APIs; no production hardware/pool registration"
+ }
+diff --git a/STAGE8_CHANGELOG_RU.md b/STAGE8_CHANGELOG_RU.md
+new file mode 100644
+index 0000000..1442341
+--- /dev/null
++++ b/STAGE8_CHANGELOG_RU.md
+@@ -0,0 +1,182 @@
++# VNishNet T21 AML 1.3.5 — Stage 8: SHA256d, target и выбор записи задания
++
++**Модульная реконструкция, не готовый T21-майнер. Физическое оборудование, пулы и серверы не подключались.**
++
++Продолжение Stage 7. Неизменённый ELF: 6 228 004 байта, SHA-256
++`b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9`.
++
++## 1. Реальные новые реализации
++
++| Путь | Реализованный объём |
++|---|---|
++| `src/frontend/cgminer.c` | Хеширование заголовка с исходным порядком слов; префикс проверки повторного nonce и старшего слова хеша |
++| `reconstruction/support/sha256d80.c` | Новая фиксированная SHA256d-процедура для 80 сериализованных байтов; использует ранее проверенное сжатие SHA |
++| `reconstruction/support/target256.c` | Исходное unsigned-сравнение 256-битного хеша с target |
++| `reconstruction/support/nonce_job_window.c` | Первый совпавший ключ в трёх записях, проверка ссылки по списку и их новая явная связка |
++| `include/xminer/recovery/nonce_verify.h` | Новый интеграционный API; не двоичный ABI структур производителя |
++
++Подтверждённый исходный путь frontend присутствует в ссылке по `0x32fdc`.
++Расположение hash-helper `0x2d994` именно в этом файле — интеграционный выбор
++внутри frontend-кластера: собственный исходный путь этой функции отдельно не
++доказан. Имена трёх support-файлов новые, неизвестные оригинальные пути не выдумываются.
++
++## 2. Полный SHA256d и порядок байтов
++
++Оригинальная функция `0x2d994` читает 20 слов из первых 80 байт work, меняет порядок
++байтов в каждом слове, считает SHA-256 от 80 байт, затем SHA-256 от полученных 32
++байт. Результат записывается по `work + 0x120`. Оригинальная SHA-процедура —
++`0x108f38`, с собственными compression/finalizer из ELF.
++
++Новый API различает **сериализованный 80-байтный заголовок** и **80 исходных байтов
++work с переставленными словами**. Это не взаимозаменяемые входы. Выход — 32 сырых
++байта digest, без разворота для отображения. Оба API допускают перекрытие входа
++с выходом: все нужные входные данные считываются до записи результата.
++
++В сравнительных тестах полностью выполняются оригинальные hash-wrapper и SHA;
++ожидаемый хеш не подставляется. Независимое сравнение — Python `hashlib`. Все
++остальные байты тестового 632-байтного work должны остаться неизменны.
++
++**Это не автоматическое продолжение 68-байтного кандидата Stage 7.** В потребителе
++обнаружен вызов восстановления полного work по сохранённому шаблону (`0x300ac`).
++Он ещё не перенесён. Для новых hash-функций вызывающий код обязан передать полный
++80-байтный заголовок. Недостающие поля не дополняются нулями или догадками.
++
++## 3. Target и предварительный фильтр — разные проверки
++
++`0x10c1c` сравнивает восемь unsigned 32-битных слов от старшего к младшему.
++На исследованной little-endian платформе это **hash <= target**, равенство проходит.
++Новый переносимый API явно читает little-endian слова, не использует потенциально
++невыровненные указатели `uint32_t *`. На месте вызова `0x327c8` передаются
++`work + 0x120` и `work + 0x100`. Валидность значения target по правилам сети или
++согласование сложности пула этой функцией не проверяются.
++
++Ранее в frontend есть префикс `0x32f74–0x330a4`:
++
++1. Равный предыдущему скалярному nonce отклоняется без вычисления хеша и мутаций.
++2. Новый nonce сохраняется в last_nonce и записывается по `work + 0x4c` **до хеширования**.
++3. Вызывается выбранная через function pointer процедура хеширования.
++4. Старшее слово результата должно быть <= `0xffff` при числовом селекторе 1,
++   либо равно 0 при остальных значениях.
++
++Если последний фильтр отклонил результат, last_nonce уже изменён. Немедленный
++повтор попадёт в duplicate-ветвь. Нулевой начальный last_nonce также отклоняет
++nonce 0; новый API не добавляет отсутствующий у исходного поля флаг валидности.
++Это описание локального контекста, не утверждение о глобальном обнаружении
++дубликатов между заданиями или об ошибке реального T21.
++
++Оригинальный hash-pointer берётся по смещению `+0x208`. В части тестов он
++**явно выбран** равным `0x2d994`; это тестовая связка, а не доказательство выбора
++этого callback моделью T21. Имена алгоритмов для числового селектора не придуманы.
++Возврат `VN135_PREFILTER_CONTINUE` — проход только этого префикса, не accepted share.
++Политика учёта и отправки после `0x330a4` не восстановлена этим этапом.
++
++## 4. Три записи и проверка ссылки
++
++Исследованный consumer-участок `0x74de4` ищет равенство 32-битного ключа по полям
++`+0x278`, `+0x6f0`, `+0xb68`; шаг записей `0x478`. Ссылка расположена на четыре
++байта дальше. Выбирается **первое** совпадение. При отсутствующей/непригодной ссылке
++или нулевом поле по `reference + 0x1fc` поздние совпадения не пробуются.
++
++Процедура `0x34d54` проверяет наличие этой ссылки в текущем массиве указателей:
++возвращает 0 при наличии, 1 при отсутствии. Сравниваются указатели, их объекты
++не разыменовываются. Оригинальные lock/unlock окружают поиск. Новый API принимает
++согласованный снимок списка и требует внешней синхронизации, а не изображает
++оригинальную глобальную таблицу и mutex. Счётчик <=0 сохраняет исходный результат
++«отсутствует». При положительном count массив должен содержать как минимум count
++доступных элементов; это не универсальный безопасный парсер произвольных указателей.
++
++В 512 составных тестах выполняются **обе исходные процедуры** выбора и поиска,
++а не только callback с ожидаемым ответом. Поле `+0x1fc` остаётся сырым словом;
++ему не приписывается непроверенное название. Новые подробные коды ошибок —
++диагностика API, в оригинале проверяется только путь continue/skip.
++
++**Генерация задания, владение ссылкой, таймауты, переиспользование слота и
++потокобезопасность всей очереди не доказаны.** Трёхэлементная выборка не заменяет
++полный менеджер заданий. Queue ABI 72/68 из Stage 7 не меняется.
++
++## 5. Воспроизводимые проверки
++
++| Новые сравнения с оригинальными инструкциями | Случаев |
++|---|---:|
++| Полный SHA256d заголовка и неизменность прочего work | 305 |
++| Target: все восемь решающих слов, равенство, unsigned-границы | 2 340 |
++| Префильтр: результат, мутации и порядок вызовов | 883 |
++| Изолированный выбор записи с внедрённым предикатом | 1 024 |
++| Поиск ссылки (349) и совместная работа с consumer (512) | 861 |
++| **Новые сравнительные случаи Stage 8** | **5 413** |
++| Прежние Stage 2–7, повторённые на этой исходной базе | 96 439 |
++| **Совокупный набор** | **101 852** |
++
++Новые 5 413 случаев повторены на GCC и Clang; повтор не увеличивает число входных
++случаев. В префильтре 752 случая проверяют границу с подставленным digest; ещё
++131 используют выбор настоящей исходной SHA-функции, из них 3 — ранние дубликаты
++без вызова SHA. Числа относятся к отдельным тестовым контрактам, не к числу функций.
++
++Отдельно, не прибавляя к сумме: 198 C-проверок API/ошибок/памяти, 3 779 синтетических
++проверок добавленной ARM-инструкции BLX register и 166 запусков офлайн CLI.
++Неподдерживаемые Thumb/невыровненные BLX-цели вызывают ошибку интерпретатора.
++Проверки ASan/UBSan и утечек выполнены на native C-наборах GCC/Clang, не на всех
++Python/ctypes сравнительных случаях. Host и freestanding ARMv7-A/A32 hard-float
++библиотеки собраны. Оригинальный ELF не запускался как Linux-процесс.
++
++Ограниченный интерпретатор не является независимо сертифицированным CPU.
++Внешние memcpy/memset/getter/logging/mutex подменяются. Стек для префильтра
++устанавливается по прологу, VFP-сохранение пролога не исполняется. Границы остановки
++явные; неизвестные инструкции, выход за память и исключения callbacks считаются
++ошибками. Конкурентность, физический ARM и периферия не проверяются.
++
++## 6. Наложение поверх обычного cgminer
++
++После добавления `src/frontend/cgminer.c` реально воспроизведён конфликт объекта
++с корневым `cgminer.c` при отключённом `subdir-objects`. В overlay включено
++`AUTOMAKE_OPTIONS = subdir-objects`: исходные имена файлов сохранены, объекты
++разнесены по каталогам. Automake-тест воспроизводит отказ без опции, затем строит
++и линкует все 14 восстановленных единиц вместе с отдельным тестовым root main.
++
++**Этот main — удаляемая тестовая фикстура, не симулятор/замена cgminer.** Он не
++поставляется как исполняемый майнер. Реальная полная база `ckolivas/cgminer` пока
++не включена и её совместная сборка не проводилась. Новая попытка сетевого скачивания
++на Stage 8 не заявляется. Пин upstream и отказ перезаписывать исходные файлы сохранены.
++
++## 7. Офлайн-утилита и команды
++
++```sh
++make -f Makefile.recovery all arm stage8
++make -f Makefile.recovery stage8-clang sanitize-stage8
++python3 tests/test_overlay_automake.py
++```
++
++`build/vn135-verify-header` принимает **160 hex-символов сериализованного заголовка**
++и **64 hex-символа target в little-endian порядке байтов**. Печатает JSON с сырым
++SHA256d, `meets_target`, `job_freshness_checked:false`, `submitted:false`.
++Код выхода 0 означает завершённое вычисление, не истинность meets_target.
++Некорректные длина/hex возвращают код 2. Нет сетевого доступа, UART, поиска nonce
++или передачи шар. Это проверочная утилита, не cgminer и не аппаратный тест.
++
++Полная проверка разделена на группы:
++
++```sh
++python3 tools/verify_stage8.py build --logs /absolute/path/outside-source
++# Затем группы: core cache uart rx nonce clang-nonce
++# verify-hash verify-target verify-prefilter verify-job verify-native
++# clang-verify sanitizers automake evidence full-runtime-blocked
++```
++
++Для Linux PTY-нaборов требуется Linux. Для отдельной Automake-фикстуры нужны
++Autoconf/Automake; для ARM-библиотеки — Clang/llvm-ar. Библиотека ARM не имеет Linux
++sysroot и не является готовым ARM executable. Финальная проверка распакованного
++ZIP передаётся отдельным логом/JSON, а не заменяется предыдущими протоколами.
++
++## 8. Состояние и оставшиеся части
++
++Наблюдаемых путей 46; частично восстановлены 7, исключены 39. Компилируется 14
++C-файлов: 7 на наблюдаемых путях и 7 новых support/adapter-модулей. Это не процент
++готовности полного закрытого проекта. Ни монолита, ни успешных функций-заглушек нет.
++
++Не перенесены полное восстановление work из шаблона/coinbase/merkle, жизненный цикл
++очереди и заданий, проверки их актуальности, сетевое принятие шар, T21 model dispatch,
++аппаратный запуск/PLL/PSU/датчики/охлаждение/защиты, драйвер для upstream и автотюн.
++Отдельные математические проверки SHA/target не отменяют эти ограничения.
++
++**Не заменять штатный `/usr/bin/cgminer`. `full-runtime` продолжает намеренно
++возвращать ошибку: полноценный исполняемый майнер не создан.**
+diff --git a/evidence/modules/src/frontend/cgminer.c.json b/evidence/modules/src/frontend/cgminer.c.json
+index 871ccb7..b32dcb2 100644
+--- a/evidence/modules/src/frontend/cgminer.c.json
++++ b/evidence/modules/src/frontend/cgminer.c.json
+@@ -1,7 +1,7 @@
+ {
+   "path": "src/frontend/cgminer.c",
+   "observed_as": "/tmp/build/src/frontend/cgminer.c",
+-  "status": "pending-not-implemented",
++  "status": "partial-verified-slices",
+   "evidence": [
+     {
+       "address": "0x5e2194",
+@@ -1212,5 +1212,7 @@
+       "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+     }
+   ],
+-  "implementation_files": []
++  "implementation_files": [
++    "src/frontend/cgminer.c"
++  ]
+ }
+diff --git a/evidence/source-tree.json b/evidence/source-tree.json
+index 780c57b..5dfe2b2 100644
+--- a/evidence/source-tree.json
++++ b/evidence/source-tree.json
+@@ -1,8 +1,8 @@
+ {
+   "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+   "observed_source_paths": 46,
+-  "partial_modules": 6,
+-  "pending_modules": 40,
++  "partial_modules": 7,
++  "pending_modules": 39,
+   "complete_vendor_file_list": false,
+   "strings_checked": 5348,
+   "string_text_equal_after_trailing_nul_strip": 5348,
+@@ -11337,7 +11337,7 @@
+     {
+       "path": "src/frontend/cgminer.c",
+       "observed_as": "/tmp/build/src/frontend/cgminer.c",
+-      "status": "pending-not-implemented",
++      "status": "partial-verified-slices",
+       "evidence": [
+         {
+           "address": "0x5e2194",
+@@ -12548,7 +12548,9 @@
+           "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+         }
+       ],
+-      "implementation_files": []
++      "implementation_files": [
++        "src/frontend/cgminer.c"
++      ]
+     }
+   ]
+ }
+diff --git a/evidence/stage8/disasm/consumer_first_match.S b/evidence/stage8/disasm/consumer_first_match.S
+new file mode 100644
+index 0000000..05a9f93
+--- /dev/null
++++ b/evidence/stage8/disasm/consumer_first_match.S
+@@ -0,0 +1,44 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   74de4: e5952278     	ldr	r2, [r5, #0x278]
++   74de8: e3a01000     	mov	r1, #0
++   74dec: e59d004c     	ldr	r0, [sp, #0x4c]
++   74df0: e1500002     	cmp	r0, r2
++   74df4: 0a000013     	beq	0x74e48 <.text+0x64d48> @ imm = #0x4c
++   74df8: e5981000     	ldr	r1, [r8]
++   74dfc: e2412001     	sub	r2, r1, #1
++   74e00: e0010291     	mul	r1, r1, r2
++   74e04: e3110001     	tst	r1, #1
++   74e08: e5981000     	ldr	r1, [r8]
++   74e0c: e2412001     	sub	r2, r1, #1
++   74e10: e0010291     	mul	r1, r1, r2
++   74e14: e59526f0     	ldr	r2, [r5, #0x6f0]
++   74e18: e3110001     	tst	r1, #1
++   74e1c: 0a000002     	beq	0x74e2c <.text+0x64d2c> @ imm = #0x8
++   74e20: e5971000     	ldr	r1, [r7]
++   74e24: e3510009     	cmp	r1, #9
++   74e28: cafffff6     	bgt	0x74e08 <.text+0x64d08> @ imm = #-0x28
++   74e2c: e3a01001     	mov	r1, #1
++   74e30: e1500002     	cmp	r0, r2
++   74e34: 0a000003     	beq	0x74e48 <.text+0x64d48> @ imm = #0xc
++   74e38: e5952b68     	ldr	r2, [r5, #0xb68]
++   74e3c: e3a01002     	mov	r1, #2
++   74e40: e1500002     	cmp	r0, r2
++   74e44: 1a00000c     	bne	0x74e7c <.text+0x64d7c> @ imm = #0x30
++   74e48: e3000478     	movw	r0, #0x478
++   74e4c: e1045081     	smlabb	r4, r1, r0, r5
++   74e50: e3740e26     	cmn	r4, #608
++   74e54: 1594a27c     	ldrne	r10, [r4, #0x27c]
++   74e58: 135a0000     	cmpne	r10, #0
++   74e5c: 0a000006     	beq	0x74e7c <.text+0x64d7c> @ imm = #0x18
++   74e60: e1a0000a     	mov	r0, r10
++   74e64: ebfeffba     	bl	0x34d54 <.text+0x24c54> @ imm = #-0x40118
++   74e68: e3500000     	cmp	r0, #0
++   74e6c: 1a000002     	bne	0x74e7c <.text+0x64d7c> @ imm = #0x8
++   74e70: e59a01fc     	ldr	r0, [r10, #0x1fc]
++   74e74: e3500000     	cmp	r0, #0
++   74e78: 1a000025     	bne	0x74f14 <.text+0x64e14> @ imm = #0x94
+diff --git a/evidence/stage8/disasm/consumer_work_rebuild_context.S b/evidence/stage8/disasm/consumer_work_rebuild_context.S
+new file mode 100644
+index 0000000..5a3b248
+--- /dev/null
++++ b/evidence/stage8/disasm/consumer_work_rebuild_context.S
+@@ -0,0 +1,73 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   74f14: e59d2024     	ldr	r2, [sp, #0x24]
++   74f18: e59d0054     	ldr	r0, [sp, #0x54]
++   74f1c: e59d1060     	ldr	r1, [sp, #0x60]
++   74f20: e1c220d0     	ldrd	r2, r3, [r2]
++   74f24: e6bf0f30     	rev	r0, r0
++   74f28: e58d2008     	str	r2, [sp, #0x8]
++   74f2c: e2842d0a     	add	r2, r4, #640
++   74f30: e59d4028     	ldr	r4, [sp, #0x28]
++   74f34: e58d1000     	str	r1, [sp]
++   74f38: e24b1020     	sub	r1, r11, #32
++   74f3c: e58d300c     	str	r3, [sp, #0xc]
++   74f40: e1a0300a     	mov	r3, r10
++   74f44: e58d0010     	str	r0, [sp, #0x10]
++   74f48: e1a00004     	mov	r0, r4
++   74f4c: ebfeec56     	bl	0x300ac <.text+0x1ffac> @ imm = #-0x44ea8
++   74f50: e1a00006     	mov	r0, r6
++   74f54: eb14c5da     	bl	0x5a66c4 <.text+0x5965c4> @ imm = #0x531768
++   74f58: e599019c     	ldr	r0, [r9, #0x19c]
++   74f5c: e58d0020     	str	r0, [sp, #0x20]
++   74f60: e5950018     	ldr	r0, [r5, #0x18]
++   74f64: e51b1020     	ldr	r1, [r11, #-0x20]
++   74f68: e58d1018     	str	r1, [sp, #0x18]
++   74f6c: eb00c8a0     	bl	0xa71f4 <.text+0x970f4> @ imm = #0x32280
++   74f70: e58d001c     	str	r0, [sp, #0x1c]
++   74f74: e3a03000     	mov	r3, #0
++   74f78: e5d40052     	ldrb	r0, [r4, #0x52]
++   74f7c: e3a01000     	mov	r1, #0
++   74f80: e3500000     	cmp	r0, #0
++   74f84: 0a00000a     	beq	0x74fb4 <.text+0x64eb4> @ imm = #0x28
++   74f88: e5980000     	ldr	r0, [r8]
++   74f8c: e1a04001     	mov	r4, r1
++   74f90: e1a0a003     	mov	r10, r3
++   74f94: e2401001     	sub	r1, r0, #1
++   74f98: e0000190     	mul	r0, r0, r1
++   74f9c: e3100001     	tst	r0, #1
++   74fa0: 0a0000cf     	beq	0x752e4 <.text+0x651e4> @ imm = #0x33c
++   74fa4: e5970000     	ldr	r0, [r7]
++   74fa8: e3500009     	cmp	r0, #9
++   74fac: ca0000db     	bgt	0x75320 <.text+0x65220> @ imm = #0x36c
++   74fb0: ea0000cb     	b	0x752e4 <.text+0x651e4> @ imm = #0x32c
++   74fb4: e5980000     	ldr	r0, [r8]
++   74fb8: e2401001     	sub	r1, r0, #1
++   74fbc: e0000190     	mul	r0, r0, r1
++   74fc0: e3100001     	tst	r0, #1
++   74fc4: e59d0040     	ldr	r0, [sp, #0x40]
++   74fc8: e3a03e32     	mov	r3, #800
++   74fcc: e5954230     	ldr	r4, [r5, #0x230]
++   74fd0: e5981000     	ldr	r1, [r8]
++   74fd4: e02e4390     	mla	lr, r0, r3, r4
++   74fd8: e59dc044     	ldr	r12, [sp, #0x44]
++   74fdc: e2414001     	sub	r4, r1, #1
++   74fe0: e59d2060     	ldr	r2, [sp, #0x60]
++   74fe4: e0010491     	mul	r1, r1, r4
++   74fe8: e08c408c     	add	r4, r12, r12, lsl #1
++   74fec: e58d0014     	str	r0, [sp, #0x14]
++   74ff0: e59e3088     	ldr	r3, [lr, #0x88]
++   74ff4: e083c284     	add	r12, r3, r4, lsl #5
++   74ff8: e3110001     	tst	r1, #1
++   74ffc: e59c0048     	ldr	r0, [r12, #0x48]
++   75000: 0a000002     	beq	0x75010 <.text+0x64f10> @ imm = #0x8
++   75004: e5971000     	ldr	r1, [r7]
++   75008: e3510009     	cmp	r1, #9
++   7500c: caffffec     	bgt	0x74fc4 <.text+0x64ec4> @ imm = #-0x50
++   75010: e1500002     	cmp	r0, r2
++   75014: 1a000027     	bne	0x750b8 <.text+0x64fb8> @ imm = #0x9c
++   75018: e59d0028     	ldr	r0, [sp, #0x28]
++   7501c: e58d4020     	str	r4, [sp, #0x20]
+diff --git a/evidence/stage8/disasm/frontend_header_hash.S b/evidence/stage8/disasm/frontend_header_hash.S
+new file mode 100644
+index 0000000..ce25236
+--- /dev/null
++++ b/evidence/stage8/disasm/frontend_header_hash.S
+@@ -0,0 +1,164 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   2d994: e92d4ff0     	push	{r4, r5, r6, r7, r8, r9, r10, r11, lr}
++   2d998: e28db01c     	add	r11, sp, #28
++   2d99c: e24dd004     	sub	sp, sp, #4
++   2d9a0: e59f9258     	ldr	r9, [pc, #0x258]        @ 0x2dc00 <.text+0x1db00>
++   2d9a4: e1a04000     	mov	r4, r0
++   2d9a8: e79f9009     	ldr	r9, [pc, r9]
++   2d9ac: e5990000     	ldr	r0, [r9]
++   2d9b0: e2401001     	sub	r1, r0, #1
++   2d9b4: e0000190     	mul	r0, r0, r1
++   2d9b8: e3100001     	tst	r0, #1
++   2d9bc: 0a000004     	beq	0x2d9d4 <.text+0x1d8d4> @ imm = #0x10
++   2d9c0: e59f023c     	ldr	r0, [pc, #0x23c]        @ 0x2dc04 <.text+0x1db04>
++   2d9c4: e79f0000     	ldr	r0, [pc, r0]
++   2d9c8: e5900000     	ldr	r0, [r0]
++   2d9cc: e3500009     	cmp	r0, #9
++   2d9d0: ca000048     	bgt	0x2daf8 <.text+0x1d9f8> @ imm = #0x120
++   2d9d4: e1a0100d     	mov	r1, sp
++   2d9d8: e2410050     	sub	r0, r1, #80
++   2d9dc: e1a0d000     	mov	sp, r0
++   2d9e0: e24da020     	sub	r10, sp, #32
++   2d9e4: e1a0d00a     	mov	sp, r10
++   2d9e8: e284e010     	add	lr, r4, #16
++   2d9ec: e894008c     	ldm	r4, {r2, r3, r7}
++   2d9f0: e6bf7f37     	rev	r7, r7
++   2d9f4: e89e5020     	ldm	lr, {r5, r12, lr}
++   2d9f8: e6bf2f32     	rev	r2, r2
++   2d9fc: e6bf3f33     	rev	r3, r3
++   2da00: e594600c     	ldr	r6, [r4, #0xc]
++   2da04: e6bf5f35     	rev	r5, r5
++   2da08: e594801c     	ldr	r8, [r4, #0x1c]
++   2da0c: e6bfef3e     	rev	lr, lr
++   2da10: e5012050     	str	r2, [r1, #-0x50]
++   2da14: e2412040     	sub	r2, r1, #64
++   2da18: e501304c     	str	r3, [r1, #-0x4c]
++   2da1c: e6bf6f36     	rev	r6, r6
++   2da20: e5017048     	str	r7, [r1, #-0x48]
++   2da24: e2847020     	add	r7, r4, #32
++   2da28: e6bfcf3c     	rev	r12, r12
++   2da2c: e5016044     	str	r6, [r1, #-0x44]
++   2da30: e8825020     	stm	r2, {r5, r12, lr}
++   2da34: e6bf8f38     	rev	r8, r8
++   2da38: e284e030     	add	lr, r4, #48
++   2da3c: e5018034     	str	r8, [r1, #-0x34]
++   2da40: e897008c     	ldm	r7, {r2, r3, r7}
++   2da44: e6bf7f37     	rev	r7, r7
++   2da48: e89e5020     	ldm	lr, {r5, r12, lr}
++   2da4c: e6bf2f32     	rev	r2, r2
++   2da50: e6bf3f33     	rev	r3, r3
++   2da54: e594602c     	ldr	r6, [r4, #0x2c]
++   2da58: e6bf5f35     	rev	r5, r5
++   2da5c: e594803c     	ldr	r8, [r4, #0x3c]
++   2da60: e6bfcf3c     	rev	r12, r12
++   2da64: e5012030     	str	r2, [r1, #-0x30]
++   2da68: e2412020     	sub	r2, r1, #32
++   2da6c: e501302c     	str	r3, [r1, #-0x2c]
++   2da70: e6bf6f36     	rev	r6, r6
++   2da74: e5017028     	str	r7, [r1, #-0x28]
++   2da78: e2847040     	add	r7, r4, #64
++   2da7c: e6bfef3e     	rev	lr, lr
++   2da80: e5016024     	str	r6, [r1, #-0x24]
++   2da84: e8825020     	stm	r2, {r5, r12, lr}
++   2da88: e6bf8f38     	rev	r8, r8
++   2da8c: e241c010     	sub	r12, r1, #16
++   2da90: e5018014     	str	r8, [r1, #-0x14]
++   2da94: e897008c     	ldm	r7, {r2, r3, r7}
++   2da98: e6bf3f33     	rev	r3, r3
++   2da9c: e594604c     	ldr	r6, [r4, #0x4c]
++   2daa0: e6bf2f32     	rev	r2, r2
++   2daa4: e6bf7f37     	rev	r7, r7
++   2daa8: e88c008c     	stm	r12, {r2, r3, r7}
++   2daac: e6bf6f36     	rev	r6, r6
++   2dab0: e5016004     	str	r6, [r1, #-0x4]
++   2dab4: e3a01050     	mov	r1, #80
++   2dab8: e1a0200a     	mov	r2, r10
++   2dabc: eb036d1d     	bl	0x108f38 <.text+0xf8e38> @ imm = #0xdb474
++   2dac0: e2842e12     	add	r2, r4, #288
++   2dac4: e1a0000a     	mov	r0, r10
++   2dac8: e3a01020     	mov	r1, #32
++   2dacc: eb036d19     	bl	0x108f38 <.text+0xf8e38> @ imm = #0xdb464
++   2dad0: e5990000     	ldr	r0, [r9]
++   2dad4: e2401001     	sub	r1, r0, #1
++   2dad8: e0000190     	mul	r0, r0, r1
++   2dadc: e3100001     	tst	r0, #1
++   2dae0: 0a000044     	beq	0x2dbf8 <.text+0x1daf8> @ imm = #0x110
++   2dae4: e59f011c     	ldr	r0, [pc, #0x11c]        @ 0x2dc08 <.text+0x1db08>
++   2dae8: e79f0000     	ldr	r0, [pc, r0]
++   2daec: e5900000     	ldr	r0, [r0]
++   2daf0: e3500009     	cmp	r0, #9
++   2daf4: da00003f     	ble	0x2dbf8 <.text+0x1daf8> @ imm = #0xfc
++   2daf8: e1a0100d     	mov	r1, sp
++   2dafc: e2410050     	sub	r0, r1, #80
++   2db00: e1a0d000     	mov	sp, r0
++   2db04: e24d8020     	sub	r8, sp, #32
++   2db08: e1a0d008     	mov	sp, r8
++   2db0c: e284e010     	add	lr, r4, #16
++   2db10: e894008c     	ldm	r4, {r2, r3, r7}
++   2db14: e6bf7f37     	rev	r7, r7
++   2db18: e89e5020     	ldm	lr, {r5, r12, lr}
++   2db1c: e6bf2f32     	rev	r2, r2
++   2db20: e6bf3f33     	rev	r3, r3
++   2db24: e594600c     	ldr	r6, [r4, #0xc]
++   2db28: e6bf5f35     	rev	r5, r5
++   2db2c: e594a01c     	ldr	r10, [r4, #0x1c]
++   2db30: e6bfef3e     	rev	lr, lr
++   2db34: e5012050     	str	r2, [r1, #-0x50]
++   2db38: e2412040     	sub	r2, r1, #64
++   2db3c: e501304c     	str	r3, [r1, #-0x4c]
++   2db40: e6bf6f36     	rev	r6, r6
++   2db44: e5017048     	str	r7, [r1, #-0x48]
++   2db48: e2847020     	add	r7, r4, #32
++   2db4c: e6bfcf3c     	rev	r12, r12
++   2db50: e5016044     	str	r6, [r1, #-0x44]
++   2db54: e8825020     	stm	r2, {r5, r12, lr}
++   2db58: e6bfaf3a     	rev	r10, r10
++   2db5c: e284e030     	add	lr, r4, #48
++   2db60: e501a034     	str	r10, [r1, #-0x34]
++   2db64: e897008c     	ldm	r7, {r2, r3, r7}
++   2db68: e6bf7f37     	rev	r7, r7
++   2db6c: e89e5020     	ldm	lr, {r5, r12, lr}
++   2db70: e6bf2f32     	rev	r2, r2
++   2db74: e6bf3f33     	rev	r3, r3
++   2db78: e594602c     	ldr	r6, [r4, #0x2c]
++   2db7c: e6bf5f35     	rev	r5, r5
++   2db80: e594a03c     	ldr	r10, [r4, #0x3c]
++   2db84: e6bfcf3c     	rev	r12, r12
++   2db88: e5012030     	str	r2, [r1, #-0x30]
++   2db8c: e2412020     	sub	r2, r1, #32
++   2db90: e501302c     	str	r3, [r1, #-0x2c]
++   2db94: e6bf6f36     	rev	r6, r6
++   2db98: e5017028     	str	r7, [r1, #-0x28]
++   2db9c: e2847040     	add	r7, r4, #64
++   2dba0: e6bfef3e     	rev	lr, lr
++   2dba4: e5016024     	str	r6, [r1, #-0x24]
++   2dba8: e8825020     	stm	r2, {r5, r12, lr}
++   2dbac: e6bfaf3a     	rev	r10, r10
++   2dbb0: e241c010     	sub	r12, r1, #16
++   2dbb4: e501a014     	str	r10, [r1, #-0x14]
++   2dbb8: e897008c     	ldm	r7, {r2, r3, r7}
++   2dbbc: e6bf3f33     	rev	r3, r3
++   2dbc0: e594604c     	ldr	r6, [r4, #0x4c]
++   2dbc4: e6bf2f32     	rev	r2, r2
++   2dbc8: e6bf7f37     	rev	r7, r7
++   2dbcc: e88c008c     	stm	r12, {r2, r3, r7}
++   2dbd0: e6bf6f36     	rev	r6, r6
++   2dbd4: e5016004     	str	r6, [r1, #-0x4]
++   2dbd8: e3a01050     	mov	r1, #80
++   2dbdc: e1a02008     	mov	r2, r8
++   2dbe0: eb036cd4     	bl	0x108f38 <.text+0xf8e38> @ imm = #0xdb350
++   2dbe4: e2842e12     	add	r2, r4, #288
++   2dbe8: e1a00008     	mov	r0, r8
++   2dbec: e3a01020     	mov	r1, #32
++   2dbf0: eb036cd0     	bl	0x108f38 <.text+0xf8e38> @ imm = #0xdb340
++   2dbf4: eaffff76     	b	0x2d9d4 <.text+0x1d8d4> @ imm = #-0x228
++   2dbf8: e24bd01c     	sub	sp, r11, #28
++   2dbfc: e8bd8ff0     	pop	{r4, r5, r6, r7, r8, r9, r10, r11, pc}
++   2dc00: 005b1e78     	subseq	r1, r11, r8, ror lr
++   2dc04: 005b1d88     	subseq	r1, r11, r8, lsl #27
++   2dc08: 005b1c64     	subseq	r1, r11, r4, ror #24
+diff --git a/evidence/stage8/disasm/nonce_literals_context.S b/evidence/stage8/disasm/nonce_literals_context.S
+new file mode 100644
+index 0000000..aa99443
+--- /dev/null
++++ b/evidence/stage8/disasm/nonce_literals_context.S
+@@ -0,0 +1,13 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   33580: 005af1e3     	subseq	pc, r10, r3, ror #3
++   33584: 005af1b0     	ldrheq	pc, [r10], #-16
++   33588: 005af1dd     	ldrsbeq	pc, [r10], #-29
++   3358c: 005afed6     	ldrsbeq	pc, [r10], #-230
++   33590: 005ac1b0     	ldrheq	r12, [r10], #-16
++   33594: 005ab760     	subseq	r11, r10, r0, ror #14
++   33598: 005ab6b0     	ldrheq	r11, [r10], #-96
+diff --git a/evidence/stage8/disasm/nonce_prefilter.S b/evidence/stage8/disasm/nonce_prefilter.S
+new file mode 100644
+index 0000000..8f3102c
+--- /dev/null
++++ b/evidence/stage8/disasm/nonce_prefilter.S
+@@ -0,0 +1,82 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   32f74: e5905024     	ldr	r5, [r0, #0x24]
++   32f78: e1a08000     	mov	r8, r0
++   32f7c: e59500e8     	ldr	r0, [r5, #0xe8]
++   32f80: e1500002     	cmp	r0, r2
++   32f84: 0a00000e     	beq	0x32fc4 <.text+0x22ec4> @ imm = #0x38
++   32f88: e59f9600     	ldr	r9, [pc, #0x600]        @ 0x33590 <.text+0x23490>
++   32f8c: e1a04001     	mov	r4, r1
++   32f90: e1a06002     	mov	r6, r2
++   32f94: e79f9009     	ldr	r9, [pc, r9]
++   32f98: e5990000     	ldr	r0, [r9]
++   32f9c: e2401001     	sub	r1, r0, #1
++   32fa0: e0000190     	mul	r0, r0, r1
++   32fa4: e3100001     	tst	r0, #1
++   32fa8: 0a000014     	beq	0x33000 <.text+0x22f00> @ imm = #0x50
++   32fac: e59f05e0     	ldr	r0, [pc, #0x5e0]        @ 0x33594 <.text+0x23494>
++   32fb0: e79f0000     	ldr	r0, [pc, r0]
++   32fb4: e5900000     	ldr	r0, [r0]
++   32fb8: e3500009     	cmp	r0, #9
++   32fbc: ca00002b     	bgt	0x33070 <.text+0x22f70> @ imm = #0xac
++   32fc0: ea00000e     	b	0x33000 <.text+0x22f00> @ imm = #0x38
++   32fc4: e59f05b4     	ldr	r0, [pc, #0x5b4]        @ 0x33580 <.text+0x23480>
++   32fc8: e3a07003     	mov	r7, #3
++   32fcc: e59f15b0     	ldr	r1, [pc, #0x5b0]        @ 0x33584 <.text+0x23484>
++   32fd0: e59f25b0     	ldr	r2, [pc, #0x5b0]        @ 0x33588 <.text+0x23488>
++   32fd4: e08f0000     	add	r0, pc, r0
++   32fd8: e59f35ac     	ldr	r3, [pc, #0x5ac]        @ 0x3358c <.text+0x2348c>
++   32fdc: e08f1001     	add	r1, pc, r1
++   32fe0: e08f2002     	add	r2, pc, r2
++   32fe4: e58d7000     	str	r7, [sp]
++   32fe8: e08f3003     	add	r3, pc, r3
++   32fec: e58d3004     	str	r3, [sp, #0x4]
++   32ff0: e3a03ec7     	mov	r3, #3184
++   32ff4: eb031c32     	bl	0xfa0c4 <.text+0xe9fc4> @ imm = #0xc70c8
++   32ff8: e3a07000     	mov	r7, #0
++   32ffc: ea000147     	b	0x33520 <.text+0x23420> @ imm = #0x51c
++   33000: e3a00000     	mov	r0, #0
++   33004: e58560e8     	str	r6, [r5, #0xe8]
++   33008: e3a07000     	mov	r7, #0
++   3300c: ebffd889     	bl	0x29238 <.text+0x19138> @ imm = #-0x9ddc
++   33010: e5900014     	ldr	r0, [r0, #0x14]
++   33014: e590a018     	ldr	r10, [r0, #0x18]
++   33018: e3a00000     	mov	r0, #0
++   3301c: ebffd885     	bl	0x29238 <.text+0x19138> @ imm = #-0x9dec
++   33020: e5900014     	ldr	r0, [r0, #0x14]
++   33024: e584604c     	str	r6, [r4, #0x4c]
++   33028: e5901208     	ldr	r1, [r0, #0x208]
++   3302c: e1a00004     	mov	r0, r4
++   33030: e12fff31     	blx	r1
++   33034: e5990000     	ldr	r0, [r9]
++   33038: e2401001     	sub	r1, r0, #1
++   3303c: e0020190     	mul	r2, r0, r1
++   33040: e59a1034     	ldr	r1, [r10, #0x34]
++   33044: e594013c     	ldr	r0, [r4, #0x13c]
++   33048: e3510001     	cmp	r1, #1
++   3304c: e3a01000     	mov	r1, #0
++   33050: 030f1fff     	movweq	r1, #0xffff
++   33054: e3120001     	tst	r2, #1
++   33058: 0a00000f     	beq	0x3309c <.text+0x22f9c> @ imm = #0x3c
++   3305c: e59f2534     	ldr	r2, [pc, #0x534]        @ 0x33598 <.text+0x23498>
++   33060: e79f2002     	ldr	r2, [pc, r2]
++   33064: e5922000     	ldr	r2, [r2]
++   33068: e3520009     	cmp	r2, #9
++   3306c: da00000a     	ble	0x3309c <.text+0x22f9c> @ imm = #0x28
++   33070: e3a00000     	mov	r0, #0
++   33074: e58560e8     	str	r6, [r5, #0xe8]
++   33078: ebffd86e     	bl	0x29238 <.text+0x19138> @ imm = #-0x9e48
++   3307c: e3a00000     	mov	r0, #0
++   33080: ebffd86c     	bl	0x29238 <.text+0x19138> @ imm = #-0x9e50
++   33084: e5900014     	ldr	r0, [r0, #0x14]
++   33088: e584604c     	str	r6, [r4, #0x4c]
++   3308c: e5901208     	ldr	r1, [r0, #0x208]
++   33090: e1a00004     	mov	r0, r4
++   33094: e12fff31     	blx	r1
++   33098: eaffffd8     	b	0x33000 <.text+0x22f00> @ imm = #-0xa0
++   3309c: e1500001     	cmp	r0, r1
++   330a0: 8a00011e     	bhi	0x33520 <.text+0x23420> @ imm = #0x478
+diff --git a/evidence/stage8/disasm/nonce_prologue_context.S b/evidence/stage8/disasm/nonce_prologue_context.S
+new file mode 100644
+index 0000000..f508f77
+--- /dev/null
++++ b/evidence/stage8/disasm/nonce_prologue_context.S
+@@ -0,0 +1,11 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   32f60: e92d4ff0     	push	{r4, r5, r6, r7, r8, r9, r10, r11, lr}
++   32f64: e28db01c     	add	r11, sp, #28
++   32f68: e24dd004     	sub	sp, sp, #4
++   32f6c: ed2d8b02     	vpush	{d8}
++   32f70: e24dd018     	sub	sp, sp, #24
+diff --git a/evidence/stage8/disasm/reference_list_membership.S b/evidence/stage8/disasm/reference_list_membership.S
+new file mode 100644
+index 0000000..58a746c
+--- /dev/null
++++ b/evidence/stage8/disasm/reference_list_membership.S
+@@ -0,0 +1,39 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   34d54: e92d4830     	push	{r4, r5, r11, lr}
++   34d58: e28db008     	add	r11, sp, #8
++   34d5c: e1a05000     	mov	r5, r0
++   34d60: e59f0060     	ldr	r0, [pc, #0x60]         @ 0x34dc8 <.text+0x24cc8>
++   34d64: e79f0000     	ldr	r0, [pc, r0]
++   34d68: eb15c4e6     	bl	0x5a6108 <.text+0x596008> @ imm = #0x571398
++   34d6c: e59f0058     	ldr	r0, [pc, #0x58]         @ 0x34dcc <.text+0x24ccc>
++   34d70: e3a04001     	mov	r4, #1
++   34d74: e79f0000     	ldr	r0, [pc, r0]
++   34d78: e5900000     	ldr	r0, [r0]
++   34d7c: e3500001     	cmp	r0, #1
++   34d80: ba00000b     	blt	0x34db4 <.text+0x24cb4> @ imm = #0x2c
++   34d84: e59f1044     	ldr	r1, [pc, #0x44]         @ 0x34dd0 <.text+0x24cd0>
++   34d88: e3a02000     	mov	r2, #0
++   34d8c: e79f1001     	ldr	r1, [pc, r1]
++   34d90: e5911000     	ldr	r1, [r1]
++   34d94: e7913102     	ldr	r3, [r1, r2, lsl #2]
++   34d98: e1530005     	cmp	r3, r5
++   34d9c: 0a000003     	beq	0x34db0 <.text+0x24cb0> @ imm = #0xc
++   34da0: e2822001     	add	r2, r2, #1
++   34da4: e1520000     	cmp	r2, r0
++   34da8: bafffff9     	blt	0x34d94 <.text+0x24c94> @ imm = #-0x1c
++   34dac: ea000000     	b	0x34db4 <.text+0x24cb4> @ imm = #0x0
++   34db0: e3a04000     	mov	r4, #0
++   34db4: e59f0018     	ldr	r0, [pc, #0x18]         @ 0x34dd4 <.text+0x24cd4>
++   34db8: e79f0000     	ldr	r0, [pc, r0]
++   34dbc: eb15c640     	bl	0x5a66c4 <.text+0x5965c4> @ imm = #0x571900
++   34dc0: e1a00004     	mov	r0, r4
++   34dc4: e8bd8830     	pop	{r4, r5, r11, pc}
++   34dc8: 005aacf8     	ldrsheq	r10, [r10], #-200
++   34dcc: 005a9c2c     	subseq	r9, r10, r12, lsr #24
++   34dd0: 005aa164     	subseq	r10, r10, r4, ror #2
++   34dd4: 005aaca4     	subseq	r10, r10, r4, lsr #25
+diff --git a/evidence/stage8/disasm/sha256_oneshot.S b/evidence/stage8/disasm/sha256_oneshot.S
+new file mode 100644
+index 0000000..e47f10c
+--- /dev/null
++++ b/evidence/stage8/disasm/sha256_oneshot.S
+@@ -0,0 +1,128 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++  108f38: e92d4ff0     	push	{r4, r5, r6, r7, r8, r9, r10, r11, lr}
++  108f3c: e28db01c     	add	r11, sp, #28
++  108f40: e24dd0b4     	sub	sp, sp, #180
++  108f44: e58d2004     	str	r2, [sp, #0x4]
++  108f48: e1a08001     	mov	r8, r1
++  108f4c: e59f11b8     	ldr	r1, [pc, #0x1b8]        @ 0x10910c <.text+0xf900c>
++  108f50: e3580040     	cmp	r8, #64
++  108f54: e1a0a008     	mov	r10, r8
++  108f58: 23a0a040     	movhs	r10, #64
++  108f5c: e79f1001     	ldr	r1, [pc, r1]
++  108f60: e991008c     	ldmib	r1, {r2, r3, r7}
++  108f64: e591c000     	ldr	r12, [r1]
++  108f68: e58dc090     	str	r12, [sp, #0x90]
++  108f6c: e28dc094     	add	r12, sp, #148
++  108f70: e88c008c     	stm	r12, {r2, r3, r7}
++  108f74: e1a07000     	mov	r7, r0
++  108f78: e3a00000     	mov	r0, #0
++  108f7c: e5916010     	ldr	r6, [r1, #0x10]
++  108f80: e1a0200a     	mov	r2, r10
++  108f84: e5915014     	ldr	r5, [r1, #0x14]
++  108f88: e5914018     	ldr	r4, [r1, #0x18]
++  108f8c: e591101c     	ldr	r1, [r1, #0x1c]
++  108f90: e58d60a0     	str	r6, [sp, #0xa0]
++  108f94: e58d50a4     	str	r5, [sp, #0xa4]
++  108f98: e58d40a8     	str	r4, [sp, #0xa8]
++  108f9c: e58d10ac     	str	r1, [sp, #0xac]
++  108fa0: e1a01007     	mov	r1, r7
++  108fa4: e58d000c     	str	r0, [sp, #0xc]
++  108fa8: e58d0008     	str	r0, [sp, #0x8]
++  108fac: e28d0008     	add	r0, sp, #8
++  108fb0: e2809008     	add	r9, r0, #8
++  108fb4: e1a00009     	mov	r0, r9
++  108fb8: eb1267ca     	bl	0x5a2ee8 <.text+0x592de8> @ imm = #0x499f28
++  108fbc: e358003f     	cmp	r8, #63
++  108fc0: 8a000001     	bhi	0x108fcc <.text+0xf8ecc> @ imm = #0x4
++  108fc4: e58d800c     	str	r8, [sp, #0xc]
++  108fc8: ea00004a     	b	0x1090f8 <.text+0xf8ff8> @ imm = #0x128
++  108fcc: e59f013c     	ldr	r0, [pc, #0x13c]        @ 0x109110 <.text+0xf9010>
++  108fd0: e79f0000     	ldr	r0, [pc, r0]
++  108fd4: e5900000     	ldr	r0, [r0]
++  108fd8: e2401001     	sub	r1, r0, #1
++  108fdc: e0000190     	mul	r0, r0, r1
++  108fe0: e3100001     	tst	r0, #1
++  108fe4: 0a000004     	beq	0x108ffc <.text+0xf8efc> @ imm = #0x10
++  108fe8: e59f0124     	ldr	r0, [pc, #0x124]        @ 0x109114 <.text+0xf9014>
++  108fec: e79f0000     	ldr	r0, [pc, r0]
++  108ff0: e5900000     	ldr	r0, [r0]
++  108ff4: e3500009     	cmp	r0, #9
++  108ff8: ca000024     	bgt	0x109090 <.text+0xf8f90> @ imm = #0x90
++  108ffc: e28d6008     	add	r6, sp, #8
++  109000: e1a01009     	mov	r1, r9
++  109004: e3a02001     	mov	r2, #1
++  109008: e1a00006     	mov	r0, r6
++  10900c: ebfffeda     	bl	0x108b7c <.text+0xf8a7c> @ imm = #-0x498
++  109010: e087500a     	add	r5, r7, r10
++  109014: e1a04008     	mov	r4, r8
++  109018: e048800a     	sub	r8, r8, r10
++  10901c: e1a00006     	mov	r0, r6
++  109020: e1a01005     	mov	r1, r5
++  109024: e1a02328     	lsr	r2, r8, #6
++  109028: ebfffed3     	bl	0x108b7c <.text+0xf8a7c> @ imm = #-0x4b4
++  10902c: e3c8003f     	bic	r0, r8, #63
++  109030: e0851000     	add	r1, r5, r0
++  109034: e208503f     	and	r5, r8, #63
++  109038: e1a00009     	mov	r0, r9
++  10903c: e1a02005     	mov	r2, r5
++  109040: eb1267a8     	bl	0x5a2ee8 <.text+0x592de8> @ imm = #0x499ea0
++  109044: e59f00cc     	ldr	r0, [pc, #0xcc]         @ 0x109118 <.text+0xf9018>
++  109048: e79f0000     	ldr	r0, [pc, r0]
++  10904c: e58d500c     	str	r5, [sp, #0xc]
++  109050: e59d3008     	ldr	r3, [sp, #0x8]
++  109054: e5900000     	ldr	r0, [r0]
++  109058: e2401001     	sub	r1, r0, #1
++  10905c: e0010190     	mul	r1, r0, r1
++  109060: e2880040     	add	r0, r8, #64
++  109064: e3c0203f     	bic	r2, r0, #63
++  109068: e59f00ac     	ldr	r0, [pc, #0xac]         @ 0x10911c <.text+0xf901c>
++  10906c: e0832002     	add	r2, r3, r2
++  109070: e79f0000     	ldr	r0, [pc, r0]
++  109074: e3110001     	tst	r1, #1
++  109078: e58d2008     	str	r2, [sp, #0x8]
++  10907c: e5900000     	ldr	r0, [r0]
++  109080: 0a00001c     	beq	0x1090f8 <.text+0xf8ff8> @ imm = #0x70
++  109084: e1a08004     	mov	r8, r4
++  109088: e3500009     	cmp	r0, #9
++  10908c: da000019     	ble	0x1090f8 <.text+0xf8ff8> @ imm = #0x64
++  109090: e28d5008     	add	r5, sp, #8
++  109094: e1a01009     	mov	r1, r9
++  109098: e3a02001     	mov	r2, #1
++  10909c: e1a00005     	mov	r0, r5
++  1090a0: ebfffeb5     	bl	0x108b7c <.text+0xf8a7c> @ imm = #-0x52c
++  1090a4: e087600a     	add	r6, r7, r10
++  1090a8: e1a04007     	mov	r4, r7
++  1090ac: e048700a     	sub	r7, r8, r10
++  1090b0: e1a00005     	mov	r0, r5
++  1090b4: e1a01006     	mov	r1, r6
++  1090b8: e1a02327     	lsr	r2, r7, #6
++  1090bc: ebfffeae     	bl	0x108b7c <.text+0xf8a7c> @ imm = #-0x548
++  1090c0: e3c7003f     	bic	r0, r7, #63
++  1090c4: e207503f     	and	r5, r7, #63
++  1090c8: e0861000     	add	r1, r6, r0
++  1090cc: e1a00009     	mov	r0, r9
++  1090d0: e1a02005     	mov	r2, r5
++  1090d4: eb126783     	bl	0x5a2ee8 <.text+0x592de8> @ imm = #0x499e0c
++  1090d8: e58d500c     	str	r5, [sp, #0xc]
++  1090dc: e2871040     	add	r1, r7, #64
++  1090e0: e59d0008     	ldr	r0, [sp, #0x8]
++  1090e4: e3c1103f     	bic	r1, r1, #63
++  1090e8: e1a07004     	mov	r7, r4
++  1090ec: e0800001     	add	r0, r0, r1
++  1090f0: e58d0008     	str	r0, [sp, #0x8]
++  1090f4: eaffffc0     	b	0x108ffc <.text+0xf8efc> @ imm = #-0x100
++  1090f8: e59d1004     	ldr	r1, [sp, #0x4]
++  1090fc: e28d0008     	add	r0, sp, #8
++  109100: eb0000a5     	bl	0x10939c <.text+0xf929c> @ imm = #0x294
++  109104: e24bd01c     	sub	sp, r11, #28
++  109108: e8bd8ff0     	pop	{r4, r5, r6, r7, r8, r9, r10, r11, pc}
++  10910c: 004d66f0     	strdeq	r6, r7, [sp], #-96
++  109110: 004d5770     	subeq	r5, sp, r0, ror r7
++  109114: 004d5eac     	subeq	r5, sp, r12, lsr #29
++  109118: 004d56f8     	strdeq	r5, r6, [sp], #-104
++  10911c: 004d5e28     	subeq	r5, sp, r8, lsr #28
+diff --git a/evidence/stage8/disasm/target256_compare.S b/evidence/stage8/disasm/target256_compare.S
+new file mode 100644
+index 0000000..782ffa2
+--- /dev/null
++++ b/evidence/stage8/disasm/target256_compare.S
+@@ -0,0 +1,134 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   10c1c: e92d4c70     	push	{r4, r5, r6, r10, r11, lr}
++   10c20: e28db010     	add	r11, sp, #16
++   10c24: e59fc1e4     	ldr	r12, [pc, #0x1e4]       @ 0x10e10 <.text+0xd10>
++   10c28: e1a06000     	mov	r6, r0
++   10c2c: e79fc00c     	ldr	r12, [pc, r12]
++   10c30: e59c0000     	ldr	r0, [r12]
++   10c34: e2402001     	sub	r2, r0, #1
++   10c38: e0000290     	mul	r0, r0, r2
++   10c3c: e3100001     	tst	r0, #1
++   10c40: e59c0000     	ldr	r0, [r12]
++   10c44: e59f31c8     	ldr	r3, [pc, #0x1c8]        @ 0x10e14 <.text+0xd14>
++   10c48: e2402001     	sub	r2, r0, #1
++   10c4c: e0000290     	mul	r0, r0, r2
++   10c50: e79f3003     	ldr	r3, [pc, r3]
++   10c54: e591401c     	ldr	r4, [r1, #0x1c]
++   10c58: e596201c     	ldr	r2, [r6, #0x1c]
++   10c5c: e3100001     	tst	r0, #1
++   10c60: 0a000002     	beq	0x10c70 <.text+0xb70>   @ imm = #0x8
++   10c64: e5930000     	ldr	r0, [r3]
++   10c68: e3500009     	cmp	r0, #9
++   10c6c: cafffff3     	bgt	0x10c40 <.text+0xb40>   @ imm = #-0x34
++   10c70: e3a00000     	mov	r0, #0
++   10c74: e1520004     	cmp	r2, r4
++   10c78: 8a00004b     	bhi	0x10dac <.text+0xcac>   @ imm = #0x12c
++   10c7c: 3a000049     	blo	0x10da8 <.text+0xca8>   @ imm = #0x124
++   10c80: e59c2000     	ldr	r2, [r12]
++   10c84: e2424001     	sub	r4, r2, #1
++   10c88: e0020492     	mul	r2, r2, r4
++   10c8c: e3120001     	tst	r2, #1
++   10c90: e59c2000     	ldr	r2, [r12]
++   10c94: e2424001     	sub	r4, r2, #1
++   10c98: e0050492     	mul	r5, r2, r4
++   10c9c: e5912018     	ldr	r2, [r1, #0x18]
++   10ca0: e5964018     	ldr	r4, [r6, #0x18]
++   10ca4: e3150001     	tst	r5, #1
++   10ca8: 0a000002     	beq	0x10cb8 <.text+0xbb8>   @ imm = #0x8
++   10cac: e5935000     	ldr	r5, [r3]
++   10cb0: e3550009     	cmp	r5, #9
++   10cb4: cafffff5     	bgt	0x10c90 <.text+0xb90>   @ imm = #-0x2c
++   10cb8: e1540002     	cmp	r4, r2
++   10cbc: 8a00003a     	bhi	0x10dac <.text+0xcac>   @ imm = #0xe8
++   10cc0: 3a000038     	blo	0x10da8 <.text+0xca8>   @ imm = #0xe0
++   10cc4: e591e014     	ldr	lr, [r1, #0x14]
++   10cc8: e5964014     	ldr	r4, [r6, #0x14]
++   10ccc: e154000e     	cmp	r4, lr
++   10cd0: 8a000035     	bhi	0x10dac <.text+0xcac>   @ imm = #0xd4
++   10cd4: e59c2000     	ldr	r2, [r12]
++   10cd8: e2425001     	sub	r5, r2, #1
++   10cdc: e0020592     	mul	r2, r2, r5
++   10ce0: e3120001     	tst	r2, #1
++   10ce4: e59c2000     	ldr	r2, [r12]
++   10ce8: e2425001     	sub	r5, r2, #1
++   10cec: e0020592     	mul	r2, r2, r5
++   10cf0: e3120001     	tst	r2, #1
++   10cf4: 0a000002     	beq	0x10d04 <.text+0xc04>   @ imm = #0x8
++   10cf8: e5932000     	ldr	r2, [r3]
++   10cfc: e3520009     	cmp	r2, #9
++   10d00: cafffff7     	bgt	0x10ce4 <.text+0xbe4>   @ imm = #-0x24
++   10d04: e154000e     	cmp	r4, lr
++   10d08: 3a000026     	blo	0x10da8 <.text+0xca8>   @ imm = #0x98
++   10d0c: e5912010     	ldr	r2, [r1, #0x10]
++   10d10: e5965010     	ldr	r5, [r6, #0x10]
++   10d14: e1550002     	cmp	r5, r2
++   10d18: 8a000023     	bhi	0x10dac <.text+0xcac>   @ imm = #0x8c
++   10d1c: 3a000021     	blo	0x10da8 <.text+0xca8>   @ imm = #0x84
++   10d20: e59c2000     	ldr	r2, [r12]
++   10d24: e2425001     	sub	r5, r2, #1
++   10d28: e0020592     	mul	r2, r2, r5
++   10d2c: e3120001     	tst	r2, #1
++   10d30: e59c2000     	ldr	r2, [r12]
++   10d34: e596400c     	ldr	r4, [r6, #0xc]
++   10d38: e2425001     	sub	r5, r2, #1
++   10d3c: e0050592     	mul	r5, r2, r5
++   10d40: e591200c     	ldr	r2, [r1, #0xc]
++   10d44: e3150001     	tst	r5, #1
++   10d48: 0a000002     	beq	0x10d58 <.text+0xc58>   @ imm = #0x8
++   10d4c: e5935000     	ldr	r5, [r3]
++   10d50: e3550009     	cmp	r5, #9
++   10d54: cafffff5     	bgt	0x10d30 <.text+0xc30>   @ imm = #-0x2c
++   10d58: e1540002     	cmp	r4, r2
++   10d5c: 8a000012     	bhi	0x10dac <.text+0xcac>   @ imm = #0x48
++   10d60: 3a000010     	blo	0x10da8 <.text+0xca8>   @ imm = #0x40
++   10d64: e59c2000     	ldr	r2, [r12]
++   10d68: e2425001     	sub	r5, r2, #1
++   10d6c: e0020592     	mul	r2, r2, r5
++   10d70: e3120001     	tst	r2, #1
++   10d74: e59c2000     	ldr	r2, [r12]
++   10d78: e5964008     	ldr	r4, [r6, #0x8]
++   10d7c: e2425001     	sub	r5, r2, #1
++   10d80: e0050592     	mul	r5, r2, r5
++   10d84: e5912008     	ldr	r2, [r1, #0x8]
++   10d88: e3150001     	tst	r5, #1
++   10d8c: 0a000002     	beq	0x10d9c <.text+0xc9c>   @ imm = #0x8
++   10d90: e5935000     	ldr	r5, [r3]
++   10d94: e3550009     	cmp	r5, #9
++   10d98: cafffff5     	bgt	0x10d74 <.text+0xc74>   @ imm = #-0x2c
++   10d9c: e1540002     	cmp	r4, r2
++   10da0: 8a000001     	bhi	0x10dac <.text+0xcac>   @ imm = #0x4
++   10da4: 2a000001     	bhs	0x10db0 <.text+0xcb0>   @ imm = #0x4
++   10da8: e3a00001     	mov	r0, #1
++   10dac: e8bd8c70     	pop	{r4, r5, r6, r10, r11, pc}
++   10db0: e59c2000     	ldr	r2, [r12]
++   10db4: e2425001     	sub	r5, r2, #1
++   10db8: e0020592     	mul	r2, r2, r5
++   10dbc: e3120001     	tst	r2, #1
++   10dc0: e59c2000     	ldr	r2, [r12]
++   10dc4: e5964004     	ldr	r4, [r6, #0x4]
++   10dc8: e2425001     	sub	r5, r2, #1
++   10dcc: e0050592     	mul	r5, r2, r5
++   10dd0: e5912004     	ldr	r2, [r1, #0x4]
++   10dd4: e3150001     	tst	r5, #1
++   10dd8: 0a000002     	beq	0x10de8 <.text+0xce8>   @ imm = #0x8
++   10ddc: e5935000     	ldr	r5, [r3]
++   10de0: e3550009     	cmp	r5, #9
++   10de4: cafffff5     	bgt	0x10dc0 <.text+0xcc0>   @ imm = #-0x2c
++   10de8: e1540002     	cmp	r4, r2
++   10dec: 8affffee     	bhi	0x10dac <.text+0xcac>   @ imm = #-0x48
++   10df0: e3a00001     	mov	r0, #1
++   10df4: 3affffec     	blo	0x10dac <.text+0xcac>   @ imm = #-0x50
++   10df8: e5911000     	ldr	r1, [r1]
++   10dfc: e3a00000     	mov	r0, #0
++   10e00: e5962000     	ldr	r2, [r6]
++   10e04: e1520001     	cmp	r2, r1
++   10e08: 93000001     	movwls	r0, #0x1
++   10e0c: e8bd8c70     	pop	{r4, r5, r6, r10, r11, pc}
++   10e10: 005ce4a0     	subseq	lr, r12, r0, lsr #9
++   10e14: 005ced8c     	subseq	lr, r12, r12, lsl #27
++   10e18: e92d4c10     	push	{r4, r10, r11, lr}
+diff --git a/evidence/stage8/disasm/target_callsite_context.S b/evidence/stage8/disasm/target_callsite_context.S
+new file mode 100644
+index 0000000..26d0dc4
+--- /dev/null
++++ b/evidence/stage8/disasm/target_callsite_context.S
+@@ -0,0 +1,16 @@
++
++reference/cgminer.vendor.elf:	file format elf32-littlearm
++
++Disassembly of section .text:
++
++00010100 <.text>:
++   327b4: e79f9009     	ldr	r9, [pc, r9]
++   327b8: e5990000     	ldr	r0, [r9]
++   327bc: e12fff30     	blx	r0
++   327c0: e2850e12     	add	r0, r5, #288
++   327c4: e2851c01     	add	r1, r5, #256
++   327c8: ebff7913     	bl	0x10c1c <.text+0xb1c>   @ imm = #-0x21bb4
++   327cc: e1a01000     	mov	r1, r0
++   327d0: e3a00000     	mov	r0, #0
++   327d4: e3510000     	cmp	r1, #0
++   327d8: 0a000169     	beq	0x32d84 <.text+0x22c84> @ imm = #0x5a4
+diff --git a/evidence/stage8/recovery-manifest.json b/evidence/stage8/recovery-manifest.json
+new file mode 100644
+index 0000000..96bb372
+--- /dev/null
++++ b/evidence/stage8/recovery-manifest.json
+@@ -0,0 +1,190 @@
++{
++  "stage": 8,
++  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
++  "reference_bytes": 6228004,
++  "slices": [
++    {
++      "name": "frontend_header_hash",
++      "start": "0x2d994",
++      "end_exclusive": "0x2dc0c",
++      "size": 632,
++      "original_bytes_sha256": "f4b743748984aee4fac782ef17f261488f1c96442e6b1d5c0390905d08c5e5d6",
++      "disassembly": "evidence/stage8/disasm/frontend_header_hash.S",
++      "disassembly_sha256": "f938fa8440160ce5a68b93eb7f2f9f5271350d0e57a9c38ac544f868a4afc971",
++      "scope": "complete original function, including literal pool; opaque unreachable branches not forced"
++    },
++    {
++      "name": "target256_compare",
++      "start": "0x10c1c",
++      "end_exclusive": "0x10e1c",
++      "size": 512,
++      "original_bytes_sha256": "fe96caf93a2e8588be9f70f92d663ac87be13883c81195396792a58446dc82a2",
++      "disassembly": "evidence/stage8/disasm/target256_compare.S",
++      "disassembly_sha256": "3af2e2745063f1d4380ee7e76414c1e3a9ed7f97e69bd9d6e221b616130744ca",
++      "scope": "complete original unsigned comparator, including literal pool"
++    },
++    {
++      "name": "nonce_prefilter",
++      "start": "0x32f74",
++      "end_exclusive": "0x330a4",
++      "size": 304,
++      "original_bytes_sha256": "a9886fa640c057f8136accc118021dffccad78df4cd5df8a59f5ca9a88925488",
++      "disassembly": "evidence/stage8/disasm/nonce_prefilter.S",
++      "disassembly_sha256": "d486fe384a3f0a42504b17150f120bc34c81889591af746cfde36e6321672933",
++      "scope": "bounded prefix, reject boundary 0x33520 and continue boundary 0x330a4; stack pre-established"
++    },
++    {
++      "name": "nonce_prologue_context",
++      "start": "0x32f60",
++      "end_exclusive": "0x32f74",
++      "size": 20,
++      "original_bytes_sha256": "84729a8bed0813c88c03457afb9400e4eb4ed31c7735096bf7c0c5a7356455e9",
++      "disassembly": "evidence/stage8/disasm/nonce_prologue_context.S",
++      "disassembly_sha256": "fefcccfdfe589d3f7f04e4255db5f8c9acaa2ce65d5cae8b9f36d3fca3af36dc",
++      "scope": "context-only; prologue not executed in prefilter oracle"
++    },
++    {
++      "name": "nonce_literals_context",
++      "start": "0x33580",
++      "end_exclusive": "0x3359c",
++      "size": 28,
++      "original_bytes_sha256": "e1bb1b41856bf01a324d1657eddc4342ab581fec8850a0ed48d231cae922d52e",
++      "disassembly": "evidence/stage8/disasm/nonce_literals_context.S",
++      "disassembly_sha256": "65dae30c78d83aee8d692a680cded8a19d939b1d2a1641c0567644eef8d244dc",
++      "scope": "data-only literal pool used by prefilter"
++    },
++    {
++      "name": "consumer_first_match",
++      "start": "0x74de4",
++      "end_exclusive": "0x74e7c",
++      "size": 152,
++      "original_bytes_sha256": "c299f6b9e2fa6b8801f7996d4b5791481731389de9c1aba3444a5ce9d1b48afc",
++      "disassembly": "evidence/stage8/disasm/consumer_first_match.S",
++      "disassembly_sha256": "77e8e7b685280385b74b9da38ec38fc6f9a6f559de1d1d67ff45387b5ce1d46d",
++      "scope": "bounded selector; stop at skip 0x74e7c or continue 0x74f14"
++    },
++    {
++      "name": "reference_list_membership",
++      "start": "0x34d54",
++      "end_exclusive": "0x34dd8",
++      "size": 132,
++      "original_bytes_sha256": "b0fb6fc88f5b30372ece327c26a24d76139849a4c609ea738e5a39bae77d09af",
++      "disassembly": "evidence/stage8/disasm/reference_list_membership.S",
++      "disassembly_sha256": "633923581d7b34f0ae03bb11f0f50524d84ba654ca7ea06d13cb9c98b34d162a",
++      "scope": "complete function with injected mutex calls, including literals"
++    },
++    {
++      "name": "sha256_oneshot",
++      "start": "0x108f38",
++      "end_exclusive": "0x109120",
++      "size": 488,
++      "original_bytes_sha256": "8d4ae18bfe64e96a84f4cf5b3b4280978e0457d78a599b041687bd9506775885",
++      "disassembly": "evidence/stage8/disasm/sha256_oneshot.S",
++      "disassembly_sha256": "e6580aebdcd213a952cda68d8e87271e4c97aa8b0d5eadc67350751ae9dda76e",
++      "scope": "complete called SHA wrapper with original compression/finalizer"
++    },
++    {
++      "name": "target_callsite_context",
++      "start": "0x327b4",
++      "end_exclusive": "0x327dc",
++      "size": 40,
++      "original_bytes_sha256": "3ab802e405e83e74bc5675c0528908f479d5002a4e88dbac76463d2cffd53309",
++      "disassembly": "evidence/stage8/disasm/target_callsite_context.S",
++      "disassembly_sha256": "b3e487ec94381c6fe06d6a5d04a85c748a8b4489dc99cf844a81cbc4ac658761",
++      "scope": "context-only: original hash and target pointers at call"
++    },
++    {
++      "name": "consumer_work_rebuild_context",
++      "start": "0x74f14",
++      "end_exclusive": "0x75020",
++      "size": 268,
++      "original_bytes_sha256": "d0d96eeb2e9c7a799af832701e49ccd446e6dd0f3ca3c12f3af723cfe8e91144",
++      "disassembly": "evidence/stage8/disasm/consumer_work_rebuild_context.S",
++      "disassembly_sha256": "11117fd2c88632162392ba9ac44778b1ca5bc6d879d2b54592528492d169d671",
++      "scope": "context-only: caller data and work reconstruction call, not recovered lifecycle"
++    }
++  ],
++  "branch_edges": [
++    {
++      "pc": "0x2dabc",
++      "target": "0x108f38",
++      "instruction_hex": "eb036d1d"
++    },
++    {
++      "pc": "0x2dacc",
++      "target": "0x108f38",
++      "instruction_hex": "eb036d19"
++    },
++    {
++      "pc": "0x3300c",
++      "target": "0x29238",
++      "instruction_hex": "ebffd889"
++    },
++    {
++      "pc": "0x3301c",
++      "target": "0x29238",
++      "instruction_hex": "ebffd885"
++    },
++    {
++      "pc": "0x74e64",
++      "target": "0x34d54",
++      "instruction_hex": "ebfeffba"
++    },
++    {
++      "pc": "0x327c8",
++      "target": "0x10c1c",
++      "instruction_hex": "ebff7913"
++    },
++    {
++      "pc": "0x34d68",
++      "target": "0x5a6108",
++      "instruction_hex": "eb15c4e6"
++    },
++    {
++      "pc": "0x34dbc",
++      "target": "0x5a66c4",
++      "instruction_hex": "eb15c640"
++    }
++  ],
++  "new_helpers": [
++    "reconstruction/support/sha256d80.c",
++    "reconstruction/support/target256.c",
++    "reconstruction/support/nonce_job_window.c"
++  ],
++  "compiled_observed_path": "src/frontend/cgminer.c",
++  "path_proof": {
++    "source_reference_pc": "0x32fdc",
++    "string_address": "0x5e2194",
++    "original_text": "/tmp/build/src/frontend/cgminer.c",
++    "hash_function_source_path_individually_proven": false
++  },
++  "external_operations": [
++    "memcpy/memset",
++    "config getter",
++    "logging",
++    "mutex lock/unlock"
++  ],
++  "additional_boundaries": [
++    "forced hash callback in 752 boundary cases",
++    "forced reference reject in 1024 isolated selector cases"
++  ],
++  "original_functions_executed_together": [
++    "0x2d994 and 0x108f38 plus compression/finalizer",
++    "0x32f74 prefix with hash pointer set to 0x2d994 (test-only binding)",
++    "0x74de4 consumer and 0x34d54 membership"
++  ],
++  "limits": [
++    "No T21 model hash dispatch proven",
++    "No complete nonce queue or work reconstruction",
++    "No generation/freshness or share submission",
++    "Reference snapshots assumed coherent; mutex semantics not tested",
++    "Full target check and prefilter are distinct stages; not every mathematical target success passes the legacy prefix"
++  ],
++  "tests": [
++    "tests/test_stage8_differential.py",
++    "tests/verify_oracle.py",
++    "tests/test_nonce_verify.c",
++    "tests/test_stage8_interpreter.py",
++    "tests/test_verify_header_cli.py"
++  ]
++}
+diff --git a/evidence/validation/stage8/initial-run/automake-00.log b/evidence/validation/stage8/initial-run/automake-00.log
+new file mode 100644
+index 0000000..7e782b3
+--- /dev/null
++++ b/evidence/validation/stage8/initial-run/automake-00.log
+@@ -0,0 +1,2 @@
++COMMAND: ['/opt/pyvenv/bin/python', 'tests/test_overlay_automake.py']
++Automake fixture PASS: reproduced basename collision and fixed it with subdir-objects; upstream cgminer NOT built.
+diff --git a/evidence/validation/stage8/initial-run/automake.json b/evidence/validation/stage8/initial-run/automake.json
+new file mode 100644
+index 0000000..dc531b8
+--- /dev/null
++++ b/evidence/validation/stage8/initial-run/automake.json
+@@ -0,0 +1,18 @@
++{
++  "group": "automake",
++  "status": "PASS",
++  "complete": true,
++  "records": [
++    {
++      "command": [
++        "/opt/pyvenv/bin/python",
++        "tests/test_overlay_automake.py"
++      ],
++      "returncode": 0,
++      "expected_returncode": 0,
++      "log": "automake-00.log",
++      "seconds": 5.003,
++      "sha256": "21db12fab4cde7d77e31938e0c31c935e6a137597701118f3d6cd1ee77215176"
++    }
++  ]
++}
+diff --git a/evidence/validation/stage8/initial-run/clang-verify-00.log b/evidence/validation/stage8/initial-run/clang-verify-00.log
+new file mode 100644
+index 0000000..25eaec4
+--- /dev/null
++++ b/evidence/validation/stage8/initial-run/clang-verify-00.log
+@@ -0,0 +1,19 @@
++COMMAND: ['make', '-f', 'Makefile.recovery', 'stage8-clang']
++mkdir -p build
++clang -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -shared -fPIC src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c -o build/libvn135_recovered-clang.so
++clang -Iinclude -O2 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_nonce_verify.c -o build/test-nonce-verify-clang
++./build/test-nonce-verify-clang
++Stage8 native cases: 198 PASS; no device access
++python3 tests/test_stage8_differential.py hash --library ./build/libvn135_recovered-clang.so --tag clang
++{"status": "PASS", "group": "hash", "compiler_tag": "clang", "original_comparison_cases": 305, "library_sha256": "e281603d0616051b1fc16ec1a4b24597e12b33bff49376cc956b573ea9217454", "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9", "details": {"original_full_work_hash_calls": 305, "hashlib_cross_checks": 305, "serialized_and_word_swapped_APIs_compared_per_case": true, "original_real_SHA_executed": true}, "hardware_tested": false, "job_freshness_proven": false}
++python3 tests/test_stage8_differential.py target --library ./build/libvn135_recovered-clang.so --tag clang
++{"status": "PASS", "group": "target", "compiler_tag": "clang", "original_comparison_cases": 2340, "library_sha256": "e281603d0616051b1fc16ec1a4b24597e12b33bff49376cc956b573ea9217454", "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9", "details": {"original_compare_calls": 2340, "all_eight_decisive_limbs": true, "equality_accepted": true}, "hardware_tested": false, "job_freshness_proven": false}
++python3 tests/test_stage8_differential.py prefilter --library ./build/libvn135_recovered-clang.so --tag clang
++{"status": "PASS", "group": "prefilter", "compiler_tag": "clang", "original_comparison_cases": 883, "library_sha256": "e281603d0616051b1fc16ec1a4b24597e12b33bff49376cc956b573ea9217454", "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9", "details": {"forced_hash_boundary_cases": 752, "real_original_SHA_bound_cases": 131, "stateful_replay_native_checks": 2, "stopped_before_accounting_and_submission": true}, "hardware_tested": false, "job_freshness_proven": false}
++python3 tests/test_stage8_differential.py job --library ./build/libvn135_recovered-clang.so --tag clang
++{"status": "PASS", "group": "job", "compiler_tag": "clang", "original_comparison_cases": 1024, "library_sha256": "e281603d0616051b1fc16ec1a4b24597e12b33bff49376cc956b573ea9217454", "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9", "details": {"original_selection_slices": 1024, "original_final_policy_injected": true, "coherent_snapshot_only": true, "first_match_no_fallback": true}, "hardware_tested": false, "job_freshness_proven": false}
++python3 tests/test_stage8_differential.py registry --library ./build/libvn135_recovered-clang.so --tag clang
++{"status": "PASS", "group": "registry", "compiler_tag": "clang", "original_comparison_cases": 861, "library_sha256": "e281603d0616051b1fc16ec1a4b24597e12b33bff49376cc956b573ea9217454", "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9", "details": {"original_membership_calls": 349, "combined_original_consumer_and_membership": 512, "external_mutex_injected": true, "predicate_not_replaced_in_combined_tests": true}, "hardware_tested": false, "job_freshness_proven": false}
++clang -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_nonce_verify.c -o build/test-nonce-verify-clang-sanitized
++ASAN_OPTIONS=detect_leaks=1 ./build/test-nonce-verify-clang-sanitized
++Stage8 native cases: 198 PASS; no device access
+diff --git a/evidence/validation/stage8/initial-run/clang-verify.json b/evidence/validation/stage8/initial-run/clang-verify.json
+new file mode 100644
+index 0000000..366e0c9
+--- /dev/null
++++ b/evidence/validation/stage8/initial-run/clang-verify.json
+@@ -0,0 +1,20 @@
++{
++  "group": "clang-verify",
++  "status": "PASS",
++  "complete": true,
++  "records": [
++    {
++      "command": [
++        "make",
++        "-f",
++        "Makefile.recovery",
++        "stage8-clang"
++      ],
++      "returncode": 0,
++      "expected_returncode": 0,
++      "log": "clang-verify-00.log",
++      "seconds": 25.146,
++      "sha256": "e2f13c3a067b459a95edff11061affb110eb4a4395a0d89e1e2046d77bc9a611"
++    }
++  ]
++}
+diff --git a/evidence/validation/stage8/initial-run/sanitizers-00.log b/evidence/validation/stage8/initial-run/sanitizers-00.log
+new file mode 100644
+index 0000000..4d1e383
+--- /dev/null
++++ b/evidence/validation/stage8/initial-run/sanitizers-00.log
+@@ -0,0 +1,35 @@
++COMMAND: ['make', '-f', 'Makefile.recovery', 'sanitize', 'sanitize-linux-pty', 'sanitize-linux-pty-rx']
++mkdir -p build
++cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer src/backend/work-gen/work-gen.c reconstruction/support/sha256_midstate.c reconstruction/support/work_rx_stream.c tests/test_work_rx.c -o build/test-work-rx-sanitized
++ASAN_OPTIONS=detect_leaks=1 ./build/test-work-rx-sanitized
++Stage 6 C safety and stream chunk-invariance: PASS (3600 stream replays)
++mkdir -p build
++cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_work_nonce.c -o build/test-work-nonce-sanitized
++ASAN_OPTIONS=detect_leaks=1 ./build/test-work-nonce-sanitized
++Stage7 native: SHA KATs, candidate fixture, guards, 176 fragment streams and lookup failure cases PASS
++mkdir -p build
++cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_nonce_verify.c -o build/test-nonce-verify-sanitized
++ASAN_OPTIONS=detect_leaks=1 ./build/test-nonce-verify-sanitized
++Stage8 native cases: 198 PASS; no device access
++mkdir -p build
++cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_chip1398.c -o build/test-sanitized
++ASAN_OPTIONS=detect_leaks=0 ./build/test-sanitized
++host unit tests: PASS (no hardware)
++cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_pll_aml.c -o build/test-pll-aml-sanitized
++ASAN_OPTIONS=detect_leaks=0 ./build/test-pll-aml-sanitized
++PLL/AML host guards and flow tests: PASS (no hardware)
++cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer src/frontend/cgminer.c reconstruction/support/sha256d80.c reconstruction/support/target256.c reconstruction/support/nonce_job_window.c reconstruction/support/sha256_midstate.c reconstruction/support/work_nonce_pipeline.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c libbitmain/src/uart.c libbitmain/src/chip/chip1398.c libbitmain/src/pll.c libbitmain/src/aml/chip.c reconstruction/support/crc5.c libbitmain/src/reg_cache.c tests/test_reg_cache.c -o build/test-reg-cache-sanitized
++ASAN_OPTIONS=detect_leaks=1 ./build/test-reg-cache-sanitized
++Stage 4 cache/transaction native assertions: PASS
++cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer libbitmain/src/uart.c tests/test_uart.c -o build/test-uart-sanitized
++ASAN_OPTIONS=detect_leaks=1 ./build/test-uart-sanitized
++UART native API guards, legacy retry and lifecycle: PASS
++mkdir -p build
++cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer libbitmain/src/uart.c libbitmain/src/aml/chip.c tests/test_uart_linux_pty.c -pthread -o build/test-uart-pty-sanitized
++ASAN_OPTIONS=detect_leaks=1 ./build/test-uart-pty-sanitized
++Linux PTY: open/termios2/arbitrary baud/fragmented RX/TX frame/flush/destroy: PASS
++No physical UART, chip protocol, timings, init, mining or autotune tested.
++mkdir -p build
++cc -Iinclude -O1 -g -ffp-contract=off -std=c11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer libbitmain/src/uart.c src/backend/work-gen/work-gen.c reconstruction/support/sha256_midstate.c reconstruction/support/work_rx_stream.c tests/test_work_rx_linux_pty.c -pthread -o build/test-work-rx-pty-sanitized
++ASAN_OPTIONS=detect_leaks=1 ./build/test-work-rx-pty-sanitized
++Stage 6 real Linux PTY -> UART -> RX: PASS (88 decoded messages)
+diff --git a/evidence/validation/stage8/initial-run/sanitizers.json b/evidence/validation/stage8/initial-run/sanitizers.json
+new file mode 100644
+index 0000000..72c99de
+--- /dev/null
++++ b/evidence/validation/stage8/initial-run/sanitizers.json
+@@ -0,0 +1,22 @@
++{
++  "group": "sanitizers",
++  "status": "PASS",
++  "complete": true,
++  "records": [
++    {
++      "command": [
++        "make",
++        "-f",
++        "Makefile.recovery",
++        "sanitize",
++        "sanitize-linux-pty",
++        "sanitize-linux-pty-rx"
++      ],
++      "returncode": 0,
++      "expected_returncode": 0,
++      "log": "sanitizers-00.log",
++      "seconds": 6.956,
++      "sha256": "64ff9d1c0d2eaf54c024f78679d10287d59a628b21c94b205eecbfc76cb1336c"
++    }
++  ]
++}
+diff --git a/evidence/validation/stage8/initial-run/verify-hash-00.log b/evidence/validation/stage8/initial-run/verify-hash-00.log
+new file mode 100644
+index 0000000..916f35b
+--- /dev/null
++++ b/evidence/validation/stage8/initial-run/verify-hash-00.log
+@@ -0,0 +1,2 @@
++COMMAND: ['/opt/pyvenv/bin/python', 'tests/test_stage8_differential.py', 'hash']
++{"status": "PASS", "group": "hash", "compiler_tag": "gcc", "original_comparison_cases": 305, "library_sha256": "869fb32e6fa073f27d5052eddc863294bcd819797f65a56d07611a5b2813f161", "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9", "details": {"original_full_work_hash_calls": 305, "hashlib_cross_checks": 305, "serialized_and_word_swapped_APIs_compared_per_case": true, "original_real_SHA_executed": true}, "hardware_tested": false, "job_freshness_proven": false}
+diff --git a/evidence/validation/stage8/initial-run/verify-hash.json b/evidence/validation/stage8/initial-run/verify-hash.json
+new file mode 100644
+index 0000000..e7a9869
+--- /dev/null
++++ b/evidence/validation/stage8/initial-run/verify-hash.json
+@@ -0,0 +1,19 @@
++{
++  "group": "verify-hash",
++  "status": "PASS",
++  "complete": true,
++  "records": [
++    {
++      "command": [
++        "/opt/pyvenv/bin/python",
++        "tests/test_stage8_differential.py",
++        "hash"
++      ],
++      "returncode": 0,
++      "expected_returncode": 0,
++      "log": "verify-hash-00.log",
++      "seconds": 13.53,
++      "sha256": "64b483e07c1c7294949ff87a029e3c02fb16fd32ebd1cf515e06a8b5902aaffa"
++    }
++  ]
++}
+diff --git a/evidence/validation/stage8/initial-run/verify-job-00.log b/evidence/validation/stage8/initial-run/verify-job-00.log
+new file mode 100644
+index 0000000..4af2f51
+--- /dev/null
++++ b/evidence/validation/stage8/initial-run/verify-job-00.log
+@@ -0,0 +1,2 @@
++COMMAND: ['/opt/pyvenv/bin/python', 'tests/test_stage8_differential.py', 'job']
++{"status": "PASS", "group": "job", "compiler_tag": "gcc", "original_comparison_cases": 1024, "library_sha256": "869fb32e6fa073f27d5052eddc863294bcd819797f65a56d07611a5b2813f161", "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9", "details": {"original_selection_slices": 1024, "original_final_policy_injected": true, "coherent_snapshot_only": true, "first_match_no_fallback": true}, "hardware_tested": false, "job_freshness_proven": false}
+diff --git a/evidence/validation/stage8/initial-run/verify-job-01.log b/evidence/validation/stage8/initial-run/verify-job-01.log
+new file mode 100644
+index 0000000..2b8796b
+--- /dev/null
++++ b/evidence/validation/stage8/initial-run/verify-job-01.log
+@@ -0,0 +1,2 @@
++COMMAND: ['/opt/pyvenv/bin/python', 'tests/test_stage8_differential.py', 'registry']
++{"status": "PASS", "group": "registry", "compiler_tag": "gcc", "original_comparison_cases": 861, "library_sha256": "869fb32e6fa073f27d5052eddc863294bcd819797f65a56d07611a5b2813f161", "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9", "details": {"original_membership_calls": 349, "combined_original_consumer_and_membership": 512, "external_mutex_injected": true, "predicate_not_replaced_in_combined_tests": true}, "hardware_tested": false, "job_freshness_proven": false}
+diff --git a/evidence/validation/stage8/initial-run/verify-job.json b/evidence/validation/stage8/initial-run/verify-job.json
+new file mode 100644
+index 0000000..c2d0b97
+--- /dev/null
++++ b/evidence/validation/stage8/initial-run/verify-job.json
+@@ -0,0 +1,31 @@
++{
++  "group": "verify-job",
++  "status": "PASS",
++  "complete": true,
++  "records": [
++    {
++      "command": [
++        "/opt/pyvenv/bin/python",
++        "tests/test_stage8_differential.py",
++        "job"
++      ],
++      "returncode": 0,
++      "expected_returncode": 0,
++      "log": "verify-job-00.log",
++      "seconds": 0.749,
++      "sha256": "1a8147e2006e6c3c6838bbc585218bb92be836dccc42e5dae2a041be0e78900b"
++    },
++    {
++      "command": [
++        "/opt/pyvenv/bin/python",
++        "tests/test_stage8_differential.py",
++        "registry"
++      ],
++      "returncode": 0,
++      "expected_returncode": 0,
++      "log": "verify-job-01.log",
++      "seconds": 0.849,
++      "sha256": "c41b07d1c5e438d90874c024098ea1298394323fff06a5baa5fb2c8741d68f03"
++    }
++  ]
++}
+diff --git a/evidence/validation/stage8/initial-run/verify-native-00.log b/evidence/validation/stage8/initial-run/verify-native-00.log
+new file mode 100644
+index 0000000..2158a39
+--- /dev/null
++++ b/evidence/validation/stage8/initial-run/verify-native-00.log
+@@ -0,0 +1,2 @@
++COMMAND: ['./build/test-nonce-verify']
++Stage8 native cases: 198 PASS; no device access
+diff --git a/evidence/validation/stage8/initial-run/verify-native-01.log b/evidence/validation/stage8/initial-run/verify-native-01.log
+new file mode 100644
+index 0000000..c9b0a3e
+--- /dev/null
++++ b/evidence/validation/stage8/initial-run/verify-native-01.log
+@@ -0,0 +1,2 @@
++COMMAND: ['/opt/pyvenv/bin/python', 'tests/test_stage8_interpreter.py']
++{"status": "PASS", "synthetic_instruction_cases": 3779, "instructions": ["BLX register, A32 targets"], "unsupported_thumb_rejected": true, "ELF_not_executed_as_process": true}
+diff --git a/evidence/validation/stage8/initial-run/verify-native-02.log b/evidence/validation/stage8/initial-run/verify-native-02.log
+new file mode 100644
+index 0000000..1e01e02
+--- /dev/null
++++ b/evidence/validation/stage8/initial-run/verify-native-02.log
+@@ -0,0 +1,2 @@
++COMMAND: ['/opt/pyvenv/bin/python', 'tests/test_verify_header_cli.py']
++{"status": "PASS", "separate_cli_cases": 166, "no_network": true}
+diff --git a/evidence/validation/stage8/initial-run/verify-native.json b/evidence/validation/stage8/initial-run/verify-native.json
+new file mode 100644
+index 0000000..7b43c40
+--- /dev/null
++++ b/evidence/validation/stage8/initial-run/verify-native.json
+@@ -0,0 +1,39 @@
++{
++  "group": "verify-native",
++  "status": "PASS",
++  "complete": true,
++  "records": [
++    {
++      "command": [
++        "./build/test-nonce-verify"
++      ],
++      "returncode": 0,
++      "expected_returncode": 0,
++      "log": "verify-native-00.log",
++      "seconds": 0.001,
++      "sha256": "08799f61ad68975e238c0a556f9f50affb5353b7ebe362c539c7f2e60a579594"
++    },
++    {
++      "command": [
++        "/opt/pyvenv/bin/python",
++        "tests/test_stage8_interpreter.py"
++      ],
++      "returncode": 0,
++      "expected_returncode": 0,
++      "log": "verify-native-01.log",
++      "seconds": 0.628,
++      "sha256": "ba1b8439ed441e1e8a891eee847a666b256dd42d4a118b83731f302f8347ea9a"
++    },
++    {
++      "command": [
++        "/opt/pyvenv/bin/python",
++        "tests/test_verify_header_cli.py"
++      ],
++      "returncode": 0,
++      "expected_returncode": 0,
++      "log": "verify-native-02.log",
++      "seconds": 0.695,
++      "sha256": "f8846fdf2e28524e8f05814d5381975a9e8606250770ad1658a4aa090459340f"
++    }
++  ]
++}
+diff --git a/evidence/validation/stage8/initial-run/verify-prefilter-00.log b/evidence/validation/stage8/initial-run/verify-prefilter-00.log
+new file mode 100644
+index 0000000..0098f81
+--- /dev/null
++++ b/evidence/validation/stage8/initial-run/verify-prefilter-00.log
+@@ -0,0 +1,2 @@
++COMMAND: ['/opt/pyvenv/bin/python', 'tests/test_stage8_differential.py', 'prefilter']
++{"status": "PASS", "group": "prefilter", "compiler_tag": "gcc", "original_comparison_cases": 883, "library_sha256": "869fb32e6fa073f27d5052eddc863294bcd819797f65a56d07611a5b2813f161", "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9", "details": {"forced_hash_boundary_cases": 752, "real_original_SHA_bound_cases": 131, "stateful_replay_native_checks": 2, "stopped_before_accounting_and_submission": true}, "hardware_tested": false, "job_freshness_proven": false}
+diff --git a/evidence/validation/stage8/initial-run/verify-prefilter.json b/evidence/validation/stage8/initial-run/verify-prefilter.json
+new file mode 100644
+index 0000000..c685da5
+--- /dev/null
++++ b/evidence/validation/stage8/initial-run/verify-prefilter.json
+@@ -0,0 +1,19 @@
++{
++  "group": "verify-prefilter",
++  "status": "PASS",
++  "complete": true,
++  "records": [
++    {
++      "command": [
++        "/opt/pyvenv/bin/python",
++        "tests/test_stage8_differential.py",
++        "prefilter"
++      ],
++      "returncode": 0,
++      "expected_returncode": 0,
++      "log": "verify-prefilter-00.log",
++      "seconds": 6.334,
++      "sha256": "ca2731f021f2953c807a3cf440c9e9c99fcb64618b443c7e3f9faa9e2d95731c"
++    }
++  ]
++}
+diff --git a/evidence/validation/stage8/initial-run/verify-target-00.log b/evidence/validation/stage8/initial-run/verify-target-00.log
+new file mode 100644
+index 0000000..fa0891c
+--- /dev/null
++++ b/evidence/validation/stage8/initial-run/verify-target-00.log
+@@ -0,0 +1,2 @@
++COMMAND: ['/opt/pyvenv/bin/python', 'tests/test_stage8_differential.py', 'target']
++{"status": "PASS", "group": "target", "compiler_tag": "gcc", "original_comparison_cases": 2340, "library_sha256": "869fb32e6fa073f27d5052eddc863294bcd819797f65a56d07611a5b2813f161", "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9", "details": {"original_compare_calls": 2340, "all_eight_decisive_limbs": true, "equality_accepted": true}, "hardware_tested": false, "job_freshness_proven": false}
+diff --git a/evidence/validation/stage8/initial-run/verify-target.json b/evidence/validation/stage8/initial-run/verify-target.json
+new file mode 100644
+index 0000000..afb459d
+--- /dev/null
++++ b/evidence/validation/stage8/initial-run/verify-target.json
+@@ -0,0 +1,19 @@
++{
++  "group": "verify-target",
++  "status": "PASS",
++  "complete": true,
++  "records": [
++    {
++      "command": [
++        "/opt/pyvenv/bin/python",
++        "tests/test_stage8_differential.py",
++        "target"
++      ],
++      "returncode": 0,
++      "expected_returncode": 0,
++      "log": "verify-target-00.log",
++      "seconds": 0.993,
++      "sha256": "f2cdebe34b81b03242b121c484b9899e12592e12202ca30fc5fdc3bcd5584732"
++    }
++  ]
++}
+diff --git a/evidence/validation/stage8/results/stage8-automake-fixture.json b/evidence/validation/stage8/results/stage8-automake-fixture.json
+new file mode 100644
+index 0000000..a71644e
+--- /dev/null
++++ b/evidence/validation/stage8/results/stage8-automake-fixture.json
+@@ -0,0 +1,47 @@
++{
++  "status": "PASS",
++  "without_subdir_objects_collision_reproduced": true,
++  "with_subdir_objects_all_recovered_modules_linked": true,
++  "actual_upstream_cgminer_tested": false,
++  "fixture_only": true,
++  "commands": [
++    {
++      "command": [
++        "autoreconf",
++        "-fi"
++      ],
++      "returncode": 1,
++      "output": "configure.ac:3: installing './compile'\nconfigure.ac:2: installing './install-sh'\nconfigure.ac:2: installing './missing'\nMakefile.am:4: warning: source file 'src/frontend/cgminer.c' is in a subdirectory,\nMakefile.am:4: but option 'subdir-objects' is disabled\nautomake: warning: possible forward-incompatibility.\nautomake: At least one source file is in a subdirectory, but the 'subdir-objects'\nautomake: automake option hasn't been enabled.  For now, the corresponding output\nautomake: object file(s) will be placed in the top-level directory.  However, this\nautomake: behavior may change in a future Automake major version, with object\nautomake: files being placed in the same subdirectory as the corresponding sources.\nautomake: You are advised to start using 'subdir-objects' option throughout your\nautomake: project, to avoid future incompatibility.\nMakefile.am: error: object 'cgminer-cgminer.$(OBJEXT)' created by 'src/frontend/cgminer.c' and 'cgminer.c'\nMakefile.am:4: warning: source file 'reconstruction/support/sha256d80.c' is in a subdirectory,\nMakefile.am:4: but option 'subdir-objects' is disabled\nMakefile.am:4: warning: source file 'reconstruction/support/target256.c' is in a subdirectory,\nMakefile.am:4: but option 'subdir-objects' is disabled\nMakefile.am:4: warning: source file 'reconstruction/support/nonce_job_window.c' is in a subdirectory,\nMakefile.am:4: but option 'subdir-objects' is disabled\nMakefile.am:4: warning: source file 'reconstruction/support/sha256_midstate.c' is in a subdirectory,\nMakefile.am:4: but option 'subdir-objects' is disabled\nMakefile.am:4: warning: source file 'reconstruction/support/work_nonce_pipeline.c' is in a subdirectory,\nMakefile.am:4: but option 'subdir-objects' is disabled\nMakefile.am:4: warning: source file 'src/backend/work-gen/work-gen.c' is in a subdirectory,\nMakefile.am:4: but option 'subdir-objects' is disabled\nMakefile.am:4: warning: source file 'reconstruction/support/work_rx_stream.c' is in a subdirectory,\nMakefile.am:4: but option 'subdir-objects' is disabled\nMakefile.am:4: warning: source file 'libbitmain/src/uart.c' is in a subdirectory,\nMakefile.am:4: but option 'subdir-objects' is disabled\nMakefile.am:4: warning: source file 'libbitmain/src/chip/chip1398.c' is in a subdirectory,\nMakefile.am:4: but option 'subdir-objects' is disabled\nMakefile.am:4: warning: source file 'libbitmain/src/pll.c' is in a subdirectory,\nMakefile.am:4: but option 'subdir-objects' is disabled\nMakefile.am:4: warning: source file 'libbitmain/src/reg_cache.c' is in a subdirectory,\nMakefile.am:4: but option 'subdir-objects' is disabled\nMakefile.am:4: warning: source file 'libbitmain/src/aml/chip.c' is in a subdirectory,\nMakefile.am:4: but option 'subdir-objects' is disabled\nMakefile.am:4: warning: source file 'reconstruction/support/crc5.c' is in a subdirectory,\nMakefile.am:4: but option 'subdir-objects' is disabled\nMakefile.am: installing './depcomp'\nautoreconf: error: automake failed with exit status: 1\n"
++    },
++    {
++      "command": [
++        "autoreconf",
++        "-fi"
++      ],
++      "returncode": 0,
++      "output": ""
++    },
++    {
++      "command": [
++        "./configure"
++      ],
++      "returncode": 0,
++      "output": "checking for a BSD-compatible install... /usr/bin/install -c\nchecking whether sleep supports fractional seconds... yes\nchecking filesystem timestamp resolution... 0.01\nchecking whether build environment is sane... yes\nchecking for a race-free mkdir -p... /usr/bin/mkdir -p\nchecking for gawk... no\nchecking for mawk... mawk\nchecking whether make sets $(MAKE)... yes\nchecking whether make supports nested variables... yes\nchecking xargs -n works... yes\nchecking for gcc... gcc\nchecking whether the C compiler works... yes\nchecking for C compiler default output file name... a.out\nchecking for suffix of executables... \nchecking whether we are cross compiling... no\nchecking for suffix of object files... o\nchecking whether the compiler supports GNU C... yes\nchecking whether gcc accepts -g... yes\nchecking for gcc option to enable C11 features... none needed\nchecking whether gcc understands -c and -o together... yes\nchecking whether make supports the include directive... yes (GNU style)\nchecking dependency style of gcc... gcc3\nchecking that generated files are newer than configure... done\nconfigure: creating ./config.status\nconfig.status: creating Makefile\nconfig.status: executing depfiles commands\n"
++    },
++    {
++      "command": [
++        "make",
++        "-j2"
++      ],
++      "returncode": 0,
++      "output": "gcc -DPACKAGE_NAME=\\\"vn135-object-fixture\\\" -DPACKAGE_TARNAME=\\\"vn135-object-fixture\\\" -DPACKAGE_VERSION=\\\"1.0\\\" -DPACKAGE_STRING=\\\"vn135-object-fixture\\ 1.0\\\" -DPACKAGE_BUGREPORT=\\\"\\\" -DPACKAGE_URL=\\\"\\\" -DPACKAGE=\\\"vn135-object-fixture\\\" -DVERSION=\\\"1.0\\\" -I.  -I./include  -std=c11 -Wall -Wextra -Wpedantic -Werror -ffp-contract=off -g -O2 -MT cgminer-cgminer.o -MD -MP -MF .deps/cgminer-cgminer.Tpo -c -o cgminer-cgminer.o `test -f 'cgminer.c' || echo './'`cgminer.c\ngcc -DPACKAGE_NAME=\\\"vn135-object-fixture\\\" -DPACKAGE_TARNAME=\\\"vn135-object-fixture\\\" -DPACKAGE_VERSION=\\\"1.0\\\" -DPACKAGE_STRING=\\\"vn135-object-fixture\\ 1.0\\\" -DPACKAGE_BUGREPORT=\\\"\\\" -DPACKAGE_URL=\\\"\\\" -DPACKAGE=\\\"vn135-object-fixture\\\" -DVERSION=\\\"1.0\\\" -I.  -I./include  -std=c11 -Wall -Wextra -Wpedantic -Werror -ffp-contract=off -g -O2 -MT reconstruction/support/cgminer-work_rx_stream.o -MD -MP -MF reconstruction/support/.deps/cgminer-work_rx_stream.Tpo -c -o reconstruction/support/cgminer-work_rx_stream.o `test -f 'reconstruction/support/work_rx_stream.c' || echo './'`reconstruction/support/work_rx_stream.c\nmv -f .deps/cgminer-cgminer.Tpo .deps/cgminer-cgminer.Po\ngcc -DPACKAGE_NAME=\\\"vn135-object-fixture\\\" -DPACKAGE_TARNAME=\\\"vn135-object-fixture\\\" -DPACKAGE_VERSION=\\\"1.0\\\" -DPACKAGE_STRING=\\\"vn135-object-fixture\\ 1.0\\\" -DPACKAGE_BUGREPORT=\\\"\\\" -DPACKAGE_URL=\\\"\\\" -DPACKAGE=\\\"vn135-object-fixture\\\" -DVERSION=\\\"1.0\\\" -I.  -I./include  -std=c11 -Wall -Wextra -Wpedantic -Werror -ffp-contract=off -g -O2 -MT libbitmain/src/cgminer-pll.o -MD -MP -MF libbitmain/src/.deps/cgminer-pll.Tpo -c -o libbitmain/src/cgminer-pll.o `test -f 'libbitmain/src/pll.c' || echo './'`libbitmain/src/pll.c\nmv -f reconstruction/support/.deps/cgminer-work_rx_stream.Tpo reconstruction/support/.deps/cgminer-work_rx_stream.Po\ngcc -DPACKAGE_NAME=\\\"vn135-object-fixture\\\" -DPACKAGE_TARNAME=\\\"vn135-object-fixture\\\" -DPACKAGE_VERSION=\\\"1.0\\\" -DPACKAGE_STRING=\\\"vn135-object-fixture\\ 1.0\\\" -DPACKAGE_BUGREPORT=\\\"\\\" -DPACKAGE_URL=\\\"\\\" -DPACKAGE=\\\"vn135-object-fixture\\\" -DVERSION=\\\"1.0\\\" -I.  -I./include  -std=c11 -Wall -Wextra -Wpedantic -Werror -ffp-contract=off -g -O2 -MT libbitmain/src/cgminer-reg_cache.o -MD -MP -MF libbitmain/src/.deps/cgminer-reg_cache.Tpo -c -o libbitmain/src/cgminer-reg_cache.o `test -f 'libbitmain/src/reg_cache.c' || echo './'`libbitmain/src/reg_cache.c\nmv -f libbitmain/src/.deps/cgminer-pll.Tpo libbitmain/src/.deps/cgminer-pll.Po\ngcc -DPACKAGE_NAME=\\\"vn135-object-fixture\\\" -DPACKAGE_TARNAME=\\\"vn135-object-fixture\\\" -DPACKAGE_VERSION=\\\"1.0\\\" -DPACKAGE_STRING=\\\"vn135-object-fixture\\ 1.0\\\" -DPACKAGE_BUGREPORT=\\\"\\\" -DPACKAGE_URL=\\\"\\\" -DPACKAGE=\\\"vn135-object-fixture\\\" -DVERSION=\\\"1.0\\\" -I.  -I./include  -std=c11 -Wall -Wextra -Wpedantic -Werror -ffp-contract=off -g -O2 -MT reconstruction/support/cgminer-crc5.o -MD -MP -MF reconstruction/support/.deps/cgminer-crc5.Tpo -c -o reconstruction/support/cgminer-crc5.o `test -f 'reconstruction/support/crc5.c' || echo './'`reconstruction/support/crc5.c\nmv -f reconstruction/support/.deps/cgminer-crc5.Tpo reconstruction/support/.deps/cgminer-crc5.Po\ngcc -DPACKAGE_NAME=\\\"vn135-object-fixture\\\" -DPACKAGE_TARNAME=\\\"vn135-object-fixture\\\" -DPACKAGE_VERSION=\\\"1.0\\\" -DPACKAGE_STRING=\\\"vn135-object-fixture\\ 1.0\\\" -DPACKAGE_BUGREPORT=\\\"\\\" -DPACKAGE_URL=\\\"\\\" -DPACKAGE=\\\"vn135-object-fixture\\\" -DVERSION=\\\"1.0\\\" -I.  -I./include  -std=c11 -Wall -Wextra -Wpedantic -Werror -ffp-contract=off -g -O2 -MT src/frontend/cgminer-cgminer.o -MD -MP -MF src/frontend/.deps/cgminer-cgminer.Tpo -c -o src/frontend/cgminer-cgminer.o `test -f 'src/frontend/cgminer.c' || echo './'`src/frontend/cgminer.c\nmv -f libbitmain/src/.deps/cgminer-reg_cache.Tpo libbitmain/src/.deps/cgminer-reg_cache.Po\ngcc -DPACKAGE_NAME=\\\"vn135-object-fixture\\\" -DPACKAGE_TARNAME=\\\"vn135-object-fixture\\\" -DPACKAGE_VERSION=\\\"1.0\\\" -DPACKAGE_STRING=\\\"vn135-object-fixture\\ 1.0\\\" -DPACKAGE_BUGREPORT=\\\"\\\" -DPACKAGE_URL=\\\"\\\" -DPACKAGE=\\\"vn135-object-fixture\\\" -DVERSION=\\\"1.0\\\" -I.  -I./include  -std=c11 -Wall -Wextra -Wpedantic -Werror -ffp-contract=off -g -O2 -MT reconstruction/support/cgminer-sha256d80.o -MD -MP -MF reconstruction/support/.deps/cgminer-sha256d80.Tpo -c -o reconstruction/support/cgminer-sha256d80.o `test -f 'reconstruction/support/sha256d80.c' || echo './'`reconstruction/support/sha256d80.c\nmv -f src/frontend/.deps/cgminer-cgminer.Tpo src/frontend/.deps/cgminer-cgminer.Po\ngcc -DPACKAGE_NAME=\\\"vn135-object-fixture\\\" -DPACKAGE_TARNAME=\\\"vn135-object-fixture\\\" -DPACKAGE_VERSION=\\\"1.0\\\" -DPACKAGE_STRING=\\\"vn135-object-fixture\\ 1.0\\\" -DPACKAGE_BUGREPORT=\\\"\\\" -DPACKAGE_URL=\\\"\\\" -DPACKAGE=\\\"vn135-object-fixture\\\" -DVERSION=\\\"1.0\\\" -I.  -I./include  -std=c11 -Wall -Wextra -Wpedantic -Werror -ffp-contract=off -g -O2 -MT reconstruction/support/cgminer-target256.o -MD -MP -MF reconstruction/support/.deps/cgminer-target256.Tpo -c -o reconstruction/support/cgminer-target256.o `test -f 'reconstruction/support/target256.c' || echo './'`reconstruction/support/target256.c\nmv -f reconstruction/support/.deps/cgminer-sha256d80.Tpo reconstruction/support/.deps/cgminer-sha256d80.Po\ngcc -DPACKAGE_NAME=\\\"vn135-object-fixture\\\" -DPACKAGE_TARNAME=\\\"vn135-object-fixture\\\" -DPACKAGE_VERSION=\\\"1.0\\\" -DPACKAGE_STRING=\\\"vn135-object-fixture\\ 1.0\\\" -DPACKAGE_BUGREPORT=\\\"\\\" -DPACKAGE_URL=\\\"\\\" -DPACKAGE=\\\"vn135-object-fixture\\\" -DVERSION=\\\"1.0\\\" -I.  -I./include  -std=c11 -Wall -Wextra -Wpedantic -Werror -ffp-contract=off -g -O2 -MT reconstruction/support/cgminer-nonce_job_window.o -MD -MP -MF reconstruction/support/.deps/cgminer-nonce_job_window.Tpo -c -o reconstruction/support/cgminer-nonce_job_window.o `test -f 'reconstruction/support/nonce_job_window.c' || echo './'`reconstruction/support/nonce_job_window.c\nmv -f reconstruction/support/.deps/cgminer-target256.Tpo reconstruction/support/.deps/cgminer-target256.Po\ngcc -DPACKAGE_NAME=\\\"vn135-object-fixture\\\" -DPACKAGE_TARNAME=\\\"vn135-object-fixture\\\" -DPACKAGE_VERSION=\\\"1.0\\\" -DPACKAGE_STRING=\\\"vn135-object-fixture\\ 1.0\\\" -DPACKAGE_BUGREPORT=\\\"\\\" -DPACKAGE_URL=\\\"\\\" -DPACKAGE=\\\"vn135-object-fixture\\\" -DVERSION=\\\"1.0\\\" -I.  -I./include  -std=c11 -Wall -Wextra -Wpedantic -Werror -ffp-contract=off -g -O2 -MT reconstruction/support/cgminer-sha256_midstate.o -MD -MP -MF reconstruction/support/.deps/cgminer-sha256_midstate.Tpo -c -o reconstruction/support/cgminer-sha256_midstate.o `test -f 'reconstruction/support/sha256_midstate.c' || echo './'`reconstruction/support/sha256_midstate.c\nmv -f reconstruction/support/.deps/cgminer-nonce_job_window.Tpo reconstruction/support/.deps/cgminer-nonce_job_window.Po\ngcc -DPACKAGE_NAME=\\\"vn135-object-fixture\\\" -DPACKAGE_TARNAME=\\\"vn135-object-fixture\\\" -DPACKAGE_VERSION=\\\"1.0\\\" -DPACKAGE_STRING=\\\"vn135-object-fixture\\ 1.0\\\" -DPACKAGE_BUGREPORT=\\\"\\\" -DPACKAGE_URL=\\\"\\\" -DPACKAGE=\\\"vn135-object-fixture\\\" -DVERSION=\\\"1.0\\\" -I.  -I./include  -std=c11 -Wall -Wextra -Wpedantic -Werror -ffp-contract=off -g -O2 -MT reconstruction/support/cgminer-work_nonce_pipeline.o -MD -MP -MF reconstruction/support/.deps/cgminer-work_nonce_pipeline.Tpo -c -o reconstruction/support/cgminer-work_nonce_pipeline.o `test -f 'reconstruction/support/work_nonce_pipeline.c' || echo './'`reconstruction/support/work_nonce_pipeline.c\nmv -f reconstruction/support/.deps/cgminer-sha256_midstate.Tpo reconstruction/support/.deps/cgminer-sha256_midstate.Po\ngcc -DPACKAGE_NAME=\\\"vn135-object-fixture\\\" -DPACKAGE_TARNAME=\\\"vn135-object-fixture\\\" -DPACKAGE_VERSION=\\\"1.0\\\" -DPACKAGE_STRING=\\\"vn135-object-fixture\\ 1.0\\\" -DPACKAGE_BUGREPORT=\\\"\\\" -DPACKAGE_URL=\\\"\\\" -DPACKAGE=\\\"vn135-object-fixture\\\" -DVERSION=\\\"1.0\\\" -I.  -I./include  -std=c11 -Wall -Wextra -Wpedantic -Werror -ffp-contract=off -g -O2 -MT src/backend/work-gen/cgminer-work-gen.o -MD -MP -MF src/backend/work-gen/.deps/cgminer-work-gen.Tpo -c -o src/backend/work-gen/cgminer-work-gen.o `test -f 'src/backend/work-gen/work-gen.c' || echo './'`src/backend/work-gen/work-gen.c\nmv -f reconstruction/support/.deps/cgminer-work_nonce_pipeline.Tpo reconstruction/support/.deps/cgminer-work_nonce_pipeline.Po\ngcc -DPACKAGE_NAME=\\\"vn135-object-fixture\\\" -DPACKAGE_TARNAME=\\\"vn135-object-fixture\\\" -DPACKAGE_VERSION=\\\"1.0\\\" -DPACKAGE_STRING=\\\"vn135-object-fixture\\ 1.0\\\" -DPACKAGE_BUGREPORT=\\\"\\\" -DPACKAGE_URL=\\\"\\\" -DPACKAGE=\\\"vn135-object-fixture\\\" -DVERSION=\\\"1.0\\\" -I.  -I./include  -std=c11 -Wall -Wextra -Wpedantic -Werror -ffp-contract=off -g -O2 -MT libbitmain/src/cgminer-uart.o -MD -MP -MF libbitmain/src/.deps/cgminer-uart.Tpo -c -o libbitmain/src/cgminer-uart.o `test -f 'libbitmain/src/uart.c' || echo './'`libbitmain/src/uart.c\nmv -f libbitmain/src/.deps/cgminer-uart.Tpo libbitmain/src/.deps/cgminer-uart.Po\ngcc -DPACKAGE_NAME=\\\"vn135-object-fixture\\\" -DPACKAGE_TARNAME=\\\"vn135-object-fixture\\\" -DPACKAGE_VERSION=\\\"1.0\\\" -DPACKAGE_STRING=\\\"vn135-object-fixture\\ 1.0\\\" -DPACKAGE_BUGREPORT=\\\"\\\" -DPACKAGE_URL=\\\"\\\" -DPACKAGE=\\\"vn135-object-fixture\\\" -DVERSION=\\\"1.0\\\" -I.  -I./include  -std=c11 -Wall -Wextra -Wpedantic -Werror -ffp-contract=off -g -O2 -MT libbitmain/src/chip/cgminer-chip1398.o -MD -MP -MF libbitmain/src/chip/.deps/cgminer-chip1398.Tpo -c -o libbitmain/src/chip/cgminer-chip1398.o `test -f 'libbitmain/src/chip/chip1398.c' || echo './'`libbitmain/src/chip/chip1398.c\nmv -f src/backend/work-gen/.deps/cgminer-work-gen.Tpo src/backend/work-gen/.deps/cgminer-work-gen.Po\ngcc -DPACKAGE_NAME=\\\"vn135-object-fixture\\\" -DPACKAGE_TARNAME=\\\"vn135-object-fixture\\\" -DPACKAGE_VERSION=\\\"1.0\\\" -DPACKAGE_STRING=\\\"vn135-object-fixture\\ 1.0\\\" -DPACKAGE_BUGREPORT=\\\"\\\" -DPACKAGE_URL=\\\"\\\" -DPACKAGE=\\\"vn135-object-fixture\\\" -DVERSION=\\\"1.0\\\" -I.  -I./include  -std=c11 -Wall -Wextra -Wpedantic -Werror -ffp-contract=off -g -O2 -MT libbitmain/src/aml/cgminer-chip.o -MD -MP -MF libbitmain/src/aml/.deps/cgminer-chip.Tpo -c -o libbitmain/src/aml/cgminer-chip.o `test -f 'libbitmain/src/aml/chip.c' || echo './'`libbitmain/src/aml/chip.c\nmv -f libbitmain/src/chip/.deps/cgminer-chip1398.Tpo libbitmain/src/chip/.deps/cgminer-chip1398.Po\nmv -f libbitmain/src/aml/.deps/cgminer-chip.Tpo libbitmain/src/aml/.deps/cgminer-chip.Po\ngcc -std=c11 -Wall -Wextra -Wpedantic -Werror -ffp-contract=off -g -O2   -o cgminer cgminer-cgminer.o src/frontend/cgminer-cgminer.o reconstruction/support/cgminer-sha256d80.o reconstruction/support/cgminer-target256.o reconstruction/support/cgminer-nonce_job_window.o reconstruction/support/cgminer-sha256_midstate.o reconstruction/support/cgminer-work_nonce_pipeline.o src/backend/work-gen/cgminer-work-gen.o reconstruction/support/cgminer-work_rx_stream.o libbitmain/src/cgminer-uart.o libbitmain/src/chip/cgminer-chip1398.o libbitmain/src/cgminer-pll.o libbitmain/src/cgminer-reg_cache.o libbitmain/src/aml/cgminer-chip.o reconstruction/support/cgminer-crc5.o  \n"
++    },
++    {
++      "command": [
++        "./cgminer"
++      ],
++      "returncode": 0,
++      "output": "Automake distinct-object fixture PASS; not upstream cgminer\n"
++    }
++  ]
++}
+diff --git a/evidence/validation/stage8/results/stage8-cli-results.json b/evidence/validation/stage8/results/stage8-cli-results.json
+new file mode 100644
+index 0000000..f8dd310
+--- /dev/null
++++ b/evidence/validation/stage8/results/stage8-cli-results.json
+@@ -0,0 +1,5 @@
++{
++  "status": "PASS",
++  "separate_cli_cases": 166,
++  "no_network": true
++}
+diff --git a/evidence/validation/stage8/results/stage8-hash-clang.json b/evidence/validation/stage8/results/stage8-hash-clang.json
+new file mode 100644
+index 0000000..8d6641d
+--- /dev/null
++++ b/evidence/validation/stage8/results/stage8-hash-clang.json
+@@ -0,0 +1,16 @@
++{
++  "status": "PASS",
++  "group": "hash",
++  "compiler_tag": "clang",
++  "original_comparison_cases": 305,
++  "library_sha256": "e281603d0616051b1fc16ec1a4b24597e12b33bff49376cc956b573ea9217454",
++  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
++  "details": {
++    "original_full_work_hash_calls": 305,
++    "hashlib_cross_checks": 305,
++    "serialized_and_word_swapped_APIs_compared_per_case": true,
++    "original_real_SHA_executed": true
++  },
++  "hardware_tested": false,
++  "job_freshness_proven": false
++}
+diff --git a/evidence/validation/stage8/results/stage8-hash-gcc.json b/evidence/validation/stage8/results/stage8-hash-gcc.json
+new file mode 100644
+index 0000000..ceb0e37
+--- /dev/null
++++ b/evidence/validation/stage8/results/stage8-hash-gcc.json
+@@ -0,0 +1,16 @@
++{
++  "status": "PASS",
++  "group": "hash",
++  "compiler_tag": "gcc",
++  "original_comparison_cases": 305,
++  "library_sha256": "869fb32e6fa073f27d5052eddc863294bcd819797f65a56d07611a5b2813f161",
++  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
++  "details": {
++    "original_full_work_hash_calls": 305,
++    "hashlib_cross_checks": 305,
++    "serialized_and_word_swapped_APIs_compared_per_case": true,
++    "original_real_SHA_executed": true
++  },
++  "hardware_tested": false,
++  "job_freshness_proven": false
++}
+diff --git a/evidence/validation/stage8/results/stage8-interpreter-results.json b/evidence/validation/stage8/results/stage8-interpreter-results.json
+new file mode 100644
+index 0000000..82fdee4
+--- /dev/null
++++ b/evidence/validation/stage8/results/stage8-interpreter-results.json
+@@ -0,0 +1,9 @@
++{
++  "status": "PASS",
++  "synthetic_instruction_cases": 3779,
++  "instructions": [
++    "BLX register, A32 targets"
++  ],
++  "unsupported_thumb_rejected": true,
++  "ELF_not_executed_as_process": true
++}
+diff --git a/evidence/validation/stage8/results/stage8-job-clang.json b/evidence/validation/stage8/results/stage8-job-clang.json
+new file mode 100644
+index 0000000..9cd7ddd
+--- /dev/null
++++ b/evidence/validation/stage8/results/stage8-job-clang.json
+@@ -0,0 +1,16 @@
++{
++  "status": "PASS",
++  "group": "job",
++  "compiler_tag": "clang",
++  "original_comparison_cases": 1024,
++  "library_sha256": "e281603d0616051b1fc16ec1a4b24597e12b33bff49376cc956b573ea9217454",
++  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
++  "details": {
++    "original_selection_slices": 1024,
++    "original_final_policy_injected": true,
++    "coherent_snapshot_only": true,
++    "first_match_no_fallback": true
++  },
++  "hardware_tested": false,
++  "job_freshness_proven": false
++}
+diff --git a/evidence/validation/stage8/results/stage8-job-gcc.json b/evidence/validation/stage8/results/stage8-job-gcc.json
+new file mode 100644
+index 0000000..f7efa84
+--- /dev/null
++++ b/evidence/validation/stage8/results/stage8-job-gcc.json
+@@ -0,0 +1,16 @@
++{
++  "status": "PASS",
++  "group": "job",
++  "compiler_tag": "gcc",
++  "original_comparison_cases": 1024,
++  "library_sha256": "869fb32e6fa073f27d5052eddc863294bcd819797f65a56d07611a5b2813f161",
++  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
++  "details": {
++    "original_selection_slices": 1024,
++    "original_final_policy_injected": true,
++    "coherent_snapshot_only": true,
++    "first_match_no_fallback": true
++  },
++  "hardware_tested": false,
++  "job_freshness_proven": false
++}
+diff --git a/evidence/validation/stage8/results/stage8-prefilter-clang.json b/evidence/validation/stage8/results/stage8-prefilter-clang.json
+new file mode 100644
+index 0000000..f6f414b
+--- /dev/null
++++ b/evidence/validation/stage8/results/stage8-prefilter-clang.json
+@@ -0,0 +1,16 @@
++{
++  "status": "PASS",
++  "group": "prefilter",
++  "compiler_tag": "clang",
++  "original_comparison_cases": 883,
++  "library_sha256": "e281603d0616051b1fc16ec1a4b24597e12b33bff49376cc956b573ea9217454",
++  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
++  "details": {
++    "forced_hash_boundary_cases": 752,
++    "real_original_SHA_bound_cases": 131,
++    "stateful_replay_native_checks": 2,
++    "stopped_before_accounting_and_submission": true
++  },
++  "hardware_tested": false,
++  "job_freshness_proven": false
++}
+diff --git a/evidence/validation/stage8/results/stage8-prefilter-gcc.json b/evidence/validation/stage8/results/stage8-prefilter-gcc.json
+new file mode 100644
+index 0000000..ceef861
+--- /dev/null
++++ b/evidence/validation/stage8/results/stage8-prefilter-gcc.json
+@@ -0,0 +1,16 @@
++{
++  "status": "PASS",
++  "group": "prefilter",
++  "compiler_tag": "gcc",
++  "original_comparison_cases": 883,
++  "library_sha256": "869fb32e6fa073f27d5052eddc863294bcd819797f65a56d07611a5b2813f161",
++  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
++  "details": {
++    "forced_hash_boundary_cases": 752,
++    "real_original_SHA_bound_cases": 131,
++    "stateful_replay_native_checks": 2,
++    "stopped_before_accounting_and_submission": true
++  },
++  "hardware_tested": false,
++  "job_freshness_proven": false
++}
+diff --git a/evidence/validation/stage8/results/stage8-registry-clang.json b/evidence/validation/stage8/results/stage8-registry-clang.json
+new file mode 100644
+index 0000000..513af4f
+--- /dev/null
++++ b/evidence/validation/stage8/results/stage8-registry-clang.json
+@@ -0,0 +1,16 @@
++{
++  "status": "PASS",
++  "group": "registry",
++  "compiler_tag": "clang",
++  "original_comparison_cases": 861,
++  "library_sha256": "e281603d0616051b1fc16ec1a4b24597e12b33bff49376cc956b573ea9217454",
++  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
++  "details": {
++    "original_membership_calls": 349,
++    "combined_original_consumer_and_membership": 512,
++    "external_mutex_injected": true,
++    "predicate_not_replaced_in_combined_tests": true
++  },
++  "hardware_tested": false,
++  "job_freshness_proven": false
++}
+diff --git a/evidence/validation/stage8/results/stage8-registry-gcc.json b/evidence/validation/stage8/results/stage8-registry-gcc.json
+new file mode 100644
+index 0000000..a0e6401
+--- /dev/null
++++ b/evidence/validation/stage8/results/stage8-registry-gcc.json
+@@ -0,0 +1,16 @@
++{
++  "status": "PASS",
++  "group": "registry",
++  "compiler_tag": "gcc",
++  "original_comparison_cases": 861,
++  "library_sha256": "869fb32e6fa073f27d5052eddc863294bcd819797f65a56d07611a5b2813f161",
++  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
++  "details": {
++    "original_membership_calls": 349,
++    "combined_original_consumer_and_membership": 512,
++    "external_mutex_injected": true,
++    "predicate_not_replaced_in_combined_tests": true
++  },
++  "hardware_tested": false,
++  "job_freshness_proven": false
++}
+diff --git a/evidence/validation/stage8/results/stage8-target-clang.json b/evidence/validation/stage8/results/stage8-target-clang.json
+new file mode 100644
+index 0000000..9ab1360
+--- /dev/null
++++ b/evidence/validation/stage8/results/stage8-target-clang.json
+@@ -0,0 +1,15 @@
++{
++  "status": "PASS",
++  "group": "target",
++  "compiler_tag": "clang",
++  "original_comparison_cases": 2340,
++  "library_sha256": "e281603d0616051b1fc16ec1a4b24597e12b33bff49376cc956b573ea9217454",
++  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
++  "details": {
++    "original_compare_calls": 2340,
++    "all_eight_decisive_limbs": true,
++    "equality_accepted": true
++  },
++  "hardware_tested": false,
++  "job_freshness_proven": false
++}
+diff --git a/evidence/validation/stage8/results/stage8-target-gcc.json b/evidence/validation/stage8/results/stage8-target-gcc.json
+new file mode 100644
+index 0000000..43f3f9d
+--- /dev/null
++++ b/evidence/validation/stage8/results/stage8-target-gcc.json
+@@ -0,0 +1,15 @@
++{
++  "status": "PASS",
++  "group": "target",
++  "compiler_tag": "gcc",
++  "original_comparison_cases": 2340,
++  "library_sha256": "869fb32e6fa073f27d5052eddc863294bcd819797f65a56d07611a5b2813f161",
++  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
++  "details": {
++    "original_compare_calls": 2340,
++    "all_eight_decisive_limbs": true,
++    "equality_accepted": true
++  },
++  "hardware_tested": false,
++  "job_freshness_proven": false
++}
+diff --git a/examples/verify_header.c b/examples/verify_header.c
+new file mode 100644
+index 0000000..57a3478
+--- /dev/null
++++ b/examples/verify_header.c
+@@ -0,0 +1,29 @@
++/* Offline diagnostic utility, NOT a miner and NOT a pool submission client.
++ * Usage: vn135-verify-header <serialized-header:160 hex> <target-LE:64 hex>
++ * Exit 0 means computation completed; inspect meets_target, not the exit code. */
++#include "xminer/recovery/nonce_verify.h"
++#include <stdio.h>
++#include <string.h>
++static int nibble(char c) {
++    if(c>='0'&&c<='9')return c-'0';
++    if(c>='a'&&c<='f')return c-'a'+10;
++    if(c>='A'&&c<='F')return c-'A'+10;
++    return -1;
++}
++static int parse(const char *s,uint8_t *out,size_t n) {
++    if(strlen(s)!=2*n)return -1;
++    for(size_t i=0;i<n;i++){int a=nibble(s[2*i]),b=nibble(s[2*i+1]);if(a<0||b<0)return -1;out[i]=(uint8_t)(a*16+b);}
++    return 0;
++}
++int main(int argc,char **argv) {
++    uint8_t header[80],target[32],digest[32];
++    if(argc!=3||parse(argv[1],header,80)||parse(argv[2],target,32)) {
++        fprintf(stderr,"Usage: %s <serialized header:160 hex chars> <target little-endian:64 hex chars>\n",argv[0]);
++        return 2;
++    }
++    if(vn135_sha256d_header80(header,digest))return 2;
++    int match=vn135_target256_check_le(digest,target);if(match<0)return 2;
++    printf("{\"sha256d_raw\":\"");for(size_t i=0;i<32;i++)printf("%02x",digest[i]);
++    printf("\",\"meets_target\":%s,\"job_freshness_checked\":false,\"submitted\":false}\n",match?"true":"false");
++    return 0;
++}
+diff --git a/include/xminer/recovery/nonce_verify.h b/include/xminer/recovery/nonce_verify.h
+new file mode 100644
+index 0000000..011ae9f
+--- /dev/null
++++ b/include/xminer/recovery/nonce_verify.h
+@@ -0,0 +1,89 @@
++#ifndef VN135_RECOVERY_NONCE_VERIFY_H
++#define VN135_RECOVERY_NONCE_VERIFY_H
++#include <stddef.h>
++#include <stdint.h>
++#ifdef __cplusplus
++extern "C" {
++#endif
++/* New integration types, NOT the original work/thread/pool ABI.
++ * Inputs are fixed-size accessible byte arrays. Unless stated otherwise,
++ * mutable objects and callback-owned state must not overlap. Callers serialize
++ * access. No function below sends a share or proves job freshness. */
++#define VN135_VERIFY_HEADER_BYTES 80u
++#define VN135_VERIFY_DIGEST_BYTES 32u
++#define VN135_RECENT_JOB_COUNT 3u
++
++typedef struct {
++    uint8_t header_words_le[80]; /* Each word reversed relative to wire header. */
++    uint8_t digest[32];          /* Raw SHA digest, not reversed display hex. */
++} vn135_verify_work;
++
++typedef void (*vn135_work_hash_fn)(void *context,
++    const uint8_t header_words_le[80], uint8_t digest[32]);
++
++enum vn135_prefilter_result {
++    VN135_PREFILTER_CONTINUE = 0, /* Only the recovered prefix passed. */
++    VN135_PREFILTER_DUPLICATE = 1,
++    VN135_PREFILTER_HIGH_WORD = 2,
++    VN135_VERIFY_INVALID = -2
++};
++
++/* Independent fixed-length support implementation, checked against original
++ * SHA functions and Python hashlib. Input is SERIALIZED header bytes. */
++int vn135_sha256d_header80(const uint8_t header[80], uint8_t digest[32]);
++/* Original 0x2d994: reverse each source word, SHA256 twice.
++ * Only the 80-byte header and 32-byte digest are exposed, not a 632-byte work ABI.
++ * Header and digest MAY overlap: input is consumed before output is written. */
++int vn135_frontend_hash_words80(const uint8_t header_words_le[80], uint8_t digest[32]);
++/* Original 0x10c1c: little-endian 256-bit unsigned hash <= target; equality passes.
++ * Returns 1/0, or -2 for NULL. An all-zero target is not rejected artificially. */
++int vn135_target256_check_le(const uint8_t hash[32], const uint8_t target[32]);
++/* Prefix 0x32f60..0x330a4. A scalar last_nonce has NO validity bit/job identifier:
++ * if equal, reject without hash or mutation. Otherwise save last_nonce, write
++ * nonce little-endian at header+76, invoke hash exactly once, check high word.
++ * Numeric selector==1 permits high word <=0xffff, every other value permits 0.
++ * Selector names/algorithm binding NOT established. Callback cannot report error,
++ * as in observed boundary; production errors need a separate policy.
++ * Diagnostics and the two getter calls are not part of the normalized API. */
++int vn135_frontend_nonce_prefilter(vn135_verify_work *work, uint32_t *last_nonce,
++    uint32_t nonce, uint32_t selector, vn135_work_hash_fn hash, void *context);
++/* New explicitly selected SHA256d binding, NOT a proven T21 runtime dispatch. */
++int vn135_frontend_sha256d_prefilter(vn135_verify_work *work, uint32_t *last_nonce,
++    uint32_t nonce, uint32_t selector);
++
++/* Consumer slice 0x74de4..0x74e7c/0x74f14: normalized stable three-record window.
++ * The first matching key is decisive EVEN if that record is unusable.
++ * Word_1fc is raw observed data, not an invented freshness/generation field.
++ * Caller supplies an immutable, coherent snapshot; reference is an opaque token.
++ * The injectable boundary represents original 0x34d54. Its list-membership
++ * computation is also reconstructed below for a coherent reference-list snapshot. */
++typedef struct {
++    uint32_t key;
++    void *reference;
++    uint32_t word_1fc;
++} vn135_recent_job_record;
++typedef int (*vn135_job_reject_fn)(void *context, void *reference);
++enum vn135_job_match_result {
++    VN135_JOB_SELECTED = 0,
++    VN135_JOB_NOT_FOUND = 1,
++    VN135_JOB_NULL_REFERENCE = 2,
++    VN135_JOB_REJECTED = 3,
++    VN135_JOB_STATUS_ZERO = 4
++};
++/* selected_index remains unchanged on failure. No fallback to a later match. */
++int vn135_recent_job_select(const vn135_recent_job_record records[3], uint32_t key,
++    vn135_job_reject_fn reject, void *context, size_t *selected_index);
++/* Original 0x34d54 normalized to a coherent caller-owned list. Original lock/
++ * unlock wrap this lookup; this API requires external synchronization instead.
++ * Returns 1 when absent, 0 when present, -2 for NULL list with positive count.
++ * A signed count <=0 returns absent, as in the original. No pointee is read.
++ * With positive count the caller provides at least count accessible entries. */
++int vn135_reference_absent(void *const *references, int32_t count, void *reference);
++/* New binding of recovered selection to recovered membership, same stable
++ * snapshot precondition; no job generation, timeouts or reference ownership. */
++int vn135_recent_job_select_registered(const vn135_recent_job_record records[3],
++    uint32_t key, void *const *references, int32_t count, size_t *selected_index);
++#ifdef __cplusplus
++}
++#endif
++#endif
+diff --git a/reconstruction/cgminer-overlay.am b/reconstruction/cgminer-overlay.am
+index 0a0193a..42e7bab 100644
+--- a/reconstruction/cgminer-overlay.am
++++ b/reconstruction/cgminer-overlay.am
+@@ -1,8 +1,15 @@
+ # Added to the pinned upstream source, without replacing existing cgminer code.
+ # Only offline-verified modules are linked. This DOES NOT register a T21 driver.
++# Preserve paths: root cgminer.c and src/frontend/cgminer.c need distinct objects.
++AUTOMAKE_OPTIONS = subdir-objects
+ cgminer_CFLAGS = $(AM_CFLAGS) -ffp-contract=off
+ cgminer_CPPFLAGS += -I$(top_srcdir)/include
+-cgminer_SOURCES += reconstruction/support/sha256_midstate.c \
++cgminer_SOURCES += src/frontend/cgminer.c \
++                   reconstruction/support/sha256d80.c \
++                   reconstruction/support/target256.c \
++                   reconstruction/support/nonce_job_window.c \
++                   include/xminer/recovery/nonce_verify.h \
++                   reconstruction/support/sha256_midstate.c \
+                    reconstruction/support/work_nonce_pipeline.c \
+                    include/xminer/recovery/work_nonce.h \
+                    include/xminer/recovery/sha256_midstate.h \
+diff --git a/reconstruction/support/nonce_job_window.c b/reconstruction/support/nonce_job_window.c
+new file mode 100644
+index 0000000..3c243a6
+--- /dev/null
++++ b/reconstruction/support/nonce_job_window.c
+@@ -0,0 +1,36 @@
++/* Bounded consumer selection from 0x74de4; original source filename unknown.
++ * Normalized stable snapshot, no original mutex/queue/work-pointer ABI.
++ * Pointer-wrap sentinel from the raw ARM pointer arithmetic is not meaningful
++ * in this checked API; only valid three-record arrays are accepted. */
++#include "xminer/recovery/nonce_verify.h"
++int vn135_recent_job_select(const vn135_recent_job_record records[3],uint32_t key,
++    vn135_job_reject_fn reject,void *context,size_t *selected_index) {
++    if (!records || !reject || !selected_index) return VN135_VERIFY_INVALID;
++    for (size_t i=0;i<3;i++) {
++        if (records[i].key!=key) continue;
++        if (!records[i].reference) return VN135_JOB_NULL_REFERENCE;
++        if (reject(context,records[i].reference)) return VN135_JOB_REJECTED;
++        if (!records[i].word_1fc) return VN135_JOB_STATUS_ZERO;
++        *selected_index=i;
++        return VN135_JOB_SELECTED;
++    }
++    return VN135_JOB_NOT_FOUND;
++}
++
++int vn135_reference_absent(void *const *references,int32_t count,void *reference) {
++    if (count<=0) return 1;
++    if (!references) return VN135_VERIFY_INVALID;
++    for (int32_t i=0;i<count;i++) if (references[i]==reference) return 0;
++    return 1;
++}
++struct reference_snapshot { void *const *references; int32_t count; };
++static int reject_absent(void *context,void *reference) {
++    const struct reference_snapshot *snapshot=context;
++    return vn135_reference_absent(snapshot->references,snapshot->count,reference);
++}
++int vn135_recent_job_select_registered(const vn135_recent_job_record records[3],
++    uint32_t key,void *const *references,int32_t count,size_t *selected_index) {
++    if (count>0 && !references) return VN135_VERIFY_INVALID;
++    struct reference_snapshot snapshot={references,count};
++    return vn135_recent_job_select(records,key,reject_absent,&snapshot,selected_index);
++}
+diff --git a/reconstruction/support/sha256d80.c b/reconstruction/support/sha256d80.c
+new file mode 100644
+index 0000000..28c8c93
+--- /dev/null
++++ b/reconstruction/support/sha256d80.c
+@@ -0,0 +1,25 @@
++/* New support filename. Fixed 80-byte SHA256d, not a recovered general SHA API.
++ * Original 0x2d994 and SHA 0x108f38 serve as differential references.
++ * Leaves upstream sha2.c unchanged. No allocation, libc, I/O or mutable globals. */
++#include "xminer/recovery/nonce_verify.h"
++#include "xminer/recovery/sha256_midstate.h"
++static void store_be(uint8_t *p, uint32_t v) {
++    p[0]=(uint8_t)(v>>24); p[1]=(uint8_t)(v>>16);
++    p[2]=(uint8_t)(v>>8); p[3]=(uint8_t)v;
++}
++int vn135_sha256d_header80(const uint8_t header[80], uint8_t digest[32]) {
++    uint8_t tail[64]={0}, final[64]={0};
++    uint32_t state[8];
++    if (!header || !digest) return VN135_VERIFY_INVALID;
++    /* First hash: 80 bytes => two blocks, length 640 bits. */
++    if (vn135_sha256_midstate64(header,state)) return VN135_VERIFY_INVALID;
++    for (size_t i=0;i<16;i++) tail[i]=header[64+i];
++    tail[16]=0x80; tail[62]=0x02; tail[63]=0x80;
++    if (vn135_sha256_compress_block(state,tail)) return VN135_VERIFY_INVALID;
++    for (size_t i=0;i<8;i++) store_be(final+4*i,state[i]);
++    /* Second hash: 32 bytes => one padded block, length 256 bits. */
++    final[32]=0x80; final[62]=0x01;
++    if (vn135_sha256_midstate64(final,state)) return VN135_VERIFY_INVALID;
++    for (size_t i=0;i<8;i++) store_be(digest+4*i,state[i]);
++    return 0;
++}
+diff --git a/reconstruction/support/target256.c b/reconstruction/support/target256.c
+new file mode 100644
+index 0000000..2477cbf
+--- /dev/null
++++ b/reconstruction/support/target256.c
+@@ -0,0 +1,15 @@
++/* Original unsigned comparison 0x10c1c; exact original source path unknown.
++ * Integration helper, not a duplicate or replacement of upstream fulltest(). */
++#include "xminer/recovery/nonce_verify.h"
++static uint32_t load_le(const uint8_t *p) {
++    return (uint32_t)p[0]|((uint32_t)p[1]<<8)|((uint32_t)p[2]<<16)|((uint32_t)p[3]<<24);
++}
++int vn135_target256_check_le(const uint8_t hash[32],const uint8_t target[32]) {
++    if (!hash || !target) return VN135_VERIFY_INVALID;
++    for (size_t i=8;i!=0;i--) {
++        uint32_t h=load_le(hash+4*(i-1)),t=load_le(target+4*(i-1));
++        if (h<t) return 1;
++        if (h>t) return 0;
++    }
++    return 1;
++}
+diff --git a/src/frontend/cgminer.c b/src/frontend/cgminer.c
+index cd4c5fe..cd9f1d3 100644
+--- a/src/frontend/cgminer.c
++++ b/src/frontend/cgminer.c
+@@ -1,8 +1,39 @@
+-/* VN135_PENDING_MODULE
+- * Observed source path: /tmp/build/src/frontend/cgminer.c
+- * Source-path bytes verified against the supplied ELF.
+- * This translation unit is NOT reconstructed and is NOT in the build.
+- * Evidence: evidence/modules/src/frontend/cgminer.c.json
+- * No fake functions, signatures, constants or successful return values.
+- */
+-#error "VN135 pending module: src/frontend/cgminer.c; not a recovered implementation"
++/* Partial reconstruction. Direct source-path reference at 0x32fdc proves
++ * frontend ownership of the prefilter. Hash helper 0x2d994 is placed here as an
++ * integration choice within the frontend code cluster; its own source filename
++ * is not independently proven. This is NOT a new main or full vendor frontend.
++ * Evidence: evidence/stage8/recovery-manifest.json. */
++#include "xminer/recovery/nonce_verify.h"
++static uint32_t load_le(const uint8_t *p) {
++    return (uint32_t)p[0]|((uint32_t)p[1]<<8)|((uint32_t)p[2]<<16)|((uint32_t)p[3]<<24);
++}
++static void store_le(uint8_t *p,uint32_t v) {
++    p[0]=(uint8_t)v;p[1]=(uint8_t)(v>>8);p[2]=(uint8_t)(v>>16);p[3]=(uint8_t)(v>>24);
++}
++int vn135_frontend_hash_words80(const uint8_t words[80], uint8_t digest[32]) {
++    uint8_t header[80];
++    if (!words || !digest) return VN135_VERIFY_INVALID;
++    for (size_t i=0;i<80;i+=4)
++        for (size_t j=0;j<4;j++) header[i+j]=words[i+3-j];
++    return vn135_sha256d_header80(header,digest);
++}
++int vn135_frontend_nonce_prefilter(vn135_verify_work *work, uint32_t *last_nonce,
++    uint32_t nonce, uint32_t selector, vn135_work_hash_fn hash, void *context) {
++    if (!work || !last_nonce || !hash) return VN135_VERIFY_INVALID;
++    if (*last_nonce==nonce) return VN135_PREFILTER_DUPLICATE;
++    /* The original retains this value even when the later hash gate rejects. */
++    *last_nonce=nonce;
++    store_le(work->header_words_le+76,nonce);
++    hash(context,work->header_words_le,work->digest);
++    return load_le(work->digest+28) <= (selector==1 ? UINT32_C(0xffff) : 0u)
++        ? VN135_PREFILTER_CONTINUE : VN135_PREFILTER_HIGH_WORD;
++}
++static void sha_hash(void *context,const uint8_t words[80],uint8_t digest[32]) {
++    (void)context;
++    /* The validated outer API supplies both non-NULL fixed-size arrays. */
++    (void)vn135_frontend_hash_words80(words,digest);
++}
++int vn135_frontend_sha256d_prefilter(vn135_verify_work *work,uint32_t *last_nonce,
++    uint32_t nonce,uint32_t selector) {
++    return vn135_frontend_nonce_prefilter(work,last_nonce,nonce,selector,sha_hash,0);
++}
+diff --git a/tests/arm32_stage8_instructions.S b/tests/arm32_stage8_instructions.S
+new file mode 100644
+index 0000000..524a497
+--- /dev/null
++++ b/tests/arm32_stage8_instructions.S
+@@ -0,0 +1,11 @@
++.syntax unified
++.arm
++.text
++.global stage8_blx_example
++stage8_blx_example:
++    push {r4,lr}
++    blx r1
++    pop {r4,pc}
++.global stage8_blx_lr
++stage8_blx_lr:
++    blx lr
+diff --git a/tests/fixtures/arm32_stage8_instructions.o b/tests/fixtures/arm32_stage8_instructions.o
+new file mode 100644
+index 0000000000000000000000000000000000000000..18a2907eb462e8bb82d9f33b8aebc46929b74a45
+GIT binary patch
+literal 440
+zcmaiwy$ZrG6oqeE|8XcdIO!k?E>;8wCuu=NP#0f7QVb%rP}&G}(ueUid>A*~d;`7L
+zrkc$__|C}*C)}K-%Nb(~vc;eaKL_wkgZ%KrF61$_oZe&b>ffyM^*%<r4Gg*9-X2&D
+zWua1ZORQ{E%qnZ?WoZ}86;l|{(Yyr))X`Vf8F{d!NF><qdS!DdqrG>KB8FJ<ofvIA
+zKiT+^?nJ_a&=+9GGLqaw9s^>VYY+XABg{?h&IR>C^VwKL+69%-KUqo>a!MDG*cU1b
+a6BNzNAhSLPHBS6pTT~8i%ITc?sQ(Q{$SeE+
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/test_nonce_verify.c b/tests/test_nonce_verify.c
+new file mode 100644
+index 0000000..6749df0
+--- /dev/null
++++ b/tests/test_nonce_verify.c
+@@ -0,0 +1,94 @@
++#include "xminer/recovery/nonce_verify.h"
++#include <assert.h>
++#include <stdio.h>
++#include <string.h>
++#include <limits.h>
++static unsigned tests;
++static uint32_t le(const uint8_t *p) {return (uint32_t)p[0]|(uint32_t)p[1]<<8|(uint32_t)p[2]<<16|(uint32_t)p[3]<<24;}
++static void setle(uint8_t *p,uint32_t x) {for(unsigned i=0;i<4;i++)p[i]=(uint8_t)(x>>(8*i));}
++static void unhex(const char *s,uint8_t *b,size_t n) {
++    const char *hex="0123456789abcdef";
++    for(size_t i=0;i<n;i++){const char *a=strchr(hex,s[2*i]),*c=strchr(hex,s[2*i+1]);assert(a&&c);b[i]=(uint8_t)(((a-hex)<<4)|(c-hex));}
++}
++struct cbstate {uint32_t *last;uint32_t nonce,high;unsigned calls;};
++static void forced(void *ctx,const uint8_t words[80],uint8_t digest[32]) {
++    struct cbstate *s=ctx;assert(*s->last==s->nonce&&le(words+76)==s->nonce);
++    s->calls++;memset(digest,0x55,32);setle(digest+28,s->high);
++}
++struct rejectstate {unsigned calls;int code;void *expected;};
++static int reject(void *ctx,void *ref) {struct rejectstate *s=ctx;assert(s->expected==ref);s->calls++;return s->code;}
++int main(void) {
++    uint8_t words[80],digest[32],expected[32],wire[80],same[112];
++    for(unsigned i=0;i<80;i++)words[i]=(uint8_t)i;
++    unhex("7870cff65f59785edabcdd144023095b8926d49a834c73d1f2d77d310af30004",expected,32);
++    for(unsigned i=0;i<80;i++)wire[i]=words[(i&~3u)+(3u-(i&3u))];
++    assert(vn135_frontend_hash_words80(words,digest)==0&&!memcmp(digest,expected,32));tests++;
++    assert(vn135_sha256d_header80(wire,digest)==0&&!memcmp(digest,expected,32));tests++;
++    for(unsigned offset=0;offset<4;offset++) {
++        memset(same,0x3a,sizeof(same));memcpy(same+offset,wire,80);
++        assert(vn135_sha256d_header80(same+offset,same+offset)==0);
++        assert(!memcmp(same+offset,expected,32));tests++;
++    }
++    memset(digest,0x69,32);memcpy(expected,digest,32);
++    assert(vn135_sha256d_header80(NULL,digest)==-2&&!memcmp(digest,expected,32));tests++;
++    assert(vn135_sha256d_header80(words,NULL)==-2);tests++;
++    assert(vn135_frontend_hash_words80(NULL,digest)==-2&&!memcmp(digest,expected,32));tests++;
++    assert(vn135_frontend_hash_words80(words,NULL)==-2);tests++;
++    assert(vn135_target256_check_le(NULL,digest)==-2);tests++;
++    assert(vn135_target256_check_le(digest,NULL)==-2);tests++;
++    for(unsigned i=0;i<32;i++) {
++        uint8_t h[32]={0},t[32]={0};
++        assert(vn135_target256_check_le(h,t)==1);tests++;
++        h[i]=0x80;assert(vn135_target256_check_le(h,t)==0);tests++;
++        t[i]=0xff;assert(vn135_target256_check_le(h,t)==1);tests++;
++        if(i){h[i]=0xff;t[i]=0x80;memset(t,0xff,i);assert(vn135_target256_check_le(h,t)==0);tests++;}
++    }
++    uint32_t highs[]={0,1,0xffff,0x10000,0x80000000,0xffffffff};
++    for(unsigned selector=0;selector<3;selector++)for(unsigned i=0;i<6;i++) {
++        vn135_verify_work w;memset(&w,0x9d,sizeof(w));uint32_t last=0;
++        struct cbstate s={&last,42,highs[i],0};
++        int rc=vn135_frontend_nonce_prefilter(&w,&last,42,selector,forced,&s);
++        assert(rc==(highs[i]<=(selector==1?0xffffu:0)?0:2));
++        assert(last==42&&s.calls==1);tests++;
++        vn135_verify_work saved=w;
++        assert(vn135_frontend_nonce_prefilter(&w,&last,42,selector,forced,&s)==1);
++        assert(!memcmp(&w,&saved,sizeof(w))&&s.calls==1);tests++;
++    }
++    vn135_verify_work w;memset(&w,0xa5,sizeof(w));vn135_verify_work saved=w;uint32_t last=0;
++    struct cbstate cb={&last,0,0,0};
++    assert(vn135_frontend_nonce_prefilter(&w,&last,0,0,forced,&cb)==1&&cb.calls==0);tests++;
++    assert(vn135_frontend_nonce_prefilter(NULL,&last,1,0,forced,&cb)==-2);tests++;
++    assert(vn135_frontend_nonce_prefilter(&w,NULL,1,0,forced,&cb)==-2);tests++;
++    assert(vn135_frontend_nonce_prefilter(&w,&last,1,0,NULL,&cb)==-2);tests++;
++    assert(!memcmp(&w,&saved,sizeof(w))&&last==0&&cb.calls==0);
++    int tokens[3]={0};vn135_recent_job_record jobs[3]={{7,&tokens[0],1},{7,&tokens[1],1},{7,&tokens[2],1}};
++    struct rejectstate state={0,0,&tokens[0]};size_t index=999;
++    assert(vn135_recent_job_select(jobs,7,reject,&state,&index)==0&&index==0&&state.calls==1);tests++;
++    jobs[0].reference=NULL;index=999;state.calls=0;
++    assert(vn135_recent_job_select(jobs,7,reject,&state,&index)==2&&index==999&&state.calls==0);tests++;
++    jobs[0].reference=&tokens[0];jobs[0].word_1fc=0;
++    assert(vn135_recent_job_select(jobs,7,reject,&state,&index)==4&&index==999&&state.calls==1);tests++;
++    state.code=-1;state.calls=0;
++    assert(vn135_recent_job_select(jobs,7,reject,&state,&index)==3&&index==999&&state.calls==1);tests++;
++    state.calls=0;
++    assert(vn135_recent_job_select(jobs,8,reject,&state,&index)==1&&index==999&&state.calls==0);tests++;
++    assert(vn135_recent_job_select(NULL,7,reject,&state,&index)==-2);tests++;
++    assert(vn135_recent_job_select(jobs,7,NULL,&state,&index)==-2);tests++;
++    assert(vn135_recent_job_select(jobs,7,reject,&state,NULL)==-2);tests++;
++    void *refs[]={NULL,&tokens[1],&tokens[0],&tokens[0]};
++    assert(vn135_reference_absent(refs,4,&tokens[0])==0);tests++;
++    assert(vn135_reference_absent(refs,4,&tokens[2])==1);tests++;
++    assert(vn135_reference_absent(refs,4,NULL)==0);tests++;
++    assert(vn135_reference_absent(NULL,0,NULL)==1);tests++;
++    assert(vn135_reference_absent(NULL,INT32_MIN,NULL)==1);tests++;
++    assert(vn135_reference_absent(NULL,1,NULL)==-2);tests++;
++    jobs[0].word_1fc=1;index=999;
++    assert(vn135_recent_job_select_registered(jobs,7,refs,4,&index)==0&&index==0);tests++;
++    index=999;
++    assert(vn135_recent_job_select_registered(jobs,7,NULL,0,&index)==3&&index==999);tests++;
++    assert(vn135_recent_job_select_registered(jobs,7,NULL,1,&index)==-2&&index==999);tests++;
++    assert(vn135_recent_job_select_registered(NULL,7,refs,4,&index)==-2);tests++;
++    assert(vn135_recent_job_select_registered(jobs,7,refs,4,NULL)==-2);tests++;
++    printf("Stage8 native cases: %u PASS; no device access\n",tests);
++    return 0;
++}
+diff --git a/tests/test_overlay_automake.py b/tests/test_overlay_automake.py
+new file mode 100644
+index 0000000..ab935b5
+--- /dev/null
++++ b/tests/test_overlay_automake.py
+@@ -0,0 +1,44 @@
++#!/usr/bin/env python3
++"""Build-name integration fixture, NOT a build of upstream or vendor cgminer.
++Exercises all recovered sources alongside an independent root cgminer.c.
++All commands operate inside an automatically removed temporary directory.
++"""
++from pathlib import Path
++import hashlib,json,shutil,subprocess,tempfile
++ROOT=Path(__file__).resolve().parents[1]
++with tempfile.TemporaryDirectory(prefix='vn135-automake-fixture-') as tmp:
++    tree=Path(tmp)/'source'
++    shutil.copytree(ROOT,tree,ignore=shutil.ignore_patterns('build','__pycache__','.git'))
++    (tree/'configure.ac').write_text('AC_INIT([vn135-object-fixture], [1.0])\nAM_INIT_AUTOMAKE([foreign])\nAC_PROG_CC\nAC_CONFIG_FILES([Makefile])\nAC_OUTPUT\n')
++    (tree/'Makefile.am').write_text('AM_CFLAGS = -std=c11 -Wall -Wextra -Wpedantic -Werror\nbin_PROGRAMS = cgminer\ncgminer_CPPFLAGS =\ncgminer_SOURCES = cgminer.c\nEXTRA_DIST =\ninclude $(top_srcdir)/reconstruction/cgminer-overlay.am\n')
++    (tree/'cgminer.c').write_text('''/* TEST FIXTURE ONLY. Not original or reconstructed cgminer main. */
++#include "xminer/recovery/nonce_verify.h"
++#include <stdio.h>
++int main(void){unsigned char h[80]={0},d[32],t[32]={0};
++if(vn135_sha256d_header80(h,d)!=0)return 1;
++if(vn135_target256_check_le(d,d)!=1)return 1;
++if(vn135_target256_check_le(d,t)!=0)return 1;
++puts("Automake distinct-object fixture PASS; not upstream cgminer");return 0;}
++''')
++    records=[]
++    def run(args,expect=0):
++        p=subprocess.run(args,cwd=tree,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
++        records.append({'command':args,'returncode':p.returncode,'output':p.stdout})
++        if expect==0:assert p.returncode==0,p.stdout
++        else:assert p.returncode!=0,p.stdout
++        return p.stdout
++    overlay=tree/'reconstruction/cgminer-overlay.am';good=overlay.read_text()
++    assert 'AUTOMAKE_OPTIONS = subdir-objects' in good
++    overlay.write_text(good.replace('AUTOMAKE_OPTIONS = subdir-objects\n',''))
++    failure=run(['autoreconf','-fi'],expect=1)
++    assert 'cgminer-cgminer.$(OBJEXT)' in failure and 'created' in failure,failure
++    overlay.write_text(good)
++    run(['autoreconf','-fi']);run(['./configure']);run(['make','-j2'])
++    assert (tree/'cgminer-cgminer.o').exists()
++    assert (tree/'src/frontend/cgminer-cgminer.o').exists()
++    run(['./cgminer'])
++    result={'status':'PASS','without_subdir_objects_collision_reproduced':True,
++            'with_subdir_objects_all_recovered_modules_linked':True,
++            'actual_upstream_cgminer_tested':False,'fixture_only':True,'commands':records}
++    (ROOT/'build/stage8-automake-fixture.json').write_text(json.dumps(result,indent=2)+'\n')
++    print('Automake fixture PASS: reproduced basename collision and fixed it with subdir-objects; upstream cgminer NOT built.')
+diff --git a/tests/test_stage8_differential.py b/tests/test_stage8_differential.py
+new file mode 100644
+index 0000000..844e32f
+--- /dev/null
++++ b/tests/test_stage8_differential.py
+@@ -0,0 +1,196 @@
++#!/usr/bin/env python3
++"""Deterministic differential tests for bounded Stage8 original-code slices.
++SHA is executed in original A32 instructions, not replaced by expected results.
++Each group writes an explicit machine-readable result and fails on callback errors.
++"""
++from pathlib import Path
++import argparse,ctypes as C,hashlib,json,random,struct,sys
++ROOT=Path(__file__).resolve().parents[1]
++from verify_oracle import VerifyOracle
++U8=C.c_uint8;U32=C.c_uint32;P=C.POINTER(U8)
++def arr(data):return (U8*len(data)).from_buffer_copy(data)
++def swap_words(data):return b''.join(data[i:i+4][::-1] for i in range(0,len(data),4))
++def dhash(data):return hashlib.sha256(hashlib.sha256(data).digest()).digest()
++class Work(C.Structure):_fields_=[('words',U8*80),('digest',U8*32)]
++class Job(C.Structure):_fields_=[('key',U32),('reference',C.c_void_p),('word_1fc',U32)]
++Hash=C.CFUNCTYPE(None,C.c_void_p,P,P)
++Reject=C.CFUNCTYPE(C.c_int,C.c_void_p,C.c_void_p)
++p=argparse.ArgumentParser();p.add_argument('group',choices=['hash','target','prefilter','job','registry'])
++p.add_argument('--library',default=str(ROOT/'build/libvn135_recovered.so'))
++p.add_argument('--tag',default='gcc');args=p.parse_args()
++lib=C.CDLL(str(Path(args.library).resolve()));o=VerifyOracle();rng=random.Random(0x8135)
++lib.vn135_sha256d_header80.argtypes=[P,P];lib.vn135_sha256d_header80.restype=C.c_int
++lib.vn135_frontend_hash_words80.argtypes=[P,P];lib.vn135_frontend_hash_words80.restype=C.c_int
++lib.vn135_target256_check_le.argtypes=[P,P];lib.vn135_target256_check_le.restype=C.c_int
++lib.vn135_frontend_nonce_prefilter.argtypes=[C.POINTER(Work),C.POINTER(U32),U32,U32,Hash,C.c_void_p]
++lib.vn135_frontend_nonce_prefilter.restype=C.c_int
++lib.vn135_frontend_sha256d_prefilter.argtypes=[C.POINTER(Work),C.POINTER(U32),U32,U32]
++lib.vn135_frontend_sha256d_prefilter.restype=C.c_int
++lib.vn135_recent_job_select.argtypes=[C.POINTER(Job),U32,Reject,C.c_void_p,C.POINTER(C.c_size_t)]
++lib.vn135_recent_job_select.restype=C.c_int
++lib.vn135_reference_absent.argtypes=[C.POINTER(C.c_void_p),C.c_int32,C.c_void_p]
++lib.vn135_reference_absent.restype=C.c_int
++lib.vn135_recent_job_select_registered.argtypes=[C.POINTER(Job),U32,C.POINTER(C.c_void_p),C.c_int32,C.POINTER(C.c_size_t)]
++lib.vn135_recent_job_select_registered.restype=C.c_int
++count=0;details={}
++if args.group=='hash':
++    headers=[bytes(80),b'\xff'*80,bytes(range(80)),bytes(range(79,-1,-1))]
++    headers += [bytes([b])*80 for b in (1,0x55,0x80,0xaa,0xfe)]
++    # Each bit of the nonce portion plus both edges of each source word.
++    for word in range(20):
++        for bit in (0,31):
++            a=bytearray(80);struct.pack_into('<I',a,4*word,1<<bit);headers.append(bytes(a))
++    headers += [rng.randbytes(80) for _ in range(256)]
++    for words in headers:
++        raw=swap_words(words);want=o.hash_words(words);independent=dhash(raw)
++        assert want==independent
++        out=arr(b'\xa1'*32);assert lib.vn135_frontend_hash_words80(arr(words),out)==0
++        assert bytes(out)==want
++        assert lib.vn135_sha256d_header80(arr(raw),out)==0 and bytes(out)==want
++        # Both fixed APIs explicitly allow overlap with output, including unaligned buffers.
++        buf=arr(b'\x3d'+words+b'\x7a'*40)
++        ptr=C.cast(C.byref(buf,1),P);outptr=C.cast(C.byref(buf,6),P)
++        assert lib.vn135_frontend_hash_words80(ptr,outptr)==0
++        assert bytes(buf[6:38])==want and buf[0]==0x3d and bytes(buf[81:])==b'\x7a'*40
++        count+=1
++    details={'original_full_work_hash_calls':count,'hashlib_cross_checks':count,
++             'serialized_and_word_swapped_APIs_compared_per_case':True,'original_real_SHA_executed':True}
++elif args.group=='target':
++    cases=[(bytes(32),bytes(32)),(b'\xff'*32,b'\xff'*32),(bytes(32),b'\xff'*32),(b'\xff'*32,bytes(32))]
++    # Force comparison down to every limb, exercise unsigned edges and lower-limb irrelevance.
++    edges=[0,1,0x7fffffff,0x80000000,0xfffffffe,0xffffffff]
++    for limb in range(8):
++        for x in edges:
++            for y in edges:
++                h=[rng.getrandbits(32) for _ in range(8)];t=h.copy()
++                h[limb]=x;t[limb]=y
++                for i in range(limb):h[i]=0xffffffff;t[i]=0
++                cases.append((struct.pack('<8I',*h),struct.pack('<8I',*t)))
++    for _ in range(1024):
++        h=rng.randbytes(32);cases.append((h,h))
++        cases.append((h,rng.randbytes(32)))
++    for h,t in cases:
++        want=o.target(h,t)
++        assert want==int(int.from_bytes(h,'little')<=int.from_bytes(t,'little'))
++        a=arr(b'\x9d'+h+b'\x8e');b=arr(b'\x12'+t+b'\x13')
++        assert lib.vn135_target256_check_le(C.cast(C.byref(a,1),P),C.cast(C.byref(b,1),P))==want
++        assert bytes(a)==b'\x9d'+h+b'\x8e' and bytes(b)==b'\x12'+t+b'\x13'
++        count+=1
++    details={'original_compare_calls':count,'all_eight_decisive_limbs':True,'equality_accepted':True}
++elif args.group=='prefilter':
++    cases=[]
++    for selector in (0,1,2,7,0xffffffff):
++        for high in (0,1,0xfffe,0xffff,0x10000,0x7fffffff,0x80000000,0xffffffff):
++            for duplicate in (False,True):
++                for nonce in (0,1,0xffffffff):
++                    cases.append((nonce if duplicate else nonce^1,nonce,selector,
++                                  rng.randbytes(28)+struct.pack('<I',high)))
++    cases += [(rng.getrandbits(32),rng.getrandbits(32),rng.randrange(3),rng.randbytes(32)) for _ in range(512)]
++    # Full original prefilter with the original hash function deliberately selected.
++    real_cases=[(rng.getrandbits(32),rng.getrandbits(32),i%3,None) for i in range(128)]
++    real_cases += [(n,n,i%3,None) for i,n in enumerate((0,1,0xffffffff))]
++    for last,nonce,selector,forced in cases+real_cases:
++        words=rng.randbytes(80);old_digest=rng.randbytes(32)
++        want=o.prefilter(words,old_digest,last,nonce,selector,forced)
++        work=Work((U8*80).from_buffer_copy(words),(U8*32).from_buffer_copy(old_digest));lastp=U32(last)
++        calls=[];errors=[]
++        @Hash
++        def hash_cb(ctx,src,dst):
++            try:
++                assert ctx==0x1234
++                calls.append(('hash',lastp.value,C.string_at(src,80)))
++                C.memmove(dst,forced,32)
++            except BaseException as exc:errors.append(repr(exc))
++        if forced is None:got=lib.vn135_frontend_sha256d_prefilter(C.byref(work),C.byref(lastp),nonce,selector)
++        else:got=lib.vn135_frontend_nonce_prefilter(C.byref(work),C.byref(lastp),nonce,selector,hash_cb,0x1234)
++        assert not errors,errors
++        assert (got,lastp.value,bytes(work.words),bytes(work.digest))==(want['outcome'],want['last'],want['words'],want['digest'])
++        assert [e for e in want['events'] if e[0]=='getter']==([] if last==nonce else [('getter',),('getter',)])
++        if forced is not None:assert calls==[e for e in want['events'] if e[0]=='hash']
++        if forced is None and last!=nonce:assert bytes(work.digest)==dhash(swap_words(bytes(work.words)))
++        count+=1
++    # Stateful replay: a hash failure still updates last_nonce, next identical nonce is duplicate.
++    work=Work();lastp=U32(1);errors=[];calls=[]
++    @Hash
++    def fail_hash(ctx,src,dst):
++        try:calls.append(1);C.memmove(dst,b'\xff'*32,32)
++        except BaseException as exc:errors.append(repr(exc))
++    assert lib.vn135_frontend_nonce_prefilter(C.byref(work),C.byref(lastp),2,0,fail_hash,None)==2
++    assert lib.vn135_frontend_nonce_prefilter(C.byref(work),C.byref(lastp),2,1,fail_hash,None)==1
++    assert not errors and calls==[1] and lastp.value==2
++    details={'forced_hash_boundary_cases':len(cases),'real_original_SHA_bound_cases':len(real_cases),
++             'stateful_replay_native_checks':2,'stopped_before_accounting_and_submission':True}
++elif args.group=='job':
++    cases=[]
++    # First match can be unusable; later identical usable keys MUST NOT be tried.
++    for key in (0,1,0x7fffffff,0xffffffff):
++        for position in range(4):
++            for nonnull in (False,True):
++                for status in (0,1,2,0xffffffff):
++                    for reject in (0,1,-1,0x7fffffff):
++                        records=[(key^1,i+1,1) for i in range(3)]
++                        if position<3:
++                            records[position]=(key,position+1 if nonnull else 0,status)
++                            for j in range(position+1,3):records[j]=(key,j+1,1)
++                        cases.append((records,key,reject))
++    for _ in range(512):
++        records=[(rng.randrange(4),rng.randrange(5),rng.randrange(3)) for _ in range(3)]
++        cases.append((records,rng.randrange(5),rng.randrange(3)-1))
++    for records,key,reject_result in cases:
++        want,events=o.job(records,key,reject_result)
++        args_records=(Job*3)(*(Job(k,p or None,s) for k,p,s in records))
++        before=bytes(args_records);calls=[];errors=[];index=C.c_size_t(777)
++        @Reject
++        def reject_cb(ctx,ref):
++            try:assert ctx==0x9876;calls.append(ref)
++            except BaseException as exc:errors.append(repr(exc))
++            return reject_result
++        got=lib.vn135_recent_job_select(args_records,key,reject_cb,0x9876,C.byref(index))
++        assert not errors and calls==events and bytes(args_records)==before
++        assert (got==0,index.value if got==0 else None)==want
++        if got!=0:assert index.value==777
++        # Distinct statuses are new diagnostics; original exposes only continue/skip.
++        expected=1
++        for k,p,s in records:
++            if k==key:
++                expected=2 if not p else 3 if reject_result else 4 if not s else 0;break
++        assert got==expected
++        count+=1
++    details={'original_selection_slices':count,'original_final_policy_injected':True,
++             'coherent_snapshot_only':True,'first_match_no_fallback':True}
++elif args.group=='registry':
++    cases=[]
++    for n in range(17):
++        refs=list(range(1,n+1))
++        for target in (0,1,n,n+1,0xffffffff):cases.append((refs,target,n))
++    cases += [([],0,n) for n in (0,-1,-2147483648)]
++    cases += [([0,2,0,3],t,4) for t in (0,1,2,3,4)]
++    cases += [(rng.sample(range(0,80),rng.randrange(0,65)),rng.randrange(0,90),None) for _ in range(256)]
++    for refs,target,n in cases:
++        if n is None:n=len(refs)
++        want=o.membership(refs,target,n)
++        array=(C.c_void_p*len(refs))(*refs)
++        assert lib.vn135_reference_absent(array,n,target)==want==int(target not in refs[:max(0,n)])
++        count+=1
++    alone=count
++    # Execute real original consumer selection AND real membership routine together.
++    for i in range(512):
++        records=[(rng.randrange(4),j+1 if rng.randrange(4) else 0,rng.randrange(3)) for j in range(3)]
++        key=rng.randrange(5);registry=rng.sample(range(0,8),rng.randrange(0,8))
++        want,events=o.job(records,key,0,registry)
++        array=(Job*3)(*(Job(k,p or None,s) for k,p,s in records))
++        refs=(C.c_void_p*len(registry))(*registry);index=C.c_size_t(888)
++        got=lib.vn135_recent_job_select_registered(array,key,refs,len(registry),C.byref(index))
++        assert (got==0,index.value if got==0 else None)==want
++        if got!=0:assert index.value==888
++        first=next((p for k,p,s in records if k==key),None)
++        assert events==(['registry-lock','registry-unlock'] if first else [])
++        count+=1
++    details={'original_membership_calls':alone,'combined_original_consumer_and_membership':count-alone,
++             'external_mutex_injected':True,'predicate_not_replaced_in_combined_tests':True}
++result={'status':'PASS','group':args.group,'compiler_tag':args.tag,'original_comparison_cases':count,
++        'library_sha256':hashlib.sha256(Path(args.library).read_bytes()).hexdigest(),
++        'reference_sha256':hashlib.sha256(o.elf.data).hexdigest(),'details':details,
++        'hardware_tested':False,'job_freshness_proven':False}
++out=ROOT/'build'/f'stage8-{args.group}-{args.tag}.json';out.write_text(json.dumps(result,indent=2)+'\n')
++print(json.dumps(result))
+diff --git a/tests/test_stage8_interpreter.py b/tests/test_stage8_interpreter.py
+new file mode 100644
+index 0000000..12be06e
+--- /dev/null
++++ b/tests/test_stage8_interpreter.py
+@@ -0,0 +1,42 @@
++#!/usr/bin/env python3
++"""Synthetic BLX-register checks, NOT counted as firmware reconstruction cases."""
++from pathlib import Path
++import json,sys,random
++ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'tools'))
++from elf32 import ELF32
++from arm32_verify_subset import ARM32Verify
++m=ARM32Verify(ELF32(ROOT/'reference/cgminer.vendor.elf'));a=m.DATA_BASE;target=a+0x100
++fixture=ELF32(ROOT/'tests/fixtures/arm32_stage8_instructions.o').section('.text')
++assert int.from_bytes(fixture[4:8],'little')==0xe12fff31
++assert int.from_bytes(fixture[12:16],'little')==0xe12fff3e
++count=0
++# Expected condition table explicitly, independent of interpreter cond().
++for reg in range(15):
++    for cond in range(15):
++        for flags in range(16):
++            m.reset();n,z,c,v=[bool(flags&(1<<i)) for i in range(4)]
++            m.n=n;m.z=z;m.c=c;m.v=v;m.q=bool(flags&1)
++            expected=(z,not z,c,not c,n,not n,v,not v,c and not z,not c or z,
++                      n==v,n!=v,not z and n==v,z or n!=v,True)[cond]
++            oldlr=target if reg==14 else m.RETURN;m.r[reg]=target
++            m.write(a,(cond<<28)|0x012fff30|reg)
++            m.run(a,stop=target if expected else a+4,max_steps=2)
++            assert m.r[14]==(a+4 if expected else oldlr)
++            assert (m.n,m.z,m.c,m.v,m.q)==(n,z,c,v,bool(flags&1));count+=1
++for reg in range(15):
++    for off in (1,2,3):
++        m.reset();m.r[reg]=target+off;m.write(a,0xe12fff30|reg)
++        try:m.run(a,max_steps=3)
++        except ValueError as exc:assert 'unsupported' in str(exc);count+=1
++        else:raise AssertionError('accepted unsupported BLX target')
++m.reset();m.write(a,0xe12fff3f)
++try:m.run(a,max_steps=2)
++except ValueError as exc:assert 'PC unsupported' in str(exc);count+=1
++else:raise AssertionError('accepted BLX pc')
++# Full assembler-generated push -> BLX -> real callee -> pop/return.
++m.mem[a:a+len(fixture)]=fixture;m.write(target,0xe2800003);m.write(target+4,0xe12fff1e)
++for value in [0,1,0x7fffffff,0x80000000,0xffffffff]+[random.Random(i).getrandbits(32) for i in range(128)]:
++    m.reset((value,target));assert m.run(a,max_steps=20)==(value+3)&0xffffffff;count+=1
++out={'status':'PASS','synthetic_instruction_cases':count,'instructions':['BLX register, A32 targets'],
++     'unsupported_thumb_rejected':True,'ELF_not_executed_as_process':True}
++(ROOT/'build/stage8-interpreter-results.json').write_text(json.dumps(out,indent=2)+'\n');print(json.dumps(out))
+diff --git a/tests/test_tree.py b/tests/test_tree.py
+index 3092837..1803526 100644
+--- a/tests/test_tree.py
++++ b/tests/test_tree.py
+@@ -6,8 +6,8 @@ sys.path.insert(0,str(ROOT/'tools'))
+ manifest=json.loads((ROOT/'evidence/source-tree.json').read_text())
+ assert manifest['complete_vendor_file_list'] is False
+ assert len(manifest['modules'])==46
+-assert manifest['pending_modules']==40
+-assert manifest['partial_modules']==6
++assert manifest['pending_modules']==39
++assert manifest['partial_modules']==7
+ for module in manifest['modules']:
+     text=(ROOT/module['path']).read_text()
+     if module['status']=='pending-not-implemented':
+@@ -17,6 +17,6 @@ assert not (ROOT/'src/backend/work_gen').exists(),'Wrong work-gen spelling'
+ assert (ROOT/'src/backend/work-gen/work-gen.c').is_file()
+ assert not list(ROOT.rglob('recovered_stubs.c'))
+ assert not list(ROOT.rglob('cgminer_reconstructed_full.c'))
+-for name in ('src/backend/work-gen/work-gen.c','libbitmain/src/uart.c','libbitmain/src/reg_cache.c','libbitmain/src/pll.c','libbitmain/src/aml/chip.c','libbitmain/src/chip/chip1398.c'):
++for name in ('src/frontend/cgminer.c','src/backend/work-gen/work-gen.c','libbitmain/src/uart.c','libbitmain/src/reg_cache.c','libbitmain/src/pll.c','libbitmain/src/aml/chip.c','libbitmain/src/chip/chip1398.c'):
+     assert 'VN135 pending module:' not in (ROOT/name).read_text()
+ print('module tree and no fake stubs: PASS')
+diff --git a/tests/test_verify_header_cli.py b/tests/test_verify_header_cli.py
+new file mode 100644
+index 0000000..ba3651a
+--- /dev/null
++++ b/tests/test_verify_header_cli.py
+@@ -0,0 +1,12 @@
++#!/usr/bin/env python3
++from pathlib import Path
++import hashlib,json,random,subprocess
++ROOT=Path(__file__).resolve().parents[1];exe=ROOT/'build/vn135-verify-header';rng=random.Random(8135);count=0
++for i in range(32):
++    h=rng.randbytes(80);d=hashlib.sha256(hashlib.sha256(h).digest()).digest();v=int.from_bytes(d,'little')
++    for t in (0,(1<<256)-1,v,max(0,v-1),min((1<<256)-1,v+1)):
++        p=subprocess.run([str(exe),h.hex(),t.to_bytes(32,'little').hex()],capture_output=True,text=True,check=True)
++        out=json.loads(p.stdout);assert out=={'sha256d_raw':d.hex(),'meets_target':v<=t,'job_freshness_checked':False,'submitted':False};count+=1
++for args in ([],['00'*80],['00'*79,'00'*32],['gg'*80,'00'*32],['00'*80,'00'*33],['00'*80,'xz'*32]):
++    p=subprocess.run([str(exe)]+args,capture_output=True,text=True);assert p.returncode==2 and not p.stdout;count+=1
++out={'status':'PASS','separate_cli_cases':count,'no_network':True};(ROOT/'build/stage8-cli-results.json').write_text(json.dumps(out,indent=2)+'\n');print(json.dumps(out))
+diff --git a/tests/verify_oracle.py b/tests/verify_oracle.py
+new file mode 100644
+index 0000000..db0e946
+--- /dev/null
++++ b/tests/verify_oracle.py
+@@ -0,0 +1,125 @@
++"""Stage8 bounded reference calls, never execute the ELF as a Linux process.
++Real original SHA/comparator, injected memcpy/memset/getters/logging/hash callback.
++A SHA-bound prefilter deliberately binds the callback to 0x2d994; this is a test
++configuration, NOT proof of T21's production function-pointer selection.
++"""
++from pathlib import Path
++import hashlib,struct,sys
++ROOT=Path(__file__).resolve().parents[1]
++sys.path.insert(0,str(ROOT/'tools'))
++from elf32 import ELF32
++from arm32_verify_subset import ARM32Verify
++from nonce_oracle import NonceOracle,SHA
++class VerifyOracle:
++    def __init__(self):
++        self.elf=ELF32(ROOT/'reference/cgminer.vendor.elf')
++        assert hashlib.sha256(self.elf.data).hexdigest()==SHA
++        self.m=ARM32Verify(self.elf)
++    def hash_words(self,words):
++        assert len(words)==80
++        m=self.m;work=m.DATA_BASE+0x1000
++        image=bytearray(b'\xa7'*632);image[:80]=words
++        m.mem[work:work+632]=image;m.reset((work,))
++        m.run(0x2d994,hooks={0x5a2ee8:NonceOracle.copy,0x5a348c:NonceOracle.fill},max_steps=80000)
++        digest=bytes(m.mem[work+0x120:work+0x140])
++        image[0x120:0x140]=digest
++        assert m.mem[work:work+632]==image,'Unexpected work write outside hash'
++        return digest
++    def target(self,h,t):
++        assert len(h)==len(t)==32
++        m=self.m;a=m.DATA_BASE;b=a+64
++        m.mem[a:a+32]=h;m.mem[b:b+32]=t;m.reset((a,b))
++        answer=m.run(0x10c1c,max_steps=1000)
++        assert bytes(m.mem[a:a+32])==h and bytes(m.mem[b:b+32])==t
++        return answer
++    def prefilter(self,words,old_digest,last,nonce,selector,forced_digest=None):
++        assert len(words)==80 and len(old_digest)==32
++        m=self.m;a=m.DATA_BASE
++        thread=a;state=a+0x200;work=a+0x1000;global_config=a+0x2000
++        config=a+0x2200;model=a+0x2500;fake_hash=a+0x3000
++        m.reset((thread,work,nonce))
++        m.write(thread+0x24,state);m.write(state+0xe8,last)
++        m.write(global_config+0x14,config);m.write(config+0x18,model)
++        m.write(config+0x208,fake_hash if forced_digest is not None else 0x2d994)
++        m.write(model+0x34,selector)
++        image=bytearray(b'\xb9'*632);image[:80]=words;image[0x120:0x140]=old_digest
++        m.mem[work:work+632]=image
++        events=[];outcome=[]
++        def config_get(mm):
++            assert mm.r[0]==0;events.append(('getter',));mm.r[0]=global_config
++        def log(mm):events.append(('duplicate-log',))
++        def hash_call(mm):
++            assert mm.r[0]==work
++            events.append(('hash',mm.read(state+0xe8),bytes(mm.mem[work:work+80])))
++            mm.mem[work+0x120:work+0x140]=forced_digest
++        def passed(mm):outcome.append(0);mm.r[14]=mm.RETURN
++        def rejected(mm):outcome.append(1 if last==nonce else 2);mm.r[14]=mm.RETURN
++        hooks={0x29238:config_get,0xfa0c4:log,0x330a4:passed,0x33520:rejected,
++               0x5a2ee8:NonceOracle.copy,0x5a348c:NonceOracle.fill}
++        if forced_digest is not None:hooks[fake_hash]=hash_call
++        # Prologue allocates 72 stack bytes and sets fp=entry_sp-8; its VFP
++        # save is outside the observed prefix and no FP register is read here.
++        m.r[13]=m.STACK_TOP-72;m.r[11]=m.STACK_TOP-8
++        m.run(0x32f74,hooks=hooks,max_steps=85000)
++        assert len(outcome)==1
++        result={'outcome':outcome[0],'last':m.read(state+0xe8),
++                'words':bytes(m.mem[work:work+80]),
++                'digest':bytes(m.mem[work+0x120:work+0x140]),'events':events}
++        image[:80]=result['words'];image[0x120:0x140]=result['digest']
++        assert m.mem[work:work+632]==image,'Unexpected prefilter work write'
++        return result
++    def setup_registry(self, references, count=None):
++        m=self.m;a=m.DATA_BASE;table=a+0x6000
++        if count is None:count=len(references)
++        # Original PIC accesses load GOT slots pointing at count/list globals.
++        count_global=m.read((0x34d74+8+m.read(0x34dcc))&0xffffffff)
++        list_global=m.read((0x34d8c+8+m.read(0x34dd0))&0xffffffff)
++        m.write(count_global,count);m.write(list_global,table)
++        for i,reference in enumerate(references):m.write(table+4*i,reference)
++    def membership(self,references,target,count=None):
++        m=self.m;m.reset((target,));self.setup_registry(references,count)
++        calls=[]
++        def lock(mm):calls.append(('lock',mm.r[0]));mm.r[0]=0
++        def unlock(mm):calls.append(('unlock',mm.r[0]));mm.r[0]=0
++        result=m.run(0x34d54,hooks={0x5a6108:lock,0x5a66c4:unlock},max_steps=10000)
++        assert len(calls)==2 and calls[0][1]==calls[1][1]
++        return result
++    def job(self,records,key,reject_result,registry=None):
++        """records = (key, nonnull opaque token, word_1fc). No concurrent mutation."""
++        assert len(records)==3
++        m=self.m;a=m.DATA_BASE;base=a+0x1000;m.reset()
++        m.r[5]=base;m.r[8]=a;m.r[7]=a+4;m.write(a,0);m.write(a+4,0)
++        m.write(m.r[13]+0x4c,key)
++        pointer_tokens={};token_pointers={};events=[];outcome=[]
++        for i,(k,token,status) in enumerate(records):
++            p=a+0x3000+i*0x400 if token else 0
++            m.write(base+0x278+i*0x478,k);m.write(base+0x27c+i*0x478,p)
++            if p:
++                m.write(p+0x1fc,status);pointer_tokens[p]=token;token_pointers[token]=p
++        def reject(mm):
++            token=pointer_tokens[mm.r[0]];events.append(token);mm.r[0]=reject_result&0xffffffff
++        def selected(mm):
++            outcome.append((True,(mm.r[4]-base)//0x478));mm.r[14]=mm.RETURN
++        def skipped(mm):outcome.append((False,None));mm.r[14]=mm.RETURN
++        hooks={0x74f14:selected,0x74e7c:skipped}
++        if registry is None:hooks[0x34d54]=reject
++        else:
++            assert len(token_pointers)==len(pointer_tokens),'Registry mode requires distinct record references'
++            # Nonrecord tokens remain distinct pointers, never dereferenced by membership.
++            self.setup_registry([token_pointers.get(t,0 if t==0 else a+0x7800+4*t) for t in registry])
++            def lock(mm):events.append('registry-lock');mm.r[0]=0
++            def unlock(mm):events.append('registry-unlock');mm.r[0]=0
++            hooks.update({0x5a6108:lock,0x5a66c4:unlock})
++        m.run(0x74de4,hooks=hooks,max_steps=10000)
++        assert len(outcome)==1
++        return outcome[0],events
++if __name__=='__main__':
++    o=VerifyOracle();w=bytes(range(80))
++    swapped=b''.join(w[i:i+4][::-1] for i in range(0,80,4))
++    assert o.hash_words(w)==hashlib.sha256(hashlib.sha256(swapped).digest()).digest()
++    print('hash',o.hash_words(w).hex())
++    print('target',o.target(bytes(32),bytes(32)))
++    for d in (bytes(32),b'\xff'*32,None):
++        print('prefilter',o.prefilter(w,bytes(32),3,4,0,d))
++    print('duplicate',o.prefilter(w,b'\xef'*32,4,4,0,bytes(32)))
++    print('job',o.job([(1,1,1),(2,2,1),(3,3,1)],2,0))
+diff --git a/tools/arm32_verify_subset.py b/tools/arm32_verify_subset.py
+new file mode 100644
+index 0000000..284fd71
+--- /dev/null
++++ b/tools/arm32_verify_subset.py
+@@ -0,0 +1,13 @@
++"""Stage 8: BLX register, ARM-state targets only. No Thumb or OS emulation."""
++from arm32_nonce_subset import ARM32Nonce
++class ARM32Verify(ARM32Nonce):
++    def extra_instruction(self,w,pc):
++        if w & 0x0ffffff0 == 0x012fff30:
++            n=w&15
++            if n==15: raise ValueError('BLX PC unsupported')
++            target=self.get(n,pc)  # Read old LR before writing new LR for BLX LR.
++            if target&3: raise ValueError('BLX Thumb/unaligned target unsupported')
++            self.r[14]=(pc+4)&0xffffffff
++            self.r[15]=target
++            return True
++        return super().extra_instruction(w,pc)
+diff --git a/tools/build_source_tree.py b/tools/build_source_tree.py
+index 4f4660a..8227903 100644
+--- a/tools/build_source_tree.py
++++ b/tools/build_source_tree.py
+@@ -56,7 +56,7 @@ def build():
+                 entry['candidate_intervals'].append(dict(start=f"0x{interval['start']:08x}",
+                     end_exclusive=(f"0x{interval['end_exclusive']:08x}" if interval['end_exclusive'] else None),
+                     path_references=matched,association='Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven'))
+-    partial_paths=['src/backend/work-gen/work-gen.c','libbitmain/src/chip/chip1398.c','libbitmain/src/pll.c','libbitmain/src/aml/chip.c','libbitmain/src/reg_cache.c','libbitmain/src/uart.c']
++    partial_paths=['src/frontend/cgminer.c','src/backend/work-gen/work-gen.c','libbitmain/src/chip/chip1398.c','libbitmain/src/pll.c','libbitmain/src/aml/chip.c','libbitmain/src/reg_cache.c','libbitmain/src/uart.c']
+     for partial in partial_paths:
+         paths[partial]['status']='partial-verified-slices'
+         paths[partial]['implementation_files']=[partial]
+diff --git a/tools/check_stage8_evidence.py b/tools/check_stage8_evidence.py
+new file mode 100644
+index 0000000..fd017df
+--- /dev/null
++++ b/tools/check_stage8_evidence.py
+@@ -0,0 +1,38 @@
++#!/usr/bin/env python3
++"""Read-only source/ELF correspondence checks, no ELF process execution."""
++from pathlib import Path
++import hashlib,json
++from elf32 import ELF32
++ROOT=Path(__file__).resolve().parents[1]
++m=json.loads((ROOT/'evidence/stage8/recovery-manifest.json').read_text());elf=ELF32(ROOT/'reference/cgminer.vendor.elf')
++def h(b):return hashlib.sha256(b).hexdigest()
++def w(a):return int.from_bytes(elf.read(a,4),'little')
++assert h(elf.data)==m['reference_sha256'] and len(elf.data)==m['reference_bytes']
++for row in m['slices']:
++    a=int(row['start'],16);b=int(row['end_exclusive'],16)
++    assert b-a==row['size'] and h(elf.read(a,b-a))==row['original_bytes_sha256']
++    assert h((ROOT/row['disassembly']).read_bytes())==row['disassembly_sha256']
++for edge in m['branch_edges']:
++    pc=int(edge['pc'],16);word=w(pc);delta=word&0xffffff
++    if delta&0x800000:delta-=1<<24
++    assert word>>24==0xeb and f'{word:08x}'==edge['instruction_hex']
++    assert pc+8+delta*4==int(edge['target'],16)
++assert w(0x33030)==0xe12fff31 # Actual original BLX r1 dispatch remains indirect.
++assert w(0x33028)==0xe5901208 # Hash callback field is config+0x208.
++assert w(0x33024)==0xe584604c # Nonce written at work+76 before callback.
++assert w(0x33044)==0xe594013c # High digest word, work+316.
++assert w(0x2dac0)==0xe2842e12 # Digest pointer work+288.
++assert w(0x74e4c)==0xe1045081 # Three records use original stride0x478.
++source=json.loads((ROOT/'evidence/source-tree.json').read_text())
++assert source['partial_modules']==7 and source['pending_modules']==39
++front=next(x for x in source['modules'] if x['path']=='src/frontend/cgminer.c')
++assert front['status']=='partial-verified-slices'
++refs=json.loads((ROOT/'evidence/stage1/cgminer_string_xrefs.json').read_text())
++assert any(str(x.get('insn','')).lower()=='0x32fdc' and '/tmp/build/src/frontend/cgminer.c' in x['text']
++           for x in refs['0x32f60'])
++# Re-evaluate the actual PC-relative address, not just historic association text.
++assert (0x32fdc+8+w(0x33584))&0xffffffff==0x5e2194
++am=(ROOT/'reconstruction/cgminer-overlay.am').read_text()
++assert 'src/frontend/cgminer.c' in am
++for helper in m['new_helpers']:assert helper in am
++print('Stage8 evidence: 10 bounded/context ranges, 8 call edges, source-path reference, field offsets and explicit indirect hash boundary PASS')
+diff --git a/tools/verify_stage8.py b/tools/verify_stage8.py
+new file mode 100644
+index 0000000..06a7bfd
+--- /dev/null
++++ b/tools/verify_stage8.py
+@@ -0,0 +1,40 @@
++#!/usr/bin/env python3
++"""Checked per-group verification of a fresh Stage8 extraction.
++Logs MUST be outside source tree. No vendor ELF process or external network.
++"""
++from pathlib import Path
++import argparse,hashlib,json,subprocess,sys,time
++from verify_stage7 import GROUPS as PRIOR
++ROOT=Path(__file__).resolve().parents[1];PY=sys.executable
++GROUPS={name:[list(cmd) for cmd in cmds] for name,cmds in PRIOR.items()}
++GROUPS['build'][-1]+=['build/test-nonce-verify','build/vn135-verify-header']
++GROUPS.update({
++ 'verify-hash':[[PY,'tests/test_stage8_differential.py','hash']],
++ 'verify-target':[[PY,'tests/test_stage8_differential.py','target']],
++ 'verify-prefilter':[[PY,'tests/test_stage8_differential.py','prefilter']],
++ 'verify-job':[[PY,'tests/test_stage8_differential.py','job'],[PY,'tests/test_stage8_differential.py','registry']],
++ 'verify-native':[['./build/test-nonce-verify'],[PY,'tests/test_stage8_interpreter.py'],[PY,'tests/test_verify_header_cli.py']],
++ 'clang-verify':[['make','-f','Makefile.recovery','stage8-clang']],
++ 'automake':[[PY,'tests/test_overlay_automake.py']]
++})
++def main():
++    p=argparse.ArgumentParser(description=__doc__);p.add_argument('group',choices=GROUPS)
++    p.add_argument('--logs',type=Path,required=True);a=p.parse_args();directory=a.logs.resolve()
++    if directory.is_relative_to(ROOT):p.error('--logs must be outside source tree')
++    directory.mkdir(parents=True,exist_ok=True);records=[]
++    for i,cmd in enumerate(GROUPS[a.group]):
++        expected=2 if a.group=='full-runtime-blocked' else 0
++        log=directory/f'{a.group}-{i:02d}.log';start=time.monotonic()
++        with log.open('w') as out:
++            out.write('COMMAND: '+repr(cmd)+'\n');out.flush()
++            result=subprocess.run(cmd,cwd=ROOT,stdout=out,stderr=subprocess.STDOUT,check=False)
++        row={'command':cmd,'returncode':result.returncode,'expected_returncode':expected,'log':log.name,
++             'seconds':round(time.monotonic()-start,3),'sha256':hashlib.sha256(log.read_bytes()).hexdigest()}
++        records.append(row)
++        summary={'group':a.group,'status':'PASS' if all(x['returncode']==x['expected_returncode'] for x in records) else 'FAIL',
++                 'complete':len(records)==len(GROUPS[a.group]),'records':records}
++        (directory/(a.group+'.json')).write_text(json.dumps(summary,indent=2)+'\n')
++        print(f'{a.group} {i+1}/{len(GROUPS[a.group])}: return={result.returncode} expected={expected} ({row["seconds"]}s)',flush=True)
++        if result.returncode!=expected:return 1
++    return 0
++if __name__=='__main__':raise SystemExit(main())

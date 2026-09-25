@@ -1,0 +1,397 @@
+{
+  "path": "libbitmain/src/i2c_sw.c",
+  "observed_as": "/tmp/build/libbitmain/src/i2c_sw.c",
+  "status": "pending-not-implemented",
+  "evidence": [
+    {
+      "address": "0x5ef42e",
+      "xor": 140,
+      "decoded_length": 35,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x00126084",
+      "end_exclusive": "0x00126d14",
+      "path_references": [
+        {
+          "insn": "0x12626c",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x126414",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x126460",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x126490",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x1264e8",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x12651c",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x126568",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x12661c",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x12672c",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x126778",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x1268ec",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x126940",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x12698c",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x1269b8",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x126a04",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x126ae0",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x126bc4",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00126e0c",
+      "end_exclusive": "0x00126fcc",
+      "path_references": [
+        {
+          "insn": "0x126e60",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x126f30",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00127030",
+      "end_exclusive": "0x0012728c",
+      "path_references": [
+        {
+          "insn": "0x12707c",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x127100",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x127148",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x127214",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x0012728c",
+      "end_exclusive": "0x00127e28",
+      "path_references": [
+        {
+          "insn": "0x12745c",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x1274b8",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x127528",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x127600",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x12768c",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x1276f4",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x12771c",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x127bc8",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x127c08",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x127c74",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00127e28",
+      "end_exclusive": "0x00128188",
+      "path_references": [
+        {
+          "insn": "0x127ea8",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x127ef0",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x127f78",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x127fc0",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x128010",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x12809c",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x1280e4",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00128188",
+      "end_exclusive": "0x001287c4",
+      "path_references": [
+        {
+          "insn": "0x128318",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x1283bc",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x128498",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x12853c",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x1285a4",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x1285f4",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x128628",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x128670",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x12869c",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x1286e4",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x001287c4",
+      "end_exclusive": "0x001289c4",
+      "path_references": [
+        {
+          "insn": "0x12885c",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x1288a4",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        },
+        {
+          "insn": "0x1288fc",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x001289c4",
+      "end_exclusive": "0x00129334",
+      "path_references": [
+        {
+          "insn": "0x128b80",
+          "string": "0x5ef42e",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/i2c_sw.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": []
+}

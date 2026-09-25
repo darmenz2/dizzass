@@ -1,0 +1,109 @@
+{
+  "path": "src/backend/hwinfo.c",
+  "observed_as": "/tmp/build/src/backend/hwinfo.c",
+  "status": "pending-not-implemented",
+  "evidence": [
+    {
+      "address": "0x5e8d4f",
+      "xor": 1,
+      "decoded_length": 32,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x000b2a88",
+      "end_exclusive": "0x000b3b00",
+      "path_references": [
+        {
+          "insn": "0xb2e38",
+          "string": "0x5e8d4f",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/hwinfo.c"
+        },
+        {
+          "insn": "0xb2e90",
+          "string": "0x5e8d4f",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/hwinfo.c"
+        },
+        {
+          "insn": "0xb2fd4",
+          "string": "0x5e8d4f",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/hwinfo.c"
+        },
+        {
+          "insn": "0xb3060",
+          "string": "0x5e8d4f",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/hwinfo.c"
+        },
+        {
+          "insn": "0xb3478",
+          "string": "0x5e8d4f",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/hwinfo.c"
+        },
+        {
+          "insn": "0xb34b0",
+          "string": "0x5e8d4f",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/hwinfo.c"
+        },
+        {
+          "insn": "0xb3504",
+          "string": "0x5e8d4f",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/hwinfo.c"
+        },
+        {
+          "insn": "0xb3544",
+          "string": "0x5e8d4f",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/hwinfo.c"
+        },
+        {
+          "insn": "0xb37b8",
+          "string": "0x5e8d4f",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/hwinfo.c"
+        },
+        {
+          "insn": "0xb3808",
+          "string": "0x5e8d4f",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/hwinfo.c"
+        },
+        {
+          "insn": "0xb3840",
+          "string": "0x5e8d4f",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/hwinfo.c"
+        },
+        {
+          "insn": "0xb387c",
+          "string": "0x5e8d4f",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/hwinfo.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x000b3b00",
+      "end_exclusive": "0x000b4c58",
+      "path_references": [
+        {
+          "insn": "0xb3ba8",
+          "string": "0x5e8d4f",
+          "kind": "pc-add",
+          "text": "/tmp/build/src/backend/hwinfo.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": []
+}

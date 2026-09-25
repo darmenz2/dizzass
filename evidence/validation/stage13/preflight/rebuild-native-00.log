@@ -1,0 +1,2 @@
+COMMAND: ['./build/test-work-rebuild']
+{"status":"PASS","native_checks":338,"fragmented_genesis_replays":11,"hardware_tested":false,"submitted":false}

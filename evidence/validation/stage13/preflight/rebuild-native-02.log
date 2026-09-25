@@ -1,0 +1,2 @@
+COMMAND: ['/opt/pyvenv/bin/python3', 'tests/test_stage9_genesis.py']
+{"status": "PASS", "separate_original_slice_compositions": 12, "known_genesis_header": true, "digest": "000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f", "submitted": false, "hardware_tested": false}

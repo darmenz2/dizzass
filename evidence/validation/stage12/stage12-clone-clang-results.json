@@ -1,0 +1,12 @@
+{
+  "stage": 12,
+  "status": "PASS",
+  "group": "clone",
+  "comparisons": 1323,
+  "nonzero_delta": 1242,
+  "absent_time_text": 621,
+  "independent_mismatching_header_and_text": 513,
+  "partial_other_string_failures": 939,
+  "compares_full_normalized_image_and_copy_order": true,
+  "failed_original_encoder_allocation_not_in_domain": true
+}

@@ -1,0 +1,11 @@
+COMMAND: ['make', '-f', 'Makefile.recovery', 'evidence-check']
+python3 tools/check_evidence.py
+evidence: PASS; 40 code slices, 9 data records, 46 observed paths
+python3 tools/extract_reg_cache_defaults.py
+cache defaults: 8 selectors, 512 bytes each, PASS
+python3 tools/check_stage5_evidence.py
+Stage 5 evidence: constructor length/path and AML -> UART call: PASS
+python3 tools/check_stage6_evidence.py
+Stage6 original slices and RX->ring/filter/enqueue call edges: PASS
+python3 tools/check_stage7_evidence.py
+Stage7 evidence: 10 bounded slices (4 context-only), 10 call edges, table stride/base and 72-vs-68 boundary PASS

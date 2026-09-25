@@ -1,0 +1,3 @@
+COMMAND: ['make', '-f', 'Makefile.recovery', 'full-runtime']
+NOT IMPLEMENTED: T21 runtime/model dispatch/live transport/PLL programming/PSU/autotune are incomplete.
+make: *** [Makefile.recovery:89: full-runtime] Error 2

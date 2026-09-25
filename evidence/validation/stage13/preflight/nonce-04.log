@@ -1,0 +1,23 @@
+COMMAND: ['/opt/pyvenv/bin/python3', 'tests/test_stage7_differential.py', 'sha']
+{
+  "status": "PASS",
+  "group": "sha",
+  "build_tag": "gcc",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "cases": {
+    "sha_midstate_original_iv": 132,
+    "sha_compression_arbitrary_state": 132,
+    "independent_hashlib_padded_messages": 104,
+    "original_full_sha_and_hashlib64": 20
+  },
+  "total_cases": 388,
+  "seconds": 10.79,
+  "injected": [
+    "chip/core attribution in preparation only",
+    "memcpy",
+    "memset in original SHA finalization oracle only",
+    "numeric model getter for core helper"
+  ],
+  "original_sha_replaced_by_hook": false,
+  "valid_share_or_hardware_test": false
+}

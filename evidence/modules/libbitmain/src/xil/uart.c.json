@@ -1,0 +1,101 @@
+{
+  "path": "libbitmain/src/xil/uart.c",
+  "observed_as": "/tmp/build/libbitmain/src/xil/uart.c",
+  "status": "pending-not-implemented",
+  "evidence": [
+    {
+      "address": "0x5ee1f6",
+      "xor": 62,
+      "decoded_length": 37,
+      "byte_match": true,
+      "terminal_suffix_hex": "00"
+    }
+  ],
+  "candidate_intervals": [
+    {
+      "start": "0x00116fa8",
+      "end_exclusive": "0x00117058",
+      "path_references": [
+        {
+          "insn": "0x116fd8",
+          "string": "0x5ee1f6",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/uart.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00117058",
+      "end_exclusive": "0x001172d4",
+      "path_references": [
+        {
+          "insn": "0x1170d0",
+          "string": "0x5ee1f6",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/uart.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00117484",
+      "end_exclusive": "0x001175e4",
+      "path_references": [
+        {
+          "insn": "0x117548",
+          "string": "0x5ee1f6",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/uart.c"
+        },
+        {
+          "insn": "0x117598",
+          "string": "0x5ee1f6",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/uart.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00117620",
+      "end_exclusive": "0x00117b04",
+      "path_references": [
+        {
+          "insn": "0x1176e8",
+          "string": "0x5ee1f6",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/uart.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00117b04",
+      "end_exclusive": "0x00117d84",
+      "path_references": [
+        {
+          "insn": "0x117bb0",
+          "string": "0x5ee1f6",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/uart.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    },
+    {
+      "start": "0x00117d84",
+      "end_exclusive": "0x00117f7c",
+      "path_references": [
+        {
+          "insn": "0x117dc4",
+          "string": "0x5ee1f6",
+          "kind": "pc-add",
+          "text": "/tmp/build/libbitmain/src/xil/uart.c"
+        }
+      ],
+      "association": "Stage 1 PC-relative xrefs inside EHABI bucket; ownership NOT proven"
+    }
+  ],
+  "implementation_files": []
+}

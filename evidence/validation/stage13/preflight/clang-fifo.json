@@ -1,0 +1,20 @@
+{
+  "group": "clang-fifo",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "make",
+        "-f",
+        "Makefile.recovery",
+        "stage13-clang"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "clang-fifo-00.log",
+      "seconds": 14.009,
+      "sha256": "121558f1bae22c55decb1b6a7d9cbb1621e4faedbf819f36559c5e31c8d2d381"
+    }
+  ]
+}

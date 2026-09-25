@@ -1,0 +1,2 @@
+COMMAND: ['./build/test-work-time']
+{"stage":12,"status":"PASS","native_scenarios":6158,"assertions":43397,"hardware_tested":false}

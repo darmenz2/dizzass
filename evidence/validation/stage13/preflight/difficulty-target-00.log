@@ -1,0 +1,2 @@
+COMMAND: ['/opt/pyvenv/bin/python3', 'tests/test_stage10_differential.py', 'target']
+{"stage": 10, "group": "target", "status": "PASS", "comparisons": 1165, "zero_fallback_cases": 10, "independent_exact_power_cases": 33, "original_integer_conversion_helpers_executed": true}

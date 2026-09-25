@@ -1,0 +1,2 @@
+COMMAND: ['/opt/pyvenv/bin/python3', 'tests/test_stage13_differential.py', 'queue']
+queue {"comparisons": 2977, "dropped_oldest_cases": 145, "all_72_record_bytes_compared": true, "original_queue_and_ring_execute_together": true, "original_wrapper_procedures": 7, "failed_allocation_or_mutex_not_original_domain": true}

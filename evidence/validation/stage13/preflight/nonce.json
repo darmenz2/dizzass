@@ -1,0 +1,76 @@
+{
+  "group": "nonce",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "./build/test-work-nonce"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "nonce-00.log",
+      "seconds": 0.002,
+      "sha256": "4a77d4c7b8d269ade9dda991c835d13734a9c92e6ba8154e1d864812c1ba14de"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage7_interpreter.py"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "nonce-01.log",
+      "seconds": 0.936,
+      "sha256": "6d7d37ecd332ea4e4343b3ac36a151bb278142adbbc2011f82838591199190f7"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage7_differential.py",
+        "version"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "nonce-02.log",
+      "seconds": 7.276,
+      "sha256": "68bee5171cdb675e519b2f34d09af9d3ce388b3554ea6a0e657c712783a8e61d"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage7_differential.py",
+        "prepare"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "nonce-03.log",
+      "seconds": 16.676,
+      "sha256": "afcdf2b49e63b544d05fb75be26dfd6bc30dcff01dd5b9f4059caf5fa5ea4d40"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage7_differential.py",
+        "sha"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "nonce-04.log",
+      "seconds": 11.991,
+      "sha256": "7323d2e676e6f6fab763f202622a52dbb1ab02abbcc3c37153ac6d775febc20e"
+    },
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage7_differential.py",
+        "core"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "nonce-05.log",
+      "seconds": 1.378,
+      "sha256": "7ad0d2e927eb2c6d6f8b7ac1726232ce328faf6482410d3d4b1db47c2ea063e4"
+    }
+  ]
+}

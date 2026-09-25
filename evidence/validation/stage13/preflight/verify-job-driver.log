@@ -1,0 +1,2 @@
+verify-job 1/2: return=0 expected=0 (1.421s)
+verify-job 2/2: return=0 expected=0 (1.955s)

@@ -1,0 +1,53 @@
+{
+  "group": "build",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "make",
+        "-f",
+        "Makefile.recovery",
+        "clean"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "build-00.log",
+      "seconds": 0.007,
+      "sha256": "0f1567cef728505a178b9147f8ff6c877e18b995ac09aefbdec04156c84a5e22"
+    },
+    {
+      "command": [
+        "make",
+        "-f",
+        "Makefile.recovery",
+        "all",
+        "build/libvn135_recovered.so",
+        "build/test-chip1398",
+        "build/test-pll-aml",
+        "build/test-reg-cache",
+        "build/test-uart",
+        "build/test-work-rx",
+        "build/test-work-nonce",
+        "arm",
+        "build/test-nonce-verify",
+        "build/vn135-verify-header",
+        "build/test-work-rebuild",
+        "build/vn135-rebuild-genesis",
+        "build/test-work-difficulty",
+        "build/vn135-rebuild-genesis-difficulty",
+        "fixtures-stage10",
+        "build/test-work-storage",
+        "build/vn135-work-lifecycle",
+        "build/test-work-time",
+        "build/test-nonce-fifo",
+        "build/test-nonce-fifo-threads"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "build-01.log",
+      "seconds": 30.749,
+      "sha256": "f80ff0f344e5e03fa6ddb17774755013b006a603bfe037c4b4a02a12daa24636"
+    }
+  ]
+}

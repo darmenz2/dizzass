@@ -1,0 +1,1302 @@
+{
+  "status": "PASS",
+  "complete": true,
+  "groups_expected": 43,
+  "groups_run": 43,
+  "command_count": 80,
+  "supplemental_commands": [
+    {
+      "command": [
+        "make",
+        "-f",
+        "Makefile.recovery",
+        "build/libvn135_recovered-clang.so"
+      ],
+      "returncode": 0,
+      "log": "clang-library-prebuild.log",
+      "sha256": "1faa82a4ec656d081ddfaaaf7c0ea8934696c6cc8f0d50991e5f6e6c2653ef09"
+    }
+  ],
+  "seconds": 496.436,
+  "group_results": {
+    "build": {
+      "group": "build",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "make",
+            "-f",
+            "Makefile.recovery",
+            "clean"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "build-00.log",
+          "seconds": 0.007,
+          "sha256": "0f1567cef728505a178b9147f8ff6c877e18b995ac09aefbdec04156c84a5e22"
+        },
+        {
+          "command": [
+            "make",
+            "-f",
+            "Makefile.recovery",
+            "all",
+            "build/libvn135_recovered.so",
+            "build/test-chip1398",
+            "build/test-pll-aml",
+            "build/test-reg-cache",
+            "build/test-uart",
+            "build/test-work-rx",
+            "build/test-work-nonce",
+            "arm",
+            "build/test-nonce-verify",
+            "build/vn135-verify-header",
+            "build/test-work-rebuild",
+            "build/vn135-rebuild-genesis",
+            "build/test-work-difficulty",
+            "build/vn135-rebuild-genesis-difficulty",
+            "fixtures-stage10",
+            "build/test-work-storage",
+            "build/vn135-work-lifecycle",
+            "build/test-work-time",
+            "build/test-nonce-fifo",
+            "build/test-nonce-fifo-threads"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "build-01.log",
+          "seconds": 30.749,
+          "sha256": "f80ff0f344e5e03fa6ddb17774755013b006a603bfe037c4b4a02a12daa24636"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "core": {
+      "group": "core",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "./build/test-chip1398"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "core-00.log",
+          "seconds": 0.002,
+          "sha256": "53d45580aec8e36f1e85a2c3075d3fbd167e74ff6b56e5923c775f8490355a69"
+        },
+        {
+          "command": [
+            "./build/test-pll-aml"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "core-01.log",
+          "seconds": 0.002,
+          "sha256": "c65f8253803e8e38483b9e8289ae61b175e5636e0dd1f525dbe787c294d36f5d"
+        },
+        {
+          "command": [
+            "./build/test-reg-cache"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "core-02.log",
+          "seconds": 0.002,
+          "sha256": "9af9658aec1b4241ddbbdbe0bfdec191dac9b3b616391f9b6c52037115a44942"
+        },
+        {
+          "command": [
+            "./build/test-uart"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "core-03.log",
+          "seconds": 0.002,
+          "sha256": "0a01a3789cd9d994d0ba6b200a249cd41db7637505151efa5f8b6b64a4afb1dd"
+        },
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_arm_subset.py"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "core-04.log",
+          "seconds": 1.276,
+          "sha256": "25ac88d3a7e0755f2c822bd3a87ef94401e7af07a15864f8b7d1f1d356fc44da"
+        },
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_arm_differential.py"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "core-05.log",
+          "seconds": 3.438,
+          "sha256": "3bf72f0a529bc72f1ccc38458e8a0b49135833cf2372fb37132d2e81c1867047"
+        },
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage3_interpreter.py"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "core-06.log",
+          "seconds": 0.927,
+          "sha256": "89987c98c17224f5e21956b87bfdd24017156167f429574887eb9998e32ce820"
+        },
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage3_differential.py"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "core-07.log",
+          "seconds": 9.033,
+          "sha256": "6db930a9457a4ae74dbd188d3755a4a90468ea1d0760808db90c43ea4f5a6269"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "uart": {
+      "group": "uart",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage5_uart_differential.py"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "uart-00.log",
+          "seconds": 1.546,
+          "sha256": "0d5a8ea6662b79fba834ec12ab06a1f38b2dff934064eeaa309a7d15827044ac"
+        },
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage5_aml_uart_differential.py"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "uart-01.log",
+          "seconds": 1.1,
+          "sha256": "106ec35f74a11e9748e446cc5e2cbe2d0e25e3b6fdff824032ba26c88fabd2b9"
+        },
+        {
+          "command": [
+            "make",
+            "-f",
+            "Makefile.recovery",
+            "linux-pty"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "uart-02.log",
+          "seconds": 0.252,
+          "sha256": "e66279f1ff213f37836817e9a2f45e7876f8a4230c60f2f460cd2d92788bd0c3"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "cache": {
+      "group": "cache",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage4_cache_differential.py"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "cache-00.log",
+          "seconds": 16.55,
+          "sha256": "1c929b758205d44e3b50be2a9defa277945f10954558e93322f3ac71a52d9faf"
+        },
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage4_config_differential.py"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "cache-01.log",
+          "seconds": 10.852,
+          "sha256": "9d7faaecc71b69ff96eeb82f2ded82b0bf73655bd37e6c9b882d362336ac0728"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "rx": {
+      "group": "rx",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "./build/test-work-rx"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "rx-00.log",
+          "seconds": 0.095,
+          "sha256": "a9fa345fd8960e67f0cd4f0f9dc2bf9f3f1e5d43597719c0b24574c871a0bd5d"
+        },
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage6_interpreter.py"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "rx-01.log",
+          "seconds": 0.837,
+          "sha256": "f61a1cc456ceda4056ec07b96955700aa61d606e5224a1ce2b446c7fa41b1035"
+        },
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage6_rx_differential.py"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "rx-02.log",
+          "seconds": 8.123,
+          "sha256": "a62ae6961deec55351f3720190b4ea0d566fadfdc87252052f0b11dffc970b95"
+        },
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage6_stream_differential.py"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "rx-03.log",
+          "seconds": 3.76,
+          "sha256": "49aaf9fb4a8eb7573244d4cd6e5bb3909a9a4eaa35bd87a4508d1239e37c4348"
+        },
+        {
+          "command": [
+            "make",
+            "-f",
+            "Makefile.recovery",
+            "linux-pty-rx"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "rx-04.log",
+          "seconds": 0.433,
+          "sha256": "4e1529363d9d4b5c9e2ee15517f717cc6a25029e2ad5abf452cba3a2421ed447"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "nonce": {
+      "group": "nonce",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "./build/test-work-nonce"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "nonce-00.log",
+          "seconds": 0.002,
+          "sha256": "4a77d4c7b8d269ade9dda991c835d13734a9c92e6ba8154e1d864812c1ba14de"
+        },
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage7_interpreter.py"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "nonce-01.log",
+          "seconds": 0.936,
+          "sha256": "6d7d37ecd332ea4e4343b3ac36a151bb278142adbbc2011f82838591199190f7"
+        },
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage7_differential.py",
+            "version"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "nonce-02.log",
+          "seconds": 7.276,
+          "sha256": "68bee5171cdb675e519b2f34d09af9d3ce388b3554ea6a0e657c712783a8e61d"
+        },
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage7_differential.py",
+            "prepare"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "nonce-03.log",
+          "seconds": 16.676,
+          "sha256": "afcdf2b49e63b544d05fb75be26dfd6bc30dcff01dd5b9f4059caf5fa5ea4d40"
+        },
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage7_differential.py",
+            "sha"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "nonce-04.log",
+          "seconds": 11.991,
+          "sha256": "7323d2e676e6f6fab763f202622a52dbb1ab02abbcc3c37153ac6d775febc20e"
+        },
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage7_differential.py",
+            "core"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "nonce-05.log",
+          "seconds": 1.378,
+          "sha256": "7ad0d2e927eb2c6d6f8b7ac1726232ce328faf6482410d3d4b1db47c2ea063e4"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "clang-nonce": {
+      "group": "clang-nonce",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "make",
+            "-f",
+            "Makefile.recovery",
+            "stage7-clang"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "clang-nonce-00.log",
+          "seconds": 43.483,
+          "sha256": "0ea633b42a0eaad74843e248303f8cd284e1bea805181630ba8d3abcefe71813"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "verify-hash": {
+      "group": "verify-hash",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage8_differential.py",
+            "hash"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "verify-hash-00.log",
+          "seconds": 16.803,
+          "sha256": "b261595ee94ea83df1fcfb54ac357ecad35faf41955efc0bb5af109207ab6b76"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "verify-target": {
+      "group": "verify-target",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage8_differential.py",
+            "target"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "verify-target-00.log",
+          "seconds": 1.323,
+          "sha256": "284932afeaa50e140860bb6e4531763c13c3a27f6b38912207bcef53af432dcf"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "sanitizers": {
+      "group": "sanitizers",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "make",
+            "-f",
+            "Makefile.recovery",
+            "sanitize",
+            "sanitize-linux-pty",
+            "sanitize-linux-pty-rx"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "sanitizers-00.log",
+          "seconds": 30.084,
+          "sha256": "267b9c50b15de60ae595b8c18ce384707ffefb5115f9b11b9caf59910723ef50"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "verify-job": {
+      "group": "verify-job",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage8_differential.py",
+            "job"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "verify-job-00.log",
+          "seconds": 1.421,
+          "sha256": "912d7bde27d87f715e83783407b4859ba0a3cd49b5435cf6eb0b47b813ace118"
+        },
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage8_differential.py",
+            "registry"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "verify-job-01.log",
+          "seconds": 1.955,
+          "sha256": "aed0564d1c9159ea7ef593459965cf770012ff7306ed4288c940b49cd7a3b5a1"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "verify-native": {
+      "group": "verify-native",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "./build/test-nonce-verify"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "verify-native-00.log",
+          "seconds": 0.003,
+          "sha256": "08799f61ad68975e238c0a556f9f50affb5353b7ebe362c539c7f2e60a579594"
+        },
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage8_interpreter.py"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "verify-native-01.log",
+          "seconds": 1.308,
+          "sha256": "3c59c3af58d96745d41c304bb4832557e7cad4413ec12ff8a930b4fb4b598c62"
+        },
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_verify_header_cli.py"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "verify-native-02.log",
+          "seconds": 1.403,
+          "sha256": "7600841a9081c1278efaa4aa32412d7bf341f80e4b48a3b9ec96dbd2328bf52b"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "verify-prefilter": {
+      "group": "verify-prefilter",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage8_differential.py",
+            "prefilter"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "verify-prefilter-00.log",
+          "seconds": 11.299,
+          "sha256": "d392b14caa12cd120979339d1b02d0dd0dc8d5ba51276c1650cdc1240396f924"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "automake": {
+      "group": "automake",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_overlay_automake.py"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "automake-00.log",
+          "seconds": 7.528,
+          "sha256": "b76ed2e8462df4f0ccfa6358fecfc5cde5ff83f6cd2409c298f09ac465c683de"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "rebuild-sha": {
+      "group": "rebuild-sha",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage9_differential.py",
+            "sha"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "rebuild-sha-00.log",
+          "seconds": 18.836,
+          "sha256": "d5be3f12c57856b5e454664bbcbf7d8e2e8b6cebf1ffdc1aebe6f15de95cf747"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "clang-verify": {
+      "group": "clang-verify",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "make",
+            "-f",
+            "Makefile.recovery",
+            "stage8-clang"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "clang-verify-00.log",
+          "seconds": 34.521,
+          "sha256": "d9d811ee36815df61e6129f8a3c493a6c5973a40bef23902aca681084595289b"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "rebuild-candidate": {
+      "group": "rebuild-candidate",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage9_differential.py",
+            "candidate"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "rebuild-candidate-00.log",
+          "seconds": 91.055,
+          "sha256": "aaa659e775c55863fbda61acd8862d0b08de4ffb693b7f6433642a12b793b03f"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "rebuild-native": {
+      "group": "rebuild-native",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "./build/test-work-rebuild"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "rebuild-native-00.log",
+          "seconds": 0.002,
+          "sha256": "1df97101aeed30a7bfc84f3839db5f90a19cae0df378577e340fb434ee1b83ec"
+        },
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage9_interpreter.py"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "rebuild-native-01.log",
+          "seconds": 0.894,
+          "sha256": "0056bd8e5db3af5368046c0699c556504786a81c314d71d02021d05299b94925"
+        },
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage9_genesis.py"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "rebuild-native-02.log",
+          "seconds": 1.167,
+          "sha256": "18990428ff304615063ef9477f937174a02944b6a36f194760979681413d404b"
+        },
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tools/generate_genesis_fixture.py"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "rebuild-native-03.log",
+          "seconds": 0.805,
+          "sha256": "afbd237f24c359cec6b2b713ca666392a8bd389e747a9db30c035f76483cae81"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "rebuild-prefix": {
+      "group": "rebuild-prefix",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage9_differential.py",
+            "prefix"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "rebuild-prefix-00.log",
+          "seconds": 110.049,
+          "sha256": "d2302933c32017dee9e5c3dcc982113e8db899eac544ea7c481a8e1155c10d4f"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "difficulty-target": {
+      "group": "difficulty-target",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage10_differential.py",
+            "target"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "difficulty-target-00.log",
+          "seconds": 2.788,
+          "sha256": "a7a2833b255361ab06d46b32a42fe04dd5870aaf3b6ef03fff5a65f897aef12c"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "difficulty-inverse": {
+      "group": "difficulty-inverse",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage10_differential.py",
+            "inverse"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "difficulty-inverse-00.log",
+          "seconds": 2.365,
+          "sha256": "aec4cfebf4c7374db75a187a98025a5f85e569d203570d49d996279ce15f4592"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "work-math": {
+      "group": "work-math",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage10_differential.py",
+            "math"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "work-math-00.log",
+          "seconds": 11.992,
+          "sha256": "45863cacd41a65da3361de49df662854ac2157e81eaefb27ffc812685f0827a0"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "difficulty-pipeline": {
+      "group": "difficulty-pipeline",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage10_differential.py",
+            "pipeline"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "difficulty-pipeline-00.log",
+          "seconds": 35.271,
+          "sha256": "9465af878c518da97be044d08e3af9e12839944ab08872581f64ec54f79de953"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "difficulty-native": {
+      "group": "difficulty-native",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "./build/test-work-difficulty"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "difficulty-native-00.log",
+          "seconds": 0.002,
+          "sha256": "a9e15f25998d736f4591ae78bf127dc8ebdbf39fb5e4669c96f5ba512f9972f0"
+        },
+        {
+          "command": [
+            "./build/vn135-rebuild-genesis-difficulty"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "difficulty-native-01.log",
+          "seconds": 0.002,
+          "sha256": "3059cccc1e8b83d44347e286d925911886fa59fee764c27b4ed904eaa7bfb9a7"
+        },
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage10_interpreter.py"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "difficulty-native-02.log",
+          "seconds": 1.079,
+          "sha256": "f67680b178e3ef036d76ad6fe7656fa057d3aebe97b7009b7150738489a91d23"
+        },
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage10_compile_policy.py"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "difficulty-native-03.log",
+          "seconds": 0.963,
+          "sha256": "0d95415ac56f51874d65b082a4c15208e289bc3f6de755af03a152e091164370"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "clang-difficulty": {
+      "group": "clang-difficulty",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "make",
+            "-f",
+            "Makefile.recovery",
+            "stage10-clang"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "clang-difficulty-00.log",
+          "seconds": 50.151,
+          "sha256": "83223ba2e16153dc706029bc1d11bb5c5fae45aab539281b7c89d649312e6efd"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "storage-metadata": {
+      "group": "storage-metadata",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage11_differential.py",
+            "metadata"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "storage-metadata-00.log",
+          "seconds": 1.239,
+          "sha256": "0003ca74a9a467e6ebe8148cd5c9bdf44fa2a7f78744b27fea9ab53a9b8013e8"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "storage-clone": {
+      "group": "storage-clone",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage11_differential.py",
+            "clone"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "storage-clone-00.log",
+          "seconds": 1.661,
+          "sha256": "34bce4bd9272bfde2e5c6b41474b4de4104b47dc6705129273475587f11a22a4"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "storage-cleanup": {
+      "group": "storage-cleanup",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage11_differential.py",
+            "cleanup"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "storage-cleanup-00.log",
+          "seconds": 1.225,
+          "sha256": "c4aa1de63e1860e45d25851a27c87116747869f11da6a894f6c46aff637b28ae"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "storage-fields": {
+      "group": "storage-fields",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage11_differential.py",
+            "fields"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "storage-fields-00.log",
+          "seconds": 1.134,
+          "sha256": "2c4b9592faf14985c462d20c6b80a20c03533c0a8aba9ee613845cbd8ee052e6"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "storage-native": {
+      "group": "storage-native",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "./build/test-work-storage"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "storage-native-00.log",
+          "seconds": 0.002,
+          "sha256": "9c8be7126dc262166e28d5177c0edabe8f77b03a6faa04ba9f8d02dc7b8a9786"
+        },
+        {
+          "command": [
+            "./build/vn135-work-lifecycle"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "storage-native-01.log",
+          "seconds": 0.002,
+          "sha256": "e3e82f33fca490b443c38ad2872a094667e410a0873381bcd0d1dcb881e5d255"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "clang-storage": {
+      "group": "clang-storage",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "make",
+            "-f",
+            "Makefile.recovery",
+            "stage11-clang"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "clang-storage-00.log",
+          "seconds": 11.667,
+          "sha256": "7b7892109eb74de1f80151e2a01a3efb519e455f3137ef73bdd275de3d392a92"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "time-codec": {
+      "group": "time-codec",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage12_differential.py",
+            "codec"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "time-codec-00.log",
+          "seconds": 1.626,
+          "sha256": "e5817491b0bc504eda773dba919f4baecbe0881d33719f78db32f1c4940d1f5c"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "time-clone": {
+      "group": "time-clone",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage12_differential.py",
+            "clone"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "time-clone-00.log",
+          "seconds": 4.826,
+          "sha256": "def1d09133dbf1f30f300182ee67ec7fba1b1079a89d9e49a41f32fa3c9d062c"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "time-native": {
+      "group": "time-native",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "./build/test-work-time"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "time-native-00.log",
+          "seconds": 0.004,
+          "sha256": "15fbc427f99cb57096d785648389eeaebcd1bf3677d5676b76ddfbdc3c740630"
+        },
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tools/generate_time_fixture.py"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "time-native-01.log",
+          "seconds": 0.821,
+          "sha256": "bf4b1073c09841aefc9494dcdad337c89c733a6fab4a47afcb20030f36f9b133"
+        },
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage12_differential.py",
+            "composition"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "time-native-02.log",
+          "seconds": 8.605,
+          "sha256": "cef901d2afb8e5c97d04802c477b6047a2bd29947e2828badefd30b98c1275d2"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "clang-time": {
+      "group": "clang-time",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "make",
+            "-f",
+            "Makefile.recovery",
+            "stage12-clang"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "clang-time-00.log",
+          "seconds": 17.401,
+          "sha256": "29c90ce764eb2c0690b87059743cdbc8fad31e990a9d9640040c7668b7634b3f"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "fifo-ring": {
+      "group": "fifo-ring",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage13_differential.py",
+            "ring"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "fifo-ring-00.log",
+          "seconds": 2.809,
+          "sha256": "a23028134db6cd78f457cea936af8162ee3d6099c8650429e6d3dfcafb40f906"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "fifo-queue": {
+      "group": "fifo-queue",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage13_differential.py",
+            "queue"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "fifo-queue-00.log",
+          "seconds": 2.051,
+          "sha256": "3d848136e51a3df3faf30d150ed9dcfa6ba85ce21b838ac47fc56307a0d940b4"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "fifo-native": {
+      "group": "fifo-native",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "./build/test-nonce-fifo"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "fifo-native-00.log",
+          "seconds": 0.004,
+          "sha256": "b643ea3e8dba7dac38c3294a01f46ecc8738e3e19a8211cdb8468d9dad267e16"
+        },
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_stage13_differential.py",
+            "composition"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "fifo-native-01.log",
+          "seconds": 2.35,
+          "sha256": "0ebff48298e86dc3ece5b7c14eec20ca8948297be912ed67037d2422a50f4e42"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "fifo-threaded": {
+      "group": "fifo-threaded",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "./build/test-nonce-fifo-threads"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "fifo-threaded-00.log",
+          "seconds": 0.026,
+          "sha256": "faff897a8fba6f0c0cd87eed17f18a8a06cac90f143f9b0f9cd3bb7867fd46d1"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "clang-fifo": {
+      "group": "clang-fifo",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "make",
+            "-f",
+            "Makefile.recovery",
+            "stage13-clang"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "clang-fifo-00.log",
+          "seconds": 14.009,
+          "sha256": "121558f1bae22c55decb1b6a7d9cbb1621e4faedbf819f36559c5e31c8d2d381"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "clang-rebuild": {
+      "group": "clang-rebuild",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "make",
+            "-f",
+            "Makefile.recovery",
+            "stage9-clang"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "clang-rebuild-00.log",
+          "seconds": 208.577,
+          "sha256": "ed2824fe1c48ad147478b2730465a55b4070a8a200934d77342e3b91d8c2e2c8"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "evidence": {
+      "group": "evidence",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "make",
+            "-f",
+            "Makefile.recovery",
+            "evidence-check"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "evidence-00.log",
+          "seconds": 11.471,
+          "sha256": "93b7583760f878f3b85f086278ed91ded2efca7247ed4d805da3a3896f7eccf7"
+        },
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_tree.py"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "evidence-01.log",
+          "seconds": 0.919,
+          "sha256": "e9db9bd52a9c06ec4fc678dcf8f6f6a9926f7419005dc2e48ab40b85351fa4a0"
+        },
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tests/test_assembler.py"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "evidence-02.log",
+          "seconds": 1.036,
+          "sha256": "f1f5f886bb74e19e89e20a0ec0aac1616dd36c43f2a9379146dc175893b62d7a"
+        },
+        {
+          "command": [
+            "/opt/pyvenv/bin/python3",
+            "tools/update_overlay_inventory.py",
+            "--check"
+          ],
+          "returncode": 0,
+          "expected_returncode": 0,
+          "log": "evidence-03.log",
+          "seconds": 0.967,
+          "sha256": "3f925101ee62ced4e53a014a702d310f1efabf2464fd8a0eaf00513478acdad9"
+        }
+      ],
+      "driver_returncode": 0
+    },
+    "full-runtime-blocked": {
+      "group": "full-runtime-blocked",
+      "status": "PASS",
+      "complete": true,
+      "records": [
+        {
+          "command": [
+            "make",
+            "-f",
+            "Makefile.recovery",
+            "full-runtime"
+          ],
+          "returncode": 2,
+          "expected_returncode": 2,
+          "log": "full-runtime-blocked-00.log",
+          "seconds": 0.006,
+          "sha256": "fb8e38b958839327a351a4c966de43e19d42ce8a2b231851f21468fb035bb7e6"
+        }
+      ],
+      "driver_returncode": 0
+    }
+  },
+  "elf_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "hardware_tested": false,
+  "full_upstream_build_tested": false,
+  "full_runtime_expected_to_fail": true
+}

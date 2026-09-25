@@ -1,0 +1,19 @@
+{
+  "group": "time-codec",
+  "status": "PASS",
+  "complete": true,
+  "records": [
+    {
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tests/test_stage12_differential.py",
+        "codec"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "log": "time-codec-00.log",
+      "seconds": 1.626,
+      "sha256": "e5817491b0bc504eda773dba919f4baecbe0881d33719f78db32f1c4940d1f5c"
+    }
+  ]
+}
