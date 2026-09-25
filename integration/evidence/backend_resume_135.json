@@ -1,0 +1,114 @@
+{
+  "schema": 1,
+  "base_commit": "fcbc3ef41510b9f54d94b69d9e92f44e57dd9d59",
+  "reference_elf": "reference/cgminer.vendor.elf",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "entry": "0x70e30",
+  "last_executable_address": "0x725e4",
+  "literal_pool_end_exclusive": "0x727e0",
+  "ranges": [
+    {
+      "name": "resume_entry_and_literals",
+      "start": "0x70e30",
+      "end_exclusive": "0x727e0",
+      "sha256": "077576246f6c1824e7bd4b0842f0a4948f6ac916c712dec955c8cba12295408f"
+    },
+    {
+      "name": "board_chip_getters",
+      "start": "0xa71f4",
+      "end_exclusive": "0xa7218",
+      "sha256": "92d3c39c5ae389909f6ad8ec2cf0af3708e6ad4e516d1530ea432309a976f603"
+    },
+    {
+      "name": "chain_predicates",
+      "start": "0x56fc4",
+      "end_exclusive": "0x57030",
+      "sha256": "d45ee3af9dd8559953e83a88889c4cf0afe52fa22233fe86e8be879f5bd34445"
+    },
+    {
+      "name": "platform_mode_byte_setter",
+      "start": "0xfe114",
+      "end_exclusive": "0xfe190",
+      "sha256": "98a726bca50381269d8fc8ba2f31a73110a1bfc54c3667c6d5ddc2d4b5a69cfd"
+    },
+    {
+      "name": "existing_power_entry",
+      "start": "0x6c224",
+      "end_exclusive": "0x6c61c",
+      "sha256": "c8b060d125ca86bc217835425dda2c1f3853f48261b3036dca57243a8d26d6e8"
+    },
+    {
+      "name": "existing_psu_on_wrapper",
+      "start": "0x102a94",
+      "end_exclusive": "0x102b04",
+      "sha256": "cf7df929b63be9306edc0674b0a06815d85117dff3fe60a3c312181f98dca9e8"
+    }
+  ],
+  "observed_source_path": {
+    "address": "0x5e50be",
+    "xor": 245,
+    "text": "/tmp/build/src/backend/base.c",
+    "sha256": "d628bc37a65dad19bf023aceb2d490c4f7ac4041981e82b3cc9a26be6202e7f5"
+  },
+  "completion_message": {
+    "address": "0x5e5c7f",
+    "xor": 104,
+    "text": "Resume mining completed",
+    "sha256": "57e481b6e3a4e5c11e94a550d4a550448211238ec1dd5853e038549b7e0e7451"
+  },
+  "mapped_not_recovered": {
+    "cold_initialization_entry": "0x730d8",
+    "neighboring_chain_aggregation_entry": "0x72fb8",
+    "next_distinct_prologue": "0x74c0c",
+    "warning": "EHABI unwind ranges can cover multiple functions; prologue and actual calls were checked. Cold setup not translated by this patch."
+  },
+  "direct_call_words": [
+    {
+      "callsite": "0x732c4",
+      "target": "0xfb994",
+      "word": "0xeb0221b2",
+      "role": "cold setup -> platform initialization"
+    },
+    {
+      "callsite": "0x7426c",
+      "target": "0x100fc4",
+      "word": "0xeb023354",
+      "role": "cold setup -> PSU identification/calibration"
+    },
+    {
+      "callsite": "0x71480",
+      "target": "0x6c224",
+      "word": "0xebffeb67",
+      "role": "resume -> power-on/set-voltage"
+    }
+  ],
+  "worker_entries": [
+    {
+      "backend_field": "0x1044",
+      "entry": "0x790c0",
+      "condition": "selector not 6 or 7"
+    },
+    {
+      "backend_field": "0x101c",
+      "entry": "0x79778",
+      "condition": "always after preceding stage"
+    },
+    {
+      "backend_field": "0x1014",
+      "entry": "0x7bc78",
+      "condition": "platform selector 0 or 2"
+    }
+  ],
+  "reuse": "calls existing vn135_backend_power_start_135; no new PSU protocol or mining core",
+  "not_recovered": [
+    "cold initializer 0x730d8",
+    "bodies of external chain/configuration callees",
+    "worker thread bodies",
+    "physical sensor/PSU startup",
+    "hardware drain and slot reuse"
+  ],
+  "validation_scope": "original caller + existing power caller + pure getters; scripted unresolved callees and libc operations",
+  "policy_changes": [],
+  "production_linkage": false,
+  "physical_io": false
+}
