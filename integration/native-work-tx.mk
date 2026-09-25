@@ -16,7 +16,7 @@ $(DIZZASS_WORK_TX_DIR)/packet.o: integration/work_tx86.c integration/work_tx86.h
 $(DIZZASS_WORK_TX_DIR)/libtx86.so: integration/work_tx86.c integration/work_tx86.h integration/native-work-tx.mk | $(DIZZASS_WORK_TX_DIR)
 	$(CC) -I$(top_srcdir) -O2 -std=c11 -Wall -Wextra -Wpedantic -Werror -fPIC -shared $< -o $@
 $(DIZZASS_WORK_TX_DIR)/test: $(DIZZASS_WORK_TX_OBJS) $(DIZZASS_CORE_OTHER) integration/native-work-tx.mk integration/native-nonce.mk
-	$(CC) $(DIZZASS_NONCE_FLAGS) $(cgminer_LDFLAGS) $(LDFLAGS) -Wl,--gc-sections -Wl,--wrap=socket,--wrap=connect,--wrap=libusb_init -Wl,--undefined=__wrap_socket,--undefined=__wrap_connect,--undefined=__wrap_libusb_init -o $@ $(DIZZASS_WORK_TX_OBJS) $(DIZZASS_CORE_OTHER) $(cgminer_LDADD) $(LIBS)
+	$(CC) $(DIZZASS_NONCE_FLAGS) $(cgminer_LDFLAGS) $(LDFLAGS) -Wl,--gc-sections -Wl,--wrap=socket,--wrap=connect,--wrap=libusb_init -Wl,--undefined=__wrap_socket,--undefined=__wrap_connect,--undefined=__wrap_libusb_init,--undefined=copy_work_noffset -o $@ $(DIZZASS_WORK_TX_OBJS) $(DIZZASS_CORE_OTHER) $(cgminer_LDADD) $(LIBS)
 
 .PHONY: dizzass-native-work-tx-test dizzass-tx86-differential
 dizzass-tx86-differential: $(DIZZASS_WORK_TX_DIR)/libtx86.so
