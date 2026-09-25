@@ -1,0 +1,106 @@
+{
+  "schema": 1,
+  "base_commit": "d4b65426790f8bcb38c890f01c1d9b29bc875c4c",
+  "reference_elf": "reference/cgminer.vendor.elf",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "ranges": [
+    {
+      "name": "crc5",
+      "start": "0xf7f10",
+      "end_exclusive": "0xf803c",
+      "sha256": "fa2aeefd1614f7ce872fafde5b94697588ef3ba9b191db64e6bbad7b327bd847"
+    },
+    {
+      "name": "bm1368_vtable",
+      "start": "0xe1450",
+      "end_exclusive": "0xe16b8",
+      "sha256": "d1e526e4c773e51a22151a4082d3800142244982a9f7bfbc15ede6081b21559f"
+    },
+    {
+      "name": "inactive_prefix",
+      "start": "0xe47b8",
+      "end_exclusive": "0xe47f8",
+      "sha256": "66e2841bb208ee343f166e0cabf2383fe43e681717aaa2a776121a30a2f5a571"
+    },
+    {
+      "name": "address_prefix",
+      "start": "0xe48fc",
+      "end_exclusive": "0xe494c",
+      "sha256": "8d983ac17a4fc6575e3fed5008c8640b28d853d44490fd5d2277a49fb6faffc5"
+    },
+    {
+      "name": "read_register_prefix",
+      "start": "0xd253c",
+      "end_exclusive": "0xd25a4",
+      "sha256": "2bec334a83e42cb074608ecab21c9fa1a1c3cfdacc299198d634c3289199047e"
+    },
+    {
+      "name": "set_config",
+      "start": "0xe4a74",
+      "end_exclusive": "0xe4bec",
+      "sha256": "332275f29b1d5b8801ef1c3bfebb8e0b8b59abe41aea9487f01e64c911a5c08c"
+    },
+    {
+      "name": "core_reset_sequence",
+      "start": "0xe1b64",
+      "end_exclusive": "0xe209c",
+      "sha256": "2bd23924d4d03db29282966416498d869fd453cfe15e7620adc78c1dd6283d7c"
+    },
+    {
+      "name": "delay_prepare",
+      "start": "0x10ed2c",
+      "end_exclusive": "0x10ee24",
+      "sha256": "1eaed0e629851b4c018971433c5978a896cb6d4bd0fb5b7a232b318cc6ba1fb4"
+    },
+    {
+      "name": "sha256_rx_observation",
+      "start": "0xc4054",
+      "end_exclusive": "0xc4b18",
+      "sha256": "e3e7acdc40d6b161b6ee96181f13e6e532ad332665b0a2a887f3f6bb682ae64a"
+    },
+    {
+      "name": "scrypt_crc_observation",
+      "start": "0xc15b4",
+      "end_exclusive": "0xc162c",
+      "sha256": "246ad13664eba3c953365f3b3a7c809f423296f6bd0c75ed05cf0933899e4b74"
+    }
+  ],
+  "crc_gate": {
+    "chip": 4,
+    "variant": 2,
+    "payload_bytes": 9,
+    "bits": 72,
+    "initial": 31,
+    "polynomial": 5,
+    "residue": 0,
+    "new_sha256_receive_policy": true
+  },
+  "public_corroboration": {
+    "repository": "bitaxeorg/ESP-Miner",
+    "blobs": {
+      "components/asic/asic_common.c": "3659d3729ba3569b0cd9e4d65372a330a0b5dd28",
+      "components/asic/crc.c": "c67930d4c4e1e541e25d214c17789ca0c1510cde",
+      "components/asic/bm1368.c": "f0dd9e869bbd6829fe25ff45213d83a766774cf5"
+    }
+  },
+  "reset": {
+    "read_operations": 4,
+    "write_operations": 7,
+    "wait_operations": 5,
+    "fail_fast_is_new": true,
+    "external_hooks": [
+      "cache read/write",
+      "transport send",
+      "wait",
+      "logging"
+    ],
+    "original_set_config_and_crc_executed": true
+  },
+  "physical_runtime_profile_available": false,
+  "hardware_commands_sent": false,
+  "physical_protections_validated": false,
+  "slot_reuse_proven": false,
+  "slot_limit": 32,
+  "production_registration": false,
+  "vendor_binary_executed_as_process": false
+}

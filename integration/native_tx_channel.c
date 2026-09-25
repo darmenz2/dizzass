@@ -4,6 +4,7 @@
 #include "config.h"
 #include "miner.h"
 #include "integration/native_tx_channel.h"
+#include "integration/rx_crc5.h"
 #include "xminer/recovery/work_rx.h"
 #include <errno.h>
 #include <fcntl.h>
@@ -111,7 +112,15 @@ int dizzass_tx_channel_read(struct dizzass_tx_channel *c,uint64_t epoch,
         if(rc<0||!used) { stop_locked(c);rc=DIZZASS_CHANNEL_RX_IO;goto done; }
         c->start+=used;
         if(rc==VN135_RX_NEED_MORE) continue;
-        if(rc!=VN135_RX_NONCE_RAW) { rc=DIZZASS_CHANNEL_DISCARDED;goto done; }
+        if(rc==VN135_RX_DISCARDED) { rc=DIZZASS_CHANNEL_DISCARDED;goto done; }
+        /* Validate the full payload before trusting its kind/slot or doing
+         * native work allocation, hashing or accounting. Includes bit 7. */
+        result.match_status=dizzass_bm1368_reply_crc5(c->profile.chip,
+            c->rx.policy.variant,message.payload,message.payload_size);
+        if(result.match_status) {
+            *out=result;rc=DIZZASS_CHANNEL_DISCARDED;goto done;
+        }
+        if(rc!=VN135_RX_NONCE_RAW) { *out=result;rc=DIZZASS_CHANNEL_DISCARDED;goto done; }
         rc=dizzass_nonce_decode_payload(c->profile.chip,c->rx.policy.variant,c->chain_id,
             message.payload,message.payload_size,&reply);
         if(!rc) rc=dizzass_jobs_check(c->jobs,c->epoch,&reply,&result.job);

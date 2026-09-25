@@ -8,6 +8,7 @@
 #include "integration/native_tx_channel.h"
 #include "integration/tests/hwscan_fixture.h"
 #include "tests/fixtures/genesis_work.h"
+#include "xminer/recovery/chip1398.h"
 #include <fcntl.h>
 #include <pty.h>
 #include <poll.h>
@@ -18,7 +19,7 @@ int __wrap_socket(int d,int t,int p){(void)d;(void)t;(void)p;abort();}
 int __wrap_connect(int fd,const struct sockaddr *p,socklen_t n){(void)fd;(void)p;(void)n;abort();}
 int __wrap_libusb_init(libusb_context **c){(void)c;abort();}
 ssize_t __real_write(int,const void *,size_t);
-static unsigned checks,late,valid,sends,write_calls;
+static unsigned checks,late,valid,sends,write_calls,crc_rejected;
 static int fail_partial,watch_io;
 #define CHECK(x) do{++checks;if(!(x)){fprintf(stderr,"channel %d: %s\n",__LINE__,#x);exit(1);}}while(0)
 ssize_t __wrap_write(int fd,const void *p,size_t n)
@@ -42,10 +43,11 @@ static struct work *work_fixture(void)
 }
 static void make_reply(unsigned slot,uint8_t frame[11])
 {
-    unsigned i;uint32_t nonce=le(fixture_words+76);
+    unsigned i;uint8_t crc;uint32_t nonce=le(fixture_words+76);
     memset(frame,0,11);frame[0]=0xaa;frame[1]=0x55;
     for(i=0;i<4;++i)frame[2+i]=(uint8_t)(nonce>>(24-8*i));
     frame[6]=(uint8_t)(slot>>4);frame[7]=(uint8_t)((slot&15)<<4);frame[10]=0x80;
+    CHECK(vn135_crc5_bits(frame+2,9,67,&crc)==0);frame[10]|=crc;
 }
 static void pair(int *m,int *s)
 {
@@ -110,7 +112,27 @@ static void lifecycle(void)
             CHECK(event(c,101,&result)==DIZZASS_CHANNEL_DISCARDED);
             CHECK(result.match_status==DIZZASS_JOBS_QUARANTINED&&!result.job.check.work);++late;
         }
-        make_reply(i,reply);CHECK(write(m,reply,11)==11);
+        make_reply(i,reply);
+        if(i==0) {
+            unsigned bit;
+            for(bit=0;bit<72;++bit) {
+                uint8_t bad[11];uint32_t before=total_work;
+                memcpy(bad,reply,11);bad[2+bit/8]^=(uint8_t)(1u<<(bit%8));
+                CHECK(write(m,bad,11)==11);
+                CHECK(event(c,101,&result)==DIZZASS_CHANNEL_DISCARDED);
+                CHECK(result.match_status==DIZZASS_RX_CRC_MISMATCH);
+                CHECK(!result.job.check.work&&total_work==before);++crc_rejected;
+            }
+            /* Bad and good frames in the same tty read must not merge. */
+            {uint8_t both[22];uint32_t before=total_work;
+             memcpy(both,reply,11);both[10]^=1;memcpy(both+11,reply,11);
+             CHECK(write(m,both,sizeof(both))==(ssize_t)sizeof(both));
+             CHECK(event(c,101,&result)==DIZZASS_CHANNEL_DISCARDED);
+             CHECK(result.match_status==DIZZASS_RX_CRC_MISMATCH&&total_work==before);
+             ++crc_rejected;CHECK(event(c,101,&result)==0);
+             CHECK(result.job.check.meets_target);dizzass_job_result_clear(&result.job);}
+        }
+        CHECK(write(m,reply,11)==11);
         CHECK(dizzass_tx_channel_read(c,100,&result)==DIZZASS_JOBS_OLD_EPOCH);
         CHECK(event(c,101,&result)==0);
         CHECK(result.job.check.passes_diff1&&result.job.check.meets_target&&result.job.ticket.slot==i);
@@ -149,6 +171,6 @@ int main(void)
     mutex_init(&stats_lock);mutex_init(&console_lock);cglock_init(&control_lock);
     opt_debug=false;opt_quiet=true;opt_realquiet=true;
     lifecycle();partial_stops_channel();
-    printf("NATIVE_TX_CHANNEL_PASS sends=%u valid=%u late_rejected=%u checks=%u actual_pty=yes physical_asic=no\n",sends,valid,late,checks);
+    printf("NATIVE_TX_CHANNEL_PASS sends=%u valid=%u late_rejected=%u crc_rejected=%u checks=%u actual_pty=yes physical_asic=no\n",sends,valid,late,crc_rejected,checks);
     return 0;
 }

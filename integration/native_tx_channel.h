@@ -4,6 +4,7 @@
 #ifndef DIZZASS_NATIVE_TX_CHANNEL_H
 #define DIZZASS_NATIVE_TX_CHANNEL_H
 #include "integration/hwscan_profile.h"
+#include "integration/rx_crc5.h"
 #include "integration/posix_tx88.h"
 #include "integration/native_work_tx88.h"
 struct dizzass_tx_channel;
@@ -24,7 +25,8 @@ struct dizzass_channel_rx_result {
  * but may NOT keep using it. No baud setting, power, flash, or hardware reset.
  * initial_epoch is nonzero and unique for this physical RX session. No API in
  * this module resumes/relabels a stopped session or reuses its sent slots.
- * Only fixed work: version rolling and CRC validation are not implemented.
+ * Only fixed work: version rolling is not implemented. BM1368/variant-2
+ * replies must pass the CRC5 gate before native work processing.
  */
 int dizzass_tx_channel_create(const struct dizzass_hwscan_profile *profile,
     uint32_t chain_id,uint64_t initial_epoch,int configured_fd,
@@ -39,8 +41,11 @@ int dizzass_tx_channel_send(struct dizzass_tx_channel *channel,
     const struct work *source,uint32_t deadline_ms,
     struct dizzass_channel_send_result *out);
 /* Reads the actual fd and existing bounded RX parser, at most one complete
- * event per call; at most one new 128-byte read, so noise cannot starve stop. Calls native work checking, NOT network submission. No CRC
- * confidence is claimed. Caller initializes out to zero and clears owned job.
+ * event per call; at most one new 128-byte read, so noise cannot starve stop.
+ * Calls native work checking, NOT network submission. A CRC failure yields
+ * DISCARDED with match_status=RX_CRC_MISMATCH, without work allocation. CRC
+ * does not establish freshness or authenticate the sender. Caller initializes
+ * out to zero and clears owned job.
  * Rejects a foreign epoch BEFORE reading or consuming buffered bytes. The
  * epoch must come from the session at capture, never from a mutable global.
  */

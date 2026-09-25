@@ -2,13 +2,15 @@
 include integration/work-route.mk
 DIZZASS_HWIO_DIR = build/hwscan-io$(if $(SANITIZE),-san,)
 DIZZASS_HWIO_WARN = -Wall -Wextra -Werror $(if $(findstring clang,$(CC)),-Wno-error=unused-command-line-argument,)
-DIZZASS_HWIO_MODULES = hwscan_profile posix_tx88 native_tx_channel
-DIZZASS_HWIO_OBJS = $(addprefix $(DIZZASS_HWIO_DIR)/,$(addsuffix .o,$(DIZZASS_HWIO_MODULES)))
-DIZZASS_HWIO_HEADERS = integration/hwscan_profile.h integration/posix_tx88.h integration/native_tx_channel.h $(DIZZASS_ROUTE_HEADERS)
+DIZZASS_HWIO_MODULES = hwscan_profile posix_tx88 native_tx_channel rx_crc5
+DIZZASS_HWIO_OBJS = $(addprefix $(DIZZASS_HWIO_DIR)/,$(addsuffix .o,$(DIZZASS_HWIO_MODULES))) $(DIZZASS_HWIO_DIR)/crc5.o
+DIZZASS_HWIO_HEADERS = integration/hwscan_profile.h integration/posix_tx88.h integration/native_tx_channel.h integration/rx_crc5.h include/xminer/recovery/chip1398.h $(DIZZASS_ROUTE_HEADERS)
 $(DIZZASS_HWIO_DIR):
 	mkdir -p $@
 $(DIZZASS_HWIO_DIR)/%.o: integration/%.c $(DIZZASS_HWIO_HEADERS) config.h integration/hwscan-io.mk | $(DIZZASS_HWIO_DIR)
 	$(CC) $(DIZZASS_NATIVE_CPP) $(DIZZASS_NONCE_FLAGS) $(DIZZASS_HWIO_WARN) -c $< -o $@
+$(DIZZASS_HWIO_DIR)/crc5.o: reconstruction/support/crc5.c include/xminer/recovery/chip1398.h integration/hwscan-io.mk | $(DIZZASS_HWIO_DIR)
+	$(CC) -I$(top_srcdir)/include $(DIZZASS_NONCE_FLAGS) -std=c11 -Wall -Wextra -Werror -c $< -o $@
 $(DIZZASS_HWIO_DIR)/test_native.o: integration/tests/test_native_tx_channel.c integration/tests/hwscan_fixture.h $(DIZZASS_HWIO_HEADERS) cgminer.c miner.h config.h integration/hwscan-io.mk | $(DIZZASS_HWIO_DIR)
 	$(CC) $(DIZZASS_NATIVE_CPP) $(DIZZASS_NONCE_FLAGS) -c $< -o $@
 $(DIZZASS_HWIO_DIR)/profile-test: integration/tests/test_hwscan_profile.c integration/tests/hwscan_fixture.h $(DIZZASS_HWIO_DIR)/hwscan_profile.o integration/hwscan-io.mk

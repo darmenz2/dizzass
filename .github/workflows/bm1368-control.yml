@@ -1,0 +1,70 @@
+name: Check BM1368 CRC and fail-fast control
+
+on:
+  push:
+    branches: [work/reconstruction]
+    paths:
+      - integration/**
+      - .github/workflows/bm1368-control.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bm1368-control-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  bm1368-control:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      - name: Fetch exact source without persisting credentials
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/dizzass-bm1368-control-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$root"
+          cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c "http.extraheader=AUTHORIZATION: basic $auth" fetch --depth=1 --no-tags origin "$GITHUB_SHA"
+          git checkout -q --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Install pure test dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y build-essential python3 clang
+      - name: Compare command CRC and reset sequence with original instructions
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/bm1368-control.mk dizzass-control-original dizzass-control-bounds
+      - name: Check bounds and fail-fast handling with ASan and UBSan
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/bm1368-control.mk SANITIZE=1 dizzass-control-bounds
+      - name: Repeat with Clang
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/bm1368-control.mk CC=clang DIZZASS_CONTROL_DIR=build/control-clang dizzass-control-original dizzass-control-bounds
+      - name: Check preserved core and reference
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          test "$(git hash-object Makefile.am)" = 17d2fbde26b5e8cb614b61908b84d5937af48325
+          test "$(git hash-object cgminer.c)" = 54739e4139294c526af0c73aa9a02ba9762ca4f2
+          test "$(sha256sum reference/cgminer.vendor.elf | cut -d' ' -f1)" = b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9
+          printf '%s\n' 'No physical ASIC, thermal/PSU control, slot reuse or vendor process execution.'
