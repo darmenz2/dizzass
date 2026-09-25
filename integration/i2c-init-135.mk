@@ -3,8 +3,8 @@ CC ?= cc
 INIT135_DIR ?= build/i2c-init-135$(if $(SANITIZE),-san,)
 INIT135_FLAGS = -I. -std=c11 -O1 -g -Wall -Wextra -Wpedantic -Werror -fno-fast-math -ffp-contract=off $(if $(SANITIZE),-fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer,)
 INIT135_PSU_SOURCE ?= libbitmain/src/psu.c
-INIT135_SRC = libbitmain/src/i2c.c libbitmain/src/aml/i2c.c libbitmain/src/aml/psu.c
-INIT135_HEADERS = integration/i2c_init_135.h integration/i2c_soft_135.h integration/i2c_transport_135.h
+INIT135_SRC = libbitmain/src/gpio.c libbitmain/src/i2c.c libbitmain/src/aml/i2c.c libbitmain/src/aml/psu.c
+INIT135_HEADERS = integration/gpio_power_135.h integration/i2c_init_135.h integration/i2c_soft_135.h integration/i2c_transport_135.h
 $(INIT135_DIR):
 	mkdir -p $@
 $(INIT135_DIR)/libinit.so: $(INIT135_SRC) $(INIT135_HEADERS) integration/i2c-init-135.mk | $(INIT135_DIR)

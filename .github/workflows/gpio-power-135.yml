@@ -1,0 +1,75 @@
+name: Check original 1.3.5 GPIO and power call chain
+on:
+  push:
+    branches: [work/reconstruction]
+    paths:
+      - libbitmain/src/gpio.c
+      - libbitmain/src/aml/psu.c
+      - libbitmain/src/psu.c
+      - src/backend/base.c
+      - integration/gpio_power_135.h
+      - integration/gpio-power-135.mk
+      - integration/i2c-init-135.mk
+      - integration/tests/*gpio_power*135*
+      - integration/evidence/gpio_power_135.json
+      - .github/workflows/gpio-power-135.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: gpio-power135-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  gpio-power135:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        cc: [gcc, clang]
+    steps:
+      - name: Fetch exact source without persistent credentials
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/dizzass-gpio-power135-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-${{ matrix.cc }}"
+          mkdir "$root"
+          cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c "http.extraheader=AUTHORIZATION: basic $auth" fetch --depth=1 --no-tags origin "$GITHUB_SHA"
+          git checkout -q --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Original GPIO calls and composed current PSU voltage setter
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/gpio-power-135.mk CC=${{ matrix.cc }} dizzass-gpio135-original dizzass-gpio135-composed dizzass-gpio135-test
+      - name: Native bounds and original error behavior with sanitizers
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/gpio-power-135.mk CC=${{ matrix.cc }} SANITIZE=1 dizzass-gpio135-test
+      - name: Preserve existing I2C initialization and PSU exchange tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/i2c-init-135.mk CC=${{ matrix.cc }} dizzass-init135-original dizzass-init135-route dizzass-init135-test
+          make -f integration/psu-protocol-135.mk CC=${{ matrix.cc }} dizzass-psu135-original dizzass-psu135-test
+      - name: Static analysis and unchanged production boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          clang --analyze -I. -std=c11 -Xanalyzer -analyzer-output=text libbitmain/src/gpio.c src/backend/base.c libbitmain/src/aml/psu.c
+          test "$(git hash-object Makefile.am)" = 17d2fbde26b5e8cb614b61908b84d5937af48325
+          test "$(git hash-object cgminer.c)" = 54739e4139294c526af0c73aa9a02ba9762ca4f2
+          printf '%s\n' 'b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9  reference/cgminer.vendor.elf' | sha256sum -c -
+          printf '%s\n' 'Original bounded GPIO/power paths; OS and bus operations are scripted RAM. Not a full board startup or a proven hardware job-drain boundary.'

@@ -26,3 +26,24 @@ struct vn135_i2c_registration *vn135_aml_psu_bus_get_135(
     (void)index;
     return &s->registration;
 }
+
+/* Original 0x11c978 / 0x11ca74: snapshot ready flag, then GPIO 437. */
+#include "integration/gpio_power_135.h"
+int vn135_aml_psu_on_135(const struct vn135_gpio_io *g,uint8_t ready)
+{
+    if(ready!=1)return -1;
+    if(vn135_gpio_set_value_135(g,437,0)) {
+        if(g->ops->log)g->ops->log(g->opaque,VN135_GP_AML,68,0);
+        return -1;
+    }
+    return 0;
+}
+int vn135_aml_psu_off_135(const struct vn135_gpio_io *g,uint8_t ready)
+{
+    if(ready!=1)return 0;
+    if(vn135_gpio_set_value_135(g,437,1)) {
+        if(g->ops->log)g->ops->log(g->opaque,VN135_GP_AML,81,0);
+        return -1;
+    }
+    return 0;
+}
