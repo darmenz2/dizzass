@@ -1,0 +1,98 @@
+name: Rescue stop isolated review
+on:
+  push:
+    branches: [repair/rescue-stop-135-20260926]
+    paths: [.github/workflows/rescue-stop-review.yml]
+permissions:
+  contents: read
+jobs:
+  validate:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Fetch exact published base without persistent credentials
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/rescue-stop-source"
+          mkdir "$root"
+          cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c "http.extraheader=AUTHORIZATION: basic $auth" fetch --depth=1 --no-tags origin feb35d8fd38931ebfc92ac7a2bb0a112fb6afd27
+          git checkout -q --detach FETCH_HEAD
+          test "$(git rev-parse HEAD^{tree})" = 57a8c7ead1efa388c579ea0087b525dc3e26f2ec
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Read pinned private patch objects and verify bytes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import base64, hashlib, json, lzma, os, pathlib, urllib.request
+          ids = ['2e983db8fbfd75d1c688582b1cdfc22cccbf1359',
+                 '0547ecb8cdcebd0d84766149879ab7e5c5396e24',
+                 'a0d1093e78563b3e9d995fdf2c2ae53a71325c5a',
+                 '04b44f68606e123dbb2a437df6cf0c493ea5c9f4']
+          chunks = []
+          for sha in ids:
+              request = urllib.request.Request(
+                  'https://api.github.com/repos/darmenz2/dizzass/git/blobs/' + sha,
+                  headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'],
+                           'Accept': 'application/vnd.github+json',
+                           'X-GitHub-Api-Version': '2022-11-28'})
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  obj = json.load(response)
+              assert obj['sha'] == sha and obj['encoding'] == 'base64'
+              data = base64.b64decode(obj['content'])
+              assert hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest() == sha
+              chunks.append(data)
+          compressed = b''.join(chunks)
+          assert hashlib.sha256(compressed).hexdigest() == '68898200b20c4abfee1e33e06b75c245dc0763d707dfe2c9ace678f617a822ba'
+          patch = lzma.decompress(compressed)
+          assert hashlib.sha256(patch).hexdigest() == '075895cebf2851063a7add7f95f79d30ce1947ed4aa04fce27eea8be84516184'
+          pathlib.Path(os.environ['RUNNER_TEMP'], 'rescue-stop-135.patch').write_bytes(patch)
+          print('PATCH_BYTES_VERIFIED', len(patch))
+          PY
+      - name: Apply exact source candidate without workflow writes
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          git apply --check "$RUNNER_TEMP/rescue-stop-135.patch"
+          git apply --index --exclude='.github/workflows/*' "$RUNNER_TEMP/rescue-stop-135.patch"
+          git diff --cached --check
+          test "$(git write-tree)" = 388d890ea1ca821da03d3c8ea057ff9f35cec0e3
+          python3 integration/tests/check_rescue_stop_evidence_135.py
+      - name: Original nested comparisons native memory and rejecting controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          for cc in gcc clang; do
+            make -f integration/rescue-stop-135.mk CC="$cc" RESCUE135_DIR="build/review-$cc" dizzass-rescue135-original dizzass-rescue135-test dizzass-rescue135-negative
+            make -f integration/rescue-stop-135.mk CC="$cc" SANITIZE=1 RESCUE135_DIR="build/review-$cc-san" dizzass-rescue135-test
+          done
+          clang --analyze -I. -std=c11 -DVN135_BACKEND_SHUTDOWN_135 -DVN135_RESCUE_STOP_135 -Xanalyzer -analyzer-output=text src/backend/base.c src/frontend/rescue.c
+      - name: Publish only the verified source candidate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          git diff --exit-code
+          test "$(git write-tree)" = 388d890ea1ca821da03d3c8ea057ff9f35cec0e3
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Recover original rescue service stop with shared thread helper and evidence'
+          test "$(git rev-parse HEAD^)" = feb35d8fd38931ebfc92ac7a2bb0a112fb6afd27
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c "http.extraheader=AUTHORIZATION: basic $auth" push origin HEAD:refs/heads/repair/rescue-stop-sources-135-20260926
+          printf 'CANDIDATE_COMMIT=%s\n' "$(git rev-parse HEAD)"
+          printf 'CANDIDATE_TREE=%s\n' "$(git rev-parse HEAD^{tree})"
