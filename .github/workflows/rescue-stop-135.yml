@@ -1,0 +1,71 @@
+name: Check original 1.3.5 rescue service stop
+on:
+  push:
+    branches: [work/reconstruction]
+    paths:
+      - src/backend/base.c
+      - src/frontend/rescue.c
+      - integration/*135.h
+      - integration/rescue-stop-135.mk
+      - integration/tests/*rescue*135*
+      - integration/tests/test_exit_cleanup_135.*
+      - integration/tests/test_backend_shutdown_135.py
+      - integration/tests/test_stop_policy_135.py
+      - integration/tests/stop_policy_bridge_135.c
+      - integration/evidence/rescue_stop_135.json
+      - tools/arm32*.py
+      - tools/elf32.py
+      - reference/cgminer.vendor.elf
+      - .github/workflows/rescue-stop-135.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: rescue-stop135-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  rescue135:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    strategy:
+      matrix:
+        cc: [gcc, clang]
+    steps:
+      - name: Fetch exact source without persistent credentials
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/dizzass-rescue135-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-${{ matrix.cc }}"
+          mkdir "$root"
+          cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c "http.extraheader=AUTHORIZATION: basic $auth" fetch --depth=1 --no-tags origin "$GITHUB_SHA"
+          git checkout -q --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Original stop nested cleanup native composition and negative controls
+        run: |
+          cd "$SOURCE_ROOT"
+          make -f integration/rescue-stop-135.mk CC=${{ matrix.cc }} dizzass-rescue135-original dizzass-rescue135-test dizzass-rescue135-negative
+      - name: Native memory and undefined behavior
+        run: |
+          cd "$SOURCE_ROOT"
+          make -f integration/rescue-stop-135.mk CC=${{ matrix.cc }} SANITIZE=1 dizzass-rescue135-test
+      - name: Unchanged pre-exit cleanup stop policy and monitor regressions
+        run: |
+          cd "$SOURCE_ROOT"
+          make -f integration/exit-cleanup-135.mk CC=${{ matrix.cc }} dizzass-exit135-original dizzass-exit135-test
+          make -f integration/stop-policy-135.mk CC=${{ matrix.cc }} dizzass-stop135-original dizzass-stop135-test
+          make -f integration/monitor-handlers-135.mk CC=${{ matrix.cc }} dizzass-handlers135-original dizzass-handlers135-test
+          make -f integration/general-monitor-135.mk CC=${{ matrix.cc }} dizzass-general135-original dizzass-general135-test
+      - name: Static analysis and unchanged production boundary
+        run: |
+          cd "$SOURCE_ROOT"
+          clang --analyze -I. -std=c11 -DVN135_BACKEND_SHUTDOWN_135 -DVN135_RESCUE_STOP_135 -Xanalyzer -analyzer-output=text src/backend/base.c src/frontend/rescue.c
+          python3 integration/tests/check_rescue_stop_evidence_135.py
+          printf '%s\n' 'Offline rescue stop only; no real cancellation, network rescue worker, process restart or T21 acceptance.'
