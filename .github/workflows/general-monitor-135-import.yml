@@ -1,0 +1,79 @@
+name: Stage exact reviewed general monitor sources
+on:
+  push:
+    branches: [stage/general-monitor-135-20260926]
+    paths: [.github/workflows/general-monitor-135-import.yml]
+permissions:
+  contents: read
+jobs:
+  stage:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Fetch exact transfer and verified source base
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/general135-stage"
+          mkdir "$root"
+          cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c "http.extraheader=AUTHORIZATION: basic $auth" fetch --depth=1 --no-tags origin "$GITHUB_SHA"
+          git checkout -q --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          python3 - <<'PY'
+          import base64, hashlib, lzma, os, pathlib
+          parts = b''.join(pathlib.Path(f'.transfer/general135/part{i}').read_bytes() for i in range(1,5))
+          patch = lzma.decompress(base64.b64decode(parts, validate=True))
+          assert len(patch) == 78510
+          assert hashlib.sha256(patch).hexdigest() == 'c329bc347b6cdae565dfe1b00e468f2c9331934023c2a402807e4ff75edb0db7'
+          pathlib.Path(os.environ['RUNNER_TEMP'], 'general135.patch').write_bytes(patch)
+          PY
+          git -c "http.extraheader=AUTHORIZATION: basic $auth" fetch --depth=1 --no-tags origin ec93c6728895c724f91c7e90df8341dfc8002774
+          git checkout -q --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = ec93c6728895c724f91c7e90df8341dfc8002774
+          test "$(git rev-parse HEAD^{tree})" = 57f5b09a6dc39bfb5b2104cc313f198b577cc189
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Apply reviewed patch with exact final tree check
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          git apply --check "$RUNNER_TEMP/general135.patch"
+          git apply --index "$RUNNER_TEMP/general135.patch"
+          git diff --cached --check
+          test "$(git write-tree)" = 450c76d565d7d4140d139d6d6bbd407d21a1eb49
+          python3 integration/tests/check_general_monitor_evidence_135.py
+      - name: Original worker and native GCC Clang memory checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/general-monitor-135.mk CC=gcc GENERAL135_DIR=build/stage-gcc dizzass-general135-original
+          for cc in gcc clang; do
+            make -f integration/general-monitor-135.mk CC="$cc" GENERAL135_DIR="build/stage-$cc" dizzass-general135-test
+            make -f integration/general-monitor-135.mk CC="$cc" SANITIZE=1 GENERAL135_DIR="build/stage-$cc-san" dizzass-general135-test
+          done
+          clang --analyze -I. -std=c11 -DVN135_GENERAL_MONITOR_135 -Xanalyzer -analyzer-output=text src/backend/base.c
+      - name: Publish isolated source candidate without touching working refs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          test "$(git write-tree)" = 450c76d565d7d4140d139d6d6bbd407d21a1eb49
+          git diff --exit-code
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Stage verified original 1.3.5 general monitor sources'
+          test "$(git rev-parse HEAD^)" = ec93c6728895c724f91c7e90df8341dfc8002774
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c "http.extraheader=AUTHORIZATION: basic $auth" push origin HEAD:refs/heads/stage/general-monitor-sources-20260926
+          printf 'CANDIDATE_COMMIT=%s\n' "$(git rev-parse HEAD)"
+          printf 'CANDIDATE_TREE=%s\n' "$(git rev-parse HEAD^{tree})"
