@@ -1,0 +1,74 @@
+name: Check original 1.3.5 pre-exit cleanup
+on:
+  push:
+    branches: [work/reconstruction]
+    paths:
+      - src/backend/base.c
+      - integration/*135.h
+      - integration/exit-cleanup-135.mk
+      - integration/tests/*exit_cleanup*135*
+      - integration/tests/test_stop_policy_135.py
+      - integration/tests/test_backend_shutdown_135.py
+      - integration/tests/stop_policy_bridge_135.c
+      - integration/evidence/exit_cleanup_135.json
+      - tools/arm32*.py
+      - tools/elf32.py
+      - reference/cgminer.vendor.elf
+      - .github/workflows/exit-cleanup-135.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: exit-cleanup135-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  exit135:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    strategy:
+      matrix:
+        cc: [gcc, clang]
+    steps:
+      - name: Fetch exact source without persistent credentials
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/dizzass-exit135-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-${{ matrix.cc }}"
+          mkdir "$root"
+          cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c "http.extraheader=AUTHORIZATION: basic $auth" fetch --depth=1 --no-tags origin "$GITHUB_SHA"
+          git checkout -q --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Original teardown, nested policy, native composition and negative controls
+        run: |
+          cd "$SOURCE_ROOT"
+          make -f integration/exit-cleanup-135.mk CC=${{ matrix.cc }} dizzass-exit135-original dizzass-exit135-test dizzass-exit135-negative
+      - name: Native bounded memory and undefined behavior
+        run: |
+          cd "$SOURCE_ROOT"
+          make -f integration/exit-cleanup-135.mk CC=${{ matrix.cc }} SANITIZE=1 dizzass-exit135-test
+      - name: Existing stop policy and monitor regressions
+        run: |
+          cd "$SOURCE_ROOT"
+          make -f integration/stop-policy-135.mk CC=${{ matrix.cc }} dizzass-stop135-original dizzass-stop135-test
+          make -f integration/monitor-handlers-135.mk CC=${{ matrix.cc }} dizzass-handlers135-original dizzass-handlers135-test
+          make -f integration/general-monitor-135.mk CC=${{ matrix.cc }} dizzass-general135-original dizzass-general135-test
+      - name: Existing transport temperature shutdown and resume regressions
+        run: |
+          cd "$SOURCE_ROOT"
+          make -f integration/transport-monitor-135.mk CC=${{ matrix.cc }} dizzass-transport135-original dizzass-transport135-test
+          make -f integration/thermal-completion-135.mk CC=${{ matrix.cc }} dizzass-completion135-original dizzass-completion135-route dizzass-completion135-test
+          make -f integration/backend-resume-135.mk CC=${{ matrix.cc }} dizzass-resume135-original dizzass-resume135-test
+      - name: Static analysis and unchanged production boundary
+        run: |
+          cd "$SOURCE_ROOT"
+          clang --analyze -I. -std=c11 -DVN135_GENERAL_MONITOR_135 -DVN135_MONITOR_HANDLERS_135 -DVN135_BACKEND_SHUTDOWN_135 -DVN135_STOP_POLICY_135 -DVN135_EXIT_CLEANUP_135 -Xanalyzer -analyzer-output=text src/backend/base.c
+          python3 integration/tests/check_exit_cleanup_evidence_135.py
+          printf '%s\n' 'Offline pre-exit caller flow; no real threads, physical stop, host process exit, supervisor restart or native T21 acceptance.'

@@ -1155,3 +1155,48 @@ int vn135_stop_policy_dispatch_135(struct vn135_stop_policy *s,
     return 1;
 }
 #endif /* VN135_STOP_POLICY_135 */
+
+/* Original pre-exit teardown 5f0fc, distinct from common shutdown 5fc54. */
+#ifdef VN135_EXIT_CLEANUP_135
+#ifndef VN135_BACKEND_SHUTDOWN_135
+#error "Exit cleanup reuses the existing shutdown thread helper"
+#endif
+#include "integration/exit_cleanup_135.h"
+void vn135_backend_before_exit_135(struct vn135_shutdown_state *s,
+    const struct vn135_shutdown_ops *o,const struct vn135_backend_power_ops *power,
+    void *p,struct vn135_shutdown_scratch *scratch)
+{
+    int32_t count,i;uint32_t value;
+#define EXIT_STEP(ep,a) o->step(p,(ep),(a))
+    while(o->trylock(p))(void)o->delay_ms(p,100);
+    if((s->state|2u)==6u)goto unlock;
+    if(o->log)o->log(p,6420);
+    if(!EXIT_STEP(0xfdeb4,0) && !s->state)goto unlock;
+    s->state=4;
+    if(EXIT_STEP(0x8291c,0))(void)EXIT_STEP(0x860b8,0);
+    if((s->model_chip_selector&~1u)!=6u)shutdown_thread_135(&s->threads[0],o,p);
+    if((EXIT_STEP(0xfdfbc,0)|2u)==2u)shutdown_thread_135(&s->threads[1],o,p);
+    (void)EXIT_STEP(0xa6080,0);
+    shutdown_thread_135(&s->threads[2],o,p);
+    shutdown_thread_135(&s->threads[3],o,p);
+    shutdown_thread_135(&s->threads[4],o,p);
+    (void)EXIT_STEP(0x663cc,0);
+    for(i=5;i<9;++i)shutdown_thread_135(&s->threads[i],o,p);
+    (void)EXIT_STEP(0x287a4,0);
+    count=power->chain_count(p);
+    for(i=0;i<count;++i)(void)EXIT_STEP(0x58d08,(uint32_t)i);
+    value=EXIT_STEP(0x19c,0);(void)o->cleanup(p,scratch->cleanup,value);
+    if(s->fan_readings && s->mode!=2u)
+        for(i=0;i<s->fan_count;++i)s->fan_readings[i]=0;
+    if(s->board_byte_4f){
+        count=power->chain_count(p);
+        s->byte_fe6=0;s->word_fe8=0;s->word_fec=0;
+        for(i=0;i<count;++i)(void)EXIT_STEP(0x5a9fc,(uint32_t)i);
+    }
+    (void)vn135_backend_power_stop_135(&s->power,power,p);
+    (void)EXIT_STEP(0xf98b8,2);
+unlock:
+#undef EXIT_STEP
+    (void)o->unlock(p);
+}
+#endif /* VN135_EXIT_CLEANUP_135 */
