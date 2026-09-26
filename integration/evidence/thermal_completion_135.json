@@ -1,0 +1,145 @@
+{
+  "base_commit": "40066b09fdca72f03233d546ccd551cebe27c1c1",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "whole_entries": {
+    "direct_initializer": "0xb5d90",
+    "synchronous_reader": "0xb5f40",
+    "common_shutdown": "0x5fc54",
+    "shutdown_worker": "0x72ba4"
+  },
+  "ranges": {
+    "complete_synchronous_reader_code": {
+      "start": "0xb5f40",
+      "end_exclusive": "0xb7120",
+      "sha256": "eb988a3eb6091cf890feda6ed2ef15f4208a884d1d4c55d4453f427a3cd206b5"
+    },
+    "complete_synchronous_reader_literals": {
+      "start": "0xb7120",
+      "end_exclusive": "0xb71a8",
+      "sha256": "becb09c31489e995f186b4ea52e03a88434183f13b1cb0eed7270fc86da86a7c"
+    },
+    "direct_initializer": {
+      "start": "0xb5d90",
+      "end_exclusive": "0xb5f40",
+      "sha256": "1d7589ff0f00102e6e05915ef7ec2a0aee8d42ff66debdc0b3b6b6356f9d1d50"
+    },
+    "reused_sample_updater": {
+      "start": "0xb71e4",
+      "end_exclusive": "0xb73f4",
+      "sha256": "fe647c59398e5a29ee7c3ef5361319a475120db589fe40ff4bce3783e7357234"
+    },
+    "model_string_constructor": {
+      "start": "0xb80a8",
+      "end_exclusive": "0xb8688",
+      "sha256": "da335f9e0e4745ef4f397fede30a3463aeb613a1a98bb89ef67e245542c1f5bf"
+    },
+    "common_shutdown_code": {
+      "start": "0x5fc54",
+      "end_exclusive": "0x606c0",
+      "sha256": "6e7ef18d8deb01732e5daadd7e0761829b2e89e5c1887eab00a4c34ca5e11b1e"
+    },
+    "common_shutdown_literals": {
+      "start": "0x606c0",
+      "end_exclusive": "0x60718",
+      "sha256": "6728575fc86f4dc15e74aab17aec3c73f40b12395c9e72f37e59429e5b82e215"
+    },
+    "shutdown_worker": {
+      "start": "0x72ba4",
+      "end_exclusive": "0x72bf4",
+      "sha256": "3a7cdf54131eceaa6e628b0109c4d410bd1e96ff5bd18fab3cc9c49719a5183f"
+    },
+    "reused_power_stop": {
+      "start": "0x6b778",
+      "end_exclusive": "0x6b8c8",
+      "sha256": "fc9692ca3584dcfeee7d57d19f2aad4ffab6e2c498ec44d5803debdcea21d4c7"
+    },
+    "chip_method_dispatch_code": {
+      "start": "0xd21dc",
+      "end_exclusive": "0xd24ec",
+      "sha256": "db8b6d91f89e11850aa3bcec8c9b8a77e488d1dca606d059687fe7eb36bb1da4"
+    },
+    "chip_method_dispatch_literals": {
+      "start": "0xd24ec",
+      "end_exclusive": "0xd253c",
+      "sha256": "e97be238bac5bdc64b9b52d1d72cbf868630da149627e27bfcac51ea3fc99708"
+    },
+    "bm1368_table_initializer": {
+      "start": "0xe1450",
+      "end_exclusive": "0xe1790",
+      "sha256": "ef26034365cbbe19867a17306b34bf7193762df1ed54587d29e814e413d1c31e"
+    },
+    "bm1368_thermal_noop_methods": {
+      "start": "0xe49c4",
+      "end_exclusive": "0xe49e4",
+      "sha256": "26649457bd8a28ccb81cbc4734d794a4ee31ae309c8a82ecd1846f871de1ef45"
+    },
+    "constructor_method_table_call": {
+      "start": "0x73dd4",
+      "end_exclusive": "0x73dec",
+      "sha256": "4299d1ee2f3d5a16a774b7ecac324807a8db994007f430a7c65aec1fe27f2df1"
+    },
+    "initializer_configure_read_call": {
+      "start": "0xb7804",
+      "end_exclusive": "0xb7820",
+      "sha256": "c6f8d910c7f92b3010711f342980a0cd3e395ba4a681e11ec9ecbc6e05f46b93"
+    },
+    "initializer_read_register_call": {
+      "start": "0xb7854",
+      "end_exclusive": "0xb7874",
+      "sha256": "23c368213ada66c609a288fccebb46619476da4fd07316e59b56b007f2c85339"
+    }
+  },
+  "xor_literals": [
+    {
+      "address": "0x5e5089",
+      "text": "/config/stopped",
+      "xor": 47,
+      "length": 16,
+      "encoded_sha256": "76c97123fa154c11bac8ca58f1f599a2280d3981f28674799ab274090178ad97"
+    },
+    {
+      "address": "0x5e5099",
+      "text": "/tmp/stopped",
+      "xor": 44,
+      "length": 13,
+      "encoded_sha256": "8d31b454def08521102031da3665c35b91f32b46bbf419334b4c079393b9a45f"
+    },
+    {
+      "address": "0x5e6c65",
+      "text": "failure@btm",
+      "xor": 120,
+      "length": 12,
+      "encoded_sha256": "dcd7d57ae09d3a557f1149c63f5d0df0c14c70b8acd8a67d462bc829ab346053"
+    },
+    {
+      "address": "0x5e9211",
+      "text": "u3s21exph",
+      "xor": 100,
+      "length": 10,
+      "encoded_sha256": "753578467cd2763d2530d520f897e56c435c020a89e30a6addbc618b31f9a55e"
+    }
+  ],
+  "unchanged_source_prefix_git_blobs": {
+    "src/backend/base.c": "6bd72a261e51e4f47a296e0fbb0c060f1a5ade32",
+    "src/backend/temp.c": "5e11813b86a98e06c9a4de1b83a20709ba557ab6"
+  },
+  "previous_header_refreshed_locally_not_a_patch_change": {
+    "path": "integration/backend_prepare_135.h",
+    "git_blob": "957f31ddc87efc36880c8b19045bbcb66200b69b"
+  },
+  "external_boundaries": [
+    "OS/thread operations",
+    "low-level bus transfers and their byte-count ABI",
+    "per-sensor model offset lookup",
+    "unrecovered shutdown callees and cleanup internals",
+    "physical PSU and chain reset effects"
+  ],
+  "new_instruction_models": [
+    "A32 VLDR one S register without writeback",
+    "A32 VNMLS.f64 finite separately rounded product/addition"
+  ],
+  "full_common_rx_query_emitter_recovered": false,
+  "physical_io": false,
+  "new_remote_ci_run": false,
+  "api_scope": "offline projected fields; not vendor ABI or a registered cgminer driver"
+}

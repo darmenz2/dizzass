@@ -1,0 +1,82 @@
+{
+  "reference": "reference/cgminer.vendor.elf",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "base_commit": "40066b09fdca72f03233d546ccd551cebe27c1c1",
+  "includes_previously_uncommitted_stage": "thermal_completion_135",
+  "functions": [
+    {
+      "start": "0x119d70",
+      "end_exclusive": "0x11a12c",
+      "purpose": "AML SMBus write code and literals",
+      "sha256": "0ebe958c76b8efdc09b7d08af0231081999a3aa9e3785521ae6fd63532501d2f"
+    },
+    {
+      "start": "0x11a12c",
+      "end_exclusive": "0x11a6b0",
+      "purpose": "AML SMBus read code and literals",
+      "sha256": "3cea75386bc50862eb6476433a3cf05324b3400e0c078feb74f0e53358e1807d"
+    },
+    {
+      "start": "0x668a8",
+      "end_exclusive": "0x66f80",
+      "purpose": "Temperature polling worker code and literals",
+      "sha256": "1c094b249412ab630b42290537a9e56498da922a84ae2aa72e85b75e4ac4e81c"
+    },
+    {
+      "start": "0x66f80",
+      "end_exclusive": "0x6709c",
+      "purpose": "Abort dispatcher code and literals",
+      "sha256": "91ba9608588c686b2c3ccd2487c640ca3f5fec9c6c1b7f5eb322aba34152543b"
+    },
+    {
+      "start": "0x58d08",
+      "end_exclusive": "0x58df0",
+      "purpose": "Conditional sensor-record reset code and literals",
+      "sha256": "b0cdcca97c4857a6452379efab8381ed5fe1b9d2bd9c77aa1b1c6243e131884c"
+    },
+    {
+      "start": "0xfe440",
+      "end_exclusive": "0xfe504",
+      "purpose": "Read dispatch wrapper",
+      "sha256": "d314618f7cbc1b060bd1c56e3426d04ff4099485afd3bb6762f0b0e651c918ab"
+    },
+    {
+      "start": "0xfe518",
+      "end_exclusive": "0xfe528",
+      "purpose": "Write dispatch wrapper",
+      "sha256": "eabca4650396392911206da0b22f54d9465c549835a783d4d85599172c03d6b6"
+    }
+  ],
+  "source_table": {
+    "0x654b94": "0x11a12c",
+    "0x654b98": "0x119d70"
+  },
+  "strings": [
+    {
+      "address": "0x5e5587",
+      "length": 14,
+      "xor_key": 147,
+      "decoded": "temp_read@btm",
+      "sha256": "22f1528d72c78cbdb4704d677655f8ea195a0a725aa8ab2c9b3423d043620242"
+    },
+    {
+      "address": "0x5e55da",
+      "length": 18,
+      "xor_key": 53,
+      "decoded": "Lost temp sensors",
+      "sha256": "68d632601357e1621c0edc5e138b243d050781b0f4f26be2cea601c7b86206b9"
+    }
+  ],
+  "bounded_OS_effects": [
+    "ioctl",
+    "select",
+    "time",
+    "mutex",
+    "thread creation",
+    "remaining cleanup"
+  ],
+  "full_general_monitor": false,
+  "full_rx_loop": false,
+  "native_device_driver": false,
+  "physical_hardware": false
+}
