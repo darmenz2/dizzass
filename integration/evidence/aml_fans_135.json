@@ -1,0 +1,115 @@
+{
+  "base_commit": "9b3924d0f5a75bd1d1ae24fcfd368d30cd0eb1c7",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "source_path": "/tmp/build/libbitmain/src/aml/fan_ctrl.c",
+  "source_path_decoded_address": "0x5ee2e3",
+  "new_instruction_model": "unrounded A32 SMMUL; historical interpreters unchanged",
+  "smmul_primary_reference": "https://developer.arm.com/documentation/ddi0487/latest/",
+  "ranges": [
+    {
+      "name": "fan_initialize",
+      "start": "0x118444",
+      "end_exclusive": "0x1184fc",
+      "sha256": "1a9feeafd8cb6cdc2156898fc58f765084971d5dd959ce3ebe7c1d13ce1b70bd"
+    },
+    {
+      "name": "rpm_worker",
+      "start": "0x1184fc",
+      "end_exclusive": "0x1189dc",
+      "sha256": "bb86e61066a728b54d5ac703e88549ce05e62bba50241b18d58d090a7e2a4b2e"
+    },
+    {
+      "name": "set_all",
+      "start": "0x1189dc",
+      "end_exclusive": "0x118a04",
+      "sha256": "87601b63e61ace91b2f5ad997a2a22f76948093009f914476d62c84d07f6aa39"
+    },
+    {
+      "name": "set_channel",
+      "start": "0x118a04",
+      "end_exclusive": "0x118cc8",
+      "sha256": "bb6f20a6469a7c2ecbd6577a0b62f039ff10498dfdb58d0f5dd11217b3202769"
+    },
+    {
+      "name": "get_duty",
+      "start": "0x118cc8",
+      "end_exclusive": "0x11910c",
+      "sha256": "d35bbd5f90af7560b3399ef9aefb3a6932a369f9dd312bf9a8b689267ce50568"
+    },
+    {
+      "name": "get_rpm",
+      "start": "0x11910c",
+      "end_exclusive": "0x119258",
+      "sha256": "c18f3af4758a7d728b2c16774f71a9e6402e0c2ded15b3025e2a2766b5040cdf"
+    },
+    {
+      "name": "shutdown",
+      "start": "0x119258",
+      "end_exclusive": "0x11936c",
+      "sha256": "a7a64a642d135e6b45c89bc2ea67763003fcdda02500e060beea40fa4e27abd3"
+    },
+    {
+      "name": "strings_constructor",
+      "start": "0x11936c",
+      "end_exclusive": "0x119a1c",
+      "sha256": "0670352e4bf532b7b02cfbb2f754aae34e10b68c25ca3a9ca242e6342e7ecfc2"
+    },
+    {
+      "name": "aml_dispatch_prefix",
+      "start": "0xfb994",
+      "end_exclusive": "0xfd784",
+      "sha256": "d6b3015ee9f0b81c068be966e245ea04df05018cf54924e18bf4a913f8144fea"
+    },
+    {
+      "name": "dispatch_wrappers",
+      "start": "0xfe258",
+      "end_exclusive": "0xfe310",
+      "sha256": "f2af19a0cea00ff5abb82778b342161e052f841db1265ace3631947fc3cb87b5"
+    },
+    {
+      "name": "signed_division",
+      "start": "0x590ef0",
+      "end_exclusive": "0x590fbc",
+      "sha256": "d980a4686c88eda4640bf2007e51d2fe29a7029000be53e82a207ecfc07ad6dc"
+    },
+    {
+      "name": "counter_conversion",
+      "start": "0x5a2544",
+      "end_exclusive": "0x5a25b4",
+      "sha256": "7826262ea8b517c1a70cd5c0a1180b7efbbd70b899cf14aa7ade0f1afa26dfab"
+    }
+  ],
+  "data": [
+    {
+      "name": "interrupt_labels",
+      "address": "0x5b29bc",
+      "size": 16,
+      "sha256": "77a475e74a9a906add3e2333a945d4840da3c58f6490256567affb309882046b"
+    },
+    {
+      "name": "encrypted_fan_literals",
+      "address": "0x5ee2e3",
+      "size": 319,
+      "sha256": "9fae0789a7f482a0cd0eca0071e3a028ccec25face916650ee61b25817612893"
+    }
+  ],
+  "aml_dispatch": {
+    "platform_selector": 2,
+    "table_start": "0x654b60",
+    "values": [
+      "0x118444",
+      "0x1189dc",
+      "0x118cc8",
+      "0x11910c",
+      "0x119258"
+    ]
+  },
+  "scope": {
+    "reference_process_executed": false,
+    "physical_pwm": false,
+    "physical_tachometer": false,
+    "real_threads": false,
+    "malformed_matching_lines": false,
+    "production_linkage": false
+  }
+}
