@@ -1,0 +1,36 @@
+name: Monitor handlers isolated review
+on:
+  push:
+    branches: [repair/monitor-handlers-135-20260926]
+    paths: [.github/workflows/monitor-handlers-review.yml]
+permissions:
+  contents: read
+jobs:
+  snapshot:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    steps:
+      - name: Archive exact source without executing repository code
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/monitor-handlers-review"
+          mkdir "$root"
+          cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c "http.extraheader=AUTHORIZATION: basic $auth" fetch --depth=1 --no-tags origin f5fad5d98aea5a59d859d62b94fd72696b109cbd
+          test "$(git rev-parse FETCH_HEAD^{tree})" = 7e8e23d7a18c277c0a53a8fc8bf792f692b12f9b
+          git archive --format=tar.gz --output="$RUNNER_TEMP/dizzass-monitor-published.tar.gz" FETCH_HEAD
+          sha256sum "$RUNNER_TEMP/dizzass-monitor-published.tar.gz"
+      - name: Preserve private source snapshot
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: dizzass-monitor-published
+          path: ${{ runner.temp }}/dizzass-monitor-published.tar.gz
+          if-no-files-found: error
+          retention-days: 2
