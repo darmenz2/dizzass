@@ -665,3 +665,265 @@ abort_worker:
     o->worker_exit(p,0);
 }
 #endif
+
+/* Original general control worker 79778..7bb44 (literals through 7bc78).
+ * Reuses the existing temperature and fan field views. Only this separate
+ * offline target enables the body; it is not linked into production cgminer. */
+#ifdef VN135_GENERAL_MONITOR_135
+#include "integration/general_monitor_135.h"
+#include <stdio.h>
+#include <string.h>
+static int general_alive(const struct vn135_general_chain *c)
+{ return c->thermal.present && (c->thermal.state-3u)>2u; }
+static int general_active_state(uint32_t state)
+{ return (state|1u)==3u; }
+static int32_t general_call(const struct vn135_general_ops *o,void *p,
+    uint32_t op,uint32_t a,uint32_t b)
+{ return o->call(p,op,a,b); }
+static void general_log(const struct vn135_general_ops *o,void *p,
+    uint32_t line,uint32_t level,uint32_t a,uint32_t b,double value,const char *detail)
+{ if(o->log)o->log(p,line,level,a,b,value,detail); }
+static void general_abort(const struct vn135_general_ops *o,void *p,
+    struct vn135_general_scratch *scratch,uint32_t slot)
+{
+    if(o->create_shutdown(p,slot,0x72ba4,&scratch->handles[slot])){
+        general_log(o,p,6483,1,0,0,0.0,NULL);
+        (void)general_call(o,p,VN135_G_POWER_STOP,0,0);
+    }
+}
+void vn135_general_monitor_135(struct vn135_general_monitor *s,
+    const struct vn135_general_ops *o,void *p,struct vn135_general_scratch *scratch)
+{
+    double limit,now,rate,total,gap,measured;
+    int32_t n,i,j,required,available,target,current,maximum,prior,next,count;
+    uint32_t power,alive,kind;
+    uint8_t boot;
+    struct vn135_general_model *m;
+    struct vn135_general_chain *c;
+    struct vn135_temperature_sensor *sensors;
+    char reason[256];
+#define GC(op,a,b) general_call(o,p,(op),(uint32_t)(a),(uint32_t)(b))
+#define G0(op) GC(op,0,0)
+#define GL(line,level,a,b,v) general_log(o,p,(line),(level),(uint32_t)(a),(uint32_t)(b),(v),NULL)
+    (void)GC(VN135_G_CANCEL_TYPE,1,0);
+    (void)G0(VN135_G_NAME);
+    s->running=1;
+    limit=s->model->kind_34==0?1.0e9:s->model->kind_34==1?3.0e9:0.0;
+    do {
+        (void)G0(VN135_G_FANS);
+        m=s->model;
+        if(s->running){
+            required=s->required_fans;available=s->available_fans;
+            if(general_active_state(s->state) && s->mode!=2 && s->active &&
+               o->now(p)-s->started_at>=10.0){
+                /* The descriptor count is reread after each fan unlock. */
+                for(i=0;i<m->fan_count_bc;++i){
+                    (void)GC(VN135_G_LOCK,VN135_G_FAN_LOCK,i);
+                    if(s->fans[i].lost && available<required)
+                        GL(2207,3,s->fans[i].index+1u,0,0.0);
+                    (void)GC(VN135_G_UNLOCK,VN135_G_FAN_LOCK,i);
+                }
+                if(available<required){
+                    (void)GC(VN135_G_EVENT,2004,s->available_fans);
+                    (void)G0(VN135_G_STOP);
+                }
+            }
+        }
+        n=G0(VN135_G_CHAIN_COUNT);
+        if(s->running && general_active_state(s->state)){
+            if(!s->suppress_thermal){
+                for(i=0;i<n;++i){
+                    c=&s->chains[i];
+                    if(general_alive(c) && GC(VN135_G_THERMAL,i,s->mode)){
+                        (void)o->stop_chain(p,&c->thermal,"Lost temp sensors");
+                        (void)G0(VN135_G_FULL_FAN);
+                        if(G0(VN135_G_AFTER_STOP)){
+                            (void)GC(VN135_G_EVENT,2006,0);
+                            general_abort(o,p,scratch,0);
+                            break;
+                        }
+                    }
+                }
+            }else if(!G0(VN135_G_SENSOR_TEST) && !G0(VN135_G_CHIP_SENSOR_TEST)){
+                m=s->model;
+                n=G0(VN135_G_CHAIN_COUNT);
+                if(n>0){
+                    count=m->sensor_count;
+                    for(i=0;i<n;++i){
+                        c=&s->chains[i];
+                        if(!general_alive(c) || count<1)continue;
+                        sensors=c->thermal.sensors;
+                        for(j=0;j<count;++j)
+                            if(sensors[j].access_kind==4 && sensors[j].role==2 &&
+                               sensors[j].state!=3)goto sensors_finished;
+                    }
+                }
+                GL(2364,1,0,0,0.0);
+                (void)G0(VN135_G_FULL_FAN);
+                (void)GC(VN135_G_EVENT,2006,0);
+                general_abort(o,p,scratch,1);
+            }
+        }
+sensors_finished:
+        m=s->model;
+        kind=(uint32_t)G0(VN135_G_PLATFORM);
+        n=G0(VN135_G_CHAIN_COUNT);
+        if(s->running && s->active && !s->suppress_chain_check && !s->tuning &&
+           general_active_state(s->state)){
+            if((kind&~2u)==0){
+                for(i=0;i<n;++i){
+                    c=&s->chains[i];
+                    if(!general_alive(c) || c->detected_8c==(uint32_t)m->expected_chips_48)continue;
+                    (void)snprintf(reason,sizeof reason,
+                        "Chain break detected (%d of %d chips replied)",
+                        bits_signed(c->detected_8c),m->expected_chips_48);
+                    general_log(o,p,2565,2,c->thermal.index+1u,0,0.0,reason);
+                    if(s->model->query_fault_87){
+                        (void)o->read_chain_fault(p,(uint32_t)i,&c->fault_3c);
+                        GL(2569,2,c->thermal.index+1u,c->fault_3c,0.0);
+                        (void)o->stop_chain(p,&c->thermal,reason);
+                    }
+                    (void)GC(VN135_G_EVENT,2008,0);
+                    (void)G0(VN135_G_PRE_STOP);
+                    (void)G0(VN135_G_STOP);
+                }
+            }else if(kind==1 || kind-3u<5u){
+                now=o->now(p);
+                if(now-s->history->chain_check>=10.0){
+                    (void)GC(VN135_G_LOCK,VN135_G_BACKEND_LOCK,0);
+                    for(i=0;i<n;++i){
+                        c=&s->chains[i];
+                        if(!general_alive(c) || !GC(VN135_G_CHAIN_CHECK,i,0))continue;
+                        GL(2604,2,c->thermal.index+1u,0,0.0);
+                        if(s->model->query_fault_87){
+                            (void)o->read_chain_fault(p,(uint32_t)i,&c->fault_3c);
+                            GL(2608,2,c->thermal.index+1u,c->fault_3c,0.0);
+                            (void)o->stop_chain(p,&c->thermal,"Chain break detected");
+                        }
+                        (void)GC(VN135_G_EVENT,2008,0);
+                        (void)G0(VN135_G_PRE_STOP);
+                        (void)G0(VN135_G_STOP);
+                    }
+                    (void)GC(VN135_G_UNLOCK,VN135_G_BACKEND_LOCK,0);
+                    s->history->chain_check=now;
+                }
+            }
+        }
+        if(s->running && general_active_state(s->state) && s->psu_monitoring && (s->psu_valid&7u)){
+            maximum=0;
+            if((s->psu_valid&1u) && s->psu_temperatures[0]>0)maximum=s->psu_temperatures[0];
+            if((s->psu_valid&2u) && s->psu_temperatures[1]>maximum)maximum=s->psu_temperatures[1];
+            if((s->psu_valid&4u) && s->psu_temperatures[2]>maximum)maximum=s->psu_temperatures[2];
+            if(maximum>=s->psu_temperature_limit){
+                GL(2894,2,maximum,0,0.0);GL(2895,1,0,0,0.0);
+                (void)G0(VN135_G_PRE_STOP);
+                (void)GC(VN135_G_EVENT,3005,maximum);
+                general_abort(o,p,scratch,2);
+            }
+        }
+        (void)G0(VN135_G_UPDATE);
+        now=o->now(p);power=0;
+        if(now-s->history->power_sample>=5.0 && general_active_state(s->state)){
+            if(s->psu_monitoring){
+                (void)o->read_power(p,&power);
+            }else{
+                n=G0(VN135_G_CHAIN_COUNT);
+                for(i=0;i<n;++i)
+                    if(general_alive(&s->chains[i]))power+=(uint32_t)GC(VN135_G_CHAIN_POWER,i,0);
+            }
+            s->sampled_power=power;
+            s->history->power_sample=now;
+        }
+        boot=s->boot_flag;
+        n=G0(VN135_G_CHAIN_COUNT);
+        if(s->minimum_rate_percent && general_active_state(s->state) && !G0(VN135_G_POOL_FLAG)){
+            now=o->now(p);
+            if(s->tuning){
+                s->history->rate_check=now;
+            }else if(s->tune_percent==100 && s->running && s->active &&
+                     now-s->started_at>=(boot?600.0:300.0) && now-s->history->rate_check>=90.0){
+                count=G0(VN135_G_CHAIN_COUNT);alive=0;
+                for(i=0;i<count;++i)alive+=(uint32_t)general_alive(&s->chains[i]);
+                if(alive){
+                    total=0.0;
+                    for(i=0;i<n;++i){
+                        c=&s->chains[i];
+                        if(!general_alive(c))continue;
+                        (void)GC(VN135_G_LOCK,VN135_G_CHAIN_LOCK,i);
+                        memcpy(&measured,c->thermal.statistics,sizeof measured);
+                        rate=0.0;
+                        if(measured>=0.001)rate=(measured/o->number(p,0x59810,(uint32_t)i))*100.0;
+                        (void)GC(VN135_G_UNLOCK,VN135_G_CHAIN_LOCK,i);
+                        total+=rate;
+                    }
+                    rate=total/(double)bits_signed(alive);
+                    if(rate<(double)s->minimum_rate_percent){
+                        GL(2461,2,s->minimum_rate_percent,0,rate);
+                        GL(2462,2,s->minimum_rate_percent,0,rate);
+                        (void)GC(VN135_G_EVENT,1008,0);
+                        (void)G0(VN135_G_STOP);
+                    }
+                    s->history->rate_check=now;
+                }
+            }
+        }
+        maximum=0;
+        if(s->running && !s->mode && general_active_state(s->state)){
+            current=G0(VN135_G_FAN_TARGET);
+            if(current==s->target_temperature){
+                s->history->fan_adjust=o->now(p);
+            }else if(o->collect_temperature(p,&maximum)){
+                GL(2654,2,0,0,0.0);
+            }else{
+                now=o->now(p);
+                if(s->history->fan_adjust==0.0)s->history->fan_adjust=now;
+                target=s->target_temperature;
+                prior=s->history->previous_temperature;
+                next=current;
+                if(target>current){
+                    if(maximum<prior && current<prior){
+                        next=prior<target?prior:target;
+                    }else if(maximum==prior){
+                        gap=o->number(p,0xf8df0,0);
+                        if(current<=maximum && (gap<1.0 || now-s->history->fan_adjust>=30.0)){
+                            next=bits_signed((uint32_t)current+10u);
+                            if(next>s->target_temperature)next=s->target_temperature;
+                        }
+                    }
+                }else{
+                    if(maximum>prior && current>prior){
+                        next=prior>target?prior:target;
+                    }else if(maximum==prior){
+                        gap=o->number(p,0xf8df0,0);
+                        if(current>=maximum && (gap<1.0 || now-s->history->fan_adjust>=30.0)){
+                            next=bits_signed((uint32_t)current-10u);
+                            if(next<s->target_temperature)next=s->target_temperature;
+                        }
+                    }
+                }
+                if(next!=current){
+                    (void)GC(VN135_G_SET_FAN_TARGET,next,0);
+                    s->history->fan_adjust=now;
+                }
+                s->history->previous_temperature=maximum;
+            }
+        }
+        now=o->now(p);
+        if(general_active_state(s->state) && G0(VN135_G_PSU_AVAILABLE) &&
+           now-s->history->psu_sample>=5.0){
+            (void)o->read_psu(p,&s->psu_valid,s->psu_temperatures);
+            s->history->psu_sample=now;
+        }
+        (void)G0(VN135_G_MAINTAIN);
+        (void)G0(VN135_G_TUNE_MAINTAIN);
+        (void)G0(VN135_G_STATE_MAINTAIN);
+        if(G0(VN135_G_POOL_FLAG) && G0(VN135_G_POOL_MODE)==1)(void)G0(VN135_G_POOL_UPDATE);
+        if(limit>0.001 && *s->global_rate>=limit)(void)G0(VN135_G_RATE_ACTION);
+        (void)GC(VN135_G_DELAY,1000,0);
+    }while(s->running);
+    (void)G0(VN135_G_EXIT);
+#undef GL
+#undef G0
+#undef GC
+}
+#endif
