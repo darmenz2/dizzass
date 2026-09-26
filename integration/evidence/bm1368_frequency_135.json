@@ -1,0 +1,76 @@
+{
+  "base_commit": "5c19f122855805a8beea5f720bfcfb38aa9068d4",
+  "base_tree": "d2fc35ae20f7c5d68d8ed350348f2dcc3d062b67",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "ranges": [
+    {
+      "start": "0xe249c",
+      "end": "0xe2808",
+      "sha256": "f814c253a83068b469acccca480346f96c0e4124680d697c697f46e6f11c7bf1"
+    },
+    {
+      "start": "0xff288",
+      "end": "0xff660",
+      "sha256": "7ece050139fa0096db96c7345d6e4defe17b678a3a62b0c04d5ce69fea8b936d"
+    },
+    {
+      "start": "0x5eb6c0",
+      "end": "0x5eb6f8",
+      "sha256": "8d3788f711f55ad93dca8ca83deca4262439b71d8d1e38da67aadc427cef80de"
+    },
+    {
+      "start": "0xe4a74",
+      "end": "0xe4b04",
+      "sha256": "73dfccd0cab201f83579a2c9041462aff85f2f6fb84372ff0ada5e235e626be5"
+    }
+  ],
+  "immutable": {
+    "src/backend/base.c": "9dd2d25122e3cd7a35f3ab4f0f709ce07422d1a7",
+    "src/backend/chain.c": "9448f6acf934566577c6f9248841a78274931d04",
+    "src/backend/chain-frequency.c": "3a0dffcc3135aa9fdd3417806d0f033d448677e3",
+    "src/backend/frequency-worker.c": "d980efc0f798a9eb971b36045308f54e42ac1d8d",
+    "libbitmain/src/pll.c": "0c8fbcd6dfc64c342675c8ae3542a826e1fddbfd",
+    "libbitmain/src/chip/chip1368.c": "c64374454e6e458ec1a175f21f03af141e29a3aa",
+    "libbitmain/src/chip/chip1398.c": "b8a8d43ff2864644747a311c66071ad15c51eaa2",
+    "integration/bm1368_control.c": "20b4b0476beb3968be590373f884e91b7d6fe46f",
+    "include/xminer/recovery/pll.h": "de45948ffdca5c6b479ce843324413b7ac35c6fd",
+    "tools/arm32_subset.py": "e18a97222c1a8406fd61d5baac9763c3166f7e4b",
+    "tools/arm32_vfp_subset.py": "d1df89081dfa172ea41c84cae46e51ad099d74d8",
+    "tools/arm32_difficulty_subset.py": "94b359f6e1e8d7e2c11e22d640e36a97e7c22b37",
+    "cgminer.c": "54739e4139294c526af0c73aa9a02ba9762ca4f2",
+    "driver-bitmain.c": "9e2bb0251f30148e158978227eb224391384985d",
+    "Makefile.am": "17d2fbde26b5e8cb614b61908b84d5937af48325"
+  },
+  "literals": [
+    {
+      "address": "0x5eb3e7",
+      "xor": 216,
+      "text": "/tmp/build/libbitmain/src/chip/chip1368.c"
+    },
+    {
+      "address": "0x5eb6f8",
+      "xor": 142,
+      "text": "chain#%d - failed to find PLL for freq %.02f Mhz"
+    },
+    {
+      "address": "0x5eb729",
+      "xor": 185,
+      "text": "chain#%d - failed to set PLL%d params (%.02f Mhz)"
+    }
+  ],
+  "scope": {
+    "entry": "0xe249c",
+    "nested_existing_solver": "0xff288",
+    "write_boundary": "0xe4a74",
+    "finite_requested_mhz": [
+      0,
+      1000000000.0
+    ],
+    "hardware_io": false,
+    "real_threads": false,
+    "complete_write_method": false,
+    "solver_internal_diagnostic_equivalent": false,
+    "slot_limit_changed": false,
+    "argument_lifetime_fixed": false
+  }
+}
