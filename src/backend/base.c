@@ -373,3 +373,116 @@ int vn135_backend_configure_6c61c_135(struct vn135_peripheral_state *s,
                        (uint32_t)(reading>45?reading:45),s->word_6c,s->word_70);
     return 0;
 }
+
+/* Original preparation 0x7409c and fan polling 0x7755c.
+ * See integration/BACKEND_PREPARE_135_RU.md for exact callee boundaries.
+ */
+#include "integration/backend_prepare_135.h"
+static int32_t prepare_step(const struct vn135_prepare_ops *o,void *p,
+    uint32_t source,uint32_t a,uint32_t b,uint32_t c)
+{ return o->step(p,source,a,b,c); }
+static void prepare_log(const struct vn135_prepare_ops *o,void *p,
+    uint32_t line,uint32_t level,uint32_t a,uint32_t b,const char *text)
+{ if(o->log)o->log(p,line,level,a,b,text); }
+static int prepare_fail(const struct vn135_prepare_ops *o,void *p,
+    uint32_t line,uint32_t code)
+{
+    prepare_log(o,p,line,1,0,0,NULL);
+    (void)prepare_step(o,p,0x49c98,code,0,0);
+    (void)prepare_step(o,p,0x5e92c,0,0,0);
+    return 0;
+}
+void vn135_backend_poll_fans_135(struct vn135_prepare_state *s,
+    const struct vn135_prepare_ops *o,void *p)
+{
+    struct vn135_prepare_profile *f=s->profile;
+    int32_t i,ceiling;
+    if(f->fan_count<1)return;
+    ceiling=bits_signed((uint32_t)f->fan_word_0c*3u);
+    for(i=0;i<f->fan_count;++i){
+        struct vn135_prepare_fan *fan=&s->fans[i];
+        int32_t scale=prepare_step(o,p,0xfe2f0,0,0,0);
+        int32_t reading,first;
+        (void)prepare_step(o,p,0x5a6108,(uint32_t)i,0,0);
+        first=prepare_step(o,p,0xfe300,(uint32_t)i,0,0);
+        reading=f->fan_word_0c;
+        if(first<reading)reading=prepare_step(o,p,0xfe300,(uint32_t)i,0,0);
+        fan->word_20=reading;
+        if(reading<=ceiling && reading>=1 && fan->byte_1c){
+            fan->byte_1c=0;
+            s->word_23c=bits_signed((uint32_t)s->word_23c+1u);
+        }else if(!(reading!=0 && reading<=ceiling) && scale>=10 && !fan->byte_1c){
+            fan->byte_1c=1;
+            s->word_23c=bits_signed((uint32_t)s->word_23c-1u);
+        }
+        (void)prepare_step(o,p,0x5a66c4,(uint32_t)i,0,0);
+    }
+}
+int vn135_backend_prepare_135(struct vn135_prepare_state *s,
+    const struct vn135_prepare_ops *o,void *p,struct vn135_prepare_scratch *scratch)
+{
+    struct vn135_prepare_limits *limits=s->limits;
+    struct vn135_prepare_profile *fans;
+    void *stream;
+    int32_t value,i;
+    unsigned remaining;
+    uint32_t mode;
+    uint8_t flag;
+    s->word_28=0;s->word_2c=0;s->byte_24=0;s->byte_fe5=0;
+    s->byte_104a=0;s->word_1070=0;
+    if(prepare_step(o,p,0x4f2d0,0x50,0,0))return prepare_fail(o,p,7480,1002);
+    if(prepare_step(o,p,0xb86d0,0,0,0) && s->byte_85)
+        (void)prepare_step(o,p,0xb9148,0,0,0);
+    value=o->stat_path(p,s->byte_f4?"/config/stopped":"/tmp/stopped");
+    s->byte_210=(uint8_t)(value>=0);
+    s->text_fc8=o->duplicate(p,s->text_90);
+    mode=(uint32_t)prepare_step(o,p,0x82d60,0x50,0,0);
+    *s->platform_byte=(uint8_t)mode;
+    if(o->initialize_psu(p,limits->lower_30,limits->upper_34,limits->word_14))
+        return prepare_fail(o,p,7495,2001);
+    value=s->word_10c;
+    if(value){
+        if(value<1500)value=1500;
+        if(value>s->limits->word_3c)value=s->limits->word_3c;
+    }else value=s->profile->word_1c;
+    s->word_10c=value;
+    stream=o->serial_open(p,"/config/serial","r");
+    if(stream){
+        if(o->serial_read(p,stream,"%255s",scratch->serial)==1)
+            prepare_log(o,p,201,3,0,0,scratch->serial);
+        (void)o->serial_close(p,stream);
+    }
+    if(prepare_step(o,p,0xf96a0,0,0,0))return prepare_fail(o,p,7506,2002);
+    if(prepare_step(o,p,0xb4c58,0,0,0))return prepare_fail(o,p,7513,2003);
+    fans=s->profile;
+    if(s->mode_50==2){
+        (void)prepare_step(o,p,0xf8b60,0,0,0);
+    }else{
+        (void)prepare_step(o,p,0xf8a30,30,0,0);
+        prepare_log(o,p,253,3,0,0,NULL);
+        for(remaining=15;remaining;--remaining){
+            vn135_backend_poll_fans_135(s,o,p);
+            (void)prepare_step(o,p,0x10ef3c,1000,0,0);
+            if(s->word_23c>=fans->fan_count)break;
+        }
+        for(i=0;i<fans->fan_count;++i){
+            (void)prepare_step(o,p,0x5a6108,(uint32_t)i,0,0);
+            flag=s->fans[i].byte_1c;
+            (void)prepare_step(o,p,0x5a66c4,(uint32_t)i,0,0);
+            prepare_log(o,p,271,3,(uint32_t)i+1u,0,flag?"lost":"ok");
+        }
+        value=s->word_23c;
+        if(value<s->word_68){
+            prepare_log(o,p,275,1,(uint32_t)value,(uint32_t)fans->fan_count,NULL);
+            (void)prepare_step(o,p,0x49c98,2004,(uint32_t)s->word_23c,
+                              (uint32_t)fans->fan_count);
+            prepare_log(o,p,7520,1,0,0,NULL);
+            (void)prepare_step(o,p,0x5e92c,0,0,0);
+            return 0;
+        }
+    }
+    if(prepare_step(o,p,0xa1fe0,0,0,0))return prepare_fail(o,p,7526,1001);
+    if(o->thread_create(p,0xff4,0x7bfc0,&s->thread_ff4))
+        return prepare_fail(o,p,7533,1001);
+    return 1;
+}
