@@ -1,0 +1,177 @@
+{
+  "reference": "reference/cgminer.vendor.elf",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "base_commit": "ed54e2d033965e944361d14a588dab70e21e539b",
+  "base_tree": "3c41912a14ee3dc8ba941fd61946e4b460b27070",
+  "base_source": {
+    "path": "src/backend/base.c",
+    "length": 52805,
+    "git_blob": "8b6e93385e59d8d04844d229344a3b55d3eada59"
+  },
+  "source_entry": "0x65b3c",
+  "source_path": "/tmp/build/src/backend/base.c",
+  "worker_entry_boundary": "0x65fcc",
+  "ranges": [
+    {
+      "name": "body_and_literals",
+      "start": "0x65b3c",
+      "end_exclusive": "0x65fcc",
+      "sha256": "37575ab2c9ce2ba9010e08f5cd79dbcb3f3e71896aa65bed3b7f26d837c32d60"
+    },
+    {
+      "name": "original_config_getter",
+      "start": "0xa71e8",
+      "end_exclusive": "0xa71f4",
+      "sha256": "7fd21807c9f30f779576f50ea7e2ff4f04688091fd64fb8f3a0c7b80e0cdeb09"
+    },
+    {
+      "name": "original_chain_predicate",
+      "start": "0x56fcc",
+      "end_exclusive": "0x57030",
+      "sha256": "bb894dbfda03d815a67c72d95c0e0fffef2c3d3cb39182e50ca7ab43954e3e74"
+    },
+    {
+      "name": "calloc_overflow_and_zeroing",
+      "start": "0x593bb4",
+      "end_exclusive": "0x593c8c",
+      "sha256": "9c3a8fab70a58924cd229816af648477020b52fb33281df3ce2f9fe6bd4aec72"
+    },
+    {
+      "name": "worker_entry_prefix_only",
+      "start": "0x65fcc",
+      "end_exclusive": "0x6601c",
+      "sha256": "33854dd1019a4bdfdbb37f04cd7492af5d25f3a0c4b6a3a2079490831afcdf45"
+    }
+  ],
+  "literals": [
+    {
+      "address": "0x5e50dc",
+      "length": 7,
+      "xor_key": 173,
+      "decoded": "driver",
+      "sha256": "3b9a1fe3057c503f18531d92f63dc3198404974172fb44cb64dfb36984c39678"
+    },
+    {
+      "address": "0x5e50be",
+      "length": 30,
+      "xor_key": 245,
+      "decoded": "/tmp/build/src/backend/base.c",
+      "sha256": "a3922dfb59ced1364db6fd1b31bc23cc40b7976764ca96a9eb96e4e5cacad4a8"
+    },
+    {
+      "address": "0x5e50e3",
+      "length": 11,
+      "xor_key": 245,
+      "decoded": "[redacted]",
+      "sha256": "6a0860124733113a7a80bc8b899850bfa881adbf8e0e2aed883a7bd72f8f74d7"
+    },
+    {
+      "address": "0x5e5406",
+      "length": 26,
+      "xor_key": 178,
+      "decoded": "Failed to allocate memory",
+      "sha256": "833da1977131946dc76128b13edc064bd9717b54bf33fa6704c00053e83b2967"
+    },
+    {
+      "address": "0x5e54dc",
+      "length": 33,
+      "xor_key": 3,
+      "decoded": "Setting freq to %d Mhz gradually",
+      "sha256": "c2e5929553e976bef31c1eecd4cdbf520e7932a161c12b4bb59649fa8dd898de"
+    },
+    {
+      "address": "0x5e54fd",
+      "length": 45,
+      "xor_key": 9,
+      "decoded": "chain#%d - failed to create fall freq thread",
+      "sha256": "eca1ef230b613abbbbee6c6da722ce5eb6f71a2703814dff12d9b100bc5c209b"
+    }
+  ],
+  "got": [
+    {
+      "literal": "0x65f68",
+      "pc_relative_load": "0x65b50",
+      "got": "0x5dec80",
+      "target": "0x68ba14"
+    },
+    {
+      "literal": "0x65f6c",
+      "pc_relative_load": "0x65b64",
+      "got": "0x5dfeb8",
+      "target": "0x68bd08"
+    },
+    {
+      "literal": "0x65fac",
+      "pc_relative_load": "0x65d40",
+      "got": "0x5dec80",
+      "target": "0x68ba14"
+    },
+    {
+      "literal": "0x65fb0",
+      "pc_relative_load": "0x65d58",
+      "got": "0x5dec80",
+      "target": "0x68ba14"
+    },
+    {
+      "literal": "0x65fb4",
+      "pc_relative_load": "0x65d74",
+      "got": "0x5dfeb8",
+      "target": "0x68bd08"
+    },
+    {
+      "literal": "0x57028",
+      "pc_relative_load": "0x56ff4",
+      "got": "0x5dfa44",
+      "target": "0x68b8b0"
+    },
+    {
+      "literal": "0x5702c",
+      "pc_relative_load": "0x56ffc",
+      "got": "0x5dfcbc",
+      "target": "0x68b8d0"
+    }
+  ],
+  "unchanged_files": {
+    "cgminer.c": "54739e4139294c526af0c73aa9a02ba9762ca4f2",
+    "Makefile.am": "17d2fbde26b5e8cb614b61908b84d5937af48325",
+    "util.c": "70f7a82fa759841ff1a3687661eefcb0e1ee1dba",
+    "src/backend/volt-ctrl.c": "610fbae01ea3371e54b6a61548eaf9d3ad187df8",
+    "src/frontend/rescue.c": "fcfa108440527bb3f683ed6e065bd4b3ece2f177",
+    "integration/general_monitor_135.h": "56998462cbd559604a83f25edc1693501d050a91",
+    "integration/mining_stop_135.h": "ff8c93d95895d2463425d3598b85df46d71e7e91",
+    "integration/monitor_handlers_135.h": "593bbc343c1ff3812630e0d839cbc493f7febd83",
+    "integration/backend_shutdown_135.h": "30ba5a57e9dd8f900f2f0753040945d8694cb413",
+    "tools/arm32_subset.py": "e18a97222c1a8406fd61d5baac9763c3166f7e4b",
+    "tools/arm32_difficulty_subset.py": "94b359f6e1e8d7e2c11e22d640e36a97e7c22b37",
+    "tools/elf32.py": "57b0a77098e2125340a755e90bac194830f75203",
+    "integration/tests/test_mining_stop_135.py": "5007e1ecfd675d141659c697fa69599e58ceeb80",
+    "integration/tests/test_mining_stop_135.c": "4cb957ae991bef5bbe205fe9765bca34abc06d38",
+    "integration/tests/test_mining_stop_nested_135.py": "33b2a6ba4af98385a9ff76cf091433de12a5de88",
+    "integration/tests/test_exit_cleanup_135.c": "d8c56e04b9886977174400ca5db9133c384c2786",
+    "integration/tests/stop_policy_bridge_135.c": "6a86894433aba49fcc73f8561fd5bce294f8a667"
+  },
+  "field_offsets": {
+    "config_pointer": "backend+0x18",
+    "config_getter": "model+0xcc",
+    "floor": "getter+0x0c",
+    "target": "getter+0x18",
+    "chain_array": "backend+0x230",
+    "chain_state": "chain+0x20",
+    "chain_present": "chain+0x24",
+    "chain_frequency": "chain+0x28"
+  },
+  "boundaries": [
+    "original 593bb4 allocator effects; source uint32 count and 8/4 stride, host typed sizes",
+    "original 593c8c free; guarded real host allocation used in native tests",
+    "5a55cc thread creation with worker 65fcc (body NOT yet ported)",
+    "5a5d2c join and concurrency/lifetime effects",
+    "fe668 runtime chain count provider",
+    "production driver wiring and actual frequency/hardware changes"
+  ],
+  "partial_create_failure": {
+    "joins_prior_threads": false,
+    "releases_argument_array": true,
+    "releases_handle_array": true,
+    "live_worker_safety_proven": false
+  }
+}

@@ -1241,3 +1241,66 @@ void vn135_backend_stop_mining_135(struct vn135_mining_stop_state *s,
     if(o->log)o->log(p,4825);
 }
 #endif
+
+/* Original 65b3c: per-chain frequency-fall dispatch, before mining field reset. */
+#ifdef VN135_FREQUENCY_FALL_135
+#ifndef VN135_GENERAL_MONITOR_135
+#error "Frequency fall reuses the existing general chain predicate and fields"
+#endif
+#include "integration/frequency_fall_135.h"
+int32_t vn135_backend_fall_frequency_135(struct vn135_frequency_fall_state *s,
+    const struct vn135_frequency_fall_ops *o,void *p)
+{
+    struct vn135_frequency_fall_config *first=s->config,*second;
+    struct vn135_frequency_fall_argument *arguments;
+    uint32_t *handles,active;
+    int32_t initial,count,i,minimum=0,floor,target,result=0,empty_result;
+    int found=0;
+    initial=o->chain_count(p);
+    arguments=o->allocate(p,VN135_FALL_ARGUMENTS,(uint32_t)initial,8);
+    if(!arguments){
+        if(o->log)o->log(p,4481,1,0);
+        return -1;
+    }
+    handles=o->allocate(p,VN135_FALL_HANDLES,(uint32_t)initial,4);
+    if(!handles){
+        if(o->log)o->log(p,4487,1,0);
+        o->release(p,VN135_FALL_ARGUMENTS,arguments);
+        return -1;
+    }
+    second=s->config;
+    count=o->chain_count(p);
+    for(i=0;i<count;++i){
+        const struct vn135_general_chain *chain=&s->general->chains[i];
+        if(general_alive(chain)){
+            int32_t frequency=bits_signed(chain->thermal.cleared_words[0]);
+            if(!found || minimum>=frequency)minimum=frequency;
+            found=1;
+        }
+    }
+    /* The original reads target from the first getter, floor from the second. */
+    target=first->target_18;floor=second->floor_0c;
+    if(minimum>floor)floor=minimum;
+    if(floor<=target)goto release;
+    if(o->log)o->log(p,4496,3,target);
+    for(i=0;i<initial;++i){
+        arguments[i].backend=s;
+        arguments[i].chain=&s->general->chains[i];
+        result=o->create(p,&handles[i],0x65fccu,&arguments[i]);
+        if(result){
+            if(o->log)o->log(p,4506,1,i+1);
+            goto release;
+        }
+    }
+    for(i=0;i<initial;++i)(void)o->join(p,handles[i],NULL);
+    /* Even the initially-empty case takes a new count after this stage. */
+    empty_result=initial<1?-1:0;
+    count=o->chain_count(p);active=0;
+    for(i=0;i<count;++i)active+=(uint32_t)general_alive(&s->general->chains[i]);
+    result=active?0:empty_result;
+release:
+    o->release(p,VN135_FALL_ARGUMENTS,arguments);
+    o->release(p,VN135_FALL_HANDLES,handles);
+    return result;
+}
+#endif
