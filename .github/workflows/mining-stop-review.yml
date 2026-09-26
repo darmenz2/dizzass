@@ -1,0 +1,111 @@
+name: Mining stop isolated review
+on:
+  push:
+    branches: [repair/mining-stop-135-20260926]
+    paths: [.github/workflows/mining-stop-review.yml]
+permissions:
+  contents: read
+jobs:
+  validate:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Fetch exact published base without persistent credentials
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/mining-stop-review"
+          mkdir "$root"
+          cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c "http.extraheader=AUTHORIZATION: basic $auth" fetch --depth=1 --no-tags origin 146ee16d0b285b429b1f14b1bcca710d2e3eacb0
+          git checkout -q --detach FETCH_HEAD
+          test "$(git rev-parse HEAD^{tree})" = 8a8c61630ce4eab4b0e2cfb9f3dd3885b2d94750
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Retrieve and verify exact private patch bytes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import base64, gzip, hashlib, json, os, pathlib, urllib.request
+          ids = [
+              'be1a6fd06ec6eac90b36ab3e9ffc5c785f5b8f7b',
+              'd1473171373de584f8f9087e7281b9cfa4c81835',
+              '7ae2e37d50fe7c85ebae8f5e9598feea3d898adc',
+              '1482005bc2763a7c89eae0c76326a42fa995cc83',
+              '7e96763cb0970029af81fc245bd60526a9f553bd',
+              '22a3c885429924e445b1d34be91ec7003cddcce1',
+              'd7c7a33a295a7d5726015e226fae4da23e5b5761',
+              '1ee237390decf5faf638e164211057d44df5388c',
+              '2d1ec56837da49d8e32d7c99d954064596da38ab',
+              'c28e8626527a09ae6b9ef73d4f6b2d70be196a14',
+              '23563af43885e6d0e12a7f60e8a3094882e2ab69',
+              '11221e67a81dab5e66ecb6e3585b171020f093ac',
+              '584fb9a19760b49fbde292328ef52907aced36a5',
+              '66a030c0314c57695ee75b94d9c9c74888253cce',
+          ]
+          chunks = []
+          for sha in ids:
+              request = urllib.request.Request(
+                  'https://api.github.com/repos/darmenz2/dizzass/git/blobs/' + sha,
+                  headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'],
+                           'Accept': 'application/vnd.github+json',
+                           'X-GitHub-Api-Version': '2022-11-28'})
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  obj = json.load(response)
+              assert obj['encoding'] == 'base64' and obj['sha'] == sha
+              data = base64.b64decode(obj['content'])
+              assert hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest() == sha
+              chunks.append(data)
+          compressed = b''.join(chunks)
+          assert hashlib.sha256(compressed).hexdigest() == 'b3629de8b36c2ca32348bb77541967237f2fde3a8da61beeb39c99c39fc76df9'
+          patch = gzip.decompress(compressed)
+          assert hashlib.sha256(patch).hexdigest() == 'f5ae7ec75f3be2c871f9f5bb601c23755f4a89bf0a07ca036694e4e00737b890'
+          pathlib.Path(os.environ['RUNNER_TEMP'], 'mining-stop-135.patch').write_bytes(patch)
+          print('PATCH_BYTES_VERIFIED', len(patch))
+          PY
+      - name: Apply source candidate without workflow writes
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          git apply --check "$RUNNER_TEMP/mining-stop-135.patch"
+          git apply --index --exclude='.github/workflows/*' "$RUNNER_TEMP/mining-stop-135.patch"
+          git diff --cached --check
+          test "$(git write-tree)" = d39b132b237c642d6f217f109196852374b0a63b
+          python3 integration/tests/check_mining_stop_evidence_135.py
+          python3 integration/tests/check_voltage_stop_evidence_135.py
+      - name: Original comparisons native composition negative controls and sanitizers
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          for cc in gcc clang; do
+            make -f integration/mining-stop-135.mk CC="$cc" MINING135_DIR="build/review-$cc" dizzass-mining135-original dizzass-mining135-test dizzass-mining135-negative
+            make -f integration/mining-stop-135.mk CC="$cc" SANITIZE=1 MINING135_DIR="build/review-$cc-san" dizzass-mining135-test
+          done
+          clang --analyze -I. -std=c11 -DVN135_MINING_STOP_135 -Xanalyzer -analyzer-output=text src/backend/base.c
+      - name: Publish isolated verified candidate without updating working refs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          git diff --exit-code
+          test "$(git write-tree)" = d39b132b237c642d6f217f109196852374b0a63b
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Recover original 663cc mining stop and bounded comparison evidence'
+          test "$(git rev-parse HEAD^)" = 146ee16d0b285b429b1f14b1bcca710d2e3eacb0
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c "http.extraheader=AUTHORIZATION: basic $auth" push origin HEAD:refs/heads/repair/mining-stop-sources-135-20260926
+          printf 'CANDIDATE_COMMIT=%s\n' "$(git rev-parse HEAD)"
+          printf 'CANDIDATE_TREE=%s\n' "$(git rev-parse HEAD^{tree})"
