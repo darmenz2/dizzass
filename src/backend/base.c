@@ -529,3 +529,139 @@ int vn135_temperature_reply_135(const struct vn135_reply_profile *profile,
 }
 
 #endif /* VN135_THERMAL_ROUTES_135 */
+
+#ifdef VN135_BACKEND_SHUTDOWN_135
+#include "integration/backend_shutdown_135.h"
+static void shutdown_thread_135(struct vn135_shutdown_thread *t,
+    const struct vn135_shutdown_ops *o,void *p)
+{
+    uint32_t self,handle;
+    if(!t->running)return;
+    t->running=0;self=o->self(p);handle=t->handle;
+    if(self==handle)(void)o->detach(p,self);
+    else{(void)o->cancel(p,handle);(void)o->join(p,t->handle,NULL);}
+}
+void vn135_backend_shutdown_135(struct vn135_shutdown_state *s,
+    const struct vn135_shutdown_ops *o,const struct vn135_backend_power_ops *power,
+    void *p,struct vn135_shutdown_scratch *scratch)
+{
+    const char *marker=s->persistent_marker?"/config/stopped":"/tmp/stopped";
+    int32_t count,i;uint32_t v;uint8_t board_flag;
+#define STEP(ep,a) o->step(p,(ep),(a))
+    while(o->trylock(p))(void)o->delay_ms(p,100);
+    if((s->state|2u)==6u){(void)o->unlock(p);return;}
+    if(o->log)o->log(p,6504);
+    if(!STEP(0xfdeb4,0) && !s->state)goto finish;
+    if(STEP(0x8291c,0))(void)STEP(0x860b8,0);
+    if((s->model_chip_selector&~1u)!=6u)shutdown_thread_135(&s->threads[0],o,p);
+    if((STEP(0xfdfbc,0)|2u)==2u)shutdown_thread_135(&s->threads[1],o,p);
+    (void)STEP(0xa6080,0);
+    shutdown_thread_135(&s->threads[2],o,p);
+    shutdown_thread_135(&s->threads[3],o,p);
+    shutdown_thread_135(&s->threads[4],o,p);
+    (void)STEP(0x663cc,0);
+    for(i=5;i<9;++i)shutdown_thread_135(&s->threads[i],o,p);
+    count=power->chain_count(p);
+    for(i=0;i<count;++i)(void)STEP(0x58d08,(uint32_t)i);
+    v=STEP(0x19c,0);(void)o->cleanup(p,scratch->cleanup,v);
+    if(s->fan_readings && s->mode!=2u)
+        for(i=0;i<s->fan_count;++i)s->fan_readings[i]=0;
+    board_flag=s->board_byte_4f;
+    count=power->chain_count(p);
+    s->byte_fe6=0;s->word_fe8=0;s->word_fec=0;
+    for(i=0;i<count;++i)(void)STEP(board_flag?0x5a9fc:0x5ac80,(uint32_t)i);
+    (void)STEP(0x1082b4,0);
+    (void)vn135_backend_power_stop_135(&s->power,power,p);
+    (void)STEP(0x2f6ec,0);
+    if(s->threads[9].running){
+        v=s->threads[9].handle;s->threads[9].running=0;
+        (void)o->join(p,v,&scratch->join_result);
+    }
+    (void)STEP(0xf98b8,1);(void)STEP(0xf9840,0);
+finish:
+    s->state=6;(void)o->mark_stopped(p,marker);
+#undef STEP
+    (void)o->unlock(p);
+}
+int vn135_backend_shutdown_worker_135(struct vn135_shutdown_state *s,
+    const struct vn135_shutdown_ops *o,const struct vn135_backend_power_ops *power,
+    void *p,struct vn135_shutdown_scratch *scratch)
+{
+    (void)o->set_thread_name(p,"failure@btm");
+    (void)o->detach(p,o->self(p));
+    (void)vn135_backend_shutdown_135(s,o,power,p,scratch);
+    return 0;
+}
+#endif
+
+/* Original temperature-read worker 668a8 and abort dispatcher 66f80.
+ * Explicit source selection: separate from the native cgminer runtime. */
+#ifdef VN135_SENSOR_MONITOR_135
+#include "integration/sensor_monitor_135.h"
+static void monitor_log(const struct vn135_sensor_monitor_ops *o,void *p,
+    uint32_t line,uint32_t chain,uint32_t sensor,int32_t failures)
+{ if(o->log)o->log(p,line,chain,sensor,failures); }
+void vn135_temperature_monitor_abort_135(const struct vn135_sensor_monitor_ops *o,
+    void *p,uint32_t *thread_scratch)
+{
+    if(o->create_shutdown(p,0x72ba4,thread_scratch)) {
+        monitor_log(o,p,6483,0,0,0);
+        (void)o->power_stop(p);
+    }
+}
+void vn135_temperature_monitor_135(struct vn135_sensor_monitor *s,
+    const struct vn135_sensor_monitor_ops *o,void *p,uint32_t *thread_scratch)
+{
+    int32_t sensor_count=s->sensor_count;
+    int32_t chain_count=o->chain_count(p),i,j;
+    (void)o->set_cancel_type(p,1);
+    (void)o->set_name(p,"temp_read@btm");
+    s->running=1;
+    do {
+        double elapsed=o->now(p)-s->last_chip_poll;
+        for(i=0;i<chain_count;++i) {
+            struct vn135_route_chain *chain=&s->chains[i];
+            if(!chain->present || chain->state-3u<3u)continue;
+            for(j=0;j<sensor_count;++j) {
+                struct vn135_temperature_sensor *sensor=&chain->sensors[j];
+                if(sensor->access_kind>4 || sensor->access_kind==2 || sensor->state==3)continue;
+                if(s->state==4)goto wait_next;
+                if(o->read_sensor(p,chain,sensor))
+                    monitor_log(o,p,4907,chain->index+1u,sensor->index+1u,sensor->failures);
+                if(sensor->state==3 && (s->mode==2 || sensor->role==2)) {
+                    monitor_log(o,p,4912,chain->index+1u,sensor->index+1u,0);
+                    if(s->suppress_fault_stop)continue;
+                    (void)o->stop_chain(p,chain,"Lost temp sensors");
+                    if(o->after_chain_stop(p)) {
+                        (void)o->event(p,2006);
+                        goto abort_worker;
+                    }
+                }
+                o->aggregate(p,chain);
+                if(o->overheat(p,chain)) {
+                    monitor_log(o,p,4929,0,0,0);
+                    goto abort_worker;
+                }
+                (void)o->delay_ms(p,200);
+            }
+            if(elapsed>5.0 && (s->state|1u)==3u) {
+                (void)o->refresh_chip_temperatures(p,chain);
+                o->aggregate(p,chain);
+                if(o->overheat(p,chain)) {
+                    monitor_log(o,p,4943,0,0,0);
+                    o->before_timed_abort(p);
+                    goto abort_worker;
+                }
+            }
+        }
+        if(elapsed>5.0)s->last_chip_poll=o->now(p);
+wait_next:
+        (void)o->delay_ms(p,1000);
+    } while(s->running);
+    o->worker_exit(p,0);
+    return;
+abort_worker:
+    vn135_temperature_monitor_abort_135(o,p,thread_scratch);
+    o->worker_exit(p,0);
+}
+#endif

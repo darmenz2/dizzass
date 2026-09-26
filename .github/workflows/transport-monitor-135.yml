@@ -1,0 +1,70 @@
+name: Check original 1.3.5 sensor transport and temperature monitor
+on:
+  push:
+    branches: [work/reconstruction]
+    paths:
+      - src/backend/base.c
+      - src/backend/temp.c
+      - libbitmain/src/i2c.c
+      - libbitmain/src/aml/i2c.c
+      - reconstruction/support/sensor_cleanup_135.c
+      - integration/aml_smbus_135.h
+      - integration/sensor_monitor_135.h
+      - integration/thermal_reader_135.h
+      - integration/transport-monitor-135.mk
+      - integration/evidence/transport_monitor_135.json
+      - integration/tests/*sensor*135*
+      - integration/tests/*smbus*135*
+      - integration/tests/check_transport_monitor_evidence_135.py
+      - .github/workflows/transport-monitor-135.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: transport-monitor135-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  original:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    strategy:
+      matrix:
+        cc: [gcc, clang]
+    steps:
+      - name: Fetch exact source without persistent credentials
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/dizzass-transport135-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-${{ matrix.cc }}"
+          mkdir "$root"
+          cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c "http.extraheader=AUTHORIZATION: basic $auth" fetch --depth=1 --no-tags origin "$GITHUB_SHA"
+          git checkout -q --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Original transport monitor reader composition and cleanup
+        run: |
+          cd "$SOURCE_ROOT"
+          make -f integration/transport-monitor-135.mk CC=${{ matrix.cc }} dizzass-transport135-original dizzass-transport135-test
+      - name: Native memory and composed calls with sanitizers
+        run: |
+          cd "$SOURCE_ROOT"
+          make -f integration/transport-monitor-135.mk CC=${{ matrix.cc }} SANITIZE=1 dizzass-transport135-test
+      - name: Previous synchronous reader and common shutdown
+        run: |
+          cd "$SOURCE_ROOT"
+          make -f integration/thermal-completion-135.mk CC=${{ matrix.cc }} dizzass-completion135-original dizzass-completion135-route dizzass-completion135-test
+          make -f integration/thermal-completion-135.mk CC=${{ matrix.cc }} SANITIZE=1 dizzass-completion135-test
+      - name: Static analysis and unchanged production boundary
+        run: |
+          cd "$SOURCE_ROOT"
+          clang --analyze -I. -std=c11 -DVN135_SENSOR_MONITOR_135 -DVN135_THERMAL_READER_135 -DVN135_BACKEND_SHUTDOWN_135 -Xanalyzer -analyzer-output=text src/backend/base.c src/backend/temp.c libbitmain/src/aml/i2c.c reconstruction/support/sensor_cleanup_135.c
+          test "$(git hash-object Makefile.am)" = 17d2fbde26b5e8cb614b61908b84d5937af48325
+          test "$(git hash-object cgminer.c)" = 54739e4139294c526af0c73aa9a02ba9762ca4f2
+          printf '%s\n' 'Offline recovered bodies only; no physical sensors, real threads, native T21 driver or hardware stop proof.'

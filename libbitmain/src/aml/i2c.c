@@ -107,3 +107,69 @@ struct vn135_i2c_registration *vn135_aml_hw_bus_get_135(
     (void)index;
     return &s->registration;
 }
+
+/* Original 0x11a12c read and 0x119d70 write: Linux I2C_SMBUS, not block length.
+ * Existing raw block transfer/reopen functions above are intentionally unchanged. */
+#include "integration/aml_smbus_135.h"
+static void smbus_log(const struct vn135_smbus_ops *o, void *p,
+    uint32_t line, int64_t first, uint32_t second, const char *text)
+{
+    if (o->log) o->log(p, line, first, second, text);
+}
+static int smbus_transfer_135(struct vn135_i2c_iface *iface, uint32_t address,
+    uint32_t command, void *data, uint32_t protocol, uint8_t reading,
+    const struct vn135_smbus_ops *o, void *p)
+{
+    unsigned attempt;
+    uint32_t bitmap[32];
+    struct vn135_smbus_timeout timeout;
+    int32_t rc;
+    (void)o->lock(p, iface);
+    for (attempt = 0; attempt < 5; ++attempt) {
+        if (o->set_address(p, iface->fd, address) < 0) {
+            smbus_log(o, p, reading ? 155 : 94, address, 0, NULL);
+            (void)o->sleep_us(p, 20000);
+            continue;
+        }
+        memset(bitmap, 0, sizeof(bitmap));
+        bitmap[(uint32_t)iface->fd >> 5] = 1u << ((uint32_t)iface->fd & 31u);
+        timeout.seconds = 0;
+        timeout.microseconds = 50000;
+        rc = o->select_ready(p, iface->fd + 1, reading, bitmap, &timeout);
+        if (rc == 0) {
+            smbus_log(o, p, reading ? 176 : 115,
+                      timeout.microseconds / 1000, 0, NULL);
+            (void)o->sleep_us(p, 100000);
+        } else if (rc == -1) {
+            int32_t error = o->get_errno(p);
+            const char *text = o->error_text(p, error);
+            smbus_log(o, p, reading ? 172 : 111, 0, 0, text);
+            (void)o->unlock(p, iface);
+            return -1;
+        } else if (bitmap[(uint32_t)iface->fd >> 5] &
+                   (1u << ((uint32_t)iface->fd & 31u))) {
+            rc = o->transfer(p, iface->fd, reading, (uint8_t)command, protocol, data);
+            if (!rc) {
+                (void)o->unlock(p, iface);
+                return 0;
+            }
+            ++attempt; /* source pre-sleep increment, IN ADDITION to loop increment */
+            (void)o->sleep_us(p, 20000);
+        }
+    }
+    smbus_log(o, p, reading ? 195 : 134, 5, address, NULL);
+    (void)o->unlock(p, iface);
+    return -1;
+}
+int vn135_aml_smbus_read_135(struct vn135_i2c_iface *iface, uint32_t address,
+    uint32_t command, void *data, uint32_t protocol,
+    const struct vn135_smbus_ops *o, void *p)
+{
+    return smbus_transfer_135(iface, address, command, data, protocol, 1, o, p);
+}
+int vn135_aml_smbus_write_135(struct vn135_i2c_iface *iface, uint32_t address,
+    uint32_t command, void *data, uint32_t protocol,
+    const struct vn135_smbus_ops *o, void *p)
+{
+    return smbus_transfer_135(iface, address, command, data, protocol, 0, o, p);
+}

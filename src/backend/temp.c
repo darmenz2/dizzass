@@ -149,3 +149,136 @@ int vn135_temperature_read_direct_135(struct vn135_temperature_sensor *s,uint32_
     (void)vn135_temperature_accept(s,t,p,value,value);
     return 0;
 }
+
+/* Whole synchronous reader. Opt-in preserves earlier standalone targets. */
+#ifdef VN135_THERMAL_READER_135
+#include "integration/thermal_reader_135.h"
+static int reader_failed(struct vn135_temperature_sensor *s,
+    const struct vn135_temperature_ops *o, void *p)
+{
+    int32_t old;
+    (void)o->lock(p,s);old=s->failures;s->failures=add32(old,1);
+    if(old>=2)s->state=3;
+    (void)o->unlock(p,s);(void)o->unlock(p,NULL);return -1;
+}
+static int32_t reader_byte(uint8_t v)
+{ return v<128?(int32_t)v:(int32_t)v-256; }
+static int32_t reader_mux_write(const struct vn135_reader_ops *o,void *p,
+                               uint32_t address,uint8_t *command)
+{
+    if(o->platform_kind(p))
+        return o->transfer(p,0xfe518,address&255u,0,*command,NULL,1);
+    return o->transfer(p,0xfe538,address&255u,0,0,command,1);
+}
+static int32_t reader_mux_read(const struct vn135_reader_ops *o,void *p,
+    uint32_t address,uint32_t reg,uint8_t *out,uint32_t alternate_length)
+{
+    if(o->platform_kind(p))
+        return o->transfer(p,0xfe440,address&255u,0,reg,out,alternate_length);
+    return o->transfer(p,0xfe528,address&255u,1,reg,out,1);
+}
+int vn135_temperature_read_135(struct vn135_temperature_sensor *s,
+    const struct vn135_reader_context *c,const struct vn135_reader_ops *r,
+    void *p,struct vn135_reader_scratch *scratch)
+{
+    const struct vn135_temperature_ops *o=r->temperature;
+    static const char special_model[]="u3s21exph";
+    uint8_t raw[4]={0,0,0,0},*b=scratch->bytes;
+    int32_t rc=0,local,second,offset;
+    unsigned attempt,config_try,shift;
+    if(s->state==3)return -1;
+    if(s->remote_enabled && s->access_kind!=4){
+        if(o->log)o->log(p,401,0,0,0);
+        s->state=3;return -1;
+    }
+    (void)o->lock(p,NULL);
+    switch(s->access_kind){
+    case 0:
+        rc=r->transfer(p,0xfaeec,(c->chain_index&7u)|32u,s->address,0,raw,2);
+        if(rc){if(o->log)o->log(p,425,c->chain_index+1u,0,0);
+            return reader_failed(s,o,p);}
+        break;
+    case 1:
+        if(s->state-1u<=1u && o->read_register(p,s,0,raw))
+            return reader_failed(s,o,p);
+        break;
+    case 3:
+        if(r->platform_kind(p))
+            rc=r->transfer(p,0xfe440,(c->chain_index+s->address)&255u,0,0,raw,3);
+        else rc=r->transfer(p,0xfe528,(c->chain_index+s->address)&255u,0,0,raw,3);
+        if(rc)return reader_failed(s,o,p);
+        break;
+    case 4:
+        shift=s->index&255u;
+        for(attempt=0;attempt<3;++attempt){
+            if(s->state-1u>1u)break;
+            b[1]=0;
+            rc=reader_mux_write(r,p,c->mux_address,b+1);
+            (void)o->delay_ms(p,20);
+            if(rc)continue;
+            b[2]=(uint8_t)(shift<32?(1u<<shift):0);
+            if(reader_mux_write(r,p,c->mux_address,b+2))goto retry;
+            b[3]=0;
+            for(config_try=0;config_try<3;++config_try){
+                b[4]=0;
+                if(r->platform_kind(p))
+                    rc=r->transfer(p,0xfe518,s->address&255u,0,9,b+4,2);
+                else rc=r->transfer(p,0xfe538,s->address&255u,1,9,b+4,1);
+                (void)o->delay_ms(p,20);
+                if(rc)continue;
+                rc=reader_mux_read(r,p,s->address,3,b+3,2);
+                if(!rc && !(b[3]&4u))break;
+                (void)o->delay_ms(p,20);
+            }
+            if(config_try==3)goto retry;
+            s->extended=0;
+            (void)o->delay_ms(p,150);(void)o->delay_ms(p,20);
+            (void)o->delay_ms(p,20);
+            if(reader_mux_read(r,p,s->address,0,b+5,3))goto retry;
+            (void)o->delay_ms(p,65);raw[0]=b[5];
+            if(s->remote_enabled && (c->backend_active ||
+               (c->power_marked_on && !r->compare_model(p,c->model_name,special_model)))){
+                (void)o->delay_ms(p,20);
+                if(reader_mux_read(r,p,s->address,1,b+7,3))goto retry;
+                (void)o->delay_ms(p,65);raw[1]=b[7];
+            }
+            (void)o->delay_ms(p,20);b[0]=0;
+            if(reader_mux_write(r,p,c->mux_address,b))goto retry;
+            break;
+retry:
+            (void)o->delay_ms(p,20);
+        }
+        if(attempt==3)return reader_failed(s,o,p);
+        break;
+    default:
+        report(o,p,474,c->chain_index,s,0);
+        (void)o->unlock(p,NULL);return -1;
+    }
+    (void)o->unlock(p,NULL);
+    if(s->access_kind==1 || s->extended)raw[0]=(uint8_t)(raw[0]-64u);
+    local=reader_byte(raw[0]);second=local;
+    if(s->remote_enabled && c->power_marked_on &&
+       !r->compare_model(p,c->model_name,special_model)){
+        double result;
+        offset=0;(void)r->model_offset(p,c->chain_index+1u,s->index,&offset);
+        /* Original VNMLS: rounded product + negated previous accumulator.
+         * Finite domain, separate multiply/add; no FMA. */
+        result=(double)reader_byte(raw[1])*0x1.2666666666666p+0;
+        result=-(double)offset+result;
+        if(result>=(double)INT32_MAX)second=INT32_MAX;
+        else if(result<=(double)INT32_MIN)second=INT32_MIN;
+        else second=(int32_t)result;
+    }
+    (void)vn135_temperature_accept(s,o,p,local,second);return 0;
+}
+int vn135_temperature_initialize_direct_135(struct vn135_temperature_sensor *s,
+    const struct vn135_reader_context *c,const struct vn135_reader_ops *r,
+    void *p,struct vn135_reader_scratch *scratch)
+{
+    if(s->access_kind!=0 && s->access_kind!=3 &&
+       !(s->access_kind==4 && !s->skip_initial_read))return -1;
+    s->state=1;s->started_at=r->temperature->now(p);
+    if(vn135_temperature_read_135(s,c,r,p,scratch)){s->state=3;return -1;}
+    s->state=2;return 0;
+}
+#endif
