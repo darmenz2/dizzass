@@ -6,31 +6,104 @@ on:
 permissions:
   contents: read
 jobs:
-  snapshot:
+  validate:
     if: github.repository == 'darmenz2/dizzass'
     runs-on: ubuntu-22.04
-    timeout-minutes: 5
+    timeout-minutes: 10
+    permissions:
+      contents: write
     steps:
-      - name: Archive exact source without executing repository code
+      - name: Fetch exact published base without persistent credentials
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
-          root="$RUNNER_TEMP/monitor-handlers-review"
+          root="$RUNNER_TEMP/monitor-handlers-source"
           mkdir "$root"
           cd "$root"
           git init -q
           git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
           auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
           git -c "http.extraheader=AUTHORIZATION: basic $auth" fetch --depth=1 --no-tags origin f5fad5d98aea5a59d859d62b94fd72696b109cbd
-          test "$(git rev-parse FETCH_HEAD^{tree})" = 7e8e23d7a18c277c0a53a8fc8bf792f692b12f9b
-          git archive --format=tar.gz --output="$RUNNER_TEMP/dizzass-monitor-published.tar.gz" FETCH_HEAD
-          sha256sum "$RUNNER_TEMP/dizzass-monitor-published.tar.gz"
-      - name: Preserve private source snapshot
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: dizzass-monitor-published
-          path: ${{ runner.temp }}/dizzass-monitor-published.tar.gz
-          if-no-files-found: error
-          retention-days: 2
+          git checkout -q --detach FETCH_HEAD
+          test "$(git rev-parse HEAD^{tree})" = 7e8e23d7a18c277c0a53a8fc8bf792f692b12f9b
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Retrieve pinned private patch objects and verify complete bytes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import base64, gzip, hashlib, json, os, pathlib, urllib.request
+          ids = [
+              '5a6e96b40579c44ea704618f3d60cc44fd23c043',
+              '5a330144b06550b5bd6c1898a79f447d993d5aef',
+              'e73d8719ad47768257d71ddb1c226f318adc9bd3',
+              '19442745a3947a4b3bac461a0e4bcc6e709c824f',
+          ]
+          expected = [ids[0], '93c0d98566c5a7153dc306bbd8f8d227e68a3fd3', ids[2], ids[3]]
+          def blob_sha(data):
+              return hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest()
+          chunks = []
+          for i, sha in enumerate(ids):
+              request = urllib.request.Request(
+                  'https://api.github.com/repos/darmenz2/dizzass/git/blobs/' + sha,
+                  headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'],
+                           'Accept': 'application/vnd.github+json',
+                           'X-GitHub-Api-Version': '2022-11-28'})
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  obj = json.load(response)
+              assert obj['encoding'] == 'base64' and obj['sha'] == sha
+              data = base64.b64decode(obj['content'])
+              assert blob_sha(data) == sha
+              if i == 1:
+                  # Correct only the transport transcription; source and tree pins stay exact.
+                  encoded = base64.b64encode(data).decode('ascii')
+                  assert encoded.count('FEnW66jW') == 1
+                  data = base64.b64decode(encoded.replace('FEnW66jW', 'FEnW6jW') + 'T', validate=True)
+              assert blob_sha(data) == expected[i]
+              chunks.append(data)
+          compressed = b''.join(chunks)
+          assert hashlib.sha256(compressed).hexdigest() == 'f818840319be6a0ed9a6813053516c22fb99178ac933f314bcc4e9327c2ca71e'
+          patch = gzip.decompress(compressed)
+          assert hashlib.sha256(patch).hexdigest() == '521abc05854980ddf69ed3906a18b34170065db0e98e064f43bb63b9a97448a6'
+          pathlib.Path(os.environ['RUNNER_TEMP'], 'monitor-handlers-135.patch').write_bytes(patch)
+          print('PATCH_BYTES_VERIFIED', len(patch))
+          PY
+      - name: Apply exact source candidate without workflow writes
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          git apply --check "$RUNNER_TEMP/monitor-handlers-135.patch"
+          git apply --index --exclude='.github/workflows/*' "$RUNNER_TEMP/monitor-handlers-135.patch"
+          git diff --cached --check
+          test "$(git write-tree)" = 99676e3cfb8cc3fe46f442171e04e2d5e92540ee
+          python3 integration/tests/check_monitor_handlers_evidence_135.py
+      - name: Original comparisons native composition sanitizers and static analysis
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          for cc in gcc clang; do
+            make -f integration/monitor-handlers-135.mk CC="$cc" HANDLERS135_DIR="build/review-$cc" dizzass-handlers135-original dizzass-handlers135-test
+            make -f integration/monitor-handlers-135.mk CC="$cc" SANITIZE=1 HANDLERS135_DIR="build/review-$cc-san" dizzass-handlers135-test
+          done
+          clang --analyze -I. -std=c11 -DVN135_GENERAL_MONITOR_135 -DVN135_MONITOR_HANDLERS_135 -Xanalyzer -analyzer-output=text src/backend/base.c
+      - name: Publish isolated verified source candidate without updating working refs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          git diff --exit-code
+          test "$(git write-tree)" = 99676e3cfb8cc3fe46f442171e04e2d5e92540ee
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Recover four original internal monitor handlers and offline evidence'
+          test "$(git rev-parse HEAD^)" = f5fad5d98aea5a59d859d62b94fd72696b109cbd
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c "http.extraheader=AUTHORIZATION: basic $auth" push origin HEAD:refs/heads/repair/monitor-handlers-sources-135-20260926
+          printf 'CANDIDATE_COMMIT=%s\n' "$(git rev-parse HEAD)"
+          printf 'CANDIDATE_TREE=%s\n' "$(git rev-parse HEAD^{tree})"
