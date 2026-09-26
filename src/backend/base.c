@@ -1055,3 +1055,103 @@ int vn135_monitor_handler_dispatch_135(struct vn135_monitor_handlers *s,
     }
 }
 #endif
+
+/* Original stop/retry decision 5e92c and retry-count writer 5cea8. */
+#ifdef VN135_STOP_POLICY_135
+#include "integration/stop_policy_135.h"
+#include <stdlib.h>
+#include <string.h>
+
+static void stop_policy_log(const struct vn135_stop_policy_ops *o, void *p,
+    uint32_t line, uint32_t level, uint32_t a, uint32_t b, const char *detail)
+{
+    if (o->log) o->log(p, line, level, a, b, detail);
+}
+
+void vn135_restart_count_store_135(const struct vn135_restart_count_ops *o,
+                                  void *p, int32_t value)
+{
+    void *stream = o->open(p, "/tmp/restart_count", "w");
+    if (stream) {
+        (void)o->print(p, stream, "%d", value);
+        (void)o->close(p, stream);
+    }
+}
+
+static enum vn135_stop_flow stop_policy_exit(const struct vn135_stop_policy_ops *o,
+                                            void *p)
+{
+    o->before_process_exit(p);
+    o->request_process_exit(p, 0);
+    return VN135_STOP_PROCESS_EXIT;
+}
+
+enum vn135_stop_flow vn135_stop_policy_135(struct vn135_stop_policy *s,
+    const struct vn135_stop_policy_ops *o, void *p)
+{
+    uint32_t saved_event = o->event_code(p);
+    char description[512] = {0};
+    struct vn135_handler_profile *profile;
+    void *stream;
+    int32_t attempts = 0, limit;
+
+    if (s->handlers->minimum_enabled_b0 && s->raise_failed_c8 && s->word_30 == 1) {
+        profile = o->profile(p, 0x82ee8, s->text_3c);
+        if (profile) {
+            const char *key = profile->key;
+            const char *top = *s->top_preset_90;
+            int32_t value = (int32_t)atoi(key);
+            int32_t ceiling = (int32_t)atoi(top);
+            if (value >= ceiling) {
+                (void)o->profile_action(p, 0x4dedc, key);
+                (void)o->describe_event(p, description, sizeof(description));
+                stop_policy_log(o, p, 2113, 2, 0, 0, description);
+                stop_policy_log(o, p, 2114, 3, 0, 0, profile->label);
+            }
+        }
+    }
+
+    stream = o->counter->open(p, "/tmp/restart_count", "rb");
+    if (stream) {
+        (void)o->counter->scan(p, stream, "%d", &attempts);
+        (void)o->counter->close(p, stream);
+    }
+    limit = s->retry_limit_88;
+    if (limit >= 1 && attempts < limit) {
+        uint32_t next = (uint32_t)attempts + 1u;
+        (void)o->describe_event(p, description, sizeof(description));
+        /* The limit is read again AFTER the description callback. The branch
+         * has already been chosen; mutations do not re-evaluate that choice. */
+        stop_policy_log(o, p, 2123, 3, next, (uint32_t)s->retry_limit_88, description);
+        vn135_restart_count_store_135(o->counter, p, bits_signed(next));
+        return stop_policy_exit(o, p);
+    }
+
+    if (limit != 0 && s->retune_104 && strcmp(*s->top_preset_90, "disabled") != 0) {
+        uint32_t probe[5] = {0};
+        profile = o->profile(p, 0x82d68, NULL);
+        if (profile) {
+            int32_t rc = o->probe_profile(p, profile->key, probe);
+            /* Probe runs before checking the event captured at ENTRY, even
+             * when a different event now occupies the backend event record. */
+            if (saved_event == 2008u && rc == 0) {
+                stop_policy_log(o, p, 2139, 1, 0, 0, profile->label);
+                (void)o->profile_action(p, 0x94090, profile->key);
+                return stop_policy_exit(o, p);
+            }
+        }
+    }
+
+    o->shutdown(p);
+    return VN135_STOP_RETURNED;
+}
+
+int vn135_stop_policy_dispatch_135(struct vn135_stop_policy *s,
+    const struct vn135_stop_policy_ops *o, void *p, uint32_t entry,
+    enum vn135_stop_flow *flow)
+{
+    if (entry != 0x5e92c) return 0;
+    *flow = vn135_stop_policy_135(s, o, p);
+    return 1;
+}
+#endif /* VN135_STOP_POLICY_135 */
