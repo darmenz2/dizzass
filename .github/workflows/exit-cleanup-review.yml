@@ -1,0 +1,36 @@
+name: Exit cleanup isolated review
+on:
+  push:
+    branches: [repair/exit-cleanup-135-20260926]
+    paths: [.github/workflows/exit-cleanup-review.yml]
+permissions:
+  contents: read
+jobs:
+  snapshot:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    steps:
+      - name: Archive exact base without executing repository code
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/exit-cleanup-review"
+          mkdir "$root"
+          cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c "http.extraheader=AUTHORIZATION: basic $auth" fetch --depth=1 --no-tags origin 890a3ce41208024e8dad494b88dbada00c0f18f4
+          test "$(git rev-parse FETCH_HEAD^{tree})" = 8bb98a8e89f47e2b5a5d5198b91e2a0301af59c2
+          git archive --format=tar.gz --output="$RUNNER_TEMP/dizzass-stop-policy-published.tar.gz" FETCH_HEAD
+          sha256sum "$RUNNER_TEMP/dizzass-stop-policy-published.tar.gz"
+      - name: Preserve private source snapshot
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: dizzass-stop-policy-published
+          path: ${{ runner.temp }}/dizzass-stop-policy-published.tar.gz
+          if-no-files-found: error
+          retention-days: 2
