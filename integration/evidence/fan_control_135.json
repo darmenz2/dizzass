@@ -1,0 +1,219 @@
+{
+  "base_commit": "9f73e0c7f072423f96240a6e7ce4b61addac9bbf",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "entries": {
+    "fan_records_initialize": "0xb4c58",
+    "controller_initialize": "0xf8568",
+    "automatic_mode": "0xf86a8",
+    "manual_mode": "0xf8a30",
+    "immersion_mode": "0xf8b60",
+    "emergency_mode": "0xf8c70",
+    "integral_gap": "0xf8df0",
+    "controller_update": "0xf8e78",
+    "get_mode": "0xf910c",
+    "set_target": "0xf911c",
+    "get_target": "0xf91f4",
+    "controller_shutdown": "0xf9278",
+    "pid_initialize": "0xfb530",
+    "pid_gains": "0xfb584",
+    "pid_limits": "0xfb590",
+    "pid_target": "0xfb5b8",
+    "pid_get_target": "0xfb5c0",
+    "pid_direction": "0xfb5c8",
+    "pid_input": "0xfb5d0",
+    "pid_seed": "0xfb638",
+    "pid_step": "0xfb6d0",
+    "pid_output": "0xfb928"
+  },
+  "ranges": [
+    {
+      "start": "0xf8568",
+      "end_exclusive": "0xf8654",
+      "sha256": "8cf3ae9cb84c9dcbb51533fbe18ef1bba1a36bd9e87dd4710152a607ff23f330"
+    },
+    {
+      "start": "0xf86a8",
+      "end_exclusive": "0xf89a0",
+      "sha256": "536f8ebd44d9325599ad036f4e6fd1e045e57738fcfb58b8e702ff3606281586"
+    },
+    {
+      "start": "0xf8a30",
+      "end_exclusive": "0xf8b28",
+      "sha256": "5f9c0fbbdcad3ffaf1eda11991c8198bd85dc04f2bb47c8d489e7f955ea4ba16"
+    },
+    {
+      "start": "0xf8b60",
+      "end_exclusive": "0xf8c3c",
+      "sha256": "5d84c98a3002787ef50fb0e37cc5a997889bf2a8871ab99f194663a8057c9925"
+    },
+    {
+      "start": "0xf8c70",
+      "end_exclusive": "0xf8db8",
+      "sha256": "0a2d7583ddb28f74e3ef4ea07eed531395d8482c4a12ef12e450594165e422a8"
+    },
+    {
+      "start": "0xf8df0",
+      "end_exclusive": "0xf8e68",
+      "sha256": "f59520883c2da5370f8372edbf05dca58679af48368b3ecddc863c932386bd0d"
+    },
+    {
+      "start": "0xf8e78",
+      "end_exclusive": "0xf90b8",
+      "sha256": "9d47d0e0f8e79f2412a196338f527faae4cc5f37749bf54f44e530600bfcd098"
+    },
+    {
+      "start": "0xf910c",
+      "end_exclusive": "0xf91e0",
+      "sha256": "1e203fa0577b9805db508510a7a3941136f2f165846451986b8c341299ef1fc6"
+    },
+    {
+      "start": "0xf91f4",
+      "end_exclusive": "0xf9268",
+      "sha256": "ea7416f7c921094bc24e644d912bc54442d3bff70ec3af65f9ff60a662472c2f"
+    },
+    {
+      "start": "0xf9278",
+      "end_exclusive": "0xf92e0",
+      "sha256": "2d75b9f18f210f229bf4fbeef44d148e6c6c2560bd067f85a2f36cb5e301ddb0"
+    },
+    {
+      "start": "0xf92e8",
+      "end_exclusive": "0xf9674",
+      "sha256": "48c5e7a6281d7a6b5a43bc28f179a2f4b231d84d1ff498eb8486f0b212701b89"
+    },
+    {
+      "start": "0xfb530",
+      "end_exclusive": "0xfb5ac",
+      "sha256": "e3a5b3b0f58fdca0d36969a01b8c30169e16b3901a8b6f642f1b9706e0a2b0c3"
+    },
+    {
+      "start": "0xfb5b8",
+      "end_exclusive": "0xfb630",
+      "sha256": "828120c966c54881a378501ba88daa67e26fcb4e49e79b8a9ff4aaf953f5c843"
+    },
+    {
+      "start": "0xfb638",
+      "end_exclusive": "0xfb6c0",
+      "sha256": "72e814717e8193f6a9e89d2ae8031570ae41ff3e92e7bcc89d749a9b80bdd0e2"
+    },
+    {
+      "start": "0xfb6d0",
+      "end_exclusive": "0xfb910",
+      "sha256": "bf8fc28534ed15e6b6f6f745235d42f7384767007c24faf2e93884a10afb13b9"
+    },
+    {
+      "start": "0xfb928",
+      "end_exclusive": "0xfb98c",
+      "sha256": "96f6e1c40b7c3c4fb09618502c506e85e8bd9fc448b9225cf06e189e41826823"
+    },
+    {
+      "start": "0x596778",
+      "end_exclusive": "0x596818",
+      "sha256": "126ff72061f7a4335619e92069ccf927eddda15841d66bee5ba9c43776fb0898"
+    },
+    {
+      "start": "0xb4c58",
+      "end_exclusive": "0xb4dc8",
+      "sha256": "00eedcb17055033b23a70b46a5269f732b0c51234c9740999d05bdd09e9fadb4"
+    },
+    {
+      "start": "0xa71dc",
+      "end_exclusive": "0xa71e8",
+      "sha256": "7cde20106a077963e93ad4702b0946a4f870b63d3dafb6c817ec32e84cb1c553"
+    },
+    {
+      "start": "0xf8654",
+      "end_exclusive": "0xf86a8",
+      "sha256": "07932b3dcdac8db7dc004ecb5d072b54d6d55300a56303cf8858cd40eb1dfeaf"
+    },
+    {
+      "start": "0xf89a0",
+      "end_exclusive": "0xf8a30",
+      "sha256": "5f5211dbf8be9aff919e959e2939fa06c86cd01f2f419a6b361510815a07492b"
+    },
+    {
+      "start": "0xf8b28",
+      "end_exclusive": "0xf8b60",
+      "sha256": "5956d9bfa5aa849f43d1579b57bf68e083e1cd456056c10e07a4718899d71433"
+    },
+    {
+      "start": "0xf8c3c",
+      "end_exclusive": "0xf8c70",
+      "sha256": "e7c4b367d111434f28f8eb10601a87e1484ad3121c18a1d02e5c06a7db40f877"
+    },
+    {
+      "start": "0xf8db8",
+      "end_exclusive": "0xf8df0",
+      "sha256": "460962d3ed7566af7cf24fba69b269e5156760cc5b13bde62ccd2f04a7cd6f86"
+    },
+    {
+      "start": "0xf8e68",
+      "end_exclusive": "0xf8e78",
+      "sha256": "67aa1ca3db394d063f273e49e300fb54aab63540abd681320cd8c9b738d83e34"
+    },
+    {
+      "start": "0xf90b8",
+      "end_exclusive": "0xf910c",
+      "sha256": "5a86ebc7c1450738fc127e4db7e2528ee13d6fca2aa9d8534a3f6cc7500527a8"
+    },
+    {
+      "start": "0xf91e0",
+      "end_exclusive": "0xf91f4",
+      "sha256": "518764788c55a3343c26848a8e23c8d6f95d3a710d44285ab84256b4c74145e6"
+    },
+    {
+      "start": "0xf9268",
+      "end_exclusive": "0xf9278",
+      "sha256": "a9a07a8f2bea6a615e6980f914dbb956e38a7a8f5697dd6b714f6d659c3e6fa3"
+    },
+    {
+      "start": "0xf92e0",
+      "end_exclusive": "0xf92e8",
+      "sha256": "729717f250729ae4334f7b58aa94f730ff99a68782ff393aaf62156025464c5f"
+    },
+    {
+      "start": "0xf9674",
+      "end_exclusive": "0xf96a0",
+      "sha256": "dd04a7dc19d57df44abdec51eae296c893048660c8a1189108d85fa0968f1e5e"
+    },
+    {
+      "start": "0xfb5ac",
+      "end_exclusive": "0xfb5b8",
+      "sha256": "5367235cad9493be7940c1b5345d8e9fcf81042ab25ffdf342f63f67cf5b5133"
+    },
+    {
+      "start": "0xfb630",
+      "end_exclusive": "0xfb638",
+      "sha256": "05c81db5a3fdc4faa48e843a6abee2284c8ee8446ca930d33f1b3467ff8eaf92"
+    },
+    {
+      "start": "0xfb6c0",
+      "end_exclusive": "0xfb6d0",
+      "sha256": "4b43bf6af36a55ad5f939c8981df0e553e30169c0cfbe2bcd7004bec2c8b48fc"
+    },
+    {
+      "start": "0xfb910",
+      "end_exclusive": "0xfb928",
+      "sha256": "56920fc42c601c06e77e20efaa9286aba8815cd274d5c9d82af6310ff0603c1e"
+    },
+    {
+      "start": "0xfb98c",
+      "end_exclusive": "0xfb994",
+      "sha256": "817cab593fc23de9757c68a9bd5f6e02ff035598fe694a569df160c21187f4d1"
+    },
+    {
+      "start": "0xb4dc8",
+      "end_exclusive": "0xb4dd8",
+      "sha256": "3565881e0f93fe436fe16da59e330952733053de96b1fd6ae27cd3556f04a41c"
+    }
+  ],
+  "confirmed_path": "/tmp/build/libbitmain/src/fan_ctrl.c",
+  "path_evidence": {
+    "address": "0x5ecde9",
+    "length": 37,
+    "xor": 118,
+    "raw_sha256": "27d90b5f5dd7677873f02814da5ca17b05fd9e77ac0e397e284ab811fb49f18d"
+  },
+  "helper_paths": "Original paths of PID and fan-record initializer not established; reconstruction/support paths are integration names.",
+  "scope": "Finite nonexceptional binary64, initialized valid objects, scripted OS/hardware, no physical device or production linkage."
+}
