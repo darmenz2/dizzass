@@ -1,0 +1,111 @@
+name: Frequency fall isolated review
+on:
+  push:
+    branches: [repair/frequency-fall-135-20260926]
+    paths: [.github/workflows/frequency-fall-review.yml]
+permissions:
+  contents: read
+jobs:
+  validate:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Fetch exact published base without persistent credentials
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/frequency-fall-source"
+          mkdir "$root"
+          cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c "http.extraheader=AUTHORIZATION: basic $auth" fetch --depth=1 --no-tags origin ed54e2d033965e944361d14a588dab70e21e539b
+          git checkout -q --detach FETCH_HEAD
+          test "$(git rev-parse HEAD^{tree})" = 3c41912a14ee3dc8ba941fd61946e4b460b27070
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Retrieve and verify exact private patch objects
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import base64, gzip, hashlib, json, os, pathlib, urllib.request
+          ids = [
+              '93591c29eea0fbaba8a3d3c2a44d6eaea63ecb42',
+              'ca24326a13b0dd6e5cec0533508b135819a45612',
+              '3e5301666ebd3dcf6f3f49778db2d5fc4e02858f',
+              'a9dc533a72b2dda074bc49a754d5318a9d9894eb',
+              '00cff8932612ee540b288767a9b631e66c0fd25a',
+              'fdbcc6b448ff7ee4ad7001985eb36d42549a73f7',
+              '63fbf363ebc539ff8e00de8b74f3bf14e835555b',
+              '170791eff270fbadd116a226c2e7a1779b77b28a',
+              'fa7be0d686581b9a86c1be2304b6033ccca3f6b0',
+              'ef7fb08b4220af781dc8b3506e06a369659ea555',
+              '064836f7ac89ffa539a49b343641757c1a254f47',
+              'e9691f46566af76bd18cb98d8064d10fe6ba8021',
+              '6c71c71144ad7bfbed4f96d70530223517ce2576',
+          ]
+          chunks = []
+          for sha in ids:
+              request = urllib.request.Request(
+                  'https://api.github.com/repos/darmenz2/dizzass/git/blobs/' + sha,
+                  headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'],
+                           'Accept': 'application/vnd.github+json',
+                           'X-GitHub-Api-Version': '2022-11-28'})
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  obj = json.load(response)
+              assert obj['encoding'] == 'base64' and obj['sha'] == sha
+              data = base64.b64decode(obj['content'])
+              assert hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest() == sha
+              chunks.append(data)
+          compressed = b''.join(chunks)
+          assert len(compressed) == 23165
+          assert hashlib.sha256(compressed).hexdigest() == 'b7557eb1072e43fc45ba0c5f843791709e83b548d2fa694026a69305bf625594'
+          patch = gzip.decompress(compressed)
+          assert len(patch) == 73367
+          assert hashlib.sha256(patch).hexdigest() == 'a21b438513db54613bb23fc08575c3a7557c389befdec5393d736b0a89e785bb'
+          pathlib.Path(os.environ['RUNNER_TEMP'], 'frequency-fall-135.patch').write_bytes(patch)
+          print('PATCH_BYTES_VERIFIED', len(patch))
+          PY
+      - name: Apply exact source candidate without workflow writes
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          git apply --check "$RUNNER_TEMP/frequency-fall-135.patch"
+          git apply --index --exclude='.github/workflows/*' "$RUNNER_TEMP/frequency-fall-135.patch"
+          git diff --cached --check
+          test "$(git write-tree)" = 340bee97260613c873a70dd751b66a1e2cdd812e
+          python3 integration/tests/check_frequency_fall_evidence_135.py
+      - name: Original dispatch native composition negative controls and sanitizers
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          for cc in gcc clang; do
+            make -f integration/frequency-fall-135.mk CC="$cc" FALL135_DIR="build/review-$cc" dizzass-fall135-original dizzass-fall135-test dizzass-fall135-negative
+            make -f integration/frequency-fall-135.mk CC="$cc" SANITIZE=1 FALL135_DIR="build/review-$cc-san" dizzass-fall135-test
+          done
+          clang --analyze -I. -std=c11 -DVN135_GENERAL_MONITOR_135 -DVN135_FREQUENCY_FALL_135 -Xanalyzer -analyzer-output=text src/backend/base.c
+      - name: Publish isolated verified source candidate without updating working refs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          git diff --exit-code
+          test "$(git write-tree)" = 340bee97260613c873a70dd751b66a1e2cdd812e
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Recover original 65b3c per-chain frequency-fall dispatcher'
+          test "$(git rev-parse HEAD^)" = ed54e2d033965e944361d14a588dab70e21e539b
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c "http.extraheader=AUTHORIZATION: basic $auth" push origin HEAD:refs/heads/repair/frequency-fall-sources-135-20260926
+          printf 'CANDIDATE_COMMIT=%s\n' "$(git rev-parse HEAD)"
+          printf 'CANDIDATE_TREE=%s\n' "$(git rev-parse HEAD^{tree})"
