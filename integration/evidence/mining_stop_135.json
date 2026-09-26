@@ -1,0 +1,151 @@
+{
+  "reference": "reference/cgminer.vendor.elf",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "base_commit": "146ee16d0b285b429b1f14b1bcca710d2e3eacb0",
+  "base_tree": "8a8c61630ce4eab4b0e2cfb9f3dd3885b2d94750",
+  "base_source": {
+    "path": "src/backend/base.c",
+    "length": 51657,
+    "git_blob": "0432ee1ccd32f0ff9e4918daf33088cd356fb1b7"
+  },
+  "source_entry": "0x663cc",
+  "source_path": "/tmp/build/src/backend/base.c",
+  "field_offsets": {
+    "tuning": "0x1049",
+    "joinable": "0x104a",
+    "handle": "0x104c",
+    "started": "0x28",
+    "active": "0x24",
+    "byte_fd0": "0xfd0",
+    "byte_fe5": "0xfe5",
+    "warmup_done": "0x22c",
+    "sampled_power": "0x1070"
+  },
+  "worker_association": {
+    "creator": "0x4caf4",
+    "worker": "0x4cda0",
+    "name": "preset_switcher@btm",
+    "full_worker_recovered": false
+  },
+  "ranges": [
+    {
+      "name": "body_and_literal_pool",
+      "start": "0x663cc",
+      "end_exclusive": "0x66504",
+      "sha256": "5940454bd83dde6a2719a7e1fafdeefeeead7f4806aefb6cfd897bec108bb9ef"
+    },
+    {
+      "name": "creator_and_literal_pool",
+      "start": "0x4caf4",
+      "end_exclusive": "0x4cda0",
+      "sha256": "adf44a258d3a45f909a8c297607cad76664a8c0255e73007024693c74bc80628"
+    },
+    {
+      "name": "worker_prefix",
+      "start": "0x4cda0",
+      "end_exclusive": "0x4cde4",
+      "sha256": "7ae59018fb07f31e8196ee1680a38a8f7cd3a479e0288067b168041ff8623aa5"
+    },
+    {
+      "name": "name_literal",
+      "start": "0x4ce80",
+      "end_exclusive": "0x4ce84",
+      "sha256": "9d3e63228da2319c1b7c4ebf1e90db552a176615bc6578ffec940f7c5225f607"
+    },
+    {
+      "name": "name_decoder",
+      "start": "0x4d324",
+      "end_exclusive": "0x4d350",
+      "sha256": "731f39774dc525fdc80da937773ceab5d6f3180ee29e80df327121683bb469a1"
+    },
+    {
+      "name": "name_decoder_pool",
+      "start": "0x4d46c",
+      "end_exclusive": "0x4d470",
+      "sha256": "68147dca09ced1c8034cda7f06785178c009a105ac52f9473141d7dab93df7f3"
+    },
+    {
+      "name": "delay_argument_conversion",
+      "start": "0x10ed2c",
+      "end_exclusive": "0x10ee90",
+      "sha256": "bde1f6b9eefcd80f45e6dec568476e0ab03acc017385e7756c4ab3157e14b9e2"
+    }
+  ],
+  "literals": [
+    {
+      "address": "0x5e51e0",
+      "xor_key": 79,
+      "length": 7,
+      "decoded": "status",
+      "sha256": "e83b01d0bca40b1e2bab75cf09beab933247eef08096f9529d3e97c17a8df19a"
+    },
+    {
+      "address": "0x5e50be",
+      "xor_key": 245,
+      "length": 30,
+      "decoded": "/tmp/build/src/backend/base.c",
+      "sha256": "a3922dfb59ced1364db6fd1b31bc23cc40b7976764ca96a9eb96e4e5cacad4a8"
+    },
+    {
+      "address": "0x5e50e3",
+      "xor_key": 245,
+      "length": 11,
+      "decoded": "[redacted]",
+      "sha256": "6a0860124733113a7a80bc8b899850bfa881adbf8e0e2aed883a7bd72f8f74d7"
+    },
+    {
+      "address": "0x5e5537",
+      "xor_key": 101,
+      "length": 15,
+      "decoded": "Mining stopped",
+      "sha256": "4e0845239fd916174a4eca7af4f2235fa4dd2610c54b3daeb31de216cc664c2a"
+    },
+    {
+      "address": "0x5e38ad",
+      "xor_key": 176,
+      "length": 20,
+      "decoded": "preset_switcher@btm",
+      "sha256": "7175e13d20eea2b4d720e226354dcff099c8edcd99c8cdaa7a9fd3bd1de64c06"
+    }
+  ],
+  "got": [
+    {
+      "literal": "0x664ec",
+      "pc_relative_load": "0x663e0",
+      "got": "0x5de7d8",
+      "target": "0x68b964"
+    },
+    {
+      "literal": "0x664f0",
+      "pc_relative_load": "0x663f4",
+      "got": "0x5df11c",
+      "target": "0x68bad0"
+    }
+  ],
+  "unchanged_files": {
+    "src/backend/volt-ctrl.c": "610fbae01ea3371e54b6a61548eaf9d3ad187df8",
+    "src/frontend/rescue.c": "fcfa108440527bb3f683ed6e065bd4b3ece2f177",
+    "integration/backend_shutdown_135.h": "30ba5a57e9dd8f900f2f0753040945d8694cb413",
+    "integration/general_monitor_135.h": "56998462cbd559604a83f25edc1693501d050a91",
+    "integration/monitor_handlers_135.h": "593bbc343c1ff3812630e0d839cbc493f7febd83",
+    "cgminer.c": "54739e4139294c526af0c73aa9a02ba9762ca4f2",
+    "util.c": "70f7a82fa759841ff1a3687661eefcb0e1ee1dba",
+    "Makefile.am": "17d2fbde26b5e8cb614b61908b84d5937af48325",
+    "tools/arm32_subset.py": "e18a97222c1a8406fd61d5baac9763c3166f7e4b",
+    "tools/arm32_difficulty_subset.py": "94b359f6e1e8d7e2c11e22d640e36a97e7c22b37",
+    "tools/arm32_vfp_subset.py": "d1df89081dfa172ea41c84cae46e51ad099d74d8",
+    "tools/elf32.py": "57b0a77098e2125340a755e90bac194830f75203",
+    "integration/tests/test_voltage_stop_135.py": "14a2931185f98538c5b752f13baa62c17761fefb",
+    "integration/tests/test_voltage_stop_nested_135.py": "d2c6d5571bdba4a0003ba3c01f10916773dd6dba",
+    "integration/tests/test_exit_cleanup_135.py": "6f5bb620dd1568593554ea4264b94adb391696dc"
+  },
+  "boundaries": [
+    "fe218 platform dispatch",
+    "b8e54 lower cache cleanup",
+    "65b3c lower backend operation",
+    "10ed2c sleep effects",
+    "real pthread cancel and join",
+    "fa0c4 logging transport",
+    "device_drv integration, supervisor restart and electrical stop"
+  ]
+}
