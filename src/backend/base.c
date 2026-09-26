@@ -927,3 +927,131 @@ sensors_finished:
 #undef GC
 }
 #endif
+
+/* Original internal monitor handlers 60730/60a2c/60d58/5e53c. */
+#ifdef VN135_MONITOR_HANDLERS_135
+#ifndef VN135_GENERAL_MONITOR_135
+#error "Monitor handlers use the existing general-monitor field views"
+#endif
+#include "integration/monitor_handlers_135.h"
+#include <stdlib.h>
+static int32_t handler_call(const struct vn135_monitor_handler_ops *o,void *p,
+    uint32_t entry,uint32_t a,uint32_t b)
+{ return o->call(p,entry,a,b); }
+static void handler_log(const struct vn135_monitor_handler_ops *o,void *p,
+    uint32_t line,uint32_t level,uint32_t a,uint32_t b,const char *detail)
+{ if(o->log)o->log(p,line,level,a,b,detail); }
+static uint32_t handler_active_count(struct vn135_monitor_handlers *s,
+    const struct vn135_monitor_handler_ops *o,void *p)
+{
+    int32_t i,n=handler_call(o,p,VN135_H_CHAIN_COUNT,0,0);
+    uint32_t count=0;
+    for(i=0;i<n;++i)count+=(uint32_t)general_alive(&s->general->chains[i]);
+    return count;
+}
+int32_t vn135_monitor_chain_decision_135(struct vn135_monitor_handlers *s,
+    const struct vn135_monitor_handler_ops *o,void *p)
+{
+    uint32_t active=handler_active_count(s,o,p),bad=0;
+    int32_t i,n;
+    /* Counts and fields are reread in source order. A missing/present flag
+     * does not suppress the original state-3 and state-5 tests. */
+    if(!s->general->model->query_fault_87 && !s->partial_chains_105){
+        n=handler_call(o,p,VN135_H_CHAIN_COUNT,0,0);
+        for(i=0;i<n;++i)bad+=(s->general->chains[i].thermal.state==3u);
+        if(!bad){
+            n=handler_call(o,p,VN135_H_CHAIN_COUNT,0,0);
+            for(i=0;i<n;++i)bad+=(s->general->chains[i].thermal.state==5u);
+        }
+        if(bad){handler_log(o,p,445,1,0,0,NULL);return -1;}
+    }
+    if(bits_signed(active)<s->minimum_chains_f8){
+        handler_log(o,p,451,1,active,(uint32_t)s->minimum_chains_f8,NULL);
+        return -1;
+    }
+    return 0;
+}
+void vn135_monitor_check_chains_135(struct vn135_monitor_handlers *s,
+    const struct vn135_monitor_handler_ops *o,void *p)
+{
+    if(!s->general->running || !general_active_state(s->general->state))return;
+    if(vn135_monitor_chain_decision_135(s,o,p)){
+        handler_log(o,p,2167,1,0,0,NULL);
+        (void)handler_call(o,p,VN135_H_EVENT,2007,0);
+        (void)handler_call(o,p,VN135_H_STOP,0,0);
+    }
+    /* No extra gate/return after STOP. The original recounts even when its
+     * callback changes running/state, and can report a second event. */
+    if(!handler_active_count(s,o,p)){
+        handler_log(o,p,2173,1,0,0,NULL);
+        (void)handler_call(o,p,VN135_H_EVENT,2007,0);
+        (void)handler_call(o,p,VN135_H_STOP,0,0);
+    }
+}
+void vn135_monitor_finish_warmup_135(struct vn135_monitor_handlers *s,
+    const struct vn135_monitor_handler_ops *o,void *p)
+{
+    struct vn135_general_monitor *g=s->general;
+    uint32_t entry,voltage;
+    int32_t temperature,rc;
+    double now;
+    if(handler_call(o,p,VN135_H_PLATFORM,0,0)!=4 &&
+       handler_call(o,p,VN135_H_PLATFORM,0,0)!=5)goto completed;
+    now=o->now(p);
+    if(now-g->started_at>900.0 || !s->warmup_e4 || g->mode || g->state==3u)
+        goto completed;
+    if(g->state!=2u || !g->active)return;
+    if(o->collect_temperature(p,&temperature))return;
+    if(temperature<g->target_temperature || s->warmup_done_22c)return;
+    while(handler_call(o,p,VN135_H_TRYLOCK,0x1074,0))
+        (void)handler_call(o,p,VN135_H_DELAY,10,0);
+    (void)handler_call(o,p,VN135_H_CLEANUP_PUSH,0x5cf34,0);
+    entry=handler_call(o,p,VN135_H_PLATFORM,0,0)==0?0x6100cu:0x61170u;
+    voltage=s->power->word_20c;
+    rc=o->reset_cores(p,entry,0,voltage);
+    if(rc)handler_log(o,p,entry==0x6100cu?2737u:2740u,2,0,0,NULL);
+    (void)handler_call(o,p,VN135_H_CLEANUP_POP,0,0);
+    (void)handler_call(o,p,VN135_H_UNLOCK,0x1074,0);
+completed:
+    /* Failure of reset_cores does not leave this byte unset in the original. */
+    s->warmup_done_22c=1;
+}
+void vn135_monitor_lower_preset_135(struct vn135_monitor_handlers *s,
+    const struct vn135_monitor_handler_ops *o,void *p)
+{
+    const char *current;
+    struct vn135_handler_profiles *table;
+    struct vn135_handler_profile *previous=NULL;
+    int32_t i;
+    if(!s->lower_preset_95)return;
+    current=s->current_preset_fc8;
+    if(!current)return;
+    table=s->profiles;
+    for(i=table->count;i>1;){
+        --i;
+        if(!strcmp(table->entries[i].key,current)){
+            previous=&table->entries[i-1];break;
+        }
+    }
+    if(!previous)return;
+    if(s->minimum_enabled_b0){
+        const char *minimum=s->minimum_preset_b8;
+        if(!minimum || atoi(previous->key)<atoi(minimum))return;
+    }
+    handler_log(o,p,2084,3,0,0,previous->label);
+    handler_log(o,p,2065,3,0,0,previous->label);
+    (void)o->set_profile(p,"autotune-profile",previous->key);
+    handler_log(o,p,2067,3,0,0,previous->label);
+}
+int vn135_monitor_handler_dispatch_135(struct vn135_monitor_handlers *s,
+    const struct vn135_monitor_handler_ops *o,void *p,uint32_t entry,int32_t *result)
+{
+    switch(entry){
+    case 0x60730:vn135_monitor_check_chains_135(s,o,p);*result=0;return 1;
+    case 0x60a2c:*result=vn135_monitor_chain_decision_135(s,o,p);return 1;
+    case 0x60d58:vn135_monitor_finish_warmup_135(s,o,p);*result=0;return 1;
+    case 0x5e53c:vn135_monitor_lower_preset_135(s,o,p);*result=0;return 1;
+    default:return 0;
+    }
+}
+#endif

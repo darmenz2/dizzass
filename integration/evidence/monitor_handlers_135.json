@@ -1,0 +1,256 @@
+{
+  "reference": "reference/cgminer.vendor.elf",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "base_commit": "f5fad5d98aea5a59d859d62b94fd72696b109cbd",
+  "base_tree": "7e8e23d7a18c277c0a53a8fc8bf792f692b12f9b",
+  "base_source": {
+    "path": "src/backend/base.c",
+    "length": 40330,
+    "git_blob": "46b67169f56b4b6a487676948b667ff9a773a800"
+  },
+  "ranges": [
+    {
+      "name": "chain preflight and literals",
+      "start": "0x60730",
+      "end_exclusive": "0x60a2c",
+      "sha256": "a1127dd288140f8aa62aa78f00ead844d6a425ead2c162f8e06524713f743dbc"
+    },
+    {
+      "name": "chain stop decision and literals",
+      "start": "0x60a2c",
+      "end_exclusive": "0x60d58",
+      "sha256": "3ad8766f12dfd86c0608b7dd7207bda13d712c398888204efcc39db095a4c941"
+    },
+    {
+      "name": "warmup completion and literals",
+      "start": "0x60d58",
+      "end_exclusive": "0x6100c",
+      "sha256": "893929a2edd8a3dc31ff0a8cd4fd8bd049512fce5a0186777fdf155ca4ed0320"
+    },
+    {
+      "name": "previous table preset and literals",
+      "start": "0x5e53c",
+      "end_exclusive": "0x5e92c",
+      "sha256": "1d9660e1b8a99729d6dc9db7ac5ff4b131dc74f499d6a3fca0d0edb6e654a752"
+    },
+    {
+      "name": "active chain predicate and literals",
+      "start": "0x56fcc",
+      "end_exclusive": "0x57030",
+      "sha256": "bb894dbfda03d815a67c72d95c0e0fffef2c3d3cb39182e50ca7ab43954e3e74"
+    },
+    {
+      "name": "state-3 predicate and literals",
+      "start": "0x57030",
+      "end_exclusive": "0x5708c",
+      "sha256": "818cbcd11f9d0389dce33e1770ce41f4a6feb048ee342986835788ac2e5ae728"
+    },
+    {
+      "name": "board descriptor accessor",
+      "start": "0xa720c",
+      "end_exclusive": "0xa7218",
+      "sha256": "75cf4ac24b47097c94faca34d348431b77cdb0c00154c46e861f1b6fba5d93f4"
+    },
+    {
+      "name": "profile descriptor accessor",
+      "start": "0xa71e8",
+      "end_exclusive": "0xa71f4",
+      "sha256": "7fd21807c9f30f779576f50ea7e2ff4f04688091fd64fb8f3a0c7b80e0cdeb09"
+    },
+    {
+      "name": "original atoi",
+      "start": "0x5a24d4",
+      "end_exclusive": "0x5a2544",
+      "sha256": "7826262ea8b517c1a70cd5c0a1180b7efbbd70b899cf14aa7ade0f1afa26dfab"
+    }
+  ],
+  "literals": [
+    {
+      "address": "0x5e50be",
+      "length": 30,
+      "xor_key": 245,
+      "decoded": "/tmp/build/src/backend/base.c",
+      "sha256": "a3922dfb59ced1364db6fd1b31bc23cc40b7976764ca96a9eb96e4e5cacad4a8"
+    },
+    {
+      "address": "0x5e50e3",
+      "length": 11,
+      "xor_key": 245,
+      "decoded": "[redacted]",
+      "sha256": "6a0860124733113a7a80bc8b899850bfa881adbf8e0e2aed883a7bd72f8f74d7"
+    },
+    {
+      "address": "0x5e5296",
+      "length": 26,
+      "xor_key": 70,
+      "decoded": "Not enough working chains",
+      "sha256": "8d6a6576aa962ac0ec153d14dc2959b9fef14bc6fcc9bd802e22acec2df8ac76"
+    },
+    {
+      "address": "0x5e52b0",
+      "length": 18,
+      "xor_key": 61,
+      "decoded": "No working chains",
+      "sha256": "8088e3cdf6d6b38bddcb9034940ac47d553f5a92fa17d2cb2dad741bb6601e72"
+    },
+    {
+      "address": "0x5e6030",
+      "length": 74,
+      "xor_key": 8,
+      "decoded": "This is a no-PIC miner, so all connected chains must be fully operational",
+      "sha256": "57d2685371df60f1cd9fd691977ec8f9e5930a8965b8665293f3b950fca6f03e"
+    },
+    {
+      "address": "0x5e607a",
+      "length": 61,
+      "xor_key": 144,
+      "decoded": "Insufficient operational chains, only %d out of %d available",
+      "sha256": "f657aae42f61ce1d90245c8a6dc09aeaabbd5f75485931050abc2d46da783336"
+    },
+    {
+      "address": "0x5e52c2",
+      "length": 30,
+      "xor_key": 215,
+      "decoded": "Failed to reset hashing cores",
+      "sha256": "46d0bfb3751c0c50cabb41f44b8fc9e8bcd097df8dc3656a96c1eb18a18650da"
+    },
+    {
+      "address": "0x5e51e7",
+      "length": 25,
+      "xor_key": 177,
+      "decoded": "Downscaling preset to %s",
+      "sha256": "d47a7bc98b3095e4ab69d26458d3b1165438ab779672f55c440b9e7b29b8956c"
+    },
+    {
+      "address": "0x5e5fe9",
+      "length": 22,
+      "xor_key": 192,
+      "decoded": "Lowering preset to %s",
+      "sha256": "c017343ab6a11a46cec6cca86af25a02d78d9d1bafafa0ebca3c575ce457708a"
+    },
+    {
+      "address": "0x5e5fff",
+      "length": 17,
+      "xor_key": 86,
+      "decoded": "autotune-profile",
+      "sha256": "8dde961c34871d3ed1f8342fbe40026dd4f00ca5c1a447d5085c29ae6c6fd080"
+    },
+    {
+      "address": "0x5e6010",
+      "length": 29,
+      "xor_key": 0,
+      "decoded": "Change autotune preset to %s",
+      "sha256": "731053863d22798dfe72464c3b7cf1a700965bbce9d075081b51f8196b9b4645"
+    }
+  ],
+  "constants": {
+    "warmup_deadline": {
+      "address": "0x60fd8",
+      "encoding": "binary64-le",
+      "value": 900.0,
+      "bytes": "0000000000208c40"
+    },
+    "cleanup_routine_got": {
+      "address": "0x5df05c",
+      "value": "0x5cf34",
+      "bytes": "34cf0500"
+    }
+  },
+  "aliases": {
+    "general.model.query_fault_87": "config + 0x38 + 0x4f, exactly config + 0x87",
+    "power.word_20c": "same backend + 0x20c voltage view",
+    "profile_descriptor": "config + 0xcc; entries + 0x10, count + 0x14; original entry stride 24"
+  },
+  "unchanged_files": {
+    "Makefile.am": "17d2fbde26b5e8cb614b61908b84d5937af48325",
+    "cgminer.c": "54739e4139294c526af0c73aa9a02ba9762ca4f2",
+    "AGENTS.md": "c9d99ca8e95e34f3644fb37e2fdeea359e61ec3d",
+    "integration/general_monitor_135.h": "56998462cbd559604a83f25edc1693501d050a91",
+    "integration/tests/test_general_monitor_135.py": "5e8750922d63e738e505d81ac16697ff2d302056",
+    "integration/tests/test_general_monitor_135.c": "80f3ab776bd065801ecbcb1719e32e59ed44d596",
+    "integration/evidence/general_monitor_135.json": "c475ad5fd647fd5e749aa777a7c55fec4b7ffa6f",
+    "tools/arm32_subset.py": "e18a97222c1a8406fd61d5baac9763c3166f7e4b",
+    "tools/arm32_difficulty_subset.py": "94b359f6e1e8d7e2c11e22d640e36a97e7c22b37",
+    "tools/elf32.py": "57b0a77098e2125340a755e90bac194830f75203"
+  },
+  "oracle_summary": {
+    "cases": {
+      "check/baseline": 1,
+      "decision/baseline": 1,
+      "warmup/baseline": 1,
+      "preset/baseline": 1,
+      "check/chain_policy": 2100,
+      "decision/chain_policy": 2100,
+      "check/outer_gate": 24,
+      "warmup/platform_reread": 54,
+      "warmup/warmup_gates": 378,
+      "warmup/time_boundary": 18,
+      "warmup/temperature_boundary": 105,
+      "warmup/lock_failure": 144,
+      "warmup/untouched_error_output": 1,
+      "preset/preset_selection": 768,
+      "preset/atoi_boundary": 49,
+      "check/repeat_entry": 2,
+      "decision/repeat_entry": 2,
+      "warmup/repeat_entry": 2,
+      "preset/repeat_entry": 2,
+      "check/callback_mutation": 84,
+      "decision/callback_mutation": 42,
+      "warmup/callback_mutation": 210,
+      "preset/callback_mutation": 42,
+      "check/late_mutation": 20,
+      "check/independent_counts": 4,
+      "decision/independent_counts": 4,
+      "decision/mixed": 106,
+      "preset/mixed": 104,
+      "check/mixed": 103,
+      "warmup/mixed": 87
+    },
+    "total": 6559,
+    "compared_events": 27656,
+    "original_steps": 824057,
+    "visited_instruction_addresses": 638,
+    "original_entries": [
+      "0x60730",
+      "0x60a2c",
+      "0x60d58",
+      "0x5e53c"
+    ],
+    "nested_original_60a2c": true,
+    "original_predicates_and_atoi": true,
+    "new_arm_instructions": 0,
+    "hardware_io": false,
+    "real_threads": false,
+    "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9"
+  },
+  "native_summary": {
+    "scenarios": 797,
+    "assertions": 11457,
+    "composed_general_worker": true,
+    "composed_cached_collector": true,
+    "composed_power_stop_on_create_failure": true
+  },
+  "scope": {
+    "full_control_bodies": [
+      "0x60730",
+      "0x60a2c",
+      "0x60d58",
+      "0x5e53c"
+    ],
+    "original_nested_decision_predicates_accessors_atoi_executed": true,
+    "new_arm_opcodes": 0,
+    "general_worker_prefix_unchanged": true,
+    "no_hardware_io": true,
+    "no_real_threads": true,
+    "slot_limit_changed": false,
+    "all_lower_callees_recovered": false,
+    "unresolved": [
+      "0x5e92c retry/stop/restart decisions",
+      "0x6100c and 0x61170 physical core reset",
+      "0x509b4 config persistence",
+      "OS locking and cancellation cleanup effects",
+      "other general-monitor handlers e.g. 0x772d8 and 0x78eb8"
+    ],
+    "domain": "Stable allocated descriptor identities, positive chain counts within allocated arrays; nonnegative bounded profile count; required callbacks; serialized mutations; finite binary64 time differences; atoi values representable by int32_t. Not arbitrary corrupt descriptors, async races, unbounded lock failures or hardware acceptance."
+  }
+}
