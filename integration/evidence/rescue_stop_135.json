@@ -1,0 +1,134 @@
+{
+  "reference": "reference/cgminer.vendor.elf",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "base_commit": "feb35d8fd38931ebfc92ac7a2bb0a112fb6afd27",
+  "base_tree": "57a8c7ead1efa388c579ea0087b525dc3e26f2ec",
+  "base_source": {
+    "path": "src/backend/base.c",
+    "length": 51226,
+    "git_blob": "ad5c91ba1f5a44ed05212f53421a57902f3f8926"
+  },
+  "ranges": [
+    {
+      "name": "stop body and literal pool",
+      "start": "0x287a4",
+      "end_exclusive": "0x288a8",
+      "sha256": "3f77e9ea3496d16822d4702108aa807a49a87c841fadced4c86ba0bf918835f9"
+    },
+    {
+      "name": "creator and literals",
+      "start": "0x26f54",
+      "end_exclusive": "0x26fe8",
+      "sha256": "3c70a8dfd444423d4a3c0e91f5c7ac38c5e01bb750f6bffede72b8aa4e7022dd"
+    },
+    {
+      "name": "worker prefix setting name and flag",
+      "start": "0x26fe8",
+      "end_exclusive": "0x27044",
+      "sha256": "620032c4051303d4e6df648ec38a568091449ae1745dc38f0d8e439ea861c0c7"
+    },
+    {
+      "name": "string decoder prefix",
+      "start": "0x289b4",
+      "end_exclusive": "0x28ba4",
+      "sha256": "9f5a101f8a0a0a67efc505607508e5c8daa2e1fc776187745991e081ea62eda7"
+    },
+    {
+      "name": "parent call sites",
+      "start": "0x5f8e0",
+      "end_exclusive": "0x5f938",
+      "sha256": "0bc0627c8e56243e4ddb0fc36cc7bc4690150a785e054544d32b0780236b2279"
+    }
+  ],
+  "got": [
+    {
+      "literal": "0x28890",
+      "pc_relative_load": "0x287b0",
+      "got": "0x5de76c",
+      "target": "0x68b108"
+    },
+    {
+      "literal": "0x28894",
+      "pc_relative_load": "0x287d4",
+      "got": "0x5df624",
+      "target": "0x68b118"
+    },
+    {
+      "literal": "0x28898",
+      "pc_relative_load": "0x287fc",
+      "got": "0x5df368",
+      "target": "0x68b114"
+    },
+    {
+      "literal": "0x2889c",
+      "pc_relative_load": "0x28810",
+      "got": "0x5df634",
+      "target": "0x68b11c"
+    },
+    {
+      "literal": "0x288a0",
+      "pc_relative_load": "0x28860",
+      "got": "0x5df368",
+      "target": "0x68b114"
+    },
+    {
+      "literal": "0x288a4",
+      "pc_relative_load": "0x28868",
+      "got": "0x5df634",
+      "target": "0x68b11c"
+    }
+  ],
+  "literals": [
+    {
+      "address": "0x5e1fae",
+      "length": 33,
+      "xor_key": 151,
+      "sha256": "5d9110a99ec25ab72a7ed69aa792eba3bdcdab620cae9e7185799ca875021046",
+      "decoded": "/tmp/build/src/frontend/rescue.c"
+    },
+    {
+      "address": "0x5e1fe1",
+      "length": 39,
+      "xor_key": 52,
+      "sha256": "411813c746a092d772a7a7bf6d727fa6cfec7e4325895f3fd6cb9d6eb159ecb9",
+      "decoded": "Failed to create rescue service thread"
+    },
+    {
+      "address": "0x5e2008",
+      "length": 19,
+      "xor_key": 199,
+      "sha256": "1a0af64d44906d880b81e5f96daf874539adaf89b11027172f409d6ac065b76b",
+      "decoded": "rescue-service@btm"
+    }
+  ],
+  "unchanged_files": {
+    "cgminer.c": "54739e4139294c526af0c73aa9a02ba9762ca4f2",
+    "Makefile.am": "17d2fbde26b5e8cb614b61908b84d5937af48325",
+    "util.c": "70f7a82fa759841ff1a3687661eefcb0e1ee1dba",
+    "src/frontend/cgminer.c": "6a1d9424d79c8a80c73a38137b5839f7690dd56c",
+    "integration/backend_shutdown_135.h": "30ba5a57e9dd8f900f2f0753040945d8694cb413",
+    "integration/exit_cleanup_135.h": "82612eb35cb241bcc55b1cf772a6a283548e9fcb",
+    "integration/stop_policy_135.h": "e43e75a8921e28bf72e0b6d57754b07f9b4e9981",
+    "integration/tests/test_exit_cleanup_135.py": "6f5bb620dd1568593554ea4264b94adb391696dc",
+    "integration/tests/test_exit_cleanup_135.c": "d8c56e04b9886977174400ca5db9133c384c2786",
+    "integration/tests/test_backend_shutdown_135.py": "5587b7c68f6c29c232206485d8f5e8049ffad4f3",
+    "integration/tests/test_stop_policy_135.py": "b9e2f98f92e420338e64504f79328447ce00b4f0",
+    "integration/tests/stop_policy_bridge_135.c": "6a86894433aba49fcc73f8561fd5bce294f8a667",
+    "tools/elf32.py": "57b0a77098e2125340a755e90bac194830f75203",
+    "tools/arm32_difficulty_subset.py": "94b359f6e1e8d7e2c11e22d640e36a97e7c22b37",
+    "tools/arm32_freshness_subset.py": "1f6f58ad83ad26cce28036382977421764bb4582",
+    "tools/arm32_nonce_subset.py": "84e86cb15dcc9a45819ef8448f8c89077cbd7548",
+    "tools/arm32_rebuild_subset.py": "37fc528e01f10754b18a43f1a1ddff32d445a5b4",
+    "tools/arm32_rx_subset.py": "175bfc14a4413f84895ed983a45289b4c426e588",
+    "tools/arm32_subset.py": "e18a97222c1a8406fd61d5baac9763c3166f7e4b",
+    "tools/arm32_verify_subset.py": "284fd7169697e3643d963300063eb7a156c57fb5",
+    "tools/arm32_vfp_subset.py": "d1df89081dfa172ea41c84cae46e51ad099d74d8"
+  },
+  "bounds": [
+    "normal serial callback execution; stable object identities; no real pthread operations",
+    "arbitrary uint32 handle words and uint8 flag; no host pthread_t ABI claim",
+    "void result; ignored cancel/join/detach errors; no termination guarantee",
+    "rescue worker 26fe8, network behavior, persistence, supervisor restart not recovered",
+    "new typed slot is independent of all ten backend thread slots"
+  ]
+}

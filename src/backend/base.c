@@ -1200,3 +1200,16 @@ unlock:
     (void)o->unlock(p);
 }
 #endif /* VN135_EXIT_CLEANUP_135 */
+
+/* Shared thread-stop adapter for original rescue-service stop 287a4. */
+#ifdef VN135_RESCUE_STOP_135
+#ifndef VN135_BACKEND_SHUTDOWN_135
+#error "Rescue stop requires the recovered thread helper"
+#endif
+#include "integration/rescue_stop_135.h"
+void vn135_shutdown_thread_stop_135(struct vn135_shutdown_thread *worker,
+    const struct vn135_shutdown_ops *ops, void *opaque)
+{
+    shutdown_thread_135(worker, ops, opaque);
+}
+#endif
