@@ -7,7 +7,7 @@ GP135_SAN = $(if $(SANITIZE),-fsanitize=address$(comma)undefined -fno-omit-frame
 comma := ,
 GP135_PSU_SOURCE ?= libbitmain/src/psu.c
 GP135_SOURCES = libbitmain/src/gpio.c src/backend/base.c
-GP135_HEADER = integration/gpio_power_135.h integration/backend_resume_135.h
+GP135_HEADER = integration/gpio_power_135.h integration/backend_resume_135.h integration/backend_cold_135.h integration/backend_peripheral_135.h
 GP135_AML_HEADERS = integration/i2c_init_135.h integration/i2c_soft_135.h integration/i2c_transport_135.h
 $(GP135_DIR):
 	mkdir -p $@

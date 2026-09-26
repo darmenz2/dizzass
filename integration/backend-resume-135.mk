@@ -3,7 +3,7 @@ CC ?= cc
 RESUME135_DIR ?= build/backend-resume-135$(if $(SANITIZE),-san,)
 RESUME135_FLAGS = -I. -std=c11 -O1 -g -Wall -Wextra -Wpedantic -Werror -fno-fast-math -ffp-contract=off
 RESUME135_SAN = $(if $(SANITIZE),-fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer,)
-RESUME135_HEADERS = integration/backend_resume_135.h integration/gpio_power_135.h
+RESUME135_HEADERS = integration/backend_resume_135.h integration/gpio_power_135.h integration/backend_cold_135.h integration/backend_peripheral_135.h
 $(RESUME135_DIR):
 	mkdir -p $@
 $(RESUME135_DIR)/libresume.so: src/backend/base.c $(RESUME135_HEADERS) integration/backend-resume-135.mk | $(RESUME135_DIR)

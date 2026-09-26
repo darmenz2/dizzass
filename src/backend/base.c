@@ -219,3 +219,157 @@ common_exit:
 #undef LOG
     return result;
 }
+
+/* 0x730d8..0x73f14: cold object construction/registration, NOT 0x7409c. */
+#include "integration/backend_cold_135.h"
+static void cold_log(const struct vn135_cold_ops *o, void *p, uint32_t line, uint32_t level)
+{ if(o->log)o->log(p,line,level); }
+static int32_t cold_object(const struct vn135_cold_ops *o,void *p,uint32_t op,
+    void *object,uint32_t off,void *second,uint32_t a,uint32_t b)
+{ return o->object(p,op,object,off,second,a,b); }
+static enum vn135_cold_boundary cold_fatal(struct vn135_cold_result *r,uint32_t code)
+{ r->fatal_code=code;return VN135_C_FATAL_BOUNDARY; }
+uint32_t vn135_cold_chip_identifier_135(uint32_t selector)
+{
+    /* Original 0xa72b4 lookup at 0x5b0928. Numeric IDs, not guessed names. */
+    static const uint32_t ids[8]={4960,4962,5016,4966,4968,4976,5257,5265};
+    return selector<8?ids[selector]:0;
+}
+enum vn135_cold_boundary vn135_backend_construct_135(
+    struct vn135_cold_result *r,const struct vn135_cold_ops *o,void *p,uintptr_t driver)
+{
+    /* Order is backend fields +1f0,+1f4,...,+208. Tokens are not invoked. */
+    static const uint32_t targets[3][7]={
+      {0xbfce8,0xbfd70,0xbf43c,0xbf8f0,0xbfb94,0xbf440,0x2d994},
+      {0xc1c0c,0xc1e40,0xc0c3c,0xc0e40,0xc1970,0xc0cf8,0xbace4},
+      {0xc3b54,0xc3e18,0xc4050,0xc33d0,0xc39a8,0xc3148,0x2d994}};
+    struct vn135_cold_backend *b;
+    struct vn135_cold_profile *m;
+    int32_t count,i,j; uint32_t route,k;
+    void *limits;
+    r->fatal_code=0;r->backend=NULL;
+    r->device=o->allocate(p,VN135_C_DEVICE,1,416);
+    r->model=o->allocate(p,VN135_C_MODEL,1,704);m=r->model;
+    if(!m){cold_log(o,p,7354,1);return VN135_C_RETURNED;}
+    if(o->load_model(p,m))return cold_fatal(r,1001);
+    if(!(m->capability[0]|m->capability[1]|m->capability[2]|m->capability[3])){
+        cold_log(o,p,7333,1);cold_log(o,p,7334,3);return cold_fatal(r,1001);
+    }
+    (void)o->scalar(p,0xfdfdc,vn135_cold_chip_identifier_135(m->chip_selector),0,0);
+    (void)o->scalar(p,0xfe038,m->capability[0]!=0,0,0);
+    (void)o->scalar(p,0xfe000,m->board_word_0,0,0);
+    if(o->scalar(p,0xfb994,m->chip_selector,(uint32_t)m->board_word_10,m->model_byte_2c)){
+        cold_log(o,p,7375,1);return cold_fatal(r,1003);
+    }
+    b=o->allocate(p,VN135_C_BACKEND,1,0x1348);r->backend=b;
+    count=o->scalar(p,0xfe668,0,0,0);
+    (void)cold_object(o,p,0x5a6880,NULL,0,NULL,0,0);
+    (void)cold_object(o,p,0x5a6890,NULL,0,NULL,1,0);
+    (void)cold_object(o,p,0x5a60dc,b,0,NULL,1,0);
+    (void)cold_object(o,p,0x5a60dc,b,0x1074,NULL,1,0);
+    (void)cold_object(o,p,0x5a60dc,b,0x244,NULL,0,0);
+    (void)cold_object(o,p,0x5a6878,NULL,0,NULL,0,0);
+    (void)cold_object(o,p,0x5a60dc,b,0x214,NULL,0,0);
+    (void)cold_object(o,p,0x5a6c48,b,0xfd4,NULL,0,0);
+    b->alias_74=m;b->model_18=m;b->word_7c=(uint32_t)m->board_word_10;
+    b->chains_230=o->allocate(p,VN135_C_CHAINS,(uint32_t)count,800);
+    if(!b->chains_230){cold_log(o,p,7147,1);goto failed_arrays;}
+    b->records_100=o->allocate(p,VN135_C_RECORDS,(uint32_t)count,12);
+    if(!b->records_100){cold_log(o,p,7154,1);goto failed_arrays;}
+    if(cold_object(o,p,0x82048,m,0,b->records_100,(uint32_t)count,0)){
+        cold_log(o,p,7159,1);
+        if(b->records_100){
+            (void)cold_object(o,p,0x593c8c,b->records_100,0,NULL,0,0);
+            b->records_100=NULL;
+        }
+        goto failed_arrays;
+    }
+    for(i=0;i<count;++i){
+        struct vn135_cold_chain *c=&b->chains_230[i];
+        c->index=(uint32_t)i;c->parent=b;
+        c->chips=o->allocate(p,VN135_C_CHIPS,(uint32_t)m->board_word_10,96);
+        if(!c->chips){cold_log(o,p,7172,1);goto failed_arrays;}
+        c->items=o->allocate(p,VN135_C_ITEMS,(uint32_t)m->table_count,128);
+        if(!c->items){cold_log(o,p,7178,1);goto failed_arrays;}
+        for(j=0;j<m->board_word_10;++j){
+            c->chips[j].index=(uint32_t)j;
+            c->chips[j].word_04=(uint32_t)j*m->board_word_0; /* original 0x53d98 */
+        }
+        (void)cold_object(o,p,0x5a60dc,c,0,NULL,0,0);
+    }
+    (void)cold_object(o,p,0x5a60dc,b,0x260,NULL,0,0);
+    (void)cold_object(o,p,0x5a60dc,b,0x6d8,NULL,0,0);
+    (void)cold_object(o,p,0x5a60dc,b,0xb50,NULL,0,0);
+    b->byte_211=0;b->word_20=0;
+    (void)cold_object(o,p,0x5c4dc,b,0x12e0,NULL,m->model_word_34,0);
+    route=(uint32_t)o->scalar(p,0xfdfac,0,0,0);
+    k=(m->model_word_34|route)?(m->model_word_34==1?1u:2u):0u;
+    for(j=0;j<7;++j)b->targets[j]=targets[k][j];
+    limits=o->allocate(p,VN135_C_LIMITS,1,72);b->limits_1c=limits;
+    if(!limits){cold_log(o,p,7393,1);return VN135_C_RETURNED;}
+    b->alias_78=limits;
+    if(cold_object(o,p,0xb2a88,limits,0,NULL,0,0)){cold_log(o,p,7399,1);goto failed_setup;}
+    if(cold_object(o,p,0x49b38,b,0x10b4,NULL,0,0)){cold_log(o,p,7405,1);goto failed_setup;}
+    if(cold_object(o,p,0xb86fc,b,0,NULL,0,0)){cold_log(o,p,7411,1);goto failed_setup;}
+    if(cold_object(o,p,0x81f68,b,0,NULL,0,0)){cold_log(o,p,7418,1);goto failed_setup;}
+    if(cold_object(o,p,0xd21dc,b,0x110,NULL,m->chip_selector,m->model_byte_2c)){
+        cold_log(o,p,7427,1);
+        (void)cold_object(o,p,0x49c98,b,0x10b4,NULL,1004,0);
+        return cold_fatal(r,1004);
+    }
+    r->device->word_98=1;r->device->word_20=0;
+    r->device->driver=driver;r->device->data=b;
+    (void)cold_object(o,p,0x35830,r->device,0,NULL,0,0);
+    return VN135_C_RETURNED;
+failed_arrays:
+    cold_log(o,p,7382,1);
+    /* Original puts literal 0x10b4 into r0 on these failure paths.
+     * Report only the callee boundary; NEVER dereference that address. */
+    (void)cold_object(o,p,0x49c98,NULL,0x10b4,NULL,1001,0);
+    return cold_fatal(r,1001);
+failed_setup:
+    (void)cold_object(o,p,0x49c98,b,0x10b4,NULL,1001,0);
+    return cold_fatal(r,1001);
+}
+
+/* Original callees 0x5db54 and 0x6c61c; cached data is not a live sensor. */
+#include "integration/backend_peripheral_135.h"
+int vn135_backend_collect_5db54_135(struct vn135_peripheral_state *s,
+    const struct vn135_peripheral_ops *o,void *p,int32_t *out)
+{
+    int32_t count=o->chain_count(p),i;int found=0;
+    for(i=0;i<count;++i){
+        struct vn135_peripheral_chain *c=&s->chains[i];
+        /* Existing original chain predicate 0x56fcc. */
+        if(!c->byte_24 || c->word_20-3u<=2u)continue;
+        (void)o->lock(p,(uint32_t)i);
+        if(c->byte_2b0){
+            if(!found)*out=c->word_2ac;
+            if(*out<c->word_2ac)*out=c->word_2ac;
+            found=1;
+        }
+        (void)o->unlock(p,(uint32_t)i);
+    }
+    return found?0:-1;
+}
+int vn135_backend_configure_6c61c_135(struct vn135_peripheral_state *s,
+    const struct vn135_peripheral_ops *o,void *p)
+{
+    struct vn135_peripheral_profile *profile=s->profile;
+    uint32_t count_type4=0;int32_t i,reading=0;int aggregate=0;
+    if(s->mode_50==2)return 0;
+    for(i=0;i<profile->table_count;++i)
+        if(profile->entries[i].type==4)
+            count_type4+=(uint32_t)(profile->entries[i].byte_19^1u);
+    aggregate=bits_signed(count_type4)>1;
+    if(!aggregate)for(i=0;i<profile->table_count;++i)
+        if(profile->entries[i].type==0||profile->entries[i].type==3){aggregate=1;break;}
+    if(!aggregate){(void)o->apply_f8a30(p,profile->model_bc_08);return 0;}
+    if(vn135_backend_collect_5db54_135(s,o,p,&reading)){
+        if(o->log)o->log(p,1504);
+        return -1;
+    }
+    (void)o->apply_f86a8(p,profile->model_f0_00,
+                       (uint32_t)(reading>45?reading:45),s->word_6c,s->word_70);
+    return 0;
+}
