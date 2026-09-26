@@ -1,0 +1,91 @@
+{
+  "base_commit": "b863b3b922db2839724e80909d3837258695ecc3",
+  "base_tree": "2110be797a0af04a7ee9a2b255cfa3b5964aa202",
+  "reference": "reference/cgminer.vendor.elf",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "source_entry": "0xa6080",
+  "source_path": "/tmp/build/src/backend/volt-ctrl.c",
+  "projection": {
+    "handle_offset": "0x1024",
+    "flag_offset": "0x1028",
+    "separate_from_shutdown_ten_slots": true,
+    "worker_entry": "0xa2218",
+    "creator_entry": "0xa20a0",
+    "name": "volt_ctrl@btm"
+  },
+  "ranges": [
+    {
+      "name": "stop_and_pool",
+      "start": "0xa6080",
+      "end_exclusive": "0xa6190",
+      "sha256": "bd0b38e6817e8cb5c40b955f67290bc4ca9b80469c5e78fa9a3b3b988520577b"
+    },
+    {
+      "name": "creator_and_pool",
+      "start": "0xa20a0",
+      "end_exclusive": "0xa2218",
+      "sha256": "b6c792866804fa683d68ff7bfbebe23930a91657aa90484f2b2fd14fe8059c79"
+    },
+    {
+      "name": "worker_prologue",
+      "start": "0xa2218",
+      "end_exclusive": "0xa22c0",
+      "sha256": "ce9869a40068feeb4afc36e7ca432517bb206cef2ff4336329f60f6ae3bb9037"
+    },
+    {
+      "name": "worker_path_xref",
+      "start": "0xa24dc",
+      "end_exclusive": "0xa2510",
+      "sha256": "16995d3414451e40d97cc49087dc58609043c50d7fe61a03244826148075f8fa"
+    },
+    {
+      "name": "path_and_name_decoder",
+      "start": "0xa6b90",
+      "end_exclusive": "0xa6c50",
+      "sha256": "3185068a1b53d9e6baff098ae9115707ba901bf1f5438d0a1ae60d14d1ab90d3"
+    }
+  ],
+  "got": [
+    {
+      "literal": "0xa6188",
+      "pc_relative_load": "0xa60b4",
+      "got": "0x5deed4",
+      "target": "0x68b090"
+    },
+    {
+      "literal": "0xa618c",
+      "pc_relative_load": "0xa60c4",
+      "got": "0x5df530",
+      "target": "0x68b0ac"
+    }
+  ],
+  "literals": [
+    {
+      "address": "0x5e7cd4",
+      "xor_key": 28,
+      "length": 35,
+      "sha256": "ae0449c59da7bcb4aa1efc3a56e10e05b7601d0099ad150ebbf276551e708f33",
+      "decoded": "/tmp/build/src/backend/volt-ctrl.c"
+    },
+    {
+      "address": "0x5e7cf7",
+      "xor_key": 23,
+      "length": 14,
+      "sha256": "6699a8903057dddd2927acb1189c77c76da78cfd1406bdd7600c16deb3b8b87e",
+      "decoded": "volt_ctrl@btm"
+    }
+  ],
+  "unchanged_files": {
+    "src/backend/base.c": "0432ee1ccd32f0ff9e4918daf33088cd356fb1b7",
+    "src/frontend/rescue.c": "fcfa108440527bb3f683ed6e065bd4b3ece2f177",
+    "integration/backend_shutdown_135.h": "30ba5a57e9dd8f900f2f0753040945d8694cb413",
+    "integration/rescue_stop_135.h": "b901d774a60553c5ef2b66384c7aed8c47bee377",
+    "cgminer.c": "54739e4139294c526af0c73aa9a02ba9762ca4f2",
+    "util.c": "70f7a82fa759841ff1a3687661eefcb0e1ee1dba",
+    "Makefile.am": "17d2fbde26b5e8cb614b61908b84d5937af48325",
+    "tools/arm32_subset.py": "e18a97222c1a8406fd61d5baac9763c3166f7e4b",
+    "tools/arm32_difficulty_subset.py": "94b359f6e1e8d7e2c11e22d640e36a97e7c22b37",
+    "tools/arm32_vfp_subset.py": "d1df89081dfa172ea41c84cae46e51ad099d74d8",
+    "tools/elf32.py": "57b0a77098e2125340a755e90bac194830f75203"
+  }
+}
