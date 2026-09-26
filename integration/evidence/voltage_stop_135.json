@@ -76,7 +76,6 @@
     }
   ],
   "unchanged_files": {
-    "src/backend/base.c": "0432ee1ccd32f0ff9e4918daf33088cd356fb1b7",
     "src/frontend/rescue.c": "fcfa108440527bb3f683ed6e065bd4b3ece2f177",
     "integration/backend_shutdown_135.h": "30ba5a57e9dd8f900f2f0753040945d8694cb413",
     "integration/rescue_stop_135.h": "b901d774a60553c5ef2b66384c7aed8c47bee377",
@@ -87,5 +86,10 @@
     "tools/arm32_difficulty_subset.py": "94b359f6e1e8d7e2c11e22d640e36a97e7c22b37",
     "tools/arm32_vfp_subset.py": "d1df89081dfa172ea41c84cae46e51ad099d74d8",
     "tools/elf32.py": "57b0a77098e2125340a755e90bac194830f75203"
+  },
+  "base_source": {
+    "path": "src/backend/base.c",
+    "length": 51657,
+    "git_blob": "0432ee1ccd32f0ff9e4918daf33088cd356fb1b7"
   }
 }

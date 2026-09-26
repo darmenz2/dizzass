@@ -1213,3 +1213,31 @@ void vn135_shutdown_thread_stop_135(struct vn135_shutdown_thread *worker,
     shutdown_thread_135(worker, ops, opaque);
 }
 #endif
+
+#ifdef VN135_MINING_STOP_135
+#include "integration/mining_stop_135.h"
+#include <string.h>
+_Static_assert(sizeof(double) == 8, "Original timestamp is an eight-byte field");
+void vn135_backend_stop_mining_135(struct vn135_mining_stop_state *s,
+    const struct vn135_shutdown_ops *o,void *p)
+{
+    struct vn135_general_monitor *g=s->handlers->general;
+    (void)o->step(p,0xfe218u,0);
+    (void)o->step(p,0xb8e54u,0);
+    (void)o->delay_ms(p,100);
+    if(g->tuning){
+        /* Unlike shutdown_thread_135, no early flag clear or self/detach.
+         * Original handle is reloaded after cancel; errors do not skip join. */
+        (void)o->cancel(p,s->handle_104c);
+        (void)o->join(p,s->handle_104c,NULL);
+        g->tuning=0;s->byte_104a=0; /* original STRH at backend+1049 */
+    }
+    (void)o->step(p,0x65b3cu,0);
+    /* Two original zero-word stores, no floating-point evaluation of input.
+     * No observable callback separates these scalar stores in this model. */
+    memset(&g->started_at,0,8);
+    s->byte_fd0=0;g->active=0;s->byte_fe5=0;
+    s->handlers->warmup_done_22c=0;g->sampled_power=0;
+    if(o->log)o->log(p,4825);
+}
+#endif

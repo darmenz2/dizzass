@@ -25,6 +25,9 @@ def main():
         raw=elf.read(int(l['address'],16),l['length'])
         assert hashlib.sha256(raw).hexdigest()==l['sha256']
         assert bytes(v^l['xor_key'] for v in raw)==l['decoded'].encode()+b'\0'
+    # Subsequent isolated ports may append; all historical bytes stay pinned.
+    prefix=e['base_source'];data=(ROOT/prefix['path']).read_bytes()
+    assert len(data)>=prefix['length'] and blob(data[:prefix['length']])==prefix['git_blob']
     for p,s in e['unchanged_files'].items():
         assert blob((ROOT/p).read_bytes())==s,p
     # Creator's real arguments and name pointer; no neighboring-name guess.
