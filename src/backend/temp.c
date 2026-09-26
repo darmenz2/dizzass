@@ -116,3 +116,36 @@ int vn135_temperature_read_local_path(struct vn135_temperature_sensor *s,
     raw=(uint8_t)(raw-64u);value=raw<128?(int32_t)raw:(int32_t)raw-256;
     (void)vn135_temperature_accept(s,o,p,value,value);return 0;
 }
+
+/* Additional original direct paths of b5f40, access kinds 0 and 3 only. */
+#include "integration/thermal_routes_135.h"
+int vn135_temperature_read_direct_135(struct vn135_temperature_sensor *s,uint32_t chain,
+    const struct vn135_direct_temperature_ops *o,void *p)
+{
+    uint8_t raw[4]={0,0,0,0};int32_t rc,old,value;uint32_t address,arg;
+    const struct vn135_temperature_ops *t=o->temperature;
+    if(s->state==3)return -1;
+    if(s->remote_enabled){
+        if(o->log)o->log(p,VN135_ROUTE_DIRECT_READ,401,NULL,0);
+        s->state=3;return -1;
+    }
+    (void)t->lock(p,NULL);
+    if(s->access_kind==0)
+        rc=o->read(p,0xfaeec,0x20u|(chain&7u),s->address,0,raw,2);
+    else{
+        uint32_t platform=o->platform_kind(p);
+        address=(chain+s->address)&255u;
+        rc=o->read(p,platform?0xfe440:0xfe528,address,0,0,raw,3);
+    }
+    if(rc){
+        if(s->access_kind==0 && o->log){arg=chain+1u;o->log(p,VN135_ROUTE_DIRECT_READ,425,&arg,1);}
+        (void)t->lock(p,s);old=s->failures;s->failures=add32(old,1);
+        if(old>=2)s->state=3;
+        (void)t->unlock(p,s);(void)t->unlock(p,NULL);return -1;
+    }
+    (void)t->unlock(p,NULL);
+    if(s->extended)raw[0]=(uint8_t)(raw[0]-64u);
+    value=raw[0]<128?(int32_t)raw[0]:(int32_t)raw[0]-256;
+    (void)vn135_temperature_accept(s,t,p,value,value);
+    return 0;
+}

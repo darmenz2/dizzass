@@ -486,3 +486,46 @@ int vn135_backend_prepare_135(struct vn135_prepare_state *s,
         return prepare_fail(o,p,7533,1001);
     return 1;
 }
+
+#ifdef VN135_THERMAL_ROUTES_135
+/* Opt-in offline target: old isolated base tests keep their link boundary. */
+/* Original decoded hashchip temperature reply, entry 0x78aa4. */
+#include "integration/thermal_routes_135.h"
+static void note(vn135_route_log fn,void *p,enum vn135_route_log_source src,
+    uint32_t line,const uint32_t *a,size_t n)
+{ if(fn)fn(p,src,line,a,n); }
+int vn135_temperature_reply_135(const struct vn135_reply_profile *profile,
+    struct vn135_route_chain *chains,const struct vn135_temperature_reply *r,
+    const struct vn135_reply_ops *o,void *p,uint32_t *thread_scratch)
+{
+    int32_t i,slot,count=o->chain_count(p);
+    struct vn135_route_chain *c;struct vn135_temperature_sensor *s;
+    uint32_t local,remote,status,error,args[6];
+    for(i=0;i<profile->sensor_count;++i)if(profile->description_types[i]==2)break;
+    if(profile->sensor_count<1 || i==profile->sensor_count)return 0;
+    if(r->chain_index<0 || r->chain_index>=count)return 0;
+    c=chains+r->chain_index;
+    slot=vn135_temperature_lookup_chip_135(c,r->chip_address);
+    if(slot<0){args[0]=r->chip_address;note(o->log,p,VN135_ROUTE_REPLY,1577,args,1);return -1;}
+    s=c->sensors+slot;local=(r->payload>>16)&255u;error=r->payload>>24;
+    remote=s->remote_enabled?(r->payload&255u):local;
+    status=s->remote_enabled?((r->payload>>8)&255u):1u;
+    if(error || status!=1){
+        args[0]=c->index+1u;args[1]=s->index+1u;args[2]=status;
+        args[3]=remote;args[4]=error;args[5]=local;
+        note(o->log,p,VN135_ROUTE_REPLY,1595,args,6);return 0;
+    }
+    vn135_temperature_accept_chip_135(c,bits_signed(s->index),(int32_t)local,(int32_t)remote,o,p);
+    vn135_temperature_aggregate_135(c,o,p);
+    if(o->overheat(p,c)){
+        note(o->log,p,VN135_ROUTE_REPLY,1603,NULL,0);
+        (void)o->backend_action(p,c);
+        if(o->create_stop_thread(p,0x72ba4u,thread_scratch)){
+            note(o->log,p,VN135_ROUTE_REPLY,6483,NULL,0);
+            (void)o->power_stop(p);
+        }
+    }
+    return 0;
+}
+
+#endif /* VN135_THERMAL_ROUTES_135 */
