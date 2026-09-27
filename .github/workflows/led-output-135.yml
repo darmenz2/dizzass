@@ -1,0 +1,63 @@
+name: Check A-05 original LED output calls
+on:
+  pull_request:
+    branches: [work/reconstruction]
+    paths:
+      - libbitmain/src/led-output.c
+      - libbitmain/src/gpio.c
+      - src/backend/base.c
+      - integration/led_output_135.h
+      - integration/led-output-135.mk
+      - integration/tests/*led_output*135*
+      - integration/evidence/led_output_135.json
+      - .github/workflows/led-output-135.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: led-output135-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  led135:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        cc: [gcc, clang]
+    steps:
+      - name: Fetch exact public source without credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/led135-${{ matrix.cc }}"
+          mkdir "$root"
+          cd "$root"
+          git init -q
+          git remote add origin https://github.com/darmenz2/dizzass.git
+          git fetch --depth=1 --no-tags origin "$GITHUB_SHA"
+          git checkout -q --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Original LED GPIO and parent comparisons
+        run: |
+          set -e
+          cd "$SOURCE_ROOT"
+          make -f integration/led-output-135.mk CC=${{ matrix.cc }} dizzass-led135-original dizzass-led135-test dizzass-led135-negative
+      - name: Address and undefined behavior checks
+        run: |
+          set -e
+          cd "$SOURCE_ROOT"
+          make -f integration/led-output-135.mk CC=${{ matrix.cc }} SANITIZE=1 dizzass-led135-test
+      - name: Unchanged GPIO power and shutdown regressions
+        run: |
+          set -e
+          cd "$SOURCE_ROOT"
+          make -f integration/gpio-power-135.mk CC=${{ matrix.cc }} dizzass-gpio135-original dizzass-gpio135-test
+          make -f integration/exit-cleanup-135.mk CC=${{ matrix.cc }} dizzass-exit135-original dizzass-exit135-test
+      - name: Static analysis and immutable dependencies
+        run: |
+          set -e
+          cd "$SOURCE_ROOT"
+          clang --analyze -I. -std=c11 -DVN135_LED_OUTPUT_135 -Xanalyzer -analyzer-output=text libbitmain/src/led-output.c
+          python3 integration/tests/check_led_output_evidence_135.py
