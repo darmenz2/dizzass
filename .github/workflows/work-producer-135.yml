@@ -1,0 +1,80 @@
+name: Check B-06 original producer batch
+on:
+  pull_request:
+    branches: [work/reconstruction]
+    paths:
+      - src/backend/work-gen/work-producer.c
+      - reconstruction/support/sha256_bytes.c
+      - reconstruction/support/sha256_midstate.c
+      - include/xminer/recovery/work_rebuild.h
+      - include/xminer/recovery/work_nonce.h
+      - integration/work_producer_135.h
+      - integration/work-producer-135.mk
+      - integration/WORK_PRODUCER_135_RU.md
+      - integration/evidence/work_producer_135.json
+      - integration/tests/*work_producer*135*
+      - .github/workflows/work-producer-135.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  producer135:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Original instructions, native checks and semantic mutants
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build/b06-logs
+          git rev-parse HEAD | tee build/b06-logs/head.txt
+          ${{ matrix.cc }} --version | tee build/b06-logs/compiler.txt
+          make -f integration/work-producer-135.mk CC=${{ matrix.cc }} PRODUCER_DIR=build/b06 all negative 2>&1 | tee build/b06-logs/new.log
+      - name: ASan and UBSan
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -f integration/work-producer-135.mk CC=${{ matrix.cc }} PRODUCER_DIR=build/b06 sanitize 2>&1 | tee build/b06-logs/sanitizers.log
+      - name: Existing route and TX88 regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -f integration/work-producer-135.mk CC=${{ matrix.cc }} PRODUCER_DIR=build/b06 regressions 2>&1 | tee build/b06-logs/regressions.log
+      - name: Static analysis
+        if: matrix.cc == 'clang'
+        shell: bash
+        run: |
+          set -euo pipefail
+          clang --analyze -I. -Iinclude -std=c11 -Wall -Wextra -Wpedantic -Xanalyzer -analyzer-output=text src/backend/work-gen/work-producer.c 2>&1 | tee build/b06-logs/analyzer.log
+      - name: Existing SHA, rebuild and nonce regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -f Makefile.recovery CC=${{ matrix.cc }} build/libvn135_recovered.so build/test-work-nonce 2>&1 | tee build/b06-logs/old-build.log
+          ./build/test-work-nonce 2>&1 | tee build/b06-logs/nonce-native.log
+          python3 tests/test_stage7_differential.py prepare --library ./build/libvn135_recovered.so --tag b06-${{ matrix.cc }} 2>&1 | tee build/b06-logs/nonce-original.log
+          cp build/libvn135_recovered.so build/b06/lib-regression-${{ matrix.cc }}.so
+          for group in sha prefix candidate; do
+            VN135_TEST_LIBRARY=./build/b06/lib-regression-${{ matrix.cc }}.so python3 tests/test_stage9_differential.py "$group" 2>&1 | tee "build/b06-logs/$group.log"
+          done
+      - name: Save exact head logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: work-producer-${{ matrix.cc }}-${{ github.run_id }}
+          retention-days: 7
+          path: |
+            build/b06-logs/
+            build/b06/negative/*.log
+            build/stage7-prepare-b06-*-results.json
+            build/stage9-*-results.json
