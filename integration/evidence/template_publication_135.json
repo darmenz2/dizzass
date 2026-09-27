@@ -1,0 +1,128 @@
+{
+  "archive_sha256": "20fabdd66255889315e61ae2a33ff2e4623566ca430f1cb8c90d9b938dc7b43c",
+  "archive_member": "uramdisk.image.gz -> U-Boot/gzip/newc -> usr/bin/cgminer",
+  "elf_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "source_path": "/tmp/build/src/backend/work-gen/work-gen.c",
+  "scope": "Whole c3148 coordinator only, required clone/OS/reset callbacks; nested existing FIFO reset within documented domain.",
+  "clone_implemented": false,
+  "production_wired": false,
+  "ghidra": {
+    "version": "12.1.4",
+    "artifacts": {
+      "InspectTemplatePublication.java": {
+        "sha256": "e740e793c7792e6f226d88757df781aeefc4b8500d11a31d1ce243de5ccaf5ab",
+        "text": "import ghidra.app.script.GhidraScript;\nimport ghidra.app.decompiler.*;\nimport ghidra.program.model.listing.*;\nimport java.nio.file.*;\nimport java.nio.charset.StandardCharsets;\npublic class InspectTemplatePublication extends GhidraScript {\n public void run() throws Exception {\n  Path out=Paths.get(getScriptArgs()[0]);Files.createDirectories(out);\n  DecompInterface d=new DecompInterface();d.openProgram(currentProgram);\n  for(long entry:new long[]{0xc3148L,0x5cd70L,0xc2f6cL,0x5ce44L,0x5ccf4L,0xfa944L}) {\n   disassemble(toAddr(entry));if(getFunctionAt(toAddr(entry))==null)createFunction(toAddr(entry),null);\n   Function f=getFunctionAt(toAddr(entry));DecompileResults r=d.decompileFunction(f,90,monitor);\n   if(!r.decompileCompleted())throw new Exception(r.getErrorMessage());\n   String name=Long.toHexString(entry);\n   Files.writeString(out.resolve(name+\".ghidra.c\"),r.getDecompiledFunction().getC(),StandardCharsets.UTF_8);\n   StringBuilder a=new StringBuilder();InstructionIterator it=currentProgram.getListing().getInstructions(f.getBody(),true);\n   while(it.hasNext()){Instruction ins=it.next();a.append(ins.getAddress()).append(\"  \").append(ins).append(\"\\n\");}\n   Files.writeString(out.resolve(name+\".ghidra.asm\"),a.toString(),StandardCharsets.UTF_8);\n   println(\"TEMPLATE_PUBLICATION_RESEARCH_DONE \"+name+\" \"+f.getBody());\n  }\n  d.dispose();\n }\n}\n"
+      },
+      "headless.log": {
+        "sha256": "cdafad4049bd98555ef32ee60a92debe42a07d536e0e245e506bb9fb01ddf65c",
+        "text": "openjdk version \"25.0.4.1\" 2026-08-18 LTS\nOpenJDK Runtime Environment Temurin-25.0.4.1+1 (build 25.0.4.1+1-LTS)\nOpenJDK 64-Bit Server VM Temurin-25.0.4.1+1 (build 25.0.4.1+1-LTS, mixed mode)\nINFO  Using log config file: jar:file:/opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Framework/Generic/lib/Generic.jar!/generic.log4j.xml (LoggingInitialization)  \nINFO  Using log file: /root/.config/ghidra/ghidra_12.1.4_PUBLIC/application.log (LoggingInitialization)  \nINFO  Loading user preferences: /root/.config/ghidra/ghidra_12.1.4_PUBLIC/preferences (Preferences)  \nINFO  Searching for classes... (ClassSearcher)  \nINFO  Class search complete (766 ms) (ClassSearcher)  \nINFO  Initializing SSL Context (DefaultSSLContextInitializer)  \nINFO  Initializing Random Number Generator... (SecureRandomFactory)  \nINFO  Random Number Generator initialization complete: NativePRNGNonBlocking (SecureRandomFactory)  \nINFO  Trust manager disabled, cacerts have not been set (DefaultTrustManagerFactory)  \nINFO  Headless startup complete (2251 ms) (AnalyzeHeadless)  \nINFO  Class searcher loaded 59 extension points (20 false positives) (ClassSearcher)  \nWARNING: A terminally deprecated method in sun.misc.Unsafe has been called\nWARNING: sun.misc.Unsafe::staticFieldOffset has been called by org.apache.felix.framework.util.SecureAction (file:/opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/Base/lib/org.apache.felix.framework-7.0.5.jar)\nWARNING: Please consider reporting this to the maintainers of class org.apache.felix.framework.util.SecureAction\nWARNING: sun.misc.Unsafe::staticFieldOffset will be removed in a future release\nINFO  HEADLESS Script Paths:\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/PDB/ghidra_scripts\n    /mnt/c/Users/Main/.codex/worktrees/b8e54-review/dizzass/build/b11-ghidra\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Processors/Atmel/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/Base/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Processors/DATA/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/BytePatterns/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/SwiftDemangler/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/MicrosoftCodeAnalyzer/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/FileFormats/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/BSim/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/Decompiler/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/FunctionID/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Processors/8051/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/WildcardAssembler/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Processors/JVM/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Processors/PIC/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Debug/Debugger/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/DecompilerDependent/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Debug/Debugger-rmi-trace/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/PyGhidra/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/VersionTracking/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/GnuDemangler/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/SystemEmulation/ghidra_scripts (HeadlessAnalyzer)  \nINFO  HEADLESS: execution starts (HeadlessAnalyzer)  \nINFO  Opening existing project: /opt/dizzass-re-tools/projects/vn135-b04 (HeadlessAnalyzer)  \nINFO  Opening project: /opt/dizzass-re-tools/projects/vn135-b04 (HeadlessProject)  \nINFO  REPORT: Processing project file: /cgminer.vendor.elf (HeadlessAnalyzer)  \nINFO  REPORT: Execute script: InspectTemplatePublication.java 'build/b12-ghidra'  (HeadlessAnalyzer)  \nINFO  SCRIPT: /mnt/c/Users/Main/.codex/worktrees/b8e54-review/dizzass/build/b11-ghidra/InspectTemplatePublication.java (HeadlessAnalyzer)  \nINFO  InspectTemplatePublication.java> TEMPLATE_PUBLICATION_RESEARCH_DONE c3148 [[000c3148, 000c338f]] (GhidraScript)  \nINFO  InspectTemplatePublication.java> TEMPLATE_PUBLICATION_RESEARCH_DONE 5cd70 [[0005cd70, 0005ce3b]] (GhidraScript)  \nINFO  InspectTemplatePublication.java> TEMPLATE_PUBLICATION_RESEARCH_DONE c2f6c [[000c2f6c, 000c3133]] (GhidraScript)  \nINFO  InspectTemplatePublication.java> TEMPLATE_PUBLICATION_RESEARCH_DONE 5ce44 [[0005ce44, 0005ce9f]] (GhidraScript)  \nINFO  InspectTemplatePublication.java> TEMPLATE_PUBLICATION_RESEARCH_DONE 5ccf4 [[0005ccf4, 0005cd67]] (GhidraScript)  \nINFO  InspectTemplatePublication.java> TEMPLATE_PUBLICATION_RESEARCH_DONE fa944 [[000fa944, 000fa973] [005a66c4, 005a6877]] (GhidraScript)  \nINFO  REPORT: Save succeeded for processed file: /cgminer.vendor.elf (HeadlessAnalyzer)  \n"
+      },
+      "c3148.ghidra.c": {
+        "sha256": "9a3547f4dd17bc9ab9302805e0375f50baf30dc9f3f1f7eafc3ec3867af0ca5e",
+        "text": "\n/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */\n\nvoid FUN_000c3148(int param_1)\n\n{\n  int iVar1;\n  int iVar2;\n  int *piVar3;\n  int iVar4;\n  int *piVar5;\n  \n  func_0x005a6108(_UNK_000c3390 + 0xc3160);\n  iVar2 = _UNK_000c3394;\n  iVar4 = *(int *)(_UNK_000c3394 + 0xc31bc);\n  if (iVar4 != 0) {\n    piVar5 = *(int **)(_UNK_000c3398 + 0xc3180);\n    iVar1 = *piVar5;\n    piVar3 = *(int **)(_UNK_000c339c + 0xc3194);\n    if (((iVar1 * (iVar1 + -1) & 1U) != 0) && (9 < *piVar3)) goto LAB_000c31d4;\n    while( true ) {\n      func_0x00593c8c(iVar4);\n      iVar1 = *piVar5;\n      *(undefined4 *)(iVar2 + 0xc31bc) = 0;\n      if (((iVar1 * (iVar1 + -1) & 1U) == 0) || (*piVar3 < 10)) break;\nLAB_000c31d4:\n      func_0x00593c8c(iVar4);\n      *(undefined4 *)(iVar2 + 0xc31bc) = 0;\n    }\n  }\n  iVar4 = *(int *)(iVar2 + 0xc31b4);\n  if (iVar4 != 0) {\n    piVar5 = *(int **)(_UNK_000c33a0 + 0xc3200);\n    iVar1 = *piVar5;\n    piVar3 = *(int **)(_UNK_000c33a4 + 0xc3214);\n    if (((iVar1 * (iVar1 + -1) & 1U) != 0) && (9 < *piVar3)) goto LAB_000c3254;\n    while( true ) {\n      func_0x00593c8c(iVar4);\n      iVar1 = *piVar5;\n      *(undefined4 *)(iVar2 + 0xc31b4) = 0;\n      if (((iVar1 * (iVar1 + -1) & 1U) == 0) || (*piVar3 < 10)) break;\nLAB_000c3254:\n      func_0x00593c8c(iVar4);\n      *(undefined4 *)(iVar2 + 0xc31b4) = 0;\n    }\n  }\n  if (*(int *)(iVar2 + 0xc3170) != 0) {\n    func_0x00593c8c();\n    *(undefined4 *)(iVar2 + 0xc3170) = 0;\n  }\n  FUN_0005cd70(_UNK_000c33a8 + 0xc3290,param_1);\n  *(undefined1 *)(_UNK_000c33ac + 0xc32a0) = 1;\n  if (*(char *)(param_1 + 0x60) != '\\0') {\n    piVar3 = *(int **)(_UNK_000c33b0 + 0xc32b8);\n    iVar2 = *piVar3;\n    piVar5 = *(int **)(_UNK_000c33b4 + 0xc32cc);\n    if (((iVar2 * (iVar2 + -1) & 1U) != 0) && (9 < *piVar5)) goto LAB_000c3300;\n    while( true ) {\n      FUN_000fa944();\n      iVar2 = *piVar3;\n      if (((iVar2 * (iVar2 + -1) & 1U) == 0) || (*piVar5 < 10)) break;\nLAB_000c3300:\n      FUN_000fa944();\n    }\n  }\n  piVar3 = *(int **)(_UNK_000c33b8 + 0xc3314);\n  iVar2 = *piVar3;\n  piVar5 = *(int **)(_UNK_000c33bc + 0xc3328);\n  if (((iVar2 * (iVar2 + -1) & 1U) != 0) && (9 < *piVar5)) goto LAB_000c3370;\n  while( true ) {\n    func_0x005a48d0(_UNK_000c33c0 + 0xc3344);\n    func_0x005a66c4(_UNK_000c33c4 + 0xc3350);\n    iVar2 = *piVar3;\n    if (((iVar2 * (iVar2 + -1) & 1U) == 0) || (*piVar5 < 10)) break;\nLAB_000c3370:\n    func_0x005a48d0(_UNK_000c33c8 + 0xc337c);\n    func_0x005a66c4(_UNK_000c33cc + 0xc3388);\n  }\n  return;\n}\n\n"
+      },
+      "c3148.ghidra.asm": {
+        "sha256": "18c5e123c0d51b95b71d454b91431729b8d54562a592bf0f19605400ec1ccbad",
+        "text": "000c3148  stmdb sp!,{r4,r5,r6,r7,r8,r10,r11,lr}\n000c314c  add r11,sp,#0x18\n000c3150  cpy r8,r0\n000c3154  ldr r0,[0xc3390]\n000c3158  add r0,pc,r0\n000c315c  bl 0x005a6108\n000c3160  ldr r6,[0xc3394]\n000c3164  add r6,pc,r6\n000c3168  ldr r5,[r6,#0x50]\n000c316c  cmp r5,#0x0\n000c3170  beq 0x000c31e8\n000c3174  ldr r7,[0xc3398]\n000c3178  ldr r7,[pc,r7]\n000c317c  ldr r0,[r7,#0x0]\n000c3180  ldr r4,[0xc339c]\n000c3184  sub r1,r0,#0x1\n000c3188  mul r0,r0,r1\n000c318c  ldr r4,[pc,r4]\n000c3190  tst r0,#0x1\n000c3194  beq 0x000c31a4\n000c3198  ldr r0,[r4,#0x0]\n000c319c  cmp r0,#0x9\n000c31a0  bgt 0x000c31d4\n000c31a4  cpy r0,r5\n000c31a8  bl 0x00593c8c\n000c31ac  ldr r0,[r7,#0x0]\n000c31b0  mov r2,#0x0\n000c31b4  str r2,[r6,#0x50]\n000c31b8  sub r1,r0,#0x1\n000c31bc  mul r1,r0,r1\n000c31c0  ldr r0,[r4,#0x0]\n000c31c4  tst r1,#0x1\n000c31c8  beq 0x000c31e8\n000c31cc  cmp r0,#0x9\n000c31d0  ble 0x000c31e8\n000c31d4  cpy r0,r5\n000c31d8  bl 0x00593c8c\n000c31dc  mov r0,#0x0\n000c31e0  str r0,[r6,#0x50]\n000c31e4  b 0x000c31a4\n000c31e8  ldr r5,[r6,#0x48]\n000c31ec  cmp r5,#0x0\n000c31f0  beq 0x000c3268\n000c31f4  ldr r7,[0xc33a0]\n000c31f8  ldr r7,[pc,r7]\n000c31fc  ldr r0,[r7,#0x0]\n000c3200  ldr r4,[0xc33a4]\n000c3204  sub r1,r0,#0x1\n000c3208  mul r0,r0,r1\n000c320c  ldr r4,[pc,r4]\n000c3210  tst r0,#0x1\n000c3214  beq 0x000c3224\n000c3218  ldr r0,[r4,#0x0]\n000c321c  cmp r0,#0x9\n000c3220  bgt 0x000c3254\n000c3224  cpy r0,r5\n000c3228  bl 0x00593c8c\n000c322c  ldr r0,[r7,#0x0]\n000c3230  mov r2,#0x0\n000c3234  str r2,[r6,#0x48]\n000c3238  sub r1,r0,#0x1\n000c323c  mul r1,r0,r1\n000c3240  ldr r0,[r4,#0x0]\n000c3244  tst r1,#0x1\n000c3248  beq 0x000c3268\n000c324c  cmp r0,#0x9\n000c3250  ble 0x000c3268\n000c3254  cpy r0,r5\n000c3258  bl 0x00593c8c\n000c325c  mov r0,#0x0\n000c3260  str r0,[r6,#0x48]\n000c3264  b 0x000c3224\n000c3268  ldr r0,[r6,#0x4]\n000c326c  cmp r0,#0x0\n000c3270  beq 0x000c3280\n000c3274  bl 0x00593c8c\n000c3278  mov r0,#0x0\n000c327c  str r0,[r6,#0x4]\n000c3280  ldr r0,[0xc33a8]\n000c3284  cpy r1,r8\n000c3288  add r0,pc,r0\n000c328c  bl 0x0005cd70\n000c3290  ldr r0,[0xc33ac]\n000c3294  mov r1,#0x1\n000c3298  add r0,pc,r0\n000c329c  strb r1,[r0,#0x0]\n000c32a0  ldrb r0,[r8,#0x60]\n000c32a4  cmp r0,#0x0\n000c32a8  beq 0x000c3308\n000c32ac  ldr r4,[0xc33b0]\n000c32b0  ldr r4,[pc,r4]\n000c32b4  ldr r0,[r4,#0x0]\n000c32b8  ldr r5,[0xc33b4]\n000c32bc  sub r1,r0,#0x1\n000c32c0  mul r0,r0,r1\n000c32c4  ldr r5,[pc,r5]\n000c32c8  tst r0,#0x1\n000c32cc  beq 0x000c32dc\n000c32d0  ldr r0,[r5,#0x0]\n000c32d4  cmp r0,#0x9\n000c32d8  bgt 0x000c3300\n000c32dc  bl 0x000fa944\n000c32e0  ldr r0,[r4,#0x0]\n000c32e4  sub r1,r0,#0x1\n000c32e8  mul r0,r0,r1\n000c32ec  tst r0,#0x1\n000c32f0  beq 0x000c3308\n000c32f4  ldr r0,[r5,#0x0]\n000c32f8  cmp r0,#0x9\n000c32fc  ble 0x000c3308\n000c3300  bl 0x000fa944\n000c3304  b 0x000c32dc\n000c3308  ldr r4,[0xc33b8]\n000c330c  ldr r4,[pc,r4]\n000c3310  ldr r0,[r4,#0x0]\n000c3314  ldr r5,[0xc33bc]\n000c3318  sub r1,r0,#0x1\n000c331c  mul r0,r0,r1\n000c3320  ldr r5,[pc,r5]\n000c3324  tst r0,#0x1\n000c3328  beq 0x000c3338\n000c332c  ldr r0,[r5,#0x0]\n000c3330  cmp r0,#0x9\n000c3334  bgt 0x000c3370\n000c3338  ldr r0,[0xc33c0]\n000c333c  add r0,pc,r0\n000c3340  bl 0x005a48d0\n000c3344  ldr r0,[0xc33c4]\n000c3348  add r0,pc,r0\n000c334c  bl 0x005a66c4\n000c3350  ldr r0,[r4,#0x0]\n000c3354  sub r1,r0,#0x1\n000c3358  mul r0,r0,r1\n000c335c  tst r0,#0x1\n000c3360  beq 0x000c338c\n000c3364  ldr r0,[r5,#0x0]\n000c3368  cmp r0,#0x9\n000c336c  ble 0x000c338c\n000c3370  ldr r0,[0xc33c8]\n000c3374  add r0,pc,r0\n000c3378  bl 0x005a48d0\n000c337c  ldr r0,[0xc33cc]\n000c3380  add r0,pc,r0\n000c3384  bl 0x005a66c4\n000c3388  b 0x000c3338\n000c338c  ldmia sp!,{r4,r5,r6,r7,r8,r10,r11,pc}\n"
+      },
+      "5cd70.ghidra.c": {
+        "sha256": "6bbc16a6fb436735850c0e1a8dd902e31628bf4737221c04c31b1fe19a61a47c",
+        "text": "\n/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */\n\nvoid FUN_0005cd70(int param_1,int param_2)\n\n{\n  undefined4 uVar1;\n  int *piVar2;\n  int iVar3;\n  int *piVar4;\n  \n  func_0x005a2ee8(param_1,param_2,0x68);\n  uVar1 = func_0x005940ec(*(undefined4 *)(param_2 + 0x4c));\n  *(undefined4 *)(param_1 + 0x48) = uVar1;\n  func_0x005a2ee8(uVar1,*(undefined4 *)(param_2 + 0x48),*(undefined4 *)(param_2 + 0x4c));\n  uVar1 = func_0x005940ec(*(int *)(param_2 + 0x54) << 5);\n  *(undefined4 *)(param_1 + 0x50) = uVar1;\n  func_0x005a2ee8(uVar1,*(undefined4 *)(param_2 + 0x50),*(int *)(param_2 + 0x54) << 5);\n  if (*(int *)(param_2 + 4) == 0) {\n    uVar1 = 0;\n  }\n  else {\n    uVar1 = func_0x005a38a0();\n  }\n  piVar2 = *(int **)(_UNK_0005ce3c + 0x5cde8);\n  iVar3 = *piVar2;\n  piVar4 = *(int **)(_UNK_0005ce40 + 0x5cdfc);\n  if (((iVar3 * (iVar3 + -1) & 1U) != 0) && (9 < *piVar4)) {\n    *(undefined4 *)(param_1 + 4) = uVar1;\n  }\n  while ((*(undefined4 *)(param_1 + 4) = uVar1, iVar3 = *piVar2, (iVar3 * (iVar3 + -1) & 1U) != 0 &&\n         (9 < *piVar4))) {\n    *(undefined4 *)(param_1 + 4) = uVar1;\n  }\n  return;\n}\n\n"
+      },
+      "5cd70.ghidra.asm": {
+        "sha256": "ba1ea64c7221c9e1ad8101d47b191d8966561749960b2bfa5432b5194ddab7b5",
+        "text": "0005cd70  stmdb sp!,{r4,r5,r6,r7,r11,lr}\n0005cd74  add r11,sp,#0x10\n0005cd78  mov r2,#0x68\n0005cd7c  cpy r5,r1\n0005cd80  cpy r4,r0\n0005cd84  bl 0x005a2ee8\n0005cd88  ldr r0,[r5,#0x4c]\n0005cd8c  bl 0x005940ec\n0005cd90  str r0,[r4,#0x48]\n0005cd94  ldrd r2,r3,[r5,#0x48]\n0005cd98  cpy r1,r2\n0005cd9c  cpy r2,r3\n0005cda0  bl 0x005a2ee8\n0005cda4  ldr r0,[r5,#0x54]\n0005cda8  mov r0,r0, lsl #0x5\n0005cdac  bl 0x005940ec\n0005cdb0  str r0,[r4,#0x50]\n0005cdb4  ldrd r6,r7,[r5,#0x50]\n0005cdb8  mov r2,r7, lsl #0x5\n0005cdbc  cpy r1,r6\n0005cdc0  bl 0x005a2ee8\n0005cdc4  ldr r0,[r5,#0x4]\n0005cdc8  cmp r0,#0x0\n0005cdcc  beq 0x0005cdd8\n0005cdd0  bl 0x005a38a0\n0005cdd4  b 0x0005cddc\n0005cdd8  mov r0,#0x0\n0005cddc  ldr r1,[0x5ce3c]\n0005cde0  ldr r1,[pc,r1]\n0005cde4  ldr r2,[r1,#0x0]\n0005cde8  sub r3,r2,#0x1\n0005cdec  mul r3,r2,r3\n0005cdf0  ldr r2,[0x5ce40]\n0005cdf4  ldr r2,[pc,r2]\n0005cdf8  tst r3,#0x1\n0005cdfc  beq 0x0005ce0c\n0005ce00  ldr r3,[r2,#0x0]\n0005ce04  cmp r3,#0x9\n0005ce08  strgt r0,[r4,#0x4]\n0005ce0c  str r0,[r4,#0x4]\n0005ce10  ldr r3,[r1,#0x0]\n0005ce14  sub r7,r3,#0x1\n0005ce18  mul r3,r3,r7\n0005ce1c  tst r3,#0x1\n0005ce20  beq 0x0005ce38\n0005ce24  ldr r3,[r2,#0x0]\n0005ce28  cmp r3,#0x9\n0005ce2c  ble 0x0005ce38\n0005ce30  str r0,[r4,#0x4]\n0005ce34  b 0x0005ce0c\n0005ce38  ldmia sp!,{r4,r5,r6,r7,r11,pc}\n"
+      },
+      "fa944.ghidra.c": {
+        "sha256": "fa3df6efd5136c6c7dac4a44c2f1ee892a0feeb9ec2048d3c2d4b9c683dbe11a",
+        "text": "\n/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */\n\nundefined4 FUN_000fa944(void)\n\n{\n  bool bVar1;\n  int iVar2;\n  int *extraout_r1;\n  int *piVar3;\n  uint *puVar4;\n  uint *puVar5;\n  uint uVar6;\n  uint uVar7;\n  uint uVar8;\n  uint uVar9;\n  int unaff_r9;\n  int iVar10;\n  uint unaff_r10;\n  int iVar11;\n  \n  iVar2 = _UNK_000fa974;\n  puVar5 = (uint *)(_UNK_000fa974 + 0xfa958);\n  func_0x005a6108(puVar5);\n  func_0x000d212c(_UNK_000fa978 + 0xfa968);\n  uVar9 = *puVar5;\n  iVar11 = *(int *)(iVar2 + 0xfa960);\n  uVar7 = ~uVar9 & 0x80;\n  if ((uVar9 & 0xf) == 0) {\n    uVar8 = 0;\n    piVar3 = extraout_r1;\n  }\n  else {\n    unaff_r10 = *(uint *)(iVar2 + 0xfa95c);\n    iVar10 = coproc_movefrom_User_R_Thread_and_Process_ID();\n    unaff_r9 = iVar10 + -0x70;\n    if (*(uint *)(iVar10 + -0x60) != (unaff_r10 & 0x3fffffff)) {\n      return 1;\n    }\n    if (((uVar9 & 3) == 1) && (*(int *)(iVar2 + 0xfa96c) != 0)) {\n      *(int *)(iVar2 + 0xfa96c) = *(int *)(iVar2 + 0xfa96c) + -1;\n      return 0;\n    }\n    uVar8 = 0;\n    if (((uVar9 & 4) != 0) && (uVar8 = 0, (unaff_r10 & 0x40000000) != 0)) {\n      uVar8 = 0x7fffffff;\n    }\n    if (uVar7 == 0) {\n      *(int *)(iVar10 + -0x24) = iVar2 + 0xfa968;\n      func_0x005a6f6c(puVar5);\n    }\n    piVar3 = *(int **)(iVar2 + 0xfa964);\n    puVar5 = (uint *)(iVar10 + -0x2c);\n    puVar4 = *(uint **)(iVar2 + 0xfa968);\n    *piVar3 = (int)puVar4;\n    if (puVar4 != puVar5) {\n      puVar4[-1] = (uint)piVar3;\n    }\n  }\n  puVar4 = (uint *)(iVar2 + 0xfa95c);\n  if ((uVar9 & 8) == 0) {\n    DataMemoryBarrier(0xb);\n    do {\n      uVar6 = *puVar4;\n      bVar1 = (bool)hasExclusiveAccess(puVar4);\n    } while (!bVar1);\n    *puVar4 = uVar8;\n    DataMemoryBarrier(0xb);\n    goto LAB_005a67c4;\n  }\n  if ((int)unaff_r10 < 0) {\nLAB_005a677c:\n    if (uVar8 != 0) {\n      DataMemoryBarrier(0xb);\n      *(undefined4 *)(iVar2 + 0xfa960) = 0xffffffff;\n      DataMemoryBarrier(0xb);\n    }\n    piVar3 = (int *)(uVar7 | 7);\n    software_interrupt(0);\n    puVar5 = puVar4;\n  }\n  else {\n    DataMemoryBarrier(0xb);\n    do {\n      uVar6 = *puVar4;\n      if (unaff_r10 != uVar6) break;\n      bVar1 = (bool)hasExclusiveAccess(puVar4);\n      if (bVar1) {\n        *puVar4 = uVar8;\n      }\n      piVar3 = (int *)(uint)!bVar1;\n    } while (piVar3 != (int *)0x0);\n    DataMemoryBarrier(0xb);\n    if (unaff_r10 != uVar6) goto LAB_005a677c;\n  }\n  uVar6 = 0;\n  iVar11 = 0;\nLAB_005a67c4:\n  if (uVar7 == 0 && (uVar9 & 0xf) != 0) {\n    *(undefined4 *)(unaff_r9 + 0x4c) = 0;\n    func_0x005a6f98(puVar5,piVar3);\n  }\n  if ((iVar11 != 0 || (int)uVar6 < 0) && (software_interrupt(0), puVar4 == (uint *)0xffffffda)) {\n    software_interrupt(0);\n  }\n  return 0;\n}\n\n"
+      },
+      "fa944.ghidra.asm": {
+        "sha256": "55629da9c46fe449ea75ee200d46293a2c06c244cf9c181554775074cd6d05b8",
+        "text": "000fa944  stmdb sp!,{r4,r10,r11,lr}\n000fa948  add r11,sp,#0x8\n000fa94c  ldr r4,[0xfa974]\n000fa950  add r4,pc,r4\n000fa954  cpy r0,r4\n000fa958  bl 0x005a6108\n000fa95c  ldr r0,[0xfa978]\n000fa960  add r0,pc,r0\n000fa964  bl 0x000d212c\n000fa968  cpy r0,r4\n000fa96c  ldmia sp!,{r4,r10,r11,lr}\n000fa970  b 0x005a66c4\n005a66c4  stmdb sp!,{r0,r1,r2,r4,r5,r6,r7,r8,r9,r10,r11,lr}\n005a66c8  cpy r4,r0\n005a66cc  ldr r7,[r0,#0x0]\n005a66d0  ldr r11,[r0,#0x8]\n005a66d4  ands r3,r7,#0xf\n005a66d8  mvn r5,r7\n005a66dc  and r5,r5,#0x80\n005a66e0  beq 0x005a6798\n005a66e4  ldr r10,[r0,#0x4]\n005a66e8  mrc p15,0x0,r9,cr13,cr0,0x3\n005a66ec  ldr r1,[r9,#-0x60]\n005a66f0  sub r9,r9,#0x70\n005a66f4  bic r2,r10,#0xc0000000\n005a66f8  cmp r1,r2\n005a66fc  movne r0,#0x1\n005a6700  bne 0x005a67fc\n005a6704  and r2,r7,#0x3\n005a6708  cmp r2,#0x1\n005a670c  bne 0x005a6724\n005a6710  ldr r2,[r4,#0x14]\n005a6714  cmp r2,#0x0\n005a6718  subne r2,r2,#0x1\n005a671c  strne r2,[r4,#0x14]\n005a6720  bne 0x005a67f8\n005a6724  ands r6,r7,#0x4\n005a6728  beq 0x005a6734\n005a672c  ands r6,r10,#0x40000000\n005a6730  mvnne r6,#0x80000000\n005a6734  cmp r5,#0x0\n005a6738  bne 0x005a6750\n005a673c  add r2,r4,#0x10\n005a6740  str r3,[sp,#0x4]\n005a6744  str r2,[r9,#0x4c]\n005a6748  bl 0x005a6f6c\n005a674c  ldr r3,[sp,#0x4]\n005a6750  ldr r1,[r4,#0xc]\n005a6754  add r0,r9,#0x44\n005a6758  ldr r2,[r4,#0x10]\n005a675c  cmp r2,r0\n005a6760  str r2,[r1,#0x0]\n005a6764  strne r1,[r2,#-0x4]\n005a6768  tst r7,#0x8\n005a676c  add r8,r4,#0x4\n005a6770  beq 0x005a6828\n005a6774  cmp r10,#0x0\n005a6778  bge 0x005a67a0\n005a677c  cmp r6,#0x0\n005a6780  bne 0x005a6814\n005a6784  mov r7,#0xf0\n005a6788  cpy r0,r8\n005a678c  orr r1,r5,#0x7\n005a6790  swi 0x0\n005a6794  b 0x005a67bc\n005a6798  cpy r6,r3\n005a679c  b 0x005a6768\n005a67a0  dmb ISH\n005a67a4  ldrex r2,[r8]\n005a67a8  cmp r10,r2\n005a67ac  beq 0x005a6804\n005a67b0  dmb ISH\n005a67b4  cmp r10,r2\n005a67b8  bne 0x005a677c\n005a67bc  mov r4,#0x0\n005a67c0  cpy r11,r4\n005a67c4  subs r3,r3,#0x0\n005a67c8  movne r3,#0x1\n005a67cc  cmp r5,#0x0\n005a67d0  movne r3,#0x0\n005a67d4  cmp r3,#0x0\n005a67d8  beq 0x005a67e8\n005a67dc  mov r3,#0x0\n005a67e0  str r3,[r9,#0x4c]\n005a67e4  bl 0x005a6f98\n005a67e8  subs r11,r11,#0x0\n005a67ec  movne r11,#0x1\n005a67f0  orrs r3,r11,r4, lsr #0x1f\n005a67f4  bne 0x005a6844\n005a67f8  mov r0,#0x0\n005a67fc  add sp,sp,#0xc\n005a6800  ldmia sp!,{r4,r5,r6,r7,r8,r9,r10,r11,pc}\n005a6804  strex r1,r6,[r8]\n005a6808  cmp r1,#0x0\n005a680c  bne 0x005a67a4\n005a6810  b 0x005a67b0\n005a6814  dmb ISH\n005a6818  mvn r2,#0x0\n005a681c  str r2,[r4,#0x8]\n005a6820  dmb ISH\n005a6824  b 0x005a6784\n005a6828  dmb ISH\n005a682c  ldrex r4,[r8]\n005a6830  strex r2,r6,[r8]\n005a6834  cmp r2,#0x0\n005a6838  bne 0x005a682c\n005a683c  dmb ISH\n005a6840  b 0x005a67c4\n005a6844  cmp r5,#0x0\n005a6848  mov r7,#0xf0\n005a684c  movne r5,#0x80\n005a6850  cpy r0,r8\n005a6854  orr r1,r5,#0x1\n005a6858  mov r2,#0x1\n005a685c  swi 0x0\n005a6860  cmn r0,#0x26\n005a6864  bne 0x005a67f8\n005a6868  cpy r0,r8\n005a686c  cpy r1,r2\n005a6870  swi 0x0\n005a6874  b 0x005a67f8\n"
+      }
+    }
+  },
+  "ghidra_limit": "fa944 inferred body contains tail-called OS unlock at5a66c4..5a6877; oracle executes only original prefix and hooks unlock.",
+  "native_reuse": "copy_work_noffset/_copy_work/clean_work/_free_work inspected in actual cgminer.c. Native work allocation, id and string ownership differ from raw104 clone. No struct cast or duplicate production clone.",
+  "reset_domain": "Existing nonce_fifo_reset reused only ready1/storage/cap4096/stride72, successful queue lock/unlock. Raw original ignores errors and lacks guards.",
+  "slices": {
+    "publish": {
+      "start": "0xc3148",
+      "end_exclusive": "0xc3390",
+      "sha256": "15e10adcf6850f90b0f9e92cddd14fecbd2281af7f85c3339bfeb9fe362df3b3"
+    },
+    "publish_literals": {
+      "start": "0xc3390",
+      "end_exclusive": "0xc33d0",
+      "sha256": "750fcef9e984c2681f9d35f0e576631d9176ac0903bf05008a48071d829ef01b"
+    },
+    "clone_boundary": {
+      "start": "0x5cd70",
+      "end_exclusive": "0x5ce44",
+      "sha256": "f2e79f2e308a918ff9d656eb522ceedd0edc6b60e909145220b6481c024b92be"
+    },
+    "queue_reset": {
+      "start": "0xfa944",
+      "end_exclusive": "0xfa97c",
+      "sha256": "aac4fb07834f8f7955a3b20431ec623f9a1f5c5e82198e760fb88e2cece6a344"
+    },
+    "ring_reset": {
+      "start": "0xd212c",
+      "end_exclusive": "0xd2144",
+      "sha256": "267128322ba3c7b4eeaef9057da7e8f12f4fa038ca7ee20e2d94a0c84a0225da"
+    }
+  },
+  "literal_targets": [
+    {
+      "literal": "0xc3390",
+      "pc8": "0xc3160",
+      "target": "0x633af0"
+    },
+    {
+      "literal": "0xc3394",
+      "pc8": "0xc316c",
+      "target": "0x633b40"
+    },
+    {
+      "literal": "0xc33a8",
+      "pc8": "0xc3290",
+      "target": "0x633b40"
+    },
+    {
+      "literal": "0xc33ac",
+      "pc8": "0xc32a0",
+      "target": "0x633b38"
+    },
+    {
+      "literal": "0xc33c0",
+      "pc8": "0xc3344",
+      "target": "0x633b08"
+    },
+    {
+      "literal": "0xc33c4",
+      "pc8": "0xc3350",
+      "target": "0x633af0"
+    },
+    {
+      "literal": "0xc33c8",
+      "pc8": "0xc337c",
+      "target": "0x633b08"
+    },
+    {
+      "literal": "0xc33cc",
+      "pc8": "0xc3388",
+      "target": "0x633af0"
+    },
+    {
+      "literal": "0xfa974",
+      "pc8": "0xfa958",
+      "target": "0x654ad0"
+    },
+    {
+      "literal": "0xfa978",
+      "pc8": "0xfa968",
+      "target": "0x654ae8"
+    }
+  ]
+}
