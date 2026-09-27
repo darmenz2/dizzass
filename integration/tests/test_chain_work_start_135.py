@@ -53,7 +53,8 @@ class World:
     def sync(self):
         if self.p.get('nested') and self.fifo.storage:
             q=self.fifo;s=q.storage
-            for n,val in enumerate((s,s+q.capacity*q.stride,s+q.read_index*q.stride,s+q.write_index*q.stride,q.capacity,q.count,q.stride)):
+            # Original +8 is write, +c is read. Both are zero after this init.
+            for n,val in enumerate((s,s+q.capacity*q.stride,s+q.write_index*q.stride,s+q.read_index*q.stride,q.capacity,q.count,q.stride)):
                 U.from_address(self.ptr+0x2f8+4*n).value=val
     def memory(self):
         if self.m:return bytes(self.m.mem[CHAIN:CHAIN+800])
