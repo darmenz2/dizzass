@@ -1,0 +1,209 @@
+{
+  "task": "B-07 / #28",
+  "base": "12446bed78a060a49364a80bcbfb4340b13f4f27",
+  "archive_sha256": "20fabdd66255889315e61ae2a33ff2e4623566ca430f1cb8c90d9b938dc7b43c",
+  "elf_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "entry": "0xc3b54",
+  "return_instruction": "0xc3db0",
+  "slices": {
+    "start": {
+      "start": "0xc3b54",
+      "end_exclusive": "0xc3db4",
+      "sha256": "564b9e8e911d5b591c248d3ddfd60179388c54d5a34b7291166ab1b16690cacf"
+    },
+    "literals": {
+      "start": "0xc3db4",
+      "end_exclusive": "0xc3e18",
+      "sha256": "cf2680d329b163f21d463e733b3ede7f9c69e5bbd5ed9fa3997e88071f10a62e"
+    },
+    "producer_slot": {
+      "start": "0x5df978",
+      "end_exclusive": "0x5df97c",
+      "sha256": "0eda14a3e7a94fcf823016f8c2772090a41fcafc5ade3883f77b1f4462a7c02c"
+    },
+    "parity_slot": {
+      "start": "0x5df468",
+      "end_exclusive": "0x5df46c",
+      "sha256": "60875c24c4a540cc2021206ef9cf4e458036c2453e48db2d8340bcf210c4993e"
+    },
+    "opaque_limit_slot": {
+      "start": "0x5deec0",
+      "end_exclusive": "0x5deec4",
+      "sha256": "c0972af20e2b3cc5b1790d0282a7fb8a3f36c1f3a3583dc40ee3a774e4e1a6bc"
+    },
+    "log_data_context": {
+      "start": "0x5e962e",
+      "end_exclusive": "0x5e9790",
+      "sha256": "48fca88996927d773b4c5ed0e53925ac6add33021fc7b0730014e6472d093ced"
+    }
+  },
+  "literal_targets": [
+    {
+      "literal": "0xc3db4",
+      "pc8": "0xc3b8c",
+      "target": "0x633af0"
+    },
+    {
+      "literal": "0xc3db8",
+      "pc8": "0xc3b9c",
+      "target": "0x633b08"
+    },
+    {
+      "literal": "0xc3dbc",
+      "pc8": "0xc3bac",
+      "target": "0x633ba8"
+    },
+    {
+      "literal": "0xc3dc0",
+      "pc8": "0xc3bbc",
+      "target": "0x633bc0"
+    },
+    {
+      "literal": "0xc3dc4",
+      "pc8": "0xc3bdc",
+      "target": "0xc4054"
+    },
+    {
+      "literal": "0xc3dec",
+      "pc8": "0xc3c44",
+      "target": "0x5df978"
+    },
+    {
+      "literal": "0xc3e04",
+      "pc8": "0xc3cc8",
+      "target": "0xc4b18"
+    },
+    {
+      "literal": "0xc3e08",
+      "pc8": "0xc3cf0",
+      "target": "0x5e9659"
+    },
+    {
+      "literal": "0xc3e0c",
+      "pc8": "0xc3cf4",
+      "target": "0x5e962e"
+    },
+    {
+      "literal": "0xc3e10",
+      "pc8": "0xc3cfc",
+      "target": "0x5e9660"
+    },
+    {
+      "literal": "0xc3e14",
+      "pc8": "0xc3d08",
+      "target": "0x5e971d"
+    },
+    {
+      "literal": "0xc3df0",
+      "pc8": "0xc3c68",
+      "target": "0x5e9659"
+    },
+    {
+      "literal": "0xc3df4",
+      "pc8": "0xc3c70",
+      "target": "0x5e962e"
+    },
+    {
+      "literal": "0xc3df8",
+      "pc8": "0xc3c74",
+      "target": "0x5e9660"
+    },
+    {
+      "literal": "0xc3dfc",
+      "pc8": "0xc3c7c",
+      "target": "0x5e9758"
+    },
+    {
+      "literal": "0xc3e00",
+      "pc8": "0xc3ca4",
+      "target": "0x5e96fd"
+    },
+    {
+      "literal": "0xc3dc8",
+      "pc8": "0xc3bf4",
+      "target": "0x5df468"
+    },
+    {
+      "literal": "0xc3dcc",
+      "pc8": "0xc3c08",
+      "target": "0x5deec0"
+    },
+    {
+      "literal": "0xc3dd0",
+      "pc8": "0xc3c10",
+      "target": "0x5e96d3"
+    },
+    {
+      "literal": "0xc3dd4",
+      "pc8": "0xc3d48",
+      "target": "0x5e9659"
+    },
+    {
+      "literal": "0xc3dd8",
+      "pc8": "0xc3d4c",
+      "target": "0x5e962e"
+    },
+    {
+      "literal": "0xc3ddc",
+      "pc8": "0xc3d54",
+      "target": "0x5e9660"
+    },
+    {
+      "literal": "0xc3de0",
+      "pc8": "0xc3d94",
+      "target": "0x5e9659"
+    },
+    {
+      "literal": "0xc3de4",
+      "pc8": "0xc3d98",
+      "target": "0x5e962e"
+    },
+    {
+      "literal": "0xc3de8",
+      "pc8": "0xc3da0",
+      "target": "0x5e9660"
+    }
+  ],
+  "ghidra": {
+    "version": "12.1.4",
+    "language": "ARM:LE:32:v8",
+    "artifacts": {
+      "InspectWorkStart.java": {
+        "text": "import ghidra.app.script.GhidraScript;\nimport ghidra.app.decompiler.*;\nimport ghidra.program.model.listing.*;\nimport java.nio.file.*;\nimport java.nio.charset.StandardCharsets;\npublic class InspectWorkStart extends GhidraScript {\n public void run() throws Exception {\n  long e=0xc3b54L;disassemble(toAddr(e));\n  if(getFunctionAt(toAddr(e))==null)createFunction(toAddr(e),null);\n  DecompInterface d=new DecompInterface();d.openProgram(currentProgram);\n  Function f=getFunctionAt(toAddr(e));DecompileResults r=d.decompileFunction(f,90,monitor);\n  if(!r.decompileCompleted())throw new Exception(r.getErrorMessage());\n  Path out=Paths.get(getScriptArgs()[0]);Files.createDirectories(out);\n  Files.writeString(out.resolve(\"c3b54.ghidra.c\"),r.getDecompiledFunction().getC(),StandardCharsets.UTF_8);\n  StringBuilder a=new StringBuilder();InstructionIterator it=currentProgram.getListing().getInstructions(f.getBody(),true);\n  while(it.hasNext()){Instruction ins=it.next();a.append(ins.getAddress()).append(\"  \").append(ins).append(\"\\n\");}\n  Files.writeString(out.resolve(\"c3b54.ghidra.asm\"),a.toString(),StandardCharsets.UTF_8);\n  println(\"WORK_START_GHIDRA_DONE \"+f.getBody());d.dispose();\n }\n}\n",
+        "sha256": "49f5489cfd8db8c9c50aec3338c1389225d20574bb6dec6ee4190a9716cdf88c"
+      },
+      "c3b54.ghidra.c": {
+        "text": "\n/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */\n\nundefined4 FUN_000c3b54(int param_1)\n\n{\n  int iVar1;\n  undefined4 uVar2;\n  int *piVar3;\n  int iVar4;\n  int *piVar5;\n  int iVar6;\n  int iVar7;\n  undefined1 auStack_24 [4];\n  \n  func_0x005a50e8(auStack_24);\n  func_0x005a50f8(auStack_24,1);\n  func_0x005a60dc(_UNK_000c3db4 + 0xc3b8c,0);\n  func_0x005a4a08(_UNK_000c3db8 + 0xc3b9c,auStack_24);\n  func_0x005a60dc(_UNK_000c3dbc + 0xc3bac,0);\n  func_0x005a4a08(_UNK_000c3dc0 + 0xc3bbc,auStack_24);\n  func_0x005a50e0(auStack_24);\n  iVar1 = func_0x005a55cc(param_1 + 0x1060,0,_UNK_000c3dc4 + 0xc3bdc,param_1);\n  if (iVar1 == 0) {\n    iVar1 = func_0x005a55cc(param_1 + 0x1068,0,*(undefined4 *)(_UNK_000c3dec + 0xc3c44),param_1);\n    if (iVar1 == 0) {\n      iVar1 = func_0x005a55cc(param_1 + 0x1058,0,_UNK_000c3e04 + 0xc3cc8,param_1);\n      if (iVar1 == 0) {\n        return 0;\n      }\n      iVar7 = _UNK_000c3e08 + 0xc3cf0;\n      iVar4 = _UNK_000c3e0c + 0xc3cf4;\n      iVar6 = _UNK_000c3e10 + 0xc3cfc;\n      iVar1 = _UNK_000c3e14 + 0xc3d08;\n      func_0x000fa0c4(iVar7,iVar4,iVar6,0x291,1,iVar1);\n      uVar2 = 0x327;\n    }\n    else {\n      iVar7 = _UNK_000c3df0 + 0xc3c68;\n      iVar4 = _UNK_000c3df4 + 0xc3c70;\n      iVar6 = _UNK_000c3df8 + 0xc3c74;\n      func_0x000fa0c4(iVar7,iVar4,iVar6,0x308,1,_UNK_000c3dfc + 0xc3c7c);\n      iVar1 = _UNK_000c3e00 + 0xc3ca4;\n      uVar2 = 0x322;\n    }\n    func_0x000fa0c4(iVar7,iVar4,iVar6,uVar2,1,iVar1);\n  }\n  else {\n    piVar3 = *(int **)(_UNK_000c3dc8 + 0xc3bf4);\n    iVar1 = *piVar3;\n    piVar5 = *(int **)(_UNK_000c3dcc + 0xc3c08);\n    iVar7 = _UNK_000c3dd0 + 0xc3c10;\n    if (((iVar1 * (iVar1 + -1) & 1U) != 0) && (9 < *piVar5)) goto LAB_000c3d7c;\n    while ((func_0x000fa0c4(_UNK_000c3dd4 + 0xc3d48,_UNK_000c3dd8 + 0xc3d4c,_UNK_000c3ddc + 0xc3d54,\n                            0x31d,1,iVar7), iVar1 = *piVar3, (iVar1 * (iVar1 + -1) & 1U) != 0 &&\n           (9 < *piVar5))) {\nLAB_000c3d7c:\n      func_0x000fa0c4(_UNK_000c3de0 + 0xc3d94,_UNK_000c3de4 + 0xc3d98,_UNK_000c3de8 + 0xc3da0,0x31d,\n                      1,iVar7);\n    }\n  }\n  return 0xffffffff;\n}\n\n",
+        "sha256": "1ef4018f7936a214bd6dec0c1415a821a983d20b976339c4c2689fbe411bf39e"
+      },
+      "c3b54.ghidra.asm": {
+        "text": "000c3b54  stmdb sp!,{r4,r5,r6,r7,r8,r10,r11,lr}\n000c3b58  add r11,sp,#0x18\n000c3b5c  sub sp,sp,#0x10\n000c3b60  add r5,sp,#0xc\n000c3b64  cpy r4,r0\n000c3b68  cpy r0,r5\n000c3b6c  bl 0x005a50e8\n000c3b70  cpy r0,r5\n000c3b74  mov r1,#0x1\n000c3b78  bl 0x005a50f8\n000c3b7c  ldr r0,[0xc3db4]\n000c3b80  mov r1,#0x0\n000c3b84  add r0,pc,r0\n000c3b88  bl 0x005a60dc\n000c3b8c  ldr r0,[0xc3db8]\n000c3b90  cpy r1,r5\n000c3b94  add r0,pc,r0\n000c3b98  bl 0x005a4a08\n000c3b9c  ldr r0,[0xc3dbc]\n000c3ba0  mov r1,#0x0\n000c3ba4  add r0,pc,r0\n000c3ba8  bl 0x005a60dc\n000c3bac  ldr r0,[0xc3dc0]\n000c3bb0  cpy r1,r5\n000c3bb4  add r0,pc,r0\n000c3bb8  bl 0x005a4a08\n000c3bbc  cpy r0,r5\n000c3bc0  bl 0x005a50e0\n000c3bc4  ldr r2,[0xc3dc4]\n000c3bc8  movw r0,#0x1060\n000c3bcc  add r0,r4,r0\n000c3bd0  mov r1,#0x0\n000c3bd4  add r2,pc,r2\n000c3bd8  cpy r3,r4\n000c3bdc  bl 0x005a55cc\n000c3be0  cmp r0,#0x0\n000c3be4  beq 0x000c3c24\n000c3be8  ldr r4,[0xc3dc8]\n000c3bec  ldr r4,[pc,r4]\n000c3bf0  ldr r0,[r4,#0x0]\n000c3bf4  ldr r6,[0xc3dcc]\n000c3bf8  sub r1,r0,#0x1\n000c3bfc  mul r0,r0,r1\n000c3c00  ldr r6,[pc,r6]\n000c3c04  ldr r7,[0xc3dd0]\n000c3c08  add r7,pc,r7\n000c3c0c  tst r0,#0x1\n000c3c10  beq 0x000c3d30\n000c3c14  ldr r0,[r6,#0x0]\n000c3c18  cmp r0,#0x9\n000c3c1c  bgt 0x000c3d7c\n000c3c20  b 0x000c3d30\n000c3c24  ldr r2,[0xc3dec]\n000c3c28  movw r0,#0x1068\n000c3c2c  add r0,r4,r0\n000c3c30  mov r1,#0x0\n000c3c34  cpy r3,r4\n000c3c38  mov r5,#0x0\n000c3c3c  ldr r2,[pc,r2]\n000c3c40  bl 0x005a55cc\n000c3c44  cmp r0,#0x0\n000c3c48  beq 0x000c3cb0\n000c3c4c  ldr r4,[0xc3df0]\n000c3c50  mov r7,#0x1\n000c3c54  ldr r5,[0xc3df4]\n000c3c58  mov r3,#0x308\n000c3c5c  ldr r6,[0xc3df8]\n000c3c60  add r4,pc,r4\n000c3c64  ldr r0,[0xc3dfc]\n000c3c68  add r5,pc,r5\n000c3c6c  add r6,pc,r6\n000c3c70  str r7,[sp,#0x0]\n000c3c74  add r0,pc,r0\n000c3c78  str r0,[sp,#0x4]\n000c3c7c  cpy r0,r4\n000c3c80  cpy r1,r5\n000c3c84  cpy r2,r6\n000c3c88  bl 0x000fa0c4\n000c3c8c  ldr r0,[0xc3e00]\n000c3c90  cpy r1,r5\n000c3c94  str r7,[sp,#0x0]\n000c3c98  cpy r2,r6\n000c3c9c  add r0,pc,r0\n000c3ca0  str r0,[sp,#0x4]\n000c3ca4  cpy r0,r4\n000c3ca8  movw r3,#0x322\n000c3cac  b 0x000c3d24\n000c3cb0  ldr r2,[0xc3e04]\n000c3cb4  movw r0,#0x1058\n000c3cb8  add r0,r4,r0\n000c3cbc  mov r1,#0x0\n000c3cc0  add r2,pc,r2\n000c3cc4  cpy r3,r4\n000c3cc8  bl 0x005a55cc\n000c3ccc  cmp r0,#0x0\n000c3cd0  beq 0x000c3da8\n000c3cd4  ldr r8,[0xc3e08]\n000c3cd8  mov r4,#0x1\n000c3cdc  ldr r5,[0xc3e0c]\n000c3ce0  movw r3,#0x291\n000c3ce4  ldr r6,[0xc3e10]\n000c3ce8  add r8,pc,r8\n000c3cec  add r5,pc,r5\n000c3cf0  ldr r7,[0xc3e14]\n000c3cf4  add r6,pc,r6\n000c3cf8  cpy r0,r8\n000c3cfc  cpy r1,r5\n000c3d00  add r7,pc,r7\n000c3d04  cpy r2,r6\n000c3d08  stmia sp,{r4,r7}\n000c3d0c  bl 0x000fa0c4\n000c3d10  cpy r0,r8\n000c3d14  cpy r1,r5\n000c3d18  cpy r2,r6\n000c3d1c  movw r3,#0x327\n000c3d20  stmia sp,{r4,r7}\n000c3d24  bl 0x000fa0c4\n000c3d28  mvn r5,#0x0\n000c3d2c  b 0x000c3da8\n000c3d30  ldr r0,[0xc3dd4]\n000c3d34  mov r3,#0x1\n000c3d38  ldr r1,[0xc3dd8]\n000c3d3c  ldr r2,[0xc3ddc]\n000c3d40  add r0,pc,r0\n000c3d44  add r1,pc,r1\n000c3d48  stmia sp,{r3,r7}\n000c3d4c  add r2,pc,r2\n000c3d50  movw r3,#0x31d\n000c3d54  bl 0x000fa0c4\n000c3d58  ldr r0,[r4,#0x0]\n000c3d5c  mvn r5,#0x0\n000c3d60  sub r1,r0,#0x1\n000c3d64  mul r0,r0,r1\n000c3d68  tst r0,#0x1\n000c3d6c  beq 0x000c3da8\n000c3d70  ldr r0,[r6,#0x0]\n000c3d74  cmp r0,#0xa\n000c3d78  blt 0x000c3da8\n000c3d7c  ldr r0,[0xc3de0]\n000c3d80  mov r3,#0x1\n000c3d84  ldr r1,[0xc3de4]\n000c3d88  ldr r2,[0xc3de8]\n000c3d8c  add r0,pc,r0\n000c3d90  add r1,pc,r1\n000c3d94  stmia sp,{r3,r7}\n000c3d98  add r2,pc,r2\n000c3d9c  movw r3,#0x31d\n000c3da0  bl 0x000fa0c4\n000c3da4  b 0x000c3d30\n000c3da8  cpy r0,r5\n000c3dac  sub sp,r11,#0x18\n000c3db0  ldmia sp!,{r4,r5,r6,r7,r8,r10,r11,pc}\n",
+        "sha256": "7ceeb3b6478e00a81829e0289aa35effe80542611d4c25ae20e567bcec65f9a0"
+      },
+      "headless.log": {
+        "text": "openjdk version \"25.0.4.1\" 2026-08-18 LTS\nOpenJDK Runtime Environment Temurin-25.0.4.1+1 (build 25.0.4.1+1-LTS)\nOpenJDK 64-Bit Server VM Temurin-25.0.4.1+1 (build 25.0.4.1+1-LTS, mixed mode)\nINFO  Using log config file: jar:file:/opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Framework/Generic/lib/Generic.jar!/generic.log4j.xml (LoggingInitialization)  \nINFO  Using log file: /root/.config/ghidra/ghidra_12.1.4_PUBLIC/application.log (LoggingInitialization)  \nINFO  Loading user preferences: /root/.config/ghidra/ghidra_12.1.4_PUBLIC/preferences (Preferences)  \nINFO  Searching for classes... (ClassSearcher)  \nINFO  Class search complete (836 ms) (ClassSearcher)  \nINFO  Initializing SSL Context (DefaultSSLContextInitializer)  \nINFO  Initializing Random Number Generator... (SecureRandomFactory)  \nINFO  Random Number Generator initialization complete: NativePRNGNonBlocking (SecureRandomFactory)  \nINFO  Trust manager disabled, cacerts have not been set (DefaultTrustManagerFactory)  \nINFO  Headless startup complete (2327 ms) (AnalyzeHeadless)  \nINFO  Class searcher loaded 59 extension points (20 false positives) (ClassSearcher)  \nWARNING: A terminally deprecated method in sun.misc.Unsafe has been called\nWARNING: sun.misc.Unsafe::staticFieldOffset has been called by org.apache.felix.framework.util.SecureAction (file:/opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/Base/lib/org.apache.felix.framework-7.0.5.jar)\nWARNING: Please consider reporting this to the maintainers of class org.apache.felix.framework.util.SecureAction\nWARNING: sun.misc.Unsafe::staticFieldOffset will be removed in a future release\nINFO  HEADLESS Script Paths:\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/PDB/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Processors/Atmel/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/Base/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Processors/DATA/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/BytePatterns/ghidra_scripts\n    /mnt/c/Users/Main/.codex/worktrees/b8e54-review/dizzass/build/b07-ghidra\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/SwiftDemangler/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/MicrosoftCodeAnalyzer/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/FileFormats/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/BSim/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/Decompiler/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/FunctionID/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Processors/8051/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/WildcardAssembler/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Processors/JVM/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Processors/PIC/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Debug/Debugger/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/DecompilerDependent/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Debug/Debugger-rmi-trace/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/PyGhidra/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/VersionTracking/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/GnuDemangler/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/SystemEmulation/ghidra_scripts (HeadlessAnalyzer)  \nINFO  HEADLESS: execution starts (HeadlessAnalyzer)  \nINFO  Opening existing project: /opt/dizzass-re-tools/projects/vn135-b04 (HeadlessAnalyzer)  \nINFO  Opening project: /opt/dizzass-re-tools/projects/vn135-b04 (HeadlessProject)  \nINFO  REPORT: Processing project file: /cgminer.vendor.elf (HeadlessAnalyzer)  \nINFO  REPORT: Execute script: InspectWorkStart.java 'build/b07-ghidra'  (HeadlessAnalyzer)  \nINFO  SCRIPT: /mnt/c/Users/Main/.codex/worktrees/b8e54-review/dizzass/build/b07-ghidra/InspectWorkStart.java (HeadlessAnalyzer)  \nINFO  InspectWorkStart.java> WORK_START_GHIDRA_DONE [[000c3b54, 000c3db3]] (GhidraScript)  \nINFO  REPORT: Save succeeded for processed file: /cgminer.vendor.elf (HeadlessAnalyzer)  \n",
+        "sha256": "9ac601ab2f0c60c1308a1138e5bf3a8fcec5acce0c3c67358892beb0ebe48571"
+      }
+    }
+  },
+  "reuse_review": "util.c thr_info_create adds cgsem_init before one pthread_create; not an equivalent three-worker coordinator.",
+  "callbacks": [
+    "attribute operations",
+    "mutex/condition initialization",
+    "thread create with address tokens only",
+    "six-argument logger"
+  ],
+  "domain": [
+    "valid stable separate views/ops/objects",
+    "serialized callback writes",
+    "explicit initial attribute scratch",
+    "no real workers or synchronization"
+  ],
+  "not_claimed": [
+    "pending TX/RX/producer body composition",
+    "partial-start rollback or lifetime completion",
+    "native cgminer ABI",
+    "production driver",
+    "hardware or pool acceptance"
+  ]
+}
