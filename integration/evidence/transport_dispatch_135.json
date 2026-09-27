@@ -1,0 +1,102 @@
+{
+  "base_commit": "8f7518a544d63ed4c6043b321b43d475a04c79a4",
+  "base_tree": "d7f5faf101bfcea6a0a599e5dcbe60937525f316",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "ranges": [
+    {
+      "start": "0xd26ac",
+      "end": "0xd2760",
+      "sha256": "9c32d81b07d6f84eddf863a9a22f046243c9bff9427fa5f4af3bc6430ea2f4ec"
+    },
+    {
+      "start": "0xd21dc",
+      "end": "0xd22dc",
+      "sha256": "6182376bd90bc503ff3bd78da88628650bac3bc3fd314eaf928308d1d87993c2"
+    },
+    {
+      "start": "0xd24ec",
+      "end": "0xd253c",
+      "sha256": "e97be238bac5bdc64b9b52d1d72cbf868630da149627e27bfcac51ea3fc99708"
+    },
+    {
+      "start": "0x117f7c",
+      "end": "0x118180",
+      "sha256": "e72d69c3a9be866a094500bc9d26986cc86faf17fcd412c7a89dcbabff7358ba"
+    },
+    {
+      "start": "0x10e6c0",
+      "end": "0x10e938",
+      "sha256": "1faefeb1f0743139f9992f6c4410f70aae515c158395db435ba071782e990b78"
+    },
+    {
+      "start": "0xe4a74",
+      "end": "0xe4c04",
+      "sha256": "08d1b07979a62ae97d7023382859e8a3e6f1d3f486b354184af3725c186ab1c2"
+    },
+    {
+      "start": "0xf7f10",
+      "end": "0xf8048",
+      "sha256": "8b3d2cf2b36838d6cd4cbabd65fc6755f410ec2647614bf827f4fcaee8357c5b"
+    },
+    {
+      "start": "0x107648",
+      "end": "0x1079f0",
+      "sha256": "73eefcd9c5d223ebbdf987a7dcbdda3279fb47c6b9cd7cd1902ce4d044ca8bd2"
+    },
+    {
+      "start": "0x107ed0",
+      "end": "0x1082b4",
+      "sha256": "dddc9cdb5bda8b4b091bcd4a872238b2e8c85e5106fe697cbb84bb1fdc8613fc"
+    }
+  ],
+  "immutable": {
+    "cgminer.c": "54739e4139294c526af0c73aa9a02ba9762ca4f2",
+    "Makefile.am": "17d2fbde26b5e8cb614b61908b84d5937af48325",
+    "driver-bitmain.c": "9e2bb0251f30148e158978227eb224391384985d",
+    "libbitmain/src/aml/chip.c": "8a8614a9d356c6279b2e3d8e98aa61753b02b5e6",
+    "libbitmain/src/uart.c": "7fdec4cf83867bbbbc69a1b2b8731663d85eb318",
+    "libbitmain/src/chip/chip1368-register-write.c": "5979c0c7efdbd575b8820674c9099e3aff4721c1",
+    "libbitmain/src/chip/chip1368-frequency.c": "57c6905a31980629c698ade20062e23362e2b355",
+    "libbitmain/src/reg_cache.c": "6a89d72ae27505f64dc804b5b3b72c455865406e",
+    "libbitmain/src/pll.c": "0c8fbcd6dfc64c342675c8ae3542a826e1fddbfd",
+    "src/backend/base.c": "9dd2d25122e3cd7a35f3ab4f0f709ce07422d1a7",
+    "integration/bm1368_control.c": "20b4b0476beb3968be590373f884e91b7d6fe46f",
+    "reconstruction/support/crc5.c": "1912ec8906fb520f7d7c5196ea5a7ec122aaeda8",
+    "include/xminer/recovery/uart.h": "23838f3ac88d67f1c57c67914119f2d0a5059a54",
+    "include/xminer/recovery/aml_chip.h": "9800cdd205e155441c307f90db7dc6df06ec4ca4",
+    "integration/bm1368_register_write_135.h": "02742822a62453ad87c23d25d4f95b74a4762b42",
+    "integration/bm1368_frequency_135.h": "71319f387fa9a8753afffd9ded86f7ed7210454f",
+    "integration/tests/test_bm1368_register_write_135.py": "c1223e65fdfedc54aaf9b68081b77f4dce165e9a",
+    "integration/tests/test_bm1368_frequency_135.py": "ebd81bb62d3d4be4f2b72b34054e013bade250db",
+    "reconstruction/data/reg_cache_defaults.inc": "be581d79cd7cef4dd079c0115689c571951fc3a4",
+    "tests/test_stage5_aml_uart_differential.py": "33fd9259c4b005cf3d834133f72bbdc3db42cabd",
+    "tests/test_stage5_uart_differential.py": "861e3e04aec4d7ea0ef72fdc0e017a357c99458a",
+    "tools/arm32_difficulty_subset.py": "94b359f6e1e8d7e2c11e22d640e36a97e7c22b37",
+    "tools/arm32_freshness_subset.py": "1f6f58ad83ad26cce28036382977421764bb4582",
+    "tools/arm32_nonce_subset.py": "84e86cb15dcc9a45819ef8448f8c89077cbd7548",
+    "tools/arm32_rebuild_subset.py": "37fc528e01f10754b18a43f1a1ddff32d445a5b4",
+    "tools/arm32_rx_subset.py": "175bfc14a4413f84895ed983a45289b4c426e588",
+    "tools/arm32_subset.py": "e18a97222c1a8406fd61d5baac9763c3166f7e4b",
+    "tools/arm32_verify_subset.py": "284fd7169697e3643d963300063eb7a156c57fb5",
+    "tools/arm32_vfp_subset.py": "d1df89081dfa172ea41c84cae46e51ad099d74d8"
+  },
+  "scope": {
+    "entry": "0xd26ac",
+    "table": "0x68bf68",
+    "method_offset": "0x18",
+    "dispatch_returns_status_unchanged": true,
+    "aml_platform_selector": 2,
+    "aml_entry": "0x117f7c",
+    "uart_entry": "0x10e6c0",
+    "platform_selection_executed_until": "0xd22dc",
+    "uart_and_framing_reused": true,
+    "existing_diagnostics_excluded": true,
+    "new_binding_guards": -2,
+    "real_uart_or_mutex": false,
+    "hardware_acceptance": false,
+    "live_threads": false,
+    "safe_write_all": false,
+    "argument_lifetime_fix": false,
+    "production_binding": false
+  }
+}
