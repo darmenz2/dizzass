@@ -1,0 +1,75 @@
+name: Check B-05 original RX worker
+on:
+  pull_request:
+    branches: [work/reconstruction]
+    paths:
+      - src/backend/work-gen/work-rx-worker.c
+      - src/backend/work-gen/work-gen.c
+      - reconstruction/support/sha256_midstate.c
+      - integration/work_rx_worker_135.h
+      - integration/work-rx-worker-135.mk
+      - integration/WORK_RX_WORKER_135_RU.md
+      - integration/evidence/work_rx_worker_135.json
+      - integration/tests/*work_rx_worker*135*
+      - .github/workflows/work-rx-worker-135.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  rx135:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Original instructions, native checks and semantic mutants
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build/b05-logs
+          git rev-parse HEAD | tee build/b05-logs/head.txt
+          ${{ matrix.cc }} --version | tee build/b05-logs/compiler.txt
+          make -f integration/work-rx-worker-135.mk CC=${{ matrix.cc }} RX_DIR=build/b05 all negative 2>&1 | tee build/b05-logs/new.log
+      - name: ASan and UBSan
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -f integration/work-rx-worker-135.mk CC=${{ matrix.cc }} RX_DIR=build/b05 sanitize 2>&1 | tee build/b05-logs/sanitizers.log
+      - name: Existing RX stream regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -f integration/work-rx-worker-135.mk CC=${{ matrix.cc }} RX_DIR=build/b05 regressions 2>&1 | tee build/b05-logs/regressions.log
+      - name: Static analysis
+        if: matrix.cc == 'clang'
+        shell: bash
+        run: |
+          set -euo pipefail
+          clang --analyze -I. -Iinclude -std=c11 -Wall -Wextra -Wpedantic -Xanalyzer -analyzer-output=text src/backend/work-gen/work-rx-worker.c 2>&1 | tee build/b05-logs/analyzer.log
+      - name: Existing original RX and nonce regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -f Makefile.recovery CC=${{ matrix.cc }} build/libvn135_recovered.so build/test-work-nonce 2>&1 | tee build/b05-logs/old-build.log
+          ./build/test-work-nonce 2>&1 | tee build/b05-logs/nonce-native.log
+          python3 tests/test_stage7_differential.py prepare --library ./build/libvn135_recovered.so --tag b05-${{ matrix.cc }} 2>&1 | tee build/b05-logs/nonce-original.log
+          python3 tests/test_stage6_rx_differential.py 2>&1 | tee build/b05-logs/rx-original.log
+      - name: Save exact head logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: work-rx-worker-${{ matrix.cc }}-${{ github.run_id }}
+          retention-days: 7
+          path: |
+            build/b05-logs/
+            build/b05/negative/*.log
+            build/stage7-prepare-b05-*-results.json
+            build/stage6-rx-differential-results.json
