@@ -1,0 +1,734 @@
+{
+  "archive_sha256": "20fabdd66255889315e61ae2a33ff2e4623566ca430f1cb8c90d9b938dc7b43c",
+  "elf_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "source_path": "/tmp/build/src/backend/work-gen/work-gen.c",
+  "scope": "Offline full c36e8 and5b150 with d20b4 total capacity/d20ac count; lower OS/TLS/read/bulk-push effects required callbacks, terminal exit boundary. No production or pending-PR dependencies.",
+  "correction": "d20b4 is unsigned (end-begin)/stride, zero if stride0, not free-space/count. Full FIFO does not stop reads; ignored bulk-push result can lose the excess tail. Earlier free-space research hypothesis superseded.",
+  "setter_limit": "5a6b2c checks value<=2, optionally loads a byte from TLS-0x50 into old, then stores new byte, returns0; invalid value=>22. Kept as required address-labelled callback; no assumed host POSIX ABI or inherited cancel-type label.",
+  "reuse_limit": "Existing single-element FIFO push composed only for valid allocated byte FIFO without callback mutation during copy. Existing UART read composed with explicit ioctl/read injection. Neither complete raw domain nor real hardware/runtime is claimed.",
+  "ghidra": {
+    "version": "12.1.4",
+    "artifacts": {
+      "InspectChainUartReader.java": {
+        "sha256": "bf1dd9416f5383eb0b10f692cb14ad877995ce2ba44d5916e1cf70a80d5dc318",
+        "text": "import ghidra.app.script.GhidraScript;\nimport ghidra.app.decompiler.*;\nimport ghidra.program.model.listing.*;\nimport java.nio.file.*;\nimport java.nio.charset.StandardCharsets;\npublic class InspectChainUartReader extends GhidraScript {\n public void run() throws Exception {\n  Path out=Paths.get(getScriptArgs()[0]);Files.createDirectories(out);\n  DecompInterface d=new DecompInterface();d.openProgram(currentProgram);\n  for(long entry:new long[]{0xc36e8L,0xfef1cL,0xd1bc8L,0x5b150L,0xd20b4L,0xd20acL,0xfe0b0L,0xfdfbcL,0xfdfacL,0x10e938L,0x116fa8L,0x5a6b2cL}) {\n   disassemble(toAddr(entry));if(getFunctionAt(toAddr(entry))==null)createFunction(toAddr(entry),null);\n   Function f=getFunctionAt(toAddr(entry));DecompileResults r=d.decompileFunction(f,90,monitor);\n   if(!r.decompileCompleted())throw new Exception(r.getErrorMessage());\n   String name=Long.toHexString(entry);\n   Files.writeString(out.resolve(name+\".ghidra.c\"),r.getDecompiledFunction().getC(),StandardCharsets.UTF_8);\n   StringBuilder a=new StringBuilder();InstructionIterator it=currentProgram.getListing().getInstructions(f.getBody(),true);\n   while(it.hasNext()){Instruction ins=it.next();a.append(ins.getAddress()).append(\"  \").append(ins).append(\"\\n\");}\n   Files.writeString(out.resolve(name+\".ghidra.asm\"),a.toString(),StandardCharsets.UTF_8);\n   println(\"CHAIN_UART_READER_GHIDRA_DONE \"+name+\" \"+f.getBody());\n  }\n  d.dispose();\n }\n}\n"
+      },
+      "headless.log": {
+        "sha256": "17513ac38008271ade1908b99d2c8ba69640a5d93d13aa709ff021e68ed56f07",
+        "text": "openjdk version \"25.0.4.1\" 2026-08-18 LTS\nOpenJDK Runtime Environment Temurin-25.0.4.1+1 (build 25.0.4.1+1-LTS)\nOpenJDK 64-Bit Server VM Temurin-25.0.4.1+1 (build 25.0.4.1+1-LTS, mixed mode)\nINFO  Using log config file: jar:file:/opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Framework/Generic/lib/Generic.jar!/generic.log4j.xml (LoggingInitialization)  \nINFO  Using log file: /root/.config/ghidra/ghidra_12.1.4_PUBLIC/application.log (LoggingInitialization)  \nINFO  Loading user preferences: /root/.config/ghidra/ghidra_12.1.4_PUBLIC/preferences (Preferences)  \nINFO  Searching for classes... (ClassSearcher)  \nINFO  Class search complete (805 ms) (ClassSearcher)  \nINFO  Initializing SSL Context (DefaultSSLContextInitializer)  \nINFO  Initializing Random Number Generator... (SecureRandomFactory)  \nINFO  Random Number Generator initialization complete: NativePRNGNonBlocking (SecureRandomFactory)  \nINFO  Trust manager disabled, cacerts have not been set (DefaultTrustManagerFactory)  \nINFO  Headless startup complete (2307 ms) (AnalyzeHeadless)  \nINFO  Class searcher loaded 59 extension points (20 false positives) (ClassSearcher)  \nWARNING: A terminally deprecated method in sun.misc.Unsafe has been called\nWARNING: sun.misc.Unsafe::staticFieldOffset has been called by org.apache.felix.framework.util.SecureAction (file:/opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/Base/lib/org.apache.felix.framework-7.0.5.jar)\nWARNING: Please consider reporting this to the maintainers of class org.apache.felix.framework.util.SecureAction\nWARNING: sun.misc.Unsafe::staticFieldOffset will be removed in a future release\nINFO  HEADLESS Script Paths:\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/PDB/ghidra_scripts\n    /mnt/c/Users/Main/.codex/worktrees/b8e54-review/dizzass/build/b11-ghidra\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Processors/Atmel/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/Base/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Processors/DATA/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/BytePatterns/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/SwiftDemangler/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/MicrosoftCodeAnalyzer/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/FileFormats/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/BSim/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/Decompiler/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/FunctionID/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Processors/8051/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/WildcardAssembler/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Processors/JVM/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Processors/PIC/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Debug/Debugger/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/DecompilerDependent/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Debug/Debugger-rmi-trace/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/PyGhidra/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/VersionTracking/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/GnuDemangler/ghidra_scripts\n    /opt/dizzass-re-tools/ghidra_12.1.4_PUBLIC/Ghidra/Features/SystemEmulation/ghidra_scripts (HeadlessAnalyzer)  \nINFO  HEADLESS: execution starts (HeadlessAnalyzer)  \nINFO  Opening existing project: /opt/dizzass-re-tools/projects/vn135-b04 (HeadlessAnalyzer)  \nINFO  Opening project: /opt/dizzass-re-tools/projects/vn135-b04 (HeadlessProject)  \nINFO  REPORT: Processing project file: /cgminer.vendor.elf (HeadlessAnalyzer)  \nINFO  REPORT: Execute script: InspectChainUartReader.java 'build/b11-ghidra'  (HeadlessAnalyzer)  \nINFO  SCRIPT: /mnt/c/Users/Main/.codex/worktrees/b8e54-review/dizzass/build/b11-ghidra/InspectChainUartReader.java (HeadlessAnalyzer)  \nINFO  InspectChainUartReader.java> CHAIN_UART_READER_GHIDRA_DONE c36e8 [[000c36e8, 000c3983]] (GhidraScript)  \nINFO  InspectChainUartReader.java> CHAIN_UART_READER_GHIDRA_DONE fef1c [[000fef1c, 000fef27]] (GhidraScript)  \nINFO  InspectChainUartReader.java> CHAIN_UART_READER_GHIDRA_DONE d1bc8 [[000d1bc8, 000d1ce7]] (GhidraScript)  \nINFO  InspectChainUartReader.java> CHAIN_UART_READER_GHIDRA_DONE 5b150 [[0005b150, 0005b1d3]] (GhidraScript)  \nINFO  InspectChainUartReader.java> CHAIN_UART_READER_GHIDRA_DONE d20b4 [[000d20b4, 000d2123]] (GhidraScript)  \nINFO  InspectChainUartReader.java> CHAIN_UART_READER_GHIDRA_DONE d20ac [[000d20ac, 000d20b3]] (GhidraScript)  \nINFO  InspectChainUartReader.java> CHAIN_UART_READER_GHIDRA_DONE fe0b0 [[000fe0b0, 000fe107]] (GhidraScript)  \nINFO  InspectChainUartReader.java> CHAIN_UART_READER_GHIDRA_DONE fdfbc [[000fdfbc, 000fdfc7]] (GhidraScript)  \nINFO  InspectChainUartReader.java> CHAIN_UART_READER_GHIDRA_DONE fdfac [[000fdfac, 000fdfb7]] (GhidraScript)  \nINFO  InspectChainUartReader.java> CHAIN_UART_READER_GHIDRA_DONE 10e938 [[0010e938, 0010e993]] (GhidraScript)  \nINFO  InspectChainUartReader.java> CHAIN_UART_READER_GHIDRA_DONE 116fa8 [[00116fa8, 00117047]] (GhidraScript)  \nINFO  InspectChainUartReader.java> CHAIN_UART_READER_GHIDRA_DONE 5a6b2c [[005a6b2c, 005a6b5f]] (GhidraScript)  \nINFO  REPORT: Save succeeded for processed file: /cgminer.vendor.elf (HeadlessAnalyzer)  \n"
+      },
+      "c36e8.ghidra.c": {
+        "sha256": "053a7aac0871162eab0358d502136aa12696f1deb5bcfc9447d05e16553cdf69",
+        "text": "\n/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */\n\nvoid FUN_000c36e8(int param_1)\n\n{\n  int iVar1;\n  int iVar2;\n  uint uVar3;\n  int iVar4;\n  int iVar5;\n  undefined1 *puVar6;\n  int *piVar7;\n  uint *puVar8;\n  uint *puVar9;\n  uint uStack_30;\n  int iStack_2c;\n  \n  puVar8 = &uStack_30;\n  piVar7 = *(int **)(_UNK_000c3984 + 0xc3704);\n  iVar1 = *piVar7;\n  puVar9 = &uStack_30;\n  if (((iVar1 * (iVar1 + -1) & 1U) != 0) &&\n     (puVar9 = &uStack_30, 9 < **(int **)(_UNK_000c3988 + 0xc3720))) goto LAB_000c3774;\n  while( true ) {\n    puVar6 = (undefined1 *)((int)puVar9 + -0x100);\n    puVar8 = (uint *)((int)puVar9 + -0x148);\n    iVar1 = FUN_000fdfbc();\n    iVar2 = FUN_000fdfac();\n    iVar5 = *piVar7;\n    if (((iVar5 * (iVar5 + -1) & 1U) == 0) || (**(int **)(_UNK_000c398c + 0xc376c) < 10)) break;\nLAB_000c3774:\n    puVar9 = puVar8 + -0x52;\n    FUN_000fdfbc();\n    FUN_000fdfac();\n  }\n  iVar5 = 0;\n  if (((iVar2 != 0) && (iVar1 != 6 || iVar2 != 4)) && (iVar5 = 2, iVar1 == 7)) {\n    iVar5 = 1;\n  }\n  uStack_30 = 9;\n  iVar1 = FUN_000fe0b0();\n  if (iVar1 == 0) {\n    uStack_30 = 0xb;\n    if (iVar5 == 1) {\n      uStack_30 = 10;\n    }\n    if (iVar5 == 0) {\n      uStack_30 = 9;\n    }\n  }\n  func_0x005a6b2c(1,0);\n  func_0x0059f558((undefined1 *)((int)puVar9 + -0x140),0x40,_UNK_000c3990 + 0xc3808,\n                  *(undefined4 *)(param_1 + 0x18));\n  *(undefined4 *)((int)puVar9 + -0x150) = 0;\n  func_0x00593af8(0xf,(undefined1 *)((int)puVar9 + -0x140),0,0);\n  iVar2 = param_1 + 0x2f8;\n  iVar1 = param_1 + 0x2e0;\n  iStack_2c = param_1 + 0x2b8;\n  *(undefined1 *)(param_1 + 0x318) = 1;\n  do {\n    uVar3 = FUN_0005b150(param_1);\n    func_0x005a6b2c(0,puVar8);\n    if (0xff < uVar3) {\n      uVar3 = 0x100;\n    }\n    iVar5 = FUN_000fef1c(iStack_2c,puVar6,uVar3);\n    func_0x005a6b2c(*puVar8,0);\n    if (iVar5 < 1) {\n      func_0x0010ef3c(5);\n    }\n    else {\n      piVar7 = *(int **)(_UNK_000c3994 + 0xc38a8);\n      iVar4 = *piVar7;\n      if (((iVar4 * (iVar4 + -1) & 1U) != 0) && (9 < **(int **)(_UNK_000c3998 + 0xc38c4)))\n      goto LAB_000c3924;\n      while( true ) {\n        func_0x005a6108(iVar1);\n        FUN_000d1bc8(iVar2,puVar6,iVar5);\n        uVar3 = func_0x000d20ac(iVar2);\n        iVar4 = *piVar7;\n        if (((iVar4 * (iVar4 + -1) & 1U) == 0) || (**(int **)(_UNK_000c399c + 0xc391c) < 10)) break;\nLAB_000c3924:\n        func_0x005a6108(iVar1);\n        FUN_000d1bc8(iVar2,puVar6,iVar5);\n        func_0x000d20ac(iVar2);\n      }\n      if (uStack_30 <= uVar3) {\n        iVar5 = _UNK_000c39a0 + 0xc3960;\n        func_0x005a6108(iVar5);\n        func_0x005a4a48(_UNK_000c39a4 + 0xc3970);\n        func_0x005a66c4(iVar5);\n      }\n      func_0x005a66c4(iVar1);\n    }\n  } while (*(char *)(param_1 + 0x318) != '\\0');\n                    /* WARNING: Subroutine does not return */\n  FUN_005a52d0(0);\n}\n\n"
+      },
+      "c36e8.ghidra.asm": {
+        "sha256": "7205e4f3e5a64b4d84f945fcf42d96545e8848a29f860490ead904f4f7e734fd",
+        "text": "000c36e8  stmdb sp!,{r4,r5,r6,r7,r8,r9,r10,r11,lr}\n000c36ec  add r11,sp,#0x1c\n000c36f0  sub sp,sp,#0xc\n000c36f4  ldr r6,[0xc3984]\n000c36f8  cpy r8,r0\n000c36fc  ldr r6,[pc,r6]\n000c3700  ldr r0,[r6,#0x0]\n000c3704  sub r1,r0,#0x1\n000c3708  mul r0,r0,r1\n000c370c  tst r0,#0x1\n000c3710  beq 0x000c3728\n000c3714  ldr r0,[0xc3988]\n000c3718  ldr r0,[pc,r0]\n000c371c  ldr r0,[r0,#0x0]\n000c3720  cmp r0,#0x9\n000c3724  bgt 0x000c3774\n000c3728  sub r5,sp,#0x100\n000c372c  cpy sp,r5\n000c3730  sub r4,sp,#0x40\n000c3734  cpy sp,r4\n000c3738  sub r9,sp,#0x8\n000c373c  cpy sp,r9\n000c3740  bl 0x000fdfbc\n000c3744  cpy r7,r0\n000c3748  bl 0x000fdfac\n000c374c  ldr r1,[r6,#0x0]\n000c3750  sub r2,r1,#0x1\n000c3754  mul r1,r1,r2\n000c3758  tst r1,#0x1\n000c375c  beq 0x000c378c\n000c3760  ldr r1,[0xc398c]\n000c3764  ldr r1,[pc,r1]\n000c3768  ldr r1,[r1,#0x0]\n000c376c  cmp r1,#0x9\n000c3770  ble 0x000c378c\n000c3774  sub sp,sp,#0x100\n000c3778  sub sp,sp,#0x40\n000c377c  sub sp,sp,#0x8\n000c3780  bl 0x000fdfbc\n000c3784  bl 0x000fdfac\n000c3788  b 0x000c3728\n000c378c  mov r6,#0x0\n000c3790  cmp r0,#0x0\n000c3794  beq 0x000c37b0\n000c3798  cmp r7,#0x6\n000c379c  cmpeq r0,#0x4\n000c37a0  beq 0x000c37b0\n000c37a4  mov r6,#0x2\n000c37a8  cmp r7,#0x7\n000c37ac  movweq r6,#0x1\n000c37b0  mov r0,#0x9\n000c37b4  str r0,[r11,#-0x28]\n000c37b8  bl 0x000fe0b0\n000c37bc  cmp r0,#0x0\n000c37c0  bne 0x000c37dc\n000c37c4  mov r0,#0xb\n000c37c8  cmp r6,#0x1\n000c37cc  movweq r0,#0xa\n000c37d0  cmp r6,#0x0\n000c37d4  movweq r0,#0x9\n000c37d8  str r0,[r11,#-0x28]\n000c37dc  mov r0,#0x1\n000c37e0  mov r1,#0x0\n000c37e4  mov r6,#0x1\n000c37e8  mov r7,#0x0\n000c37ec  bl 0x005a6b2c\n000c37f0  ldr r3,[r8,#0x18]\n000c37f4  cpy r0,r4\n000c37f8  ldr r2,[0xc3990]\n000c37fc  mov r1,#0x40\n000c3800  add r2,pc,r2\n000c3804  bl 0x0059f558\n000c3808  sub sp,sp,#0x8\n000c380c  mov r0,#0xf\n000c3810  cpy r1,r4\n000c3814  mov r2,#0x0\n000c3818  mov r3,#0x0\n000c381c  str r7,[sp,#0x0]\n000c3820  bl 0x00593af8\n000c3824  add sp,sp,#0x8\n000c3828  add r7,r8,#0x2f8\n000c382c  add r4,r8,#0x2e0\n000c3830  add r0,r8,#0x2b8\n000c3834  strb r6,[r8,#0x318]\n000c3838  str r0,[r11,#-0x24]\n000c383c  b 0x000c3854\n000c3840  cpy r0,r4\n000c3844  bl 0x005a66c4\n000c3848  ldrb r0,[r8,#0x318]\n000c384c  cmp r0,#0x0\n000c3850  beq 0x000c397c\n000c3854  cpy r0,r8\n000c3858  bl 0x0005b150\n000c385c  cpy r6,r0\n000c3860  mov r0,#0x0\n000c3864  cpy r1,r9\n000c3868  bl 0x005a6b2c\n000c386c  cmp r6,#0x100\n000c3870  ldr r0,[r11,#-0x24]\n000c3874  movcs r6,#0x100\n000c3878  cpy r1,r5\n000c387c  cpy r2,r6\n000c3880  bl 0x000fef1c\n000c3884  cpy r10,r0\n000c3888  ldr r0,[r9,#0x0]\n000c388c  mov r1,#0x0\n000c3890  bl 0x005a6b2c\n000c3894  cmp r10,#0x0\n000c3898  ble 0x000c38d0\n000c389c  ldr r6,[0xc3994]\n000c38a0  ldr r6,[pc,r6]\n000c38a4  ldr r0,[r6,#0x0]\n000c38a8  sub r1,r0,#0x1\n000c38ac  mul r0,r0,r1\n000c38b0  tst r0,#0x1\n000c38b4  beq 0x000c38dc\n000c38b8  ldr r0,[0xc3998]\n000c38bc  ldr r0,[pc,r0]\n000c38c0  ldr r0,[r0,#0x0]\n000c38c4  cmp r0,#0x9\n000c38c8  bgt 0x000c3924\n000c38cc  b 0x000c38dc\n000c38d0  mov r0,#0x5\n000c38d4  bl 0x0010ef3c\n000c38d8  b 0x000c3848\n000c38dc  cpy r0,r4\n000c38e0  bl 0x005a6108\n000c38e4  cpy r0,r7\n000c38e8  cpy r1,r5\n000c38ec  cpy r2,r10\n000c38f0  bl 0x000d1bc8\n000c38f4  cpy r0,r7\n000c38f8  bl 0x000d20ac\n000c38fc  ldr r1,[r6,#0x0]\n000c3900  sub r2,r1,#0x1\n000c3904  mul r1,r1,r2\n000c3908  tst r1,#0x1\n000c390c  beq 0x000c3948\n000c3910  ldr r1,[0xc399c]\n000c3914  ldr r1,[pc,r1]\n000c3918  ldr r1,[r1,#0x0]\n000c391c  cmp r1,#0x9\n000c3920  ble 0x000c3948\n000c3924  cpy r0,r4\n000c3928  bl 0x005a6108\n000c392c  cpy r0,r7\n000c3930  cpy r1,r5\n000c3934  cpy r2,r10\n000c3938  bl 0x000d1bc8\n000c393c  cpy r0,r7\n000c3940  bl 0x000d20ac\n000c3944  b 0x000c38dc\n000c3948  ldr r1,[r11,#-0x28]\n000c394c  cmp r0,r1\n000c3950  bcc 0x000c3840\n000c3954  ldr r6,[0xc39a0]\n000c3958  add r6,pc,r6\n000c395c  cpy r0,r6\n000c3960  bl 0x005a6108\n000c3964  ldr r0,[0xc39a4]\n000c3968  add r0,pc,r0\n000c396c  bl 0x005a4a48\n000c3970  cpy r0,r6\n000c3974  bl 0x005a66c4\n000c3978  b 0x000c3840\n000c397c  mov r0,#0x0\n000c3980  bl 0x005a52d0\n"
+      },
+      "fef1c.ghidra.c": {
+        "sha256": "26412debaf7b541275b918a8d5ed8953ddca7877121021295ea3383690407c54",
+        "text": "\n/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */\n\nvoid FUN_000fef1c(void)\n\n{\n                    /* WARNING: Could not recover jumptable at 0x000fef24. Too many branches */\n                    /* WARNING: Treating indirect jump as call */\n  (**(code **)(&UNK_000fef28 + _UNK_000fef28))();\n  return;\n}\n\n"
+      },
+      "fef1c.ghidra.asm": {
+        "sha256": "6faa1d65e2e5c6630c3962b8c2286e128ba6c0aecc8c071bce0ab4cadf9de4f7",
+        "text": "000fef1c  ldr r3,[0xfef28]\n000fef20  ldr r3,[pc,r3]\n000fef24  bx r3\n"
+      },
+      "d1bc8.ghidra.c": {
+        "sha256": "7f95de6a54c8e93d73ee2cf068ed0e75a24933d39daa0fffbf260b122c1c75ab",
+        "text": "\n/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */\n\nuint FUN_000d1bc8(int *param_1,int param_2,uint param_3)\n\n{\n  int iVar1;\n  int iVar2;\n  int iVar3;\n  int iVar4;\n  uint uVar5;\n  int *piVar6;\n  int *piVar7;\n  bool bVar8;\n  \n  if (param_3 == 0) {\n    uVar5 = 0;\n  }\n  else {\n    iVar1 = param_1[5];\n    uVar5 = 0;\n    piVar7 = *(int **)(_UNK_000d1ce8 + 0xd1bfc);\n    piVar6 = *(int **)(_UNK_000d1cec + 0xd1c04);\n    do {\n      if (iVar1 == param_1[4]) {\n        return uVar5;\n      }\n      if (*param_1 == 0) {\n        do {\n          iVar3 = *piVar7;\n          iVar2 = param_1[6];\n          iVar4 = 0;\n          if ((iVar3 * (iVar3 + -1) & 1U) == 0) break;\n        } while (9 < *piVar6);\n      }\n      else {\n        func_0x005a2ee8(param_1[2],param_2,param_1[6]);\n        iVar2 = param_1[6];\n        iVar1 = param_1[1];\n        iVar3 = param_1[2] + iVar2;\n        param_1[2] = iVar3;\n        bVar8 = iVar3 == iVar1;\n        if (bVar8) {\n          iVar1 = *param_1;\n        }\n        iVar4 = 1;\n        if (bVar8) {\n          param_1[2] = iVar1;\n        }\n        iVar1 = param_1[5] + 1;\n        param_1[5] = iVar1;\n      }\n      do {\n        iVar3 = *piVar7;\n        if ((iVar3 * (iVar3 + -1) & 1U) == 0) break;\n      } while (9 < *piVar6);\n      uVar5 = iVar4 + uVar5;\n      param_2 = param_2 + iVar2;\n    } while (uVar5 < param_3);\n  }\n  return uVar5;\n}\n\n"
+      },
+      "d1bc8.ghidra.asm": {
+        "sha256": "ad68a0b439b73124818f803aae14cdcf3e91cb9e825b62e069f253c818eb6bd4",
+        "text": "000d1bc8  stmdb sp!,{r4,r5,r6,r7,r8,r9,r10,r11,lr}\n000d1bcc  add r11,sp,#0x1c\n000d1bd0  sub sp,sp,#0x4\n000d1bd4  cmp r2,#0x0\n000d1bd8  beq 0x000d1cd8\n000d1bdc  cpy r7,r0\n000d1be0  ldr r0,[r0,#0x14]\n000d1be4  ldr r10,[0xd1ce8]\n000d1be8  cpy r8,r2\n000d1bec  cpy r6,r1\n000d1bf0  mov r4,#0x0\n000d1bf4  ldr r10,[pc,r10]\n000d1bf8  ldr r9,[0xd1cec]\n000d1bfc  ldr r9,[pc,r9]\n000d1c00  b 0x000d1c14\n000d1c04  add r4,r2,r4\n000d1c08  add r6,r6,r1\n000d1c0c  cmp r4,r8\n000d1c10  bcs 0x000d1cdc\n000d1c14  ldr r1,[r7,#0x10]\n000d1c18  cmp r0,r1\n000d1c1c  beq 0x000d1cdc\n000d1c20  ldr r1,[r7,#0x0]\n000d1c24  cmp r1,#0x0\n000d1c28  beq 0x000d1c6c\n000d1c2c  ldr r0,[r7,#0x8]\n000d1c30  cpy r1,r6\n000d1c34  ldr r2,[r7,#0x18]\n000d1c38  bl 0x005a2ee8\n000d1c3c  ldr r1,[r7,#0x18]\n000d1c40  ldmib r7,{r0,r2}\n000d1c44  add r2,r2,r1\n000d1c48  str r2,[r7,#0x8]\n000d1c4c  cmp r2,r0\n000d1c50  ldreq r0,[r7,#0x0]\n000d1c54  mov r2,#0x1\n000d1c58  streq r0,[r7,#0x8]\n000d1c5c  ldr r0,[r7,#0x14]\n000d1c60  add r0,r0,#0x1\n000d1c64  str r0,[r7,#0x14]\n000d1c68  b 0x000d1ca4\n000d1c6c  ldr r1,[r10,#0x0]\n000d1c70  sub r2,r1,#0x1\n000d1c74  mul r1,r1,r2\n000d1c78  tst r1,#0x1\n000d1c7c  ldr r1,[r10,#0x0]\n000d1c80  sub r2,r1,#0x1\n000d1c84  mul r3,r1,r2\n000d1c88  ldr r1,[r7,#0x18]\n000d1c8c  mov r2,#0x0\n000d1c90  tst r3,#0x1\n000d1c94  beq 0x000d1ca4\n000d1c98  ldr r3,[r9,#0x0]\n000d1c9c  cmp r3,#0xa\n000d1ca0  bge 0x000d1c7c\n000d1ca4  ldr r3,[r10,#0x0]\n000d1ca8  sub r5,r3,#0x1\n000d1cac  mul r3,r3,r5\n000d1cb0  tst r3,#0x1\n000d1cb4  ldr r3,[r10,#0x0]\n000d1cb8  sub r5,r3,#0x1\n000d1cbc  mul r3,r3,r5\n000d1cc0  tst r3,#0x1\n000d1cc4  beq 0x000d1c04\n000d1cc8  ldr r3,[r9,#0x0]\n000d1ccc  cmp r3,#0x9\n000d1cd0  bgt 0x000d1cb4\n000d1cd4  b 0x000d1c04\n000d1cd8  mov r4,#0x0\n000d1cdc  cpy r0,r4\n000d1ce0  sub sp,r11,#0x1c\n000d1ce4  ldmia sp!,{r4,r5,r6,r7,r8,r9,r10,r11,pc}\n"
+      },
+      "5b150.ghidra.c": {
+        "sha256": "22c18025af7d9abf48552f01c581e965fa9bdaa91058029e61048bb90eb8c78f",
+        "text": "\n/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */\n\nint FUN_0005b150(int param_1)\n\n{\n  int iVar1;\n  int iVar2;\n  \n  iVar2 = param_1 + 0x2e0;\n  func_0x005a6108(iVar2);\n  while( true ) {\n    iVar1 = func_0x000d20b4(param_1 + 0x2f8);\n    func_0x005a66c4(iVar2);\n    if (iVar1 != 0) break;\n    func_0x0010ef3c(5);\n    func_0x005a6108(iVar2);\n  }\n  do {\n    if ((**(int **)(_UNK_0005b1d4 + 0x5b1a8) * (**(int **)(_UNK_0005b1d4 + 0x5b1a8) + -1) & 1U) == 0\n       ) {\n      return iVar1;\n    }\n  } while (9 < **(int **)(_UNK_0005b1d8 + 0x5b1b0));\n  return iVar1;\n}\n\n"
+      },
+      "5b150.ghidra.asm": {
+        "sha256": "8670a2bd938f4ed198ab0467ecc3f29da8ae471127f846d4873485935632d590",
+        "text": "0005b150  stmdb sp!,{r4,r5,r6,r10,r11,lr}\n0005b154  add r11,sp,#0x10\n0005b158  add r4,r0,#0x2e0\n0005b15c  cpy r5,r0\n0005b160  cpy r0,r4\n0005b164  bl 0x005a6108\n0005b168  add r6,r5,#0x2f8\n0005b16c  cpy r0,r6\n0005b170  bl 0x000d20b4\n0005b174  cpy r5,r0\n0005b178  cpy r0,r4\n0005b17c  bl 0x005a66c4\n0005b180  cmp r5,#0x0\n0005b184  bne 0x0005b19c\n0005b188  mov r0,#0x5\n0005b18c  bl 0x0010ef3c\n0005b190  cpy r0,r4\n0005b194  bl 0x005a6108\n0005b198  b 0x0005b16c\n0005b19c  ldr r0,[0x5b1d4]\n0005b1a0  ldr r0,[pc,r0]\n0005b1a4  ldr r1,[0x5b1d8]\n0005b1a8  ldr r1,[pc,r1]\n0005b1ac  ldr r2,[r0,#0x0]\n0005b1b0  sub r3,r2,#0x1\n0005b1b4  mul r2,r2,r3\n0005b1b8  tst r2,#0x1\n0005b1bc  beq 0x0005b1cc\n0005b1c0  ldr r2,[r1,#0x0]\n0005b1c4  cmp r2,#0x9\n0005b1c8  bgt 0x0005b1ac\n0005b1cc  cpy r0,r5\n0005b1d0  ldmia sp!,{r4,r5,r6,r10,r11,pc}\n"
+      },
+      "d20b4.ghidra.c": {
+        "sha256": "cb5f3cada93c53b83095045b1df4ef8fc500acb5876bfcdb6b8d7ea150d42342",
+        "text": "\n/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */\n\nundefined4 FUN_000d20b4(int *param_1)\n\n{\n  undefined4 uVar1;\n  \n  do {\n    if ((**(int **)(_UNK_000d2124 + 0xd20c8) * (**(int **)(_UNK_000d2124 + 0xd20c8) + -1) & 1U) == 0\n       ) break;\n  } while (9 < **(int **)(_UNK_000d2128 + 0xd20f8));\n  if (param_1[6] != 0) {\n    uVar1 = func_0x00590e28(param_1[1] - *param_1);\n    return uVar1;\n  }\n  return 0;\n}\n\n"
+      },
+      "d20b4.ghidra.asm": {
+        "sha256": "007a6c03cbfb7a987311a5e193ddb4caf03409b30f5ddd5cb46fa2fd4a724329",
+        "text": "000d20b4  stmdb sp!,{r11,lr}\n000d20b8  cpy r11,sp\n000d20bc  ldr r2,[0xd2124]\n000d20c0  ldr r2,[pc,r2]\n000d20c4  ldr r1,[r2,#0x0]\n000d20c8  sub r3,r1,#0x1\n000d20cc  mul r1,r1,r3\n000d20d0  tst r1,#0x1\n000d20d4  ldr r1,[r2,#0x0]\n000d20d8  sub r3,r1,#0x1\n000d20dc  mul r3,r1,r3\n000d20e0  ldr r1,[r0,#0x18]\n000d20e4  tst r3,#0x1\n000d20e8  beq 0x000d2100\n000d20ec  ldr r3,[0xd2128]\n000d20f0  ldr r3,[pc,r3]\n000d20f4  ldr r3,[r3,#0x0]\n000d20f8  cmp r3,#0x9\n000d20fc  bgt 0x000d20d4\n000d2100  cmp r1,#0x0\n000d2104  beq 0x000d211c\n000d2108  ldr r2,[r0,#0x0]\n000d210c  ldr r0,[r0,#0x4]\n000d2110  sub r0,r0,r2\n000d2114  bl 0x00590e28\n000d2118  ldmia sp!,{r11,pc}\n000d211c  mov r0,#0x0\n000d2120  ldmia sp!,{r11,pc}\n"
+      },
+      "d20ac.ghidra.c": {
+        "sha256": "e9799f60b154f751d135981bce810bc627f8fe0df771c667677672c88642b57d",
+        "text": "\nundefined4 FUN_000d20ac(int param_1)\n\n{\n  return *(undefined4 *)(param_1 + 0x14);\n}\n\n"
+      },
+      "d20ac.ghidra.asm": {
+        "sha256": "f4a242b8e0d5665a20d7f71be4701bf5b09be6e8e09d93a77218faffd747b678",
+        "text": "000d20ac  ldr r0,[r0,#0x14]\n000d20b0  bx lr\n"
+      },
+      "fe0b0.ghidra.c": {
+        "sha256": "0392f6c66eea6ffbadc7b12112468beccae6a3680f358671453e4818cb5a832b",
+        "text": "\n/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */\n\nbool FUN_000fe0b0(void)\n\n{\n  do {\n    if ((**(int **)(_UNK_000fe108 + 0xfe0bc) * (**(int **)(_UNK_000fe108 + 0xfe0bc) + -1) & 1U) == 0\n       ) break;\n  } while (9 < **(int **)(_UNK_000fe110 + 0xfe0f4));\n  return *(char *)(_UNK_000fe10c + 0xfe0dc) != '\\0';\n}\n\n"
+      },
+      "fe0b0.ghidra.asm": {
+        "sha256": "e8d55321523f9d97551495056202c3d5a6f65e5f1a6355bd370d3fcbba9eab0c",
+        "text": "000fe0b0  ldr r1,[0xfe108]\n000fe0b4  ldr r1,[pc,r1]\n000fe0b8  ldr r0,[r1,#0x0]\n000fe0bc  sub r2,r0,#0x1\n000fe0c0  mul r0,r0,r2\n000fe0c4  tst r0,#0x1\n000fe0c8  ldr r0,[r1,#0x0]\n000fe0cc  ldr r2,[0xfe10c]\n000fe0d0  sub r3,r0,#0x1\n000fe0d4  add r2,pc,r2\n000fe0d8  mul r3,r0,r3\n000fe0dc  ldrb r0,[r2,#0x0]\n000fe0e0  tst r3,#0x1\n000fe0e4  beq 0x000fe0fc\n000fe0e8  ldr r2,[0xfe110]\n000fe0ec  ldr r2,[pc,r2]\n000fe0f0  ldr r2,[r2,#0x0]\n000fe0f4  cmp r2,#0x9\n000fe0f8  bgt 0x000fe0c8\n000fe0fc  cmp r0,#0x0\n000fe100  movwne r0,#0x1\n000fe104  bx lr\n"
+      },
+      "fdfbc.ghidra.c": {
+        "sha256": "3c63fa39dcd88649b261326dde5c327153bd2a274542b44c42f4bff2a815663b",
+        "text": "\n/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */\n\nundefined4 FUN_000fdfbc(void)\n\n{\n  return *(undefined4 *)(&UNK_000fdfc8 + _UNK_000fdfc8);\n}\n\n"
+      },
+      "fdfbc.ghidra.asm": {
+        "sha256": "fe6c0c1fee480cc8830119eb6b98312602ca6310adf85e4b5dc251e5eb3b4004",
+        "text": "000fdfbc  ldr r0,[0xfdfc8]\n000fdfc0  ldr r0,[pc,r0]\n000fdfc4  bx lr\n"
+      },
+      "fdfac.ghidra.c": {
+        "sha256": "79bb5f87728e74be88fe3ba6bde04b0ffdddfcbf22cc86f4f0550e5212ef5d17",
+        "text": "\n/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */\n\nundefined4 FUN_000fdfac(void)\n\n{\n  return *(undefined4 *)(&UNK_000fdfb8 + _UNK_000fdfb8);\n}\n\n"
+      },
+      "fdfac.ghidra.asm": {
+        "sha256": "7463ac7c3d2ab354617c130e8bed897279081ecd715768622e6aba36ef329ab4",
+        "text": "000fdfac  ldr r0,[0xfdfb8]\n000fdfb0  ldr r0,[pc,r0]\n000fdfb4  bx lr\n"
+      },
+      "10e938.ghidra.c": {
+        "sha256": "f8a36d72592cccc4eb9bda2a74223717f4bc809769f920f58ff30bfead1575c7",
+        "text": "\nundefined4 FUN_0010e938(int param_1,undefined4 param_2,undefined4 param_3)\n\n{\n  int iVar1;\n  undefined4 uVar2;\n  int iStack_1c;\n  \n  iVar1 = func_0x00597550(*(undefined4 *)(param_1 + 0x20),0x541b,&iStack_1c);\n  uVar2 = 0;\n  if ((iVar1 == 0) && (iStack_1c != 0)) {\n    uVar2 = func_0x005a8498(*(undefined4 *)(param_1 + 0x20),param_2,param_3);\n  }\n  return uVar2;\n}\n\n"
+      },
+      "10e938.ghidra.asm": {
+        "sha256": "b875894dfb6491f52497930890db188e32f24bcd849b7b4294d3d0406db708c3",
+        "text": "0010e938  stmdb sp!,{r4,r5,r6,r10,r11,lr}\n0010e93c  add r11,sp,#0x10\n0010e940  sub sp,sp,#0x8\n0010e944  cpy r6,r0\n0010e948  ldr r0,[r0,#0x20]\n0010e94c  cpy r4,r2\n0010e950  add r2,sp,#0x4\n0010e954  cpy r5,r1\n0010e958  movw r1,#0x541b\n0010e95c  bl 0x00597550\n0010e960  cpy r1,r0\n0010e964  mov r0,#0x0\n0010e968  cmp r1,#0x0\n0010e96c  bne 0x0010e98c\n0010e970  ldr r1,[sp,#0x4]\n0010e974  cmp r1,#0x0\n0010e978  beq 0x0010e98c\n0010e97c  ldr r0,[r6,#0x20]\n0010e980  cpy r1,r5\n0010e984  cpy r2,r4\n0010e988  bl 0x005a8498\n0010e98c  sub sp,r11,#0x10\n0010e990  ldmia sp!,{r4,r5,r6,r10,r11,pc}\n"
+      },
+      "116fa8.ghidra.c": {
+        "sha256": "7370638bde4e1b4ceda9faae1c5be655ef7a1596e481f150c8a6f4863f422ee5",
+        "text": "\n/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */\n\nundefined4 FUN_00116fa8(int param_1,undefined4 param_2,uint param_3)\n\n{\n  uint uVar1;\n  undefined4 uVar2;\n  uint uVar3;\n  \n  uVar3 = *(uint *)(param_1 + 0x20);\n  if (0xd < uVar3) {\n    func_0x000fa0c4(_UNK_00117048 + 0x116fd8,_UNK_0011704c + 0x116fe0,_UNK_00117050 + 0x116fe4,0xe9,\n                    1,_UNK_00117054 + 0x116fec,uVar3);\n    return 0xffffffff;\n  }\n  func_0x005a6108();\n  uVar1 = func_0x00117058(uVar3);\n  if (uVar1 < param_3) {\n    param_3 = uVar1;\n  }\n  uVar2 = func_0x001172d4(uVar3,param_2,param_3);\n  func_0x005a66c4(param_1);\n  return uVar2;\n}\n\n"
+      },
+      "116fa8.ghidra.asm": {
+        "sha256": "f5744cd5f2c47e8e3df8e1742095c18f7fee129939da8c78cff0a06477c61887",
+        "text": "00116fa8  stmdb sp!,{r4,r5,r6,r7,r11,lr}\n00116fac  add r11,sp,#0x10\n00116fb0  sub sp,sp,#0x10\n00116fb4  ldr r4,[r0,#0x20]\n00116fb8  cmp r4,#0xe\n00116fbc  bcc 0x00117000\n00116fc0  ldr r0,[0x117048]\n00116fc4  mov r7,#0x1\n00116fc8  ldr r1,[0x11704c]\n00116fcc  ldr r2,[0x117050]\n00116fd0  add r0,pc,r0\n00116fd4  ldr r3,[0x117054]\n00116fd8  add r1,pc,r1\n00116fdc  add r2,pc,r2\n00116fe0  str r7,[sp,#0x0]\n00116fe4  add r3,pc,r3\n00116fe8  stmib sp,{r3,r4}\n00116fec  mov r3,#0xe9\n00116ff0  bl 0x000fa0c4\n00116ff4  mvn r0,#0x0\n00116ff8  sub sp,r11,#0x10\n00116ffc  ldmia sp!,{r4,r5,r6,r7,r11,pc}\n00117000  cpy r6,r2\n00117004  cpy r7,r1\n00117008  cpy r5,r0\n0011700c  bl 0x005a6108\n00117010  cpy r0,r4\n00117014  bl 0x00117058\n00117018  cmp r0,r6\n0011701c  cpy r1,r7\n00117020  cpycc r6,r0\n00117024  cpy r0,r4\n00117028  cpy r2,r6\n0011702c  bl 0x001172d4\n00117030  cpy r4,r0\n00117034  cpy r0,r5\n00117038  bl 0x005a66c4\n0011703c  cpy r0,r4\n00117040  sub sp,r11,#0x10\n00117044  ldmia sp!,{r4,r5,r6,r7,r11,pc}\n"
+      },
+      "5a6b2c.ghidra.c": {
+        "sha256": "4a099fdc4ec8bba22a3411605613051f4372c2927ee4e84c40f81d2ed67a87ef",
+        "text": "\nundefined4 FUN_005a6b2c(uint param_1,uint *param_2)\n\n{\n  int iVar1;\n  \n  if (2 < param_1) {\n    return 0x16;\n  }\n  iVar1 = coproc_movefrom_User_R_Thread_and_Process_ID();\n  if (param_2 != (uint *)0x0) {\n    *param_2 = (uint)*(byte *)(iVar1 + -0x50);\n  }\n  *(char *)(iVar1 + -0x50) = (char)param_1;\n  return 0;\n}\n\n"
+      },
+      "5a6b2c.ghidra.asm": {
+        "sha256": "778520dce64a254e2ce5d22d76bec943bae47b9bcbd1eccc76ae22923f7efb5b",
+        "text": "005a6b2c  cmp r0,#0x2\n005a6b30  bhi 0x005a6b58\n005a6b34  cmp r1,#0x0\n005a6b38  uxtb r0,r0\n005a6b3c  mrc p15,0x0,r3,cr13,cr0,0x3\n005a6b40  ldrbne r2,[r3,#-0x50]\n005a6b44  sub r3,r3,#0x70\n005a6b48  strne r2,[r1,#0x0]\n005a6b4c  strb r0,[r3,#0x20]\n005a6b50  mov r0,#0x0\n005a6b54  bx lr\n005a6b58  mov r0,#0x16\n005a6b5c  bx lr\n"
+      }
+    }
+  },
+  "slices": {
+    "reader": {
+      "start": "0xc36e8",
+      "end_exclusive": "0xc39a8",
+      "sha256": "b029bb68bcb7195e6d7d4adf622847a5107201ee1bbdb53c7a7163597ace8c7b"
+    },
+    "wait": {
+      "start": "0x5b150",
+      "end_exclusive": "0x5b1dc",
+      "sha256": "ea764fb4c5cc7d4c7167ffb0769102430de3b6af82d26712e802df334a3d954f"
+    },
+    "capacity": {
+      "start": "0xd20b4",
+      "end_exclusive": "0xd212c",
+      "sha256": "016bb7a9fec0fa6f8fd38f5424b4c048bb2a611fae10faf14150430df7b6e75d"
+    },
+    "count": {
+      "start": "0xd20ac",
+      "end_exclusive": "0xd20b4",
+      "sha256": "cdb6597d5f559cc0fcf394f18a78ee566b12548b02900f598ee31e5f2b6efcf8"
+    },
+    "bulk_context": {
+      "start": "0xd1bc8",
+      "end_exclusive": "0xd1cf0",
+      "sha256": "76d3668ef9a966d42db35847582d4b11b3bcc1e9e5ffa90a84394de001a98920"
+    },
+    "dispatch": {
+      "start": "0xfef1c",
+      "end_exclusive": "0xfef2c",
+      "sha256": "eeded9e2f22ac60532af7e348bc92174e928cfa2e354514d1e8af821f7bd6a43"
+    },
+    "getters": {
+      "start": "0xfdfac",
+      "end_exclusive": "0xfdfcc",
+      "sha256": "8a71e85f46828db94d9728f5c5bfeeb2f4c86b08e06bbd70b381ef3ef2140fbb"
+    },
+    "force": {
+      "start": "0xfe0b0",
+      "end_exclusive": "0xfe114",
+      "sha256": "a48fb1f1523cb7a46deec5d649ce765cbcb0a6e924b28acd687178378d0d7456"
+    },
+    "uart": {
+      "start": "0x10e938",
+      "end_exclusive": "0x10e994",
+      "sha256": "ed3e9d204d7ae8c9987c419a0c9d930626f3f91a6162683fe13e2e05612482cc"
+    },
+    "xil_context": {
+      "start": "0x116fa8",
+      "end_exclusive": "0x117074",
+      "sha256": "01ed802226a7c9abab0ba5f53c6fa23a0e4b84729d562b83e33aec239800b664"
+    },
+    "setter_context": {
+      "start": "0x5a6b2c",
+      "end_exclusive": "0x5a6b60",
+      "sha256": "b8da881c164d609b9176d72b8d932a96e4332f124a21d5743f2139b5fd016269"
+    },
+    "unsigned_division": {
+      "start": "0x590e28",
+      "end_exclusive": "0x590ec4",
+      "sha256": "879c3a5723607c61a7354ec2aa84bcd5711e6425ef0758dc739c29c7282b226c"
+    },
+    "initializer": {
+      "start": "0xfb994",
+      "end_exclusive": "0xfddfc",
+      "sha256": "aecb46dcb6dd18cc92e684c043e6bdc6fa9b3c8c2d4026639347c0100201384c"
+    },
+    "source": {
+      "start": "0x5e962e",
+      "end_exclusive": "0x5e9659",
+      "sha256": "83f51ce2e73a6d501d221e7ad438cd36775b0d1732b392387f64495155280c18"
+    },
+    "format_context": {
+      "start": "0x5e973e",
+      "end_exclusive": "0x5e9750",
+      "sha256": "1d671c57cd1e45c55d413e1faf091a9192e4af899c6582dd9609674e8cf5b70e"
+    },
+    "slot_c3984": {
+      "start": "0x5df5ac",
+      "end_exclusive": "0x5df5b0",
+      "sha256": "05c619ecade2da5f2691474dfff279ec4eae5dc31ba4c20f0ac71ef8608d3647"
+    },
+    "slot_c3988": {
+      "start": "0x5df008",
+      "end_exclusive": "0x5df00c",
+      "sha256": "dcbec08b4c372b2eea3d776f103259f61a76c02ffd3c4d78432c2748e0353fff"
+    },
+    "slot_c398c": {
+      "start": "0x5df008",
+      "end_exclusive": "0x5df00c",
+      "sha256": "dcbec08b4c372b2eea3d776f103259f61a76c02ffd3c4d78432c2748e0353fff"
+    },
+    "slot_c3994": {
+      "start": "0x5df5ac",
+      "end_exclusive": "0x5df5b0",
+      "sha256": "05c619ecade2da5f2691474dfff279ec4eae5dc31ba4c20f0ac71ef8608d3647"
+    },
+    "slot_c3998": {
+      "start": "0x5df008",
+      "end_exclusive": "0x5df00c",
+      "sha256": "dcbec08b4c372b2eea3d776f103259f61a76c02ffd3c4d78432c2748e0353fff"
+    },
+    "slot_c399c": {
+      "start": "0x5df008",
+      "end_exclusive": "0x5df00c",
+      "sha256": "dcbec08b4c372b2eea3d776f103259f61a76c02ffd3c4d78432c2748e0353fff"
+    },
+    "slot_5b1d4": {
+      "start": "0x5df4b4",
+      "end_exclusive": "0x5df4b8",
+      "sha256": "926cd05545945facd93f86ed5208c30cef632abcb304655b9a50c3654e3aeb3c"
+    },
+    "slot_5b1d8": {
+      "start": "0x5df760",
+      "end_exclusive": "0x5df764",
+      "sha256": "c51c9a72621275c26929bef0d24b151a9bef5c7a3bc575bb98909e313b89e80f"
+    },
+    "slot_d2124": {
+      "start": "0x5de658",
+      "end_exclusive": "0x5de65c",
+      "sha256": "0a0d276767907ab59b4c1db7470a33296c4921a69d6191ad2bfeb56f79ad165e"
+    },
+    "slot_d2128": {
+      "start": "0x5df6d8",
+      "end_exclusive": "0x5df6dc",
+      "sha256": "bd9ae3799c2d1cf2c8ee127d5e1c952cb5213a1cd48e6311f9196ea57c9dc3ff"
+    },
+    "slot_fe108": {
+      "start": "0x5df018",
+      "end_exclusive": "0x5df01c",
+      "sha256": "a322003828ca1bf7c2a931f28b3cd8aa284d412565356908790496562427ea36"
+    },
+    "slot_fe110": {
+      "start": "0x5df3d4",
+      "end_exclusive": "0x5df3d8",
+      "sha256": "d96e50a39f112c772583acd19656f2736514bce048569dbc6504407839120486"
+    },
+    "slot_d1ce8": {
+      "start": "0x5de64c",
+      "end_exclusive": "0x5de650",
+      "sha256": "6f29ade240797a0fe9fde8f51b19ca66d9d75d2f28c3f718ffa932b690150517"
+    },
+    "slot_d1cec": {
+      "start": "0x5ded80",
+      "end_exclusive": "0x5ded84",
+      "sha256": "d6cbfc615d869282188682ff42eead65defa75ac209c11a4e2a32a6adbaf6fcc"
+    }
+  },
+  "literal_targets": [
+    {
+      "literal": "0xc3984",
+      "pc8": "0xc3704",
+      "target": "0x5df5ac"
+    },
+    {
+      "literal": "0xc3988",
+      "pc8": "0xc3720",
+      "target": "0x5df008"
+    },
+    {
+      "literal": "0xc398c",
+      "pc8": "0xc376c",
+      "target": "0x5df008"
+    },
+    {
+      "literal": "0xc3994",
+      "pc8": "0xc38a8",
+      "target": "0x5df5ac"
+    },
+    {
+      "literal": "0xc3998",
+      "pc8": "0xc38c4",
+      "target": "0x5df008"
+    },
+    {
+      "literal": "0xc399c",
+      "pc8": "0xc391c",
+      "target": "0x5df008"
+    },
+    {
+      "literal": "0x5b1d4",
+      "pc8": "0x5b1a8",
+      "target": "0x5df4b4"
+    },
+    {
+      "literal": "0x5b1d8",
+      "pc8": "0x5b1b0",
+      "target": "0x5df760"
+    },
+    {
+      "literal": "0xd2124",
+      "pc8": "0xd20c8",
+      "target": "0x5de658"
+    },
+    {
+      "literal": "0xd2128",
+      "pc8": "0xd20f8",
+      "target": "0x5df6d8"
+    },
+    {
+      "literal": "0xfe108",
+      "pc8": "0xfe0bc",
+      "target": "0x5df018"
+    },
+    {
+      "literal": "0xfe110",
+      "pc8": "0xfe0f4",
+      "target": "0x5df3d4"
+    },
+    {
+      "literal": "0xd1ce8",
+      "pc8": "0xd1bfc",
+      "target": "0x5de64c"
+    },
+    {
+      "literal": "0xd1cec",
+      "pc8": "0xd1c04",
+      "target": "0x5ded80"
+    },
+    {
+      "literal": "0xc3990",
+      "pc8": "0xc3808",
+      "target": "0x5e973e"
+    },
+    {
+      "literal": "0xc39a0",
+      "pc8": "0xc3960",
+      "target": "0x653410"
+    },
+    {
+      "literal": "0xc39a4",
+      "pc8": "0xc3970",
+      "target": "0x653428"
+    },
+    {
+      "literal": "0xfef28",
+      "pc8": "0xfef28",
+      "target": "0x654c28"
+    },
+    {
+      "literal": "0xfdfb8",
+      "pc8": "0xfdfb8",
+      "target": "0x654b08"
+    },
+    {
+      "literal": "0xfdfc8",
+      "pc8": "0xfdfc8",
+      "target": "0x654b0c"
+    },
+    {
+      "literal": "0xfe10c",
+      "pc8": "0xfe0dc",
+      "target": "0x654b24"
+    }
+  ],
+  "slot_provenance": [
+    [
+      0,
+      0,
+      0,
+      1031248,
+      1142696,
+      96
+    ],
+    [
+      0,
+      0,
+      1,
+      1031248,
+      1142696,
+      96
+    ],
+    [
+      0,
+      0,
+      4294967295,
+      1031248,
+      1142696,
+      96
+    ],
+    [
+      0,
+      4,
+      0,
+      1031248,
+      1142696,
+      96
+    ],
+    [
+      0,
+      4,
+      1,
+      1031248,
+      1142696,
+      96
+    ],
+    [
+      0,
+      4,
+      4294967295,
+      1031248,
+      1142696,
+      96
+    ],
+    [
+      0,
+      7,
+      0,
+      1031248,
+      1142696,
+      96
+    ],
+    [
+      0,
+      7,
+      1,
+      1031248,
+      1142696,
+      96
+    ],
+    [
+      0,
+      7,
+      4294967295,
+      1031248,
+      1142696,
+      96
+    ],
+    [
+      1,
+      0,
+      0,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      1,
+      0,
+      1,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      1,
+      0,
+      4294967295,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      1,
+      4,
+      0,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      1,
+      4,
+      1,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      1,
+      4,
+      4294967295,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      1,
+      7,
+      0,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      1,
+      7,
+      1,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      1,
+      7,
+      4294967295,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      2,
+      0,
+      0,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      2,
+      0,
+      1,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      2,
+      0,
+      4294967295,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      2,
+      4,
+      0,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      2,
+      4,
+      1,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      2,
+      4,
+      4294967295,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      2,
+      7,
+      0,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      2,
+      7,
+      1,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      2,
+      7,
+      4294967295,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      3,
+      0,
+      0,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      3,
+      0,
+      1,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      3,
+      0,
+      4294967295,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      3,
+      4,
+      0,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      3,
+      4,
+      1,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      3,
+      4,
+      4294967295,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      3,
+      7,
+      0,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      3,
+      7,
+      1,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      3,
+      7,
+      4294967295,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      4,
+      0,
+      0,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      4,
+      0,
+      1,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      4,
+      0,
+      4294967295,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      4,
+      4,
+      0,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      4,
+      4,
+      1,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      4,
+      4,
+      4294967295,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      4,
+      7,
+      0,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      4,
+      7,
+      1,
+      1031248,
+      1108280,
+      96
+    ],
+    [
+      4,
+      7,
+      4294967295,
+      1031248,
+      1108280,
+      96
+    ]
+  ]
+}
