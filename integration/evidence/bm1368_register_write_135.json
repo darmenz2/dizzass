@@ -1,0 +1,95 @@
+{
+  "base_commit": "3395ab351b811aee4fe8142dec6043d84abc72ba",
+  "base_tree": "a56a0e97b0622721264d2c66f3b0d6846e33e7af",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "ranges": [
+    {
+      "start": "0xe4a74",
+      "end": "0xe4c04",
+      "sha256": "08d1b07979a62ae97d7023382859e8a3e6f1d3f486b354184af3725c186ab1c2"
+    },
+    {
+      "start": "0xf7f10",
+      "end": "0xf8048",
+      "sha256": "8b3d2cf2b36838d6cd4cbabd65fc6755f410ec2647614bf827f4fcaee8357c5b"
+    },
+    {
+      "start": "0x107648",
+      "end": "0x1079f0",
+      "sha256": "73eefcd9c5d223ebbdf987a7dcbdda3279fb47c6b9cd7cd1902ce4d044ca8bd2"
+    },
+    {
+      "start": "0x107ed0",
+      "end": "0x1082b4",
+      "sha256": "dddc9cdb5bda8b4b091bcd4a872238b2e8c85e5106fe697cbb84bb1fdc8613fc"
+    },
+    {
+      "start": "0xe249c",
+      "end": "0xe2808",
+      "sha256": "f814c253a83068b469acccca480346f96c0e4124680d697c697f46e6f11c7bf1"
+    },
+    {
+      "start": "0xff288",
+      "end": "0xff660",
+      "sha256": "7ece050139fa0096db96c7345d6e4defe17b678a3a62b0c04d5ce69fea8b936d"
+    }
+  ],
+  "immutable": {
+    "cgminer.c": "54739e4139294c526af0c73aa9a02ba9762ca4f2",
+    "Makefile.am": "17d2fbde26b5e8cb614b61908b84d5937af48325",
+    "driver-bitmain.c": "9e2bb0251f30148e158978227eb224391384985d",
+    "src/backend/base.c": "9dd2d25122e3cd7a35f3ab4f0f709ce07422d1a7",
+    "src/backend/chain-frequency.c": "3a0dffcc3135aa9fdd3417806d0f033d448677e3",
+    "src/backend/frequency-worker.c": "d980efc0f798a9eb971b36045308f54e42ac1d8d",
+    "libbitmain/src/chip/chip1368.c": "c64374454e6e458ec1a175f21f03af141e29a3aa",
+    "libbitmain/src/chip/chip1368-frequency.c": "57c6905a31980629c698ade20062e23362e2b355",
+    "libbitmain/src/chip/chip1398.c": "b8a8d43ff2864644747a311c66071ad15c51eaa2",
+    "libbitmain/src/reg_cache.c": "6a89d72ae27505f64dc804b5b3b72c455865406e",
+    "libbitmain/src/pll.c": "0c8fbcd6dfc64c342675c8ae3542a826e1fddbfd",
+    "integration/bm1368_control.c": "20b4b0476beb3968be590373f884e91b7d6fe46f",
+    "reconstruction/support/crc5.c": "1912ec8906fb520f7d7c5196ea5a7ec122aaeda8",
+    "include/xminer/recovery/chip1398.h": "185b8fddfa06b40630158aefc1dd3ab2d3bc3439",
+    "include/xminer/recovery/reg_cache.h": "96af5995ab727f830219fa96f4e77e652161a458",
+    "integration/bm1368_frequency_135.h": "71319f387fa9a8753afffd9ded86f7ed7210454f",
+    "tools/arm32_subset.py": "e18a97222c1a8406fd61d5baac9763c3166f7e4b",
+    "tools/arm32_vfp_subset.py": "d1df89081dfa172ea41c84cae46e51ad099d74d8",
+    "integration/tests/test_bm1368_frequency_135.py": "ebd81bb62d3d4be4f2b72b34054e013bade250db",
+    "tests/cache_oracle.py": "88ddc8b63fca00d9d1874896c995d3261337f81f",
+    "tests/test_stage4_cache_differential.py": "8b342073e61cb1675c5adaeab5295cd259a5d367",
+    "tests/test_stage4_config_differential.py": "41e13be03c5eafbebbe74a70e687d22bc150e031"
+  },
+  "literals": [
+    {
+      "address": "0x5eb3e7",
+      "xor": 216,
+      "text": "/tmp/build/libbitmain/src/chip/chip1368.c"
+    },
+    {
+      "address": "0x5eb883",
+      "xor": 199,
+      "text": "chain#%d - failed to send SET_CONFIG command"
+    }
+  ],
+  "scope": {
+    "entry": "0xe4a74",
+    "executable_end": "0xe4bec",
+    "literal_end": "0xe4c04",
+    "nested_original": [
+      "0xf7f10",
+      "0x107648",
+      "0x107ed0",
+      "0xe249c",
+      "0xff288"
+    ],
+    "transport_boundary": "0xd26ac",
+    "preserve_send_before_cache": true,
+    "wire_broadcast_test": "mode == 1",
+    "cache_fanout_test": "mode != 0",
+    "hardware_io": false,
+    "real_threads": false,
+    "complete_transport": false,
+    "internal_cache_solver_diagnostics_equivalent": false,
+    "slot_limit_changed": false,
+    "argument_lifetime_fixed": false
+  }
+}
