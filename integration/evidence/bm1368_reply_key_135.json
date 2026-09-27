@@ -1,0 +1,112 @@
+{
+  "base_commit": "12446bed78a060a49364a80bcbfb4340b13f4f27",
+  "base_tree": "2e73cb80b2ccbb15d24d9a7deb3c51f65bcd23ac",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "ranges": [
+    {
+      "name": "getter",
+      "start": "0xe3bbc",
+      "end": "0xe3bc4",
+      "sha256": "846d663217119eef492bd8380034a33191408aa5af4d8eef8026a2b0e11127d2"
+    },
+    {
+      "name": "table_constructor_with_literals",
+      "start": "0xe1450",
+      "end": "0xe1790",
+      "sha256": "ef26034365cbbe19867a17306b34bf7193762df1ed54587d29e814e413d1c31e"
+    },
+    {
+      "name": "table_selection",
+      "start": "0xd21dc",
+      "end": "0xd2600",
+      "sha256": "5d54a55bba866d0c5203aae178ab969c4acb65c0920d02e807159736d47c445e"
+    },
+    {
+      "name": "cold_call_window",
+      "start": "0x73dd4",
+      "end": "0x73dec",
+      "sha256": "4299d1ee2f3d5a16a774b7ecac324807a8db994007f430a7c65aec1fe27f2df1"
+    },
+    {
+      "name": "registration_windows",
+      "start": "0x6ef84",
+      "end": "0x6efe4",
+      "sha256": "b8fc6fd5bcdc74fbf41c713e74b6ef55c263bb2367ee7070fdf120bc2f124255"
+    },
+    {
+      "name": "registration_literals",
+      "start": "0x6f1b4",
+      "end": "0x6f1cc",
+      "sha256": "eac97ef3ee00ccc2d178dbf46336f33f6a1a11f4b7e4ce998830548e4c3c95c6"
+    },
+    {
+      "name": "reader_prefix",
+      "start": "0x108938",
+      "end": "0x108974",
+      "sha256": "da8dafe0f65fd03f88b045c43810dbdbf723db74e423dbf57bcad093260fb7fe"
+    },
+    {
+      "name": "reader_literal",
+      "start": "0x1089c8",
+      "end": "0x1089cc",
+      "sha256": "184d762eb3d1c671f64fa36f28a14888d02ba071c518809db8df5b63ad5927af"
+    },
+    {
+      "name": "parent_common",
+      "start": "0x5fc54",
+      "end": "0x606c0",
+      "sha256": "6e7ef18d8deb01732e5daadd7e0761829b2e89e5c1887eab00a4c34ca5e11b1e"
+    },
+    {
+      "name": "parent_exit",
+      "start": "0x5f0fc",
+      "end": "0x5fc1c",
+      "sha256": "955d862a2f6dfa49ae49215a8a22ef290f1b60169056a54f826e9faa9190badd"
+    }
+  ],
+  "immutable": {
+    "src/backend/base.c": "9dd2d25122e3cd7a35f3ab4f0f709ce07422d1a7",
+    "cgminer.c": "54739e4139294c526af0c73aa9a02ba9762ca4f2",
+    "Makefile.am": "17d2fbde26b5e8cb614b61908b84d5937af48325",
+    "integration/backend_shutdown_135.h": "30ba5a57e9dd8f900f2f0753040945d8694cb413",
+    "integration/exit_cleanup_135.h": "82612eb35cb241bcc55b1cf772a6a283548e9fcb",
+    "integration/thermal_routes_135.h": "a890810c4d62bb7041569b55fdbf3471a00b8de8",
+    "integration/tests/test_exit_cleanup_135.py": "6f5bb620dd1568593554ea4264b94adb391696dc",
+    "integration/tests/test_backend_shutdown_135.py": "5587b7c68f6c29c232206485d8f5e8049ffad4f3",
+    "integration/tests/test_stop_policy_135.py": "b9e2f98f92e420338e64504f79328447ce00b4f0",
+    "integration/tests/test_monitor_handlers_135.py": "9094c6a5dcfe1dd4dc42d13f0a025318f7532b2a",
+    "integration/tests/test_thermal_request_route_135.py": "817a7cb2bf05b2dc5a32f0bef35deff9fdd191ea",
+    "integration/tests/test_thermal_routes_135.py": "da6d06ecadca8567516783cf69a1f08456ac1ce6",
+    "integration/evidence/thermal_routes_135.json": "760a7171303edfb235b0861e453d6bf9fdbaf561",
+    "integration/evidence/exit_cleanup_135.json": "e27ba50749c7a476e30f451153e3fb4783e8b5f4",
+    "integration/exit-cleanup-135.mk": "ea29a94b2e7efdee48e2ff32288b5437c638d6b7",
+    "integration/thermal-routes-135.mk": "f68baf7a096b3b261e6249600b726eb120bebfbb",
+    "tools/arm32_rx_subset.py": "175bfc14a4413f84895ed983a45289b4c426e588",
+    "tools/arm32_nonce_subset.py": "84e86cb15dcc9a45819ef8448f8c89077cbd7548",
+    "tools/arm32_rebuild_subset.py": "37fc528e01f10754b18a43f1a1ddff32d445a5b4",
+    "tools/arm32_freshness_subset.py": "1f6f58ad83ad26cce28036382977421764bb4582",
+    "tools/arm32_vfp_subset.py": "d1df89081dfa172ea41c84cae46e51ad099d74d8",
+    "tools/arm32_difficulty_subset.py": "94b359f6e1e8d7e2c11e22d640e36a97e7c22b37",
+    "tools/arm32_subset.py": "e18a97222c1a8406fd61d5baac9763c3166f7e4b",
+    "tools/arm32_verify_subset.py": "284fd7169697e3643d963300063eb7a156c57fb5",
+    "tools/elf32.py": "57b0a77098e2125340a755e90bac194830f75203"
+  },
+  "method": {
+    "chip_selector": 4,
+    "table_builder": "0xe1450",
+    "table_offset": "0x8c",
+    "backend_table_base": "0x110",
+    "backend_slot": "0x19c",
+    "entry": "0xe3bbc",
+    "key": "0x44",
+    "registered_consumer": "0x78aa4"
+  },
+  "boundaries": {
+    "physical_chip_selection": false,
+    "registration_body_implemented": false,
+    "pending_pr_dependencies": false,
+    "new_arm_opcodes": 0,
+    "consumer_already_recovered_as": "vn135_temperature_reply_135",
+    "slot_reuse_or_callback_drain_proven": false
+  }
+}
