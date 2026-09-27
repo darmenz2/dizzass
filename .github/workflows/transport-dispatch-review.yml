@@ -1,0 +1,106 @@
+name: Transport dispatch isolated review
+on:
+  push:
+    branches: [review/transport-dispatch-135-20260927]
+    paths: [.github/workflows/transport-dispatch-review.yml]
+permissions:
+  contents: read
+jobs:
+  validate:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Fetch exact published base without persistent credentials
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/transport-dispatch-source"
+          mkdir "$root"
+          cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c "http.extraheader=AUTHORIZATION: basic $auth" fetch --depth=1 --no-tags origin 8f7518a544d63ed4c6043b321b43d475a04c79a4
+          git checkout -q --detach FETCH_HEAD
+          test "$(git rev-parse HEAD^{tree})" = d7f5faf101bfcea6a0a599e5dcbe60937525f316
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Retrieve and verify exact source patch objects
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import base64, gzip, hashlib, json, os, pathlib, urllib.request
+          ids = [
+              'ec76e8441ea4bddfe9fac69c0f1799f58d7f9bc2',
+              '4a8e84a3e7963809411109cbdc02b6d9e27bf1d3',
+              'ac6383b05ff3b9fc6a017f1b094a7f6f85124049',
+              'ce9128d686a55da74a1aecbc823bc72000e8d04c',
+              '68411d8bb70dd9d9df8d5e94afb5dd05900018a7',
+              '131453412f20bcce236c0a0e1dacf8bf8fcaae84',
+              'bd5001cba863c81c06ac32a1c69fcd623b1da5d8',
+              'dd4d486acd6d45d036ec075f97e4d976bd274d8f',
+          ]
+          chunks = []
+          for sha in ids:
+              request = urllib.request.Request(
+                  'https://api.github.com/repos/darmenz2/dizzass/git/blobs/' + sha,
+                  headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'],
+                           'Accept': 'application/vnd.github+json',
+                           'X-GitHub-Api-Version': '2022-11-28'})
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  obj = json.load(response)
+              assert obj['encoding'] == 'base64' and obj['sha'] == sha
+              data = base64.b64decode(obj['content'])
+              assert hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest() == sha
+              chunks.append(data)
+          compressed = b''.join(chunks)
+          assert len(compressed) == 13466
+          assert hashlib.sha256(compressed).hexdigest() == 'ce8d58cdcf25cb62333d4df4002c0dcb5bc7eaa78e2875989ff2109eece30c67'
+          patch = gzip.decompress(compressed)
+          assert len(patch) == 43654
+          assert hashlib.sha256(patch).hexdigest() == '13451f1689d367aaa4db64086dd884858ac436e84ae737199f8c2bb924c28f87'
+          pathlib.Path(os.environ['RUNNER_TEMP'], 'transport-dispatch-135.patch').write_bytes(patch)
+          print('PATCH_BYTES_VERIFIED', len(patch))
+          PY
+      - name: Apply exact source candidate without workflow writes
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          git apply --check "$RUNNER_TEMP/transport-dispatch-135.patch"
+          git apply --index "$RUNNER_TEMP/transport-dispatch-135.patch"
+          git diff --cached --check
+          test "$(git write-tree)" = e3977e808de56afda179917bc827dd1201aacb4d
+          python3 integration/tests/check_transport_dispatch_evidence_135.py
+      - name: Original nested comparisons native composition negative controls and sanitizers
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          for cc in gcc clang; do
+            make -f integration/transport-dispatch-135.mk CC="$cc" TRANSPORT135_DIR="build/review-$cc" dizzass-dispatch135-original dizzass-dispatch135-test dizzass-dispatch135-negative
+            make -f integration/transport-dispatch-135.mk CC="$cc" SANITIZE=1 TRANSPORT135_DIR="build/review-$cc-san" dizzass-dispatch135-test
+          done
+          clang --analyze -I. -Iinclude -std=c11 -DVN135_TRANSPORT_DISPATCH_135 -Xanalyzer -analyzer-output=text libbitmain/src/transport-dispatch.c
+      - name: Publish only the isolated verified source candidate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          git diff --exit-code
+          test "$(git write-tree)" = e3977e808de56afda179917bc827dd1201aacb4d
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Recover transport dispatch using existing AML framing and UART helper'
+          test "$(git rev-parse HEAD^)" = 8f7518a544d63ed4c6043b321b43d475a04c79a4
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c "http.extraheader=AUTHORIZATION: basic $auth" push origin HEAD:refs/heads/review/transport-dispatch-sources-135-20260927
+          printf 'CANDIDATE_COMMIT=%s\n' "$(git rev-parse HEAD)"
+          printf 'CANDIDATE_TREE=%s\n' "$(git rev-parse HEAD^{tree})"
