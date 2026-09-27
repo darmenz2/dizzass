@@ -23,8 +23,9 @@ struct vn135_chain_work_stop_ops {
 };
 /* Entire c39a8 with nested d2144 and live feeec dispatch. Void: original caller
  * ignores incidental r0; no success result invented. Required valid distinct
- * fields/objects, stable view/ops identities and serialized bounded callbacks.
- * Fields may change in callbacks. Objects and descriptors remain alive.
+ * fields/objects, stable view/ops members and serialized bounded callbacks.
+ * All field pointers, object identities and callback pointers stay fixed;
+ * callbacks may change pointed-to values. Storage remains alive throughout.
  * queue_mutex identifies original633bf0; chain_mutex/uart identify chain+2e0/
  * +2b8; allocation projects chain+2f8. Numeric methods are data, never executed.
  * No guessed mapping from an arbitrary native cgminer work/pool/uart object.

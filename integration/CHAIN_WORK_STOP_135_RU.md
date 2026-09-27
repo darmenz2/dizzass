@@ -91,9 +91,10 @@ views: index, worker, queue head/tail, allocation slot, live UART method,
 Callbacks count/mutex/cancel/join/release/uart_destroy/log обязательны.
 Номера адресов — данные; host их не выполняет и не разыменовывает.
 
-Объекты/поля раздельны и валидны, identities view/ops и storage стабильны;
-callbacks могут синхронно менять поля, но не уничтожать view или его
-storage. Проекции должны соответствовать тем же исходным полям.
+Объекты/поля раздельны и валидны. Все field pointers, object identities
+и callback pointers в view/ops остаются неизменными. Callbacks могут
+синхронно менять значения по этим указателям, но не перенаправлять
+проекции и не уничтожать их storage во время вызова.
 Не моделируются произвольные aliases, повреждённые pointers, реальные
 pthread/OS effects или асинхронные гонки. Проверки не означают, что
 cancel/join завершили настоящий поток или устройство перестало работать.
