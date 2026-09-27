@@ -1,0 +1,58 @@
+name: Check A-02 original platform stop hooks
+on:
+  pull_request:
+    branches: [work/reconstruction]
+    paths:
+      - libbitmain/src/platform-stop.c
+      - integration/platform_stop_135.h
+      - integration/platform-stop-135.mk
+      - integration/tests/*platform_stop*135*
+      - integration/evidence/platform_stop_135.json
+      - .github/workflows/platform-stop-135.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: platform-stop135-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  platform135:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+    steps:
+      - name: Fetch exact public source without credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/platform-stop-${{ matrix.cc }}-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$root"
+          cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          git fetch --depth=1 --no-tags origin "$GITHUB_SHA"
+          git checkout -q --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Original dispatch methods selection and nested mining stop
+        run: |
+          cd "$SOURCE_ROOT"
+          make -f integration/platform-stop-135.mk CC=${{ matrix.cc }} dizzass-platform135-original dizzass-platform135-test dizzass-platform135-negative
+      - name: Native address and undefined behavior checks
+        run: |
+          cd "$SOURCE_ROOT"
+          make -f integration/platform-stop-135.mk CC=${{ matrix.cc }} SANITIZE=1 dizzass-platform135-test
+      - name: Unchanged mining stop and pre-exit regressions
+        run: |
+          cd "$SOURCE_ROOT"
+          make -f integration/mining-stop-135.mk CC=${{ matrix.cc }} dizzass-mining135-original dizzass-mining135-test
+          make -f integration/exit-cleanup-135.mk CC=${{ matrix.cc }} dizzass-exit135-original dizzass-exit135-test
+      - name: Static analysis and immutable dependencies
+        run: |
+          cd "$SOURCE_ROOT"
+          clang --analyze -I. -std=c11 -DVN135_PLATFORM_STOP_135 -Xanalyzer -analyzer-output=text libbitmain/src/platform-stop.c
+          python3 integration/tests/check_platform_stop_evidence_135.py
