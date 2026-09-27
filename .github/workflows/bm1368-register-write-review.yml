@@ -1,0 +1,111 @@
+name: BM1368 register write isolated review
+on:
+  push:
+    branches: [review/bm1368-register-write-135-20260927]
+    paths: [.github/workflows/bm1368-register-write-review.yml]
+permissions:
+  contents: read
+jobs:
+  validate:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Fetch exact published base without persistent credentials
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/bm1368-register-source"
+          mkdir "$root"
+          cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c "http.extraheader=AUTHORIZATION: basic $auth" fetch --depth=1 --no-tags origin 3395ab351b811aee4fe8142dec6043d84abc72ba
+          git checkout -q --detach FETCH_HEAD
+          test "$(git rev-parse HEAD^{tree})" = a56a0e97b0622721264d2c66f3b0d6846e33e7af
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Retrieve and verify exact source patch objects
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import base64, gzip, hashlib, json, os, pathlib, urllib.request
+          ids = [
+              'a9ec9382d0df708665a59dcb90dd27dbbcdd81e1',
+              'e62abc0729d25da5c873d73e20d461f687b44c73',
+              '01fc6798d09d21a35658305020319e5264b4513f',
+              '9755d3a42440828dcdcd01f150b34b49116449fd',
+              'c22e59fc78748f733bc42a4672d3fec9030abd39',
+              'ea21bdf38af1b97b8f3826def2026268b51e24b8',
+              '3a77ca631b6a037f11610dc4cdcb5a73495d2c9d',
+              'fccc3c8108f632454c0db46a3f7ee3ad07cfa3d1',
+              'bd506021f8dfc75a80f343c742f4a1d92bf6b35a',
+              '5c871ee8d674b8a361c6584c4d4560e81384538e',
+              '68cf09022b1464dfd12a31bee7599684f805f2ed',
+              '53293d0e1fb52a78fb27252f05cbb5000310b9ad',
+              '0a0f6c83ea6b393aba2e341a5b27f8cac18581f7',
+          ]
+          chunks = []
+          for sha in ids:
+              request = urllib.request.Request(
+                  'https://api.github.com/repos/darmenz2/dizzass/git/blobs/' + sha,
+                  headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'],
+                           'Accept': 'application/vnd.github+json',
+                           'X-GitHub-Api-Version': '2022-11-28'})
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  obj = json.load(response)
+              assert obj['encoding'] == 'base64' and obj['sha'] == sha
+              data = base64.b64decode(obj['content'])
+              assert hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest() == sha
+              chunks.append(data)
+          compressed = b''.join(chunks)
+          assert len(compressed) == 18842
+          assert hashlib.sha256(compressed).hexdigest() == '17220c1fdecae3b4ea126e06c0b9fbb5ebf8cdc07b512310adc8e40328eaf722'
+          patch = gzip.decompress(compressed)
+          assert len(patch) == 59520
+          assert hashlib.sha256(patch).hexdigest() == 'cdf276faccbb45735c82a9156c9124b8690f2d229ccfe3217f91db4ad9d0d3d3'
+          pathlib.Path(os.environ['RUNNER_TEMP'], 'register-write-135.patch').write_bytes(patch)
+          print('PATCH_BYTES_VERIFIED', len(patch))
+          PY
+      - name: Apply exact source candidate without workflow writes
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          git apply --check "$RUNNER_TEMP/register-write-135.patch"
+          git apply --index --exclude='.github/workflows/*' "$RUNNER_TEMP/register-write-135.patch"
+          git diff --cached --check
+          test "$(git write-tree)" = 8e4d1b66737f48c83d19672f5876c8cdf183c76c
+          python3 integration/tests/check_bm1368_register_write_evidence_135.py
+      - name: Original nested comparisons native composition negative controls and sanitizers
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          for cc in gcc clang; do
+            make -f integration/bm1368-register-write-135.mk CC="$cc" REG1368_DIR="build/review-$cc" dizzass-reg1368-original dizzass-reg1368-test dizzass-reg1368-negative
+            make -f integration/bm1368-register-write-135.mk CC="$cc" SANITIZE=1 REG1368_DIR="build/review-$cc-san" dizzass-reg1368-test
+          done
+          clang --analyze -I. -Iinclude -std=c11 -DVN135_BM1368_REGISTER_WRITE_135 -Xanalyzer -analyzer-output=text libbitmain/src/chip/chip1368-register-write.c
+      - name: Publish only the isolated verified source candidate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          git diff --exit-code
+          test "$(git write-tree)" = 8e4d1b66737f48c83d19672f5876c8cdf183c76c
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Recover BM1368 register write with existing encoder and cache bodies'
+          test "$(git rev-parse HEAD^)" = 3395ab351b811aee4fe8142dec6043d84abc72ba
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c "http.extraheader=AUTHORIZATION: basic $auth" push origin HEAD:refs/heads/review/bm1368-register-write-sources-135-20260927
+          printf 'CANDIDATE_COMMIT=%s\n' "$(git rev-parse HEAD)"
+          printf 'CANDIDATE_TREE=%s\n' "$(git rev-parse HEAD^{tree})"
