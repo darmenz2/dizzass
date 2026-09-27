@@ -1,0 +1,83 @@
+{
+  "base_commit": "12446bed78a060a49364a80bcbfb4340b13f4f27",
+  "base_tree": "2e73cb80b2ccbb15d24d9a7deb3c51f65bcd23ac",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "ranges": [
+    {
+      "name": "existing chain cleanup",
+      "start": "0x58d08",
+      "end": "0x58df0",
+      "sha256": "b0cdcca97c4857a6452379efab8381ed5fe1b9d2bd9c77aa1b1c6243e131884c"
+    },
+    {
+      "name": "existing per-sensor reset",
+      "start": "0xb71a8",
+      "end": "0xb71e4",
+      "sha256": "09ce67738a5107818dacb586b3117cbba6320bdacfc123f1d29bc789b7ff7d57"
+    },
+    {
+      "name": "model getter",
+      "start": "0xa720c",
+      "end": "0xa7218",
+      "sha256": "75cf4ac24b47097c94faca34d348431b77cdb0c00154c46e861f1b6fba5d93f4"
+    },
+    {
+      "name": "sync call naming provenance only",
+      "start": "0x5a60b8",
+      "end": "0x5a6108",
+      "sha256": "6e064ca2f079573eb0f2ce49fb3093915367606323d1e4d17fe6cc5f79608b01"
+    },
+    {
+      "name": "parent before exit",
+      "start": "0x5f0fc",
+      "end": "0x5fc1c",
+      "sha256": "955d862a2f6dfa49ae49215a8a22ef290f1b60169056a54f826e9faa9190badd"
+    },
+    {
+      "name": "parent common shutdown",
+      "start": "0x5fc54",
+      "end": "0x606c0",
+      "sha256": "6e7ef18d8deb01732e5daadd7e0761829b2e89e5c1887eab00a4c34ca5e11b1e"
+    }
+  ],
+  "unchanged_dependencies": {
+    "AGENTS.md": "e829c42302bd775cfb9b705dc653429973888535b849d9a4965e9e6461bf746b",
+    "cgminer.c": "214148c972c380af38cd667c02ccffad5c3a0b2790d5b54eeb0316af455411e4",
+    "Makefile.am": "8601830e23e231cdadd770a9bea4c1216d281ace5aa930010f0e61983daa8995",
+    "miner.h": "46975a24967eb0d0d5b0171b210b875b0adc60feba93131e491fc0deeb72745c",
+    "driver-bitmain.c": "3873860b79667641f02781afaff9a50d23edfe6dbe9a5bef132c20eed3918556",
+    "src/backend/base.c": "d936fe0a4ab0fa8b8593b914025fa79886c21563ca78202a95a8f8528ce81a5d",
+    "src/backend/temp.c": "e41668a8a8f9a49ffb0d7d85cfe24c0cd68c60de6bf4cf82dc3817fb01920a30",
+    "reconstruction/support/sensor_cleanup_135.c": "af15117110f64cf27843be8c31f4b7a854df82f933588be065462d231d195167",
+    "integration/sensor_monitor_135.h": "6bde5c0890a0fabe2f787d5f92c49050f755d068e063d030ec8360d3c4f7333b",
+    "integration/general_monitor_135.h": "aa98ae39a5cd9a2443ee45fc1c4e7384d4ba85e640cc11ae9bd993b8a753ee74",
+    "integration/thermal_sensors_135.h": "d55730051f5d7ed92313edaaea9d86e13ca735b77e487c1fde048b7e7b1943d8",
+    "integration/thermal_routes_135.h": "e4e284b80fea953815830ae3eef71e0efd9a6fecee15837714942cbd65ece3f8",
+    "integration/backend_shutdown_135.h": "27a3c80b9b07d209cf46b2be9fb9372c2a5681c9b0f004df8dd83150665a21a5",
+    "integration/exit_cleanup_135.h": "f678bc0dc8d9d3e14b838d9da445056e0ddf6b51c0a061ff33fc2ddcbdabae72",
+    "integration/tests/test_exit_cleanup_135.py": "714c8eb6176c65eefa84269b0baab226cb36017eb17cc3dc3f2c0ea15e268775",
+    "integration/tests/test_backend_shutdown_135.py": "a545992ce29a8e995ded42e69cfa0b1006513b429e51d1d517f0d315747bc6e1",
+    "integration/tests/test_general_monitor_135.py": "4e730c3ea31ca6941ef520425b6bfef444c2325b1ab15fae3e1f3a3c6f75b047",
+    "integration/tests/test_thermal_routes_135.py": "cb9b61c843d5e0d1ba78ec7e8b237bb084eb3c084687b4ce279012e3e417106b",
+    "integration/tests/test_thermal_sensors_135.py": "a287baa8d989dc4e8002fce8640a2754396e85b84ae55bf6c2f0dcb91101e403",
+    "integration/tests/test_sensor_bus_composed_135.py": "2ebcd07797cd364afb17a25e59736b63d5562a409a876dea455849a92440bfc4",
+    "integration/tests/test_stop_policy_135.py": "5de341fbb70292a8db1b1705065eb2a55d1c5d553e44be712c3c58c66c2d5f49",
+    "tools/elf32.py": "a67edcb47712252e3f11cf503416b149910587ab181313e01400bde30258e9a3",
+    "tools/arm32_subset.py": "6c4599c648634daea665d0ee84e97661720843d5c38fa2340c123d4df261a48b",
+    "tools/arm32_difficulty_subset.py": "a5b5631cfa251f22c8b6a0e2797a98d5b35df4e14a9b9fe3d81d829036f62176",
+    "tools/arm32_vfp_subset.py": "4460e7432511b115c5002288548d5a5cd0a9800cee5a2c48e9b46729b9778a58"
+  },
+  "reused": [
+    "vn135_temperature_chain_cleanup_135",
+    "vn135_temperature_reset",
+    "vn135_backend_before_exit_135",
+    "vn135_backend_shutdown_135"
+  ],
+  "new_api": "Bounded step binding; -2 is an integration error and 1 routing acceptance, neither an original hardware status.",
+  "correction": "58d08 existed before A-03. The historical callback name mutex_init is not evidence of initialization: 5a60b8 is distinct from 5a60dc.",
+  "limits": [
+    "Three chains, five sensors and two live sensor banks in new original fixtures; positive counts must fit arrays.",
+    "Unchanged original instruction ranges, sequential scripted sync/OS effects. No real threads, mutex or hardware.",
+    "A-01/A-02/B-01 PRs not dependencies; production linkage and slot limit unchanged."
+  ]
+}
