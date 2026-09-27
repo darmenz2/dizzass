@@ -3,6 +3,7 @@
  * Evidence: integration/evidence/chain_uart_reader_135.json. Offline only.
  */
 #include "integration/chain_uart_reader_135.h"
+#include "xminer/recovery/work_rx.h"
 
 uint32_t vn135_chain_uart_wait_capacity_135(const struct vn135_chain_uart_reader_view *v,
     const struct vn135_chain_uart_reader_ops *o,void *ctx)
@@ -21,8 +22,9 @@ void vn135_chain_uart_reader_135(const struct vn135_chain_uart_reader_view *v,
     const struct vn135_chain_uart_reader_ops *o,void *ctx,struct vn135_chain_uart_reader_scratch *s)
 {
     uint32_t model=*v->model,controller=*v->controller;
-    uint32_t kind=controller==0 || (model==6 && controller==4)?0:model==7?1:2;
-    uint32_t threshold=*v->force_nine?9:kind==0?9:kind==1?10:11;
+    vn135_work_rx_policy policy;
+    (void)vn135_work_rx_policy_init(&policy,controller,model,*v->force_nine);
+    uint32_t threshold=policy.frame_size;
     (void)o->mode(ctx,1,0);
     (void)o->format(ctx,s->name,64,0x5e973e,*v->index);
     (void)o->name(ctx,15,s->name,0,0,0);

@@ -4,7 +4,7 @@ import argparse,json,subprocess,sys
 from pathlib import Path
 from test_chain_uart_reader_135 import ROOT,fixtures
 def main():
-    ap=argparse.ArgumentParser();ap.add_argument('output');ap.add_argument('--cc',required=True);ap.add_argument('--baseline',required=True);a=ap.parse_args()
+    ap=argparse.ArgumentParser();ap.add_argument('output');ap.add_argument('--cc',required=True);ap.add_argument('--baseline',required=True);ap.add_argument('--policy',required=True);a=ap.parse_args()
     out=Path(a.output).resolve();out.mkdir(parents=True,exist_ok=True);items,counts=fixtures()
     for _,r in items:r.pop('memory');r.pop('scratch')
     fixture=out/'original.json';fixture.write_text(json.dumps(items))
@@ -21,9 +21,9 @@ def main():
       'wait_early_flag':[('        uint32_t stride=*v->queue_stride;','        if (!*v->running) { (void)o->mutex(ctx,0x5a66c4,v->mutex); return 0; }\n        uint32_t stride=*v->queue_stride;')],
       'late_capacity_load':[('        (void)o->mutex(ctx,0x5a66c4,v->mutex);\n        if (capacity','        (void)o->mutex(ctx,0x5a66c4,v->mutex);\n        capacity=*v->queue_stride?(*v->queue_end-*v->queue_begin)/ *v->queue_stride:0;\n        if (capacity')],
       'wait_delay_four':[('o->delay_ms(ctx,5)','o->delay_ms(ctx,4)')],
-      'forced_threshold_wrong':[('*v->force_nine?9:','*v->force_nine?11:')],
-      'special_controller_removed':[('controller==0 || (model==6 && controller==4)','controller==0')],
-      'model_seven_wrong':[('kind==1?10:11','kind==1?11:11')],
+      'forced_threshold_wrong':[('uint32_t threshold=policy.frame_size;','uint32_t threshold=*v->force_nine?11:policy.frame_size;')],
+      'special_controller_removed':[('&policy,controller,model','&policy,controller==4 && model==6?1:controller,model')],
+      'model_seven_wrong':[('&policy,controller,model,','&policy,controller,model==7?0:model,')],
       'live_threshold':[('if (count>=threshold)','if (count>=(*v->force_nine?9:(*v->controller==0 || (*v->model==6 && *v->controller==4))?9:*v->model==7?10:threshold))')],
       'strict_signal_threshold':[('if (count>=threshold)','if (count>threshold)')],
       'skip_running_store':[('    *v->running=1;\n','')],
@@ -45,7 +45,7 @@ def main():
         changed=source
         for old,new in edits_for_case:assert old in changed,(name,old);changed=changed.replace(old,new)
         p=out/(name+'.c');p.write_text(changed);library=out/(name+'.so')
-        r=subprocess.run([a.cc,'-I.','-Iinclude','-std=c11','-Wall','-Wextra','-Wpedantic','-Werror','-O2','-shared','-fPIC',str(p),'reconstruction/support/record_fifo.c','libbitmain/src/uart.c','-Wl,-z,defs','-o',str(library)],cwd=ROOT,capture_output=True,text=True)
+        r=subprocess.run([a.cc,'-I.','-Iinclude','-std=c11','-Wall','-Wextra','-Wpedantic','-Werror','-O2','-shared','-fPIC',str(p),'reconstruction/support/record_fifo.c','libbitmain/src/uart.c',str(Path(a.policy).resolve()),'-Wl,--gc-sections,-z,defs','-o',str(library)],cwd=ROOT,capture_output=True,text=True)
         (out/(name+'-build.log')).write_text(r.stdout+r.stderr);assert r.returncode==0,(name,r.stdout,r.stderr)
         run(name,library,3)
     print(f'CHAIN_UART_READER_NEGATIVE_PASS mutants={len(edits)} original_fixtures={counts["cases"]} baseline=PASS')

@@ -4,6 +4,8 @@ on:
     branches: [work/reconstruction]
     paths:
       - src/backend/work-gen/chain-uart-reader.c
+      - src/backend/work-gen/work-gen.c
+      - include/xminer/recovery/work_rx.h
       - reconstruction/support/record_fifo.c
       - include/xminer/recovery/nonce_fifo.h
       - libbitmain/src/uart.c
@@ -68,3 +70,4 @@ jobs:
           path: |
             build/b11-logs/
             build/b11/negative/*.log
+            build/b11/symbols.txt

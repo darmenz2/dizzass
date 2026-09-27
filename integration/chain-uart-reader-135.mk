@@ -8,12 +8,20 @@ CHAIN_READER_HDR = integration/chain_uart_reader_135.h include/xminer/recovery/u
 all: evidence original native
 $(CHAIN_READER_DIR):
 	mkdir -p $@
-$(CHAIN_READER_DIR)/libchainreader.so: $(CHAIN_READER_SRC) $(CHAIN_READER_HDR) integration/chain-uart-reader-135.mk | $(CHAIN_READER_DIR)
-	$(CC) $(CHAIN_READER_FLAGS) -O2 -shared -fPIC $(CHAIN_READER_SRC) -Wl,-z,defs -o $@
-$(CHAIN_READER_DIR)/native: $(CHAIN_READER_SRC) $(CHAIN_READER_HDR) integration/tests/test_chain_uart_reader_135.c | $(CHAIN_READER_DIR)
-	$(CC) $(CHAIN_READER_FLAGS) -O2 $(CHAIN_READER_SRC) integration/tests/test_chain_uart_reader_135.c -o $@
-$(CHAIN_READER_DIR)/san: $(CHAIN_READER_SRC) $(CHAIN_READER_HDR) integration/tests/test_chain_uart_reader_135.c | $(CHAIN_READER_DIR)
-	$(CC) $(CHAIN_READER_FLAGS) -O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer -fno-pie -no-pie $(CHAIN_READER_SRC) integration/tests/test_chain_uart_reader_135.c -o $@
+# Reuse the existing policy without pulling its unrelated nonce/SHA paths into
+# this offline library: hidden function sections allow the linker to discard them.
+$(CHAIN_READER_DIR)/policy.o: src/backend/work-gen/work-gen.c include/xminer/recovery/work_rx.h integration/chain-uart-reader-135.mk | $(CHAIN_READER_DIR)
+	$(CC) $(CHAIN_READER_FLAGS) -O2 -fPIC -ffunction-sections -fdata-sections -fvisibility=hidden -c $< -o $@
+$(CHAIN_READER_DIR)/policy-san.o: src/backend/work-gen/work-gen.c include/xminer/recovery/work_rx.h integration/chain-uart-reader-135.mk | $(CHAIN_READER_DIR)
+	$(CC) $(CHAIN_READER_FLAGS) -O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer -fno-pie -ffunction-sections -fdata-sections -fvisibility=hidden -c $< -o $@
+$(CHAIN_READER_DIR)/libchainreader.so: $(CHAIN_READER_SRC) $(CHAIN_READER_HDR) $(CHAIN_READER_DIR)/policy.o integration/chain-uart-reader-135.mk | $(CHAIN_READER_DIR)
+	$(CC) $(CHAIN_READER_FLAGS) -O2 -shared -fPIC $(CHAIN_READER_SRC) $(CHAIN_READER_DIR)/policy.o -Wl,--gc-sections,-z,defs -o $@
+	nm --defined-only $@ > $(CHAIN_READER_DIR)/symbols.txt
+	python3 -c "from pathlib import Path; s=Path('$(CHAIN_READER_DIR)/symbols.txt').read_text(); assert 'vn135_work_rx_policy_init' in s; assert 'vn135_sha256' not in s and 'vn135_work_nonce_' not in s; print('CHAIN_UART_POLICY_LINK_PASS policy=present nonce_sha=absent')"
+$(CHAIN_READER_DIR)/native: $(CHAIN_READER_SRC) $(CHAIN_READER_HDR) $(CHAIN_READER_DIR)/policy.o integration/tests/test_chain_uart_reader_135.c | $(CHAIN_READER_DIR)
+	$(CC) $(CHAIN_READER_FLAGS) -O2 $(CHAIN_READER_SRC) $(CHAIN_READER_DIR)/policy.o integration/tests/test_chain_uart_reader_135.c -Wl,--gc-sections -o $@
+$(CHAIN_READER_DIR)/san: $(CHAIN_READER_SRC) $(CHAIN_READER_HDR) $(CHAIN_READER_DIR)/policy-san.o integration/tests/test_chain_uart_reader_135.c | $(CHAIN_READER_DIR)
+	$(CC) $(CHAIN_READER_FLAGS) -O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer -fno-pie -no-pie $(CHAIN_READER_SRC) $(CHAIN_READER_DIR)/policy-san.o integration/tests/test_chain_uart_reader_135.c -Wl,--gc-sections -o $@
 evidence:
 	python3 integration/tests/check_chain_uart_reader_evidence_135.py
 original: $(CHAIN_READER_DIR)/libchainreader.so
@@ -23,7 +31,7 @@ native: $(CHAIN_READER_DIR)/native
 sanitize: $(CHAIN_READER_DIR)/san
 	ASAN_OPTIONS=detect_leaks=1 UBSAN_OPTIONS=halt_on_error=1 ./$(CHAIN_READER_DIR)/san
 negative: $(CHAIN_READER_DIR)/libchainreader.so
-	python3 integration/tests/test_chain_uart_reader_negative_135.py $(CHAIN_READER_DIR)/negative --cc $(CC) --baseline $(CHAIN_READER_DIR)/libchainreader.so
+	python3 integration/tests/test_chain_uart_reader_negative_135.py $(CHAIN_READER_DIR)/negative --cc $(CC) --baseline $(CHAIN_READER_DIR)/libchainreader.so --policy $(CHAIN_READER_DIR)/policy.o
 regressions: | $(CHAIN_READER_DIR)
 	$(CC) $(CHAIN_READER_FLAGS) -O2 -shared -fPIC integration/work_route.c integration/work_tx88.c -o $(CHAIN_READER_DIR)/libroute.so
 	python3 integration/tests/test_work_route.py $(CHAIN_READER_DIR)/libroute.so

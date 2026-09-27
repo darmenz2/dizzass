@@ -47,6 +47,14 @@ UART-чтение: `d1bc8` принимает только помещающие�
 | остальные сочетания | 11 |
 
 Это значения из инструкций, не доказательство chip/model dispatch для T21.
+Выбор делегирован существующей `vn135_work_rx_policy_init`: её `frame_size`
+равен наблюдаемому порогу для всех проверенных selector/byte значений.
+Helper принимает ненулевой local output, поэтому его единственный API guard
+здесь не меняет поведение. Результат кэшируется до первого OS callback.
+Тестовая сборка компилирует неизменённый work-gen.c в hidden function sections;
+линкер сохраняет нужный policy и удаляет неиспользуемые nonce/SHA зависимости.
+Symbol-check подтверждает policy=present, nonce/SHA=absent. Sanitizer-сборка
+инструментирует и этот policy object. Никакой копии алгоритма выбора нет.
 
 1. Setter `5a6b2c(1,NULL)`, format `59f558(name,64,5e973e,live index18)`,
    name operation `593af8(15,name,0,0,0)`, затем byte318=1.
