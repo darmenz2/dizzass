@@ -1,0 +1,67 @@
+name: Check B-03 original chain cleanup
+on:
+  pull_request:
+    branches: [work/reconstruction]
+    paths:
+      - src/backend/chain-reset-cleanup.c
+      - src/backend/chain.c
+      - integration/chain_reset_cleanup_135.h
+      - integration/chain-reset-cleanup-135.mk
+      - integration/CHAIN_RESET_CLEANUP_135_RU.md
+      - integration/evidence/chain_reset_cleanup_135.json
+      - integration/tests/*chain_reset_cleanup*135*
+      - .github/workflows/chain-reset-cleanup-135.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  cleanup135:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Original composition, native byte checks and semantic mutants
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build/b03-logs
+          git rev-parse HEAD | tee build/b03-logs/head.txt
+          ${{ matrix.cc }} --version | tee build/b03-logs/compiler.txt
+          make -f integration/chain-reset-cleanup-135.mk CC=${{ matrix.cc }} RESETCLEAN135_DIR=build/b03 dizzass-resetclean135-original dizzass-resetclean135-test dizzass-resetclean135-negative 2>&1 | tee build/b03-logs/new.log
+      - name: Address and undefined behavior sanitizers
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -f integration/chain-reset-cleanup-135.mk CC=${{ matrix.cc }} SANITIZE=1 RESETCLEAN135_DIR=build/b03-san dizzass-resetclean135-test 2>&1 | tee build/b03-logs/sanitizers.log
+      - name: Unchanged thermal-route and pre-exit regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -f integration/thermal-routes-135.mk CC=${{ matrix.cc }} ROUTES135_DIR=build/b03-routes dizzass-routes135-original dizzass-routes135-test 2>&1 | tee build/b03-logs/thermal-routes.log
+          make -f integration/exit-cleanup-135.mk CC=${{ matrix.cc }} EXIT135_DIR=build/b03-exit dizzass-exit135-original dizzass-exit135-test 2>&1 | tee build/b03-logs/exit-cleanup.log
+      - name: Static analysis
+        if: matrix.cc == 'clang'
+        shell: bash
+        run: |
+          set -euo pipefail
+          clang --analyze -I. -std=c11 -DVN135_CHAIN_RESET_CLEANUP_135 -Xanalyzer -analyzer-output=text src/backend/chain-reset-cleanup.c 2>&1 | tee build/b03-logs/analyzer.log
+      - name: Save exact-head logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: chain-reset-cleanup-${{ matrix.cc }}-${{ github.run_id }}
+          retention-days: 7
+          path: |
+            build/b03-logs/
+            build/b03/original.json
+            build/b03/negative/*.log
+            build/b03/negative/results.json
