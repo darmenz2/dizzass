@@ -400,13 +400,21 @@ void dizzass_submitter_destroy(struct dizzass_submitter **pointer)
 static int admit_submission(struct dizzass_submitter *gate,
     struct dizzass_jobs *jobs, uint64_t epoch,
     const struct dizzass_nonce_reply *reply, struct work **copy,
-    struct dizzass_job_ticket *ticket)
+    struct dizzass_job_ticket *ticket,
+    const struct dizzass_job_ticket *captured)
 {
     struct job_slot *slot;
     struct dizzass_nonce_match match;
     const struct work *source;
     int rc;
     jobs_lock(jobs);
+    /* Captured identity and retained-copy admission are one critical section.
+     * Do not validate a serial first and then re-resolve an unrelated slot. */
+    if (captured) {
+        rc = ticket_status(jobs, captured);
+        if (rc) goto done;
+        if (captured->slot != reply->slot) { rc = DIZZASS_NONCE_WRONG_SLOT; goto done; }
+    }
     rc = epoch_status(jobs, epoch);
     if (rc) goto done;
     if (reply->chain_id != jobs->chain_id) { rc = DIZZASS_JOBS_WRONG_CHAIN; goto done; }
@@ -443,9 +451,10 @@ done:
     return rc;
 }
 
-int dizzass_submitter_run(struct dizzass_submitter *gate,
+static int submitter_run(struct dizzass_submitter *gate,
     struct dizzass_jobs *jobs, uint64_t received_epoch,
-    const struct dizzass_nonce_reply *reply, struct dizzass_submit_result *out)
+    const struct dizzass_nonce_reply *reply, struct dizzass_submit_result *out,
+    const struct dizzass_job_ticket *captured)
 {
     struct dizzass_submit_result result = {0};
     struct work *copy = NULL;
@@ -459,7 +468,7 @@ int dizzass_submitter_run(struct dizzass_submitter *gate,
         !gate->cgpu->drv || !gate->cgpu->drv->hw_error || !gate->cgpu->drv->name) {
         rc = DIZZASS_SUBMIT_WRONG_THREAD; goto done;
     }
-    rc = admit_submission(gate, jobs, received_epoch, reply, &copy, &result.ticket);
+    rc = admit_submission(gate, jobs, received_epoch, reply, &copy, &result.ticket, captured);
     if (rc) goto done;
     /* Registry is UNLOCKED. A driver hw_error may pause it without deadlock.
      * The immutable owned copy remains valid even after retire/pause.
@@ -471,4 +480,19 @@ int dizzass_submitter_run(struct dizzass_submitter *gate,
 done:
     if (pthread_mutex_unlock(&gate->lock)) abort();
     return rc;
+}
+
+int dizzass_submitter_run(struct dizzass_submitter *gate,
+    struct dizzass_jobs *jobs, uint64_t received_epoch,
+    const struct dizzass_nonce_reply *reply, struct dizzass_submit_result *out)
+{
+    return submitter_run(gate, jobs, received_epoch, reply, out, NULL);
+}
+
+int dizzass_submitter_run_captured(struct dizzass_submitter *gate,
+    struct dizzass_jobs *jobs, const struct dizzass_job_ticket *captured,
+    const struct dizzass_nonce_reply *reply, struct dizzass_submit_result *out)
+{
+    if (!captured) return DIZZASS_SUBMIT_INVALID;
+    return submitter_run(gate, jobs, captured->epoch, reply, out, captured);
 }

@@ -1,0 +1,184 @@
+{
+  "date": "2026-09-28",
+  "scope": "R-03 host-only captured submission / real native queue",
+  "parent": "fe768caf0807f430b036b25b1c566abc6dc02013",
+  "input_snapshot": "ee32798790c7549e0438c46c34d10e66b73db76a",
+  "input_tree": "c99e3daca20fc27246596c2b0ce010747af77572",
+  "local_history": "archive anchor, not original remote commits",
+  "runs": [
+    {
+      "name": "gcc",
+      "status": "PASS",
+      "compiler": "gcc (Debian 14.2.0-19) 14.2.0",
+      "source_head_local": "d46ed564fef5e14f883c9235a4cdae57f4410513",
+      "source_tree": "b8592f91c8721399fe27511e988f676be2f0666f",
+      "markers": [
+        "R03_PASS cases=39 checks=887 native_calls=59 real_stratum_queue=1 network=0"
+      ],
+      "mutants": [
+        "ignore-serial",
+        "ordinary-submit",
+        "consume-pending",
+        "consume-copy-error",
+        "never-consume-success",
+        "ignore-stopped-gate"
+      ],
+      "report_sha256": "88f829919daef04553e517718fb74089ec7d7f462bdd9fee4db40ec5e07c7300",
+      "command_exits": {
+        "compiler": 0,
+        "autoreconf": 0,
+        "configure": 0,
+        "native-core-build": 0,
+        "version": 0,
+        "integration": 0,
+        "symbols": 0,
+        "r02-regression": 0,
+        "old-native-submit": 0,
+        "source-boundaries": 0,
+        "ignore-serial-build": 0,
+        "ignore-serial": 1,
+        "ordinary-submit-build": 0,
+        "ordinary-submit": 1,
+        "consume-pending-build": 0,
+        "consume-pending": 1,
+        "consume-copy-error-build": 0,
+        "consume-copy-error": 1,
+        "never-consume-success-build": 0,
+        "never-consume-success": 1,
+        "ignore-stopped-gate-build": 0,
+        "ignore-stopped-gate": 1
+      },
+      "complete_report_location": "archive/reports/gcc/results.json"
+    },
+    {
+      "name": "clang",
+      "status": "PASS",
+      "compiler": "clang version 17.0.0 (https://github.com/swiftlang/llvm-project.git 10999b6d034fe318f3d56c83bddb6572593a8bb0)",
+      "source_head_local": "d46ed564fef5e14f883c9235a4cdae57f4410513",
+      "source_tree": "b8592f91c8721399fe27511e988f676be2f0666f",
+      "markers": [
+        "R03_PASS cases=39 checks=887 native_calls=59 real_stratum_queue=1 network=0"
+      ],
+      "mutants": [
+        "ignore-serial",
+        "ordinary-submit",
+        "consume-pending",
+        "consume-copy-error",
+        "never-consume-success",
+        "ignore-stopped-gate"
+      ],
+      "report_sha256": "f87885c5ec1dcbd672d46a3898a412e34aed7171693cc5259253beaa56c8616b",
+      "command_exits": {
+        "compiler": 0,
+        "autoreconf": 0,
+        "configure": 0,
+        "native-core-build": 0,
+        "version": 0,
+        "integration": 0,
+        "symbols": 0,
+        "r02-regression": 0,
+        "old-native-submit": 0,
+        "source-boundaries": 0,
+        "analyzer": 0,
+        "ignore-serial-build": 0,
+        "ignore-serial": 1,
+        "ordinary-submit-build": 0,
+        "ordinary-submit": 1,
+        "consume-pending-build": 0,
+        "consume-pending": 1,
+        "consume-copy-error-build": 0,
+        "consume-copy-error": 1,
+        "never-consume-success-build": 0,
+        "never-consume-success": 1,
+        "ignore-stopped-gate-build": 0,
+        "ignore-stopped-gate": 1
+      },
+      "complete_report_location": "archive/reports/clang/results.json"
+    },
+    {
+      "name": "gcc-san",
+      "status": "PASS",
+      "compiler": "gcc (Debian 14.2.0-19) 14.2.0",
+      "source_head_local": "d46ed564fef5e14f883c9235a4cdae57f4410513",
+      "source_tree": "b8592f91c8721399fe27511e988f676be2f0666f",
+      "markers": [
+        "R03_PASS cases=39 checks=887 native_calls=59 real_stratum_queue=1 network=0"
+      ],
+      "mutants": [],
+      "report_sha256": "cce58ceab7b343818ac10a6d8cb90ae0fb148faf6fe36ccd4369c4b805601a7b",
+      "command_exits": {
+        "compiler": 0,
+        "health-build": 0,
+        "sanitizer-health": 0,
+        "autoreconf": 0,
+        "configure": 0,
+        "native-core-build": 0,
+        "version": 0,
+        "integration": 0,
+        "symbols": 0
+      },
+      "complete_report_location": "archive/reports/gcc-san/results.json"
+    },
+    {
+      "name": "clang-san",
+      "status": "PASS",
+      "compiler": "clang version 17.0.0 (https://github.com/swiftlang/llvm-project.git 10999b6d034fe318f3d56c83bddb6572593a8bb0)",
+      "source_head_local": "d46ed564fef5e14f883c9235a4cdae57f4410513",
+      "source_tree": "b8592f91c8721399fe27511e988f676be2f0666f",
+      "markers": [
+        "R03_PASS cases=39 checks=887 native_calls=59 real_stratum_queue=1 network=0"
+      ],
+      "mutants": [],
+      "report_sha256": "c6cfda1e18e0d2367d7c9acef0a05bbc94c023b2e457a5c5ae672986429e862e",
+      "command_exits": {
+        "compiler": 0,
+        "health-build": 0,
+        "sanitizer-health": 0,
+        "autoreconf": 0,
+        "configure": 0,
+        "native-core-build": 0,
+        "version": 0,
+        "integration": 0,
+        "symbols": 0
+      },
+      "complete_report_location": "archive/reports/clang-san/results.json"
+    }
+  ],
+  "scope_limits": [
+    "No network, ASIC, device_drv or receive thread startup",
+    "39 scenarios; core Stratum queue is consumed only by the offline harness",
+    "Caller excludes cancellation across inbox dispatch and receipt handling",
+    "Native pause-after-admission semantics retained; not revocation of queued work",
+    "Direct test/root cgminer TU and adapters instrumented; support objects ordinary builds",
+    "Both local cores built separately in ANTS2/no-libcurl configuration; no driver run"
+  ],
+  "development_failures": [
+    {
+      "stage": "initial fixture",
+      "result": "FAIL",
+      "detail": "Expected stale dropping while upstream opt_submit_stale default was true; test now sets both policies explicitly and covers both. No runtime change."
+    },
+    {
+      "stage": "first symbol guard",
+      "result": "FAIL",
+      "detail": "test_nonce was inlined/garbage-collected on three builds. Test linker now retains the actual helper with --undefined=test_nonce; all functional scenarios unchanged."
+    }
+  ],
+  "runner_tests": {
+    "normal": 3,
+    "optimized": 3
+  },
+  "source_hashes": {
+    "integration/native_jobs.c": "c4f00c6a7cf1d1f859bde92b8fd35a638e3e824768d5238d67d083de319eaa8f",
+    "integration/native_submit.h": "fedb96d3a42031ebc2a14bf048559112680ebf7778497017151a5ec4817235aa",
+    "integration/native/early_rx.c": "8d7d45084f71e237823007b7341aad4384137de8122a7e2497abc63cc06b933c",
+    "integration/native/early_rx.h": "e2962c2a8ef794ce4bddb0fc35e4a572b1474c8f3b8bd722c7efc60b3138fe48",
+    "integration/review/rx_submit/test.c": "38b1bd4c1d2d6e504202b6a3d8b81f0cf99a9fb6c6669424f2395a9085b575ab",
+    "integration/review/rx_submit/suite.mk": "579b96036dcdb51b0b5473b58892c81c6e7674eb820be7ebf07e4992b9a84a6a",
+    "integration/review/rx_submit/run.py": "1492e26bd61bfb389b360c30a98d0551f55f3443f0a5611417be42d15eb127c3"
+  },
+  "archive": {
+    "name": "r03-local-evidence.tar.gz",
+    "sha256": "c7d6d44f0fdf06ea6cb3292407c1cb8d366295f90f0a02c00ddc970df776d993"
+  }
+}

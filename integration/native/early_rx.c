@@ -51,6 +51,13 @@ static int terminal_rejection(int rc)
         rc == DIZZASS_NONCE_WRONG_SLOT || rc == DIZZASS_NONCE_WRONG_FORMAT ||
         rc == DIZZASS_NONCE_WRONG_VERSION;
 }
+static void remove_entry(struct dizzass_early_rx *q, size_t i)
+{
+    --q->count;
+    memmove(&q->entries[i], &q->entries[i+1],
+        (q->count - i) * sizeof q->entries[0]);
+    memset(&q->entries[q->count], 0, sizeof q->entries[0]);
+}
 int dizzass_early_rx_take(struct dizzass_early_rx *q, struct dizzass_early_rx_event *out)
 {
     if (!q || !out || out->result.check.work) return DIZZASS_EARLY_RX_INVALID;
@@ -65,10 +72,7 @@ int dizzass_early_rx_take(struct dizzass_early_rx *q, struct dizzass_early_rx_ev
         /* Unknown/recoverable errors are never silently consumed. */
         if (rc && !terminal_rejection(rc)) return rc;
         event.job_status = rc;
-        --q->count;
-        memmove(&q->entries[i], &q->entries[i+1],
-            (q->count - i) * sizeof q->entries[0]);
-        memset(&q->entries[q->count], 0, sizeof q->entries[0]);
+        remove_entry(q, i);
         *out = event;
         return 0;
     }
@@ -94,4 +98,27 @@ void dizzass_early_rx_destroy(struct dizzass_early_rx **pointer)
 {
     if (!pointer || !*pointer) return;
     free(*pointer); *pointer = NULL;
+}
+
+int dizzass_early_rx_dispatch(struct dizzass_early_rx *q,
+    struct dizzass_submitter *submitter, struct dizzass_early_rx_submission *out)
+{
+    if (!q || !submitter || !out) return DIZZASS_EARLY_RX_INVALID;
+    if (q->stopped) return q->stopped;
+    if (!q->count) return DIZZASS_EARLY_RX_EMPTY;
+    for (size_t i = 0; i < q->count; ++i) {
+        struct dizzass_early_rx_submission event = {0};
+        event.reply = q->entries[i].reply;
+        event.captured = q->entries[i].ticket;
+        int rc = dizzass_submitter_run_captured(submitter, q->jobs,
+            &event.captured, &event.reply, &event.result);
+        if (rc == DIZZASS_JOBS_PENDING) continue;
+        if (rc && !terminal_rejection(rc)) return rc;
+        event.job_status = rc;
+        event.native_called = rc == 0;
+        remove_entry(q, i);
+        *out = event;
+        return 0;
+    }
+    return DIZZASS_EARLY_RX_WAITING;
 }

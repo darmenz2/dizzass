@@ -58,3 +58,61 @@ jobs:
           name: r03-source-${{ github.event.pull_request.head.sha || github.sha }}
           path: ${{ env.SOURCE_SNAPSHOT }}
           retention-days: 7
+
+  verify:
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc-14, clang-17]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Fetch exact candidate and pinned dependency commits without credentials
+        env:
+          REPO: ${{ github.repository }}
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -eu
+          root="$RUNNER_TEMP/r03-test-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$root"
+          cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$REPO.git"
+          git fetch --depth=1 --no-tags origin "$HEAD"
+          git checkout --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$HEAD"
+          python3 - <<'PY'
+          import json,subprocess
+          entries=json.load(open('integration/review/early_rx/manifest.json'))['pending']
+          for sha in sorted({e['commit'] for e in entries}):
+              if len(sha)!=40 or any(c not in '0123456789abcdef' for c in sha):
+                  raise SystemExit('invalid dependency commit')
+              subprocess.run(['git','fetch','--depth=1','--no-tags','origin',sha],check=True)
+          PY
+          echo "R03_SOURCE=$root" >> "$GITHUB_ENV"
+      - name: Install host Icarus build dependencies and explicit compiler
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y build-essential autoconf automake libtool pkg-config libcurl4-openssl-dev libusb-1.0-0-dev libudev-dev zlib1g-dev '${{ matrix.cc }}'
+      - name: Native dispatch, old regressions and compiled semantic controls
+        run: |
+          set -eu
+          cd "$R03_SOURCE"
+          python3 integration/review/early_rx/test_runner.py
+          python3 integration/review/rx_submit/test_runner.py
+          python3 -O integration/review/rx_submit/test_runner.py
+          python3 integration/review/rx_submit/run.py --cc '${{ matrix.cc }}' --baseline icarus --out build/r03-ci-normal --mutants
+      - name: Required sanitizer health followed by the unchanged application suite
+        run: |
+          set -eu
+          cd "$R03_SOURCE"
+          python3 integration/review/rx_submit/run.py --cc '${{ matrix.cc }}' --baseline icarus --out build/r03-ci-san --sanitize
+      - name: Preserve reports and logs including failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r03-tests-${{ matrix.cc }}
+          path: |
+            ${{ env.R03_SOURCE }}/build/r03-ci-*/results.json
+            ${{ env.R03_SOURCE }}/build/r03-ci-*/logs/
+          retention-days: 7
