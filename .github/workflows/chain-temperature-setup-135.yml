@@ -1,0 +1,65 @@
+name: Check A-08 original per-chain temperature setup
+on:
+  pull_request:
+    branches: [work/reconstruction]
+    paths:
+      - src/backend/chain-temperature-setup.c
+      - src/backend/temp.c
+      - integration/chain_temperature_setup_135.h
+      - integration/chain-temperature-setup-135.mk
+      - integration/CHAIN_TEMPERATURE_SETUP_135_RU.md
+      - integration/evidence/chain_temperature_setup_135.json
+      - integration/tests/*chain_temperature_setup*
+      - .github/workflows/chain-temperature-setup-135.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: chain-temperature-setup135-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  chainset135:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+    steps:
+      - name: Fetch exact public source without credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/a08-${{ matrix.cc }}-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$root"
+          cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          git fetch --depth=1 --no-tags origin "$GITHUB_SHA"
+          git checkout -q --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Original coordinator and existing initializer comparisons
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/chain-temperature-setup-135.mk CC=${{ matrix.cc }} dizzass-chainset135-original dizzass-chainset135-test dizzass-chainset135-negative
+      - name: Native address and undefined behavior checks
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/chain-temperature-setup-135.mk CC=${{ matrix.cc }} SANITIZE=1 dizzass-chainset135-test
+      - name: Unchanged sensor and thermal-route regressions
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/thermal-sensors-135.mk CC=${{ matrix.cc }} dizzass-thermal135-original dizzass-thermal135-test
+          make -f integration/thermal-routes-135.mk CC=${{ matrix.cc }} dizzass-routes135-original dizzass-routes135-test
+      - name: Static analysis and immutable dependencies
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          clang --analyze -I. -std=c11 -DVN135_CHAIN_TEMPERATURE_SETUP_135 -Xanalyzer -analyzer-output=text src/backend/chain-temperature-setup.c
+          python3 integration/tests/check_chain_temperature_setup_evidence_135.py
+          printf '%s\n' 'Offline 58b50 and existing b7798 only; no device I/O, live threads or production binding.'
