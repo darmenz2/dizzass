@@ -32,6 +32,22 @@ int __wrap_tcgetattr(int fd,struct termios *out) { struct event e=take(ATTR); CH
 int __wrap_clock_gettime(clockid_t clock,struct timespec *out) { struct event e=take(CLOCK); CHECK(clock==CLOCK_MONOTONIC); out->tv_sec=(time_t)(e.ms/1000); out->tv_nsec=e.nsec<0?(long)(e.ms%1000)*1000000L:e.nsec; if(e.result==2){out->tv_sec=-1;return 0;} if(e.result==3){out->tv_sec=(time_t)(UINT64_MAX/1000+1);return 0;} errno=e.error; return e.result; }
 ssize_t __wrap_write(int fd,const void *p,size_t n) { struct event e=take(WRITE); CHECK(fd==f.fd && p==f.data+e.offset && n==f.length-e.offset); CHECK(e.offset==f.accepted); if(e.result>0){CHECK((size_t)e.result<=n); memcpy(f.bytes+f.accepted,p,(size_t)e.result); f.accepted+=(size_t)e.result;} errno=e.error; return e.result; }
 int __wrap_poll(struct pollfd *p,nfds_t n,int timeout) { struct event e=take(WAIT); CHECK(n==1 && p->fd==f.fd && p->events==POLLOUT && p->revents==0); CHECK(timeout==e.timeout && timeout>0); p->revents=e.revents; errno=e.error; return e.result; }
+/* GCC/glibc fortification can select __poll_chk instead of poll under ASan.
+ * Cover that entry without disabling fortification or touching runtime code. */
+int __wrap___poll_chk(struct pollfd *p, nfds_t n, int timeout, size_t size)
+{
+    CHECK(n <= size / sizeof *p);
+    return __wrap_poll(p, n, timeout);
+}
+static void fortified_poll_entry(void)
+{
+    init("fortified-poll-entry");
+    wait_at(9, 1, POLLOUT, 0);
+    struct pollfd p = {f.fd, POLLOUT, 0};
+    CHECK(__wrap___poll_chk(&p, 1, 9, sizeof p) == 1);
+    CHECK(f.next == f.used && p.revents == POLLOUT);
+    ++scenarios;
+}
 static void run(uint64_t deadline,unsigned budget,enum dizzass_uart_status s,size_t written,int error) { struct dizzass_uart_result r=dizzass_uart_posix_write_all(f.fd,f.data,f.length,deadline,budget); CHECK(r.status==s && r.written==written && r.error==error); CHECK(f.next==f.used && f.accepted==written); CHECK(!memcmp(f.bytes,f.before,written) && !memcmp(f.data,f.before,16)); ++scenarios; }
 
 static void partitions(void) {
@@ -86,4 +102,4 @@ static void clock_conversion(void) {
     for(unsigned j=0;j<5;++j){init("clock-conversion");uint64_t out=123;add((struct event){.kind=CLOCK,.ms=2000,.nsec=ns[j]});int e=dizzass_uart_posix_now_ms(&out);CHECK(e==(j==4?EOVERFLOW:0));CHECK(out==(j==4?123:2000+(uint64_t)ns[j]/1000000));CHECK(f.next==f.used);++scenarios;}
     for(int n=2;n<=3;++n){init("clock-range");uint64_t out=123;add((struct event){.kind=CLOCK,.result=n});CHECK(dizzass_uart_posix_now_ms(&out)==EOVERFLOW && out==123);++scenarios;}
 }
-int main(void) { admission();errors_and_time();clock_conversion();partitions();printf("UART_POSIX_UNIT_PASS scenarios=%u checks=%u real_syscalls=0\n",scenarios,checks);return 0; }
+int main(void) { admission();errors_and_time();clock_conversion();fortified_poll_entry();partitions();printf("UART_POSIX_UNIT_PASS scenarios=%u checks=%u real_syscalls=0\n",scenarios,checks);return 0; }

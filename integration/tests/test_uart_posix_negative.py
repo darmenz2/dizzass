@@ -90,7 +90,7 @@ def main():
             '-Wall', '-Wextra', '-Wpedantic', '-Werror', str(path),
             str(deps / 'integration/native/uart_safe.c'),
             'integration/tests/test_uart_posix.c',
-            '-Wl,--wrap=fcntl,--wrap=tcgetattr,--wrap=clock_gettime,--wrap=write,--wrap=poll', '-o', str(binary)]
+            '-Wl,--wrap=fcntl,--wrap=tcgetattr,--wrap=clock_gettime,--wrap=write,--wrap=poll,--wrap=__poll_chk', '-o', str(binary)]
         build = subprocess.run(command, cwd=ROOT, text=True, capture_output=True, timeout=30)
         (out / (name + '.build.log')).write_text(build.stdout + build.stderr)
         if build.returncode:

@@ -23,8 +23,15 @@ static unsigned writes,shorts,again,waits;
 #define CHECK(x) do { ++checks; if(!(x)){fprintf(stderr,"UART_POSIX_PTY_ASSERT line=%d %s errno=%d\n",__LINE__,#x,errno);exit(1);} } while(0)
 ssize_t __real_write(int,const void *,size_t);
 int __real_poll(struct pollfd *,nfds_t,int);
+int __real___poll_chk(struct pollfd *,nfds_t,int,size_t);
 ssize_t __wrap_write(int fd,const void *p,size_t n) { ssize_t r=__real_write(fd,p,n);int e=errno;if(fd==observed_fd){++writes;if(r>0 && (size_t)r<n)++shorts;if(r<0 && (e==EAGAIN || e==EWOULDBLOCK))++again;}errno=e;return r; }
 int __wrap_poll(struct pollfd *p,nfds_t n,int t) { if(n==1 && p[0].fd==observed_fd && p[0].events==POLLOUT)++waits;return __real_poll(p,n,t); }
+/* Observe the fortified ABI too; still execute its real bounds check and poll. */
+int __wrap___poll_chk(struct pollfd *p, nfds_t n, int timeout, size_t size)
+{
+    if (n == 1 && p[0].fd == observed_fd && p[0].events == POLLOUT) ++waits;
+    return __real___poll_chk(p, n, timeout, size);
+}
 static uint64_t now(void) { uint64_t t;CHECK(dizzass_uart_posix_now_ms(&t)==0);return t; }
 static void pair(int *master,int *slave) { CHECK(openpty(master,slave,NULL,NULL,NULL)==0);struct termios a;CHECK(tcgetattr(*slave,&a)==0);cfmakeraw(&a);CHECK(tcsetattr(*slave,TCSANOW,&a)==0);CHECK(fcntl(*slave,F_SETFL,fcntl(*slave,F_GETFL)|O_NONBLOCK)==0);CHECK(fcntl(*master,F_SETFL,fcntl(*master,F_GETFL)|O_NONBLOCK)==0); }
 static void observe(int fd){observed_fd=fd;writes=shorts=again=waits=0;}
