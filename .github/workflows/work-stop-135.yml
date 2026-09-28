@@ -1,0 +1,69 @@
+name: Check B-08 original work-thread stop
+on:
+  pull_request:
+    branches: [work/reconstruction]
+    paths:
+      - src/backend/work-gen/work-stop.c
+      - integration/work_stop_135.h
+      - integration/backend_shutdown_135.h
+      - integration/work-stop-135.mk
+      - integration/WORK_STOP_135_RU.md
+      - integration/evidence/work_stop_135.json
+      - integration/tests/*work_stop*135*
+      - tools/arm32*.py
+      - tools/elf32.py
+      - reference/cgminer.vendor.elf
+      - .github/workflows/work-stop-135.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  stop135:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Original instructions, native and semantic mutants
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build/b08-logs
+          git rev-parse HEAD | tee build/b08-logs/head.txt
+          ${{ matrix.cc }} --version | tee build/b08-logs/compiler.txt
+          make -f integration/work-stop-135.mk CC=${{ matrix.cc }} STOP_DIR=build/b08 all negative 2>&1 | tee build/b08-logs/new.log
+      - name: ASan and UBSan
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -f integration/work-stop-135.mk CC=${{ matrix.cc }} STOP_DIR=build/b08 sanitize 2>&1 | tee build/b08-logs/sanitizers.log
+      - name: Existing route and mining-stop regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -f integration/work-stop-135.mk CC=${{ matrix.cc }} STOP_DIR=build/b08 regressions backend-regressions 2>&1 | tee build/b08-logs/regressions.log
+      - name: Static analysis
+        if: matrix.cc == 'clang'
+        shell: bash
+        run: |
+          set -euo pipefail
+          clang --analyze -I. -Iinclude -std=c11 -Wall -Wextra -Wpedantic -Xanalyzer -analyzer-output=text src/backend/work-gen/work-stop.c 2>&1 | tee build/b08-logs/analyzer.log
+      - name: Save exact head logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: work-stop-${{ matrix.cc }}-${{ github.run_id }}
+          retention-days: 7
+          path: |
+            build/b08-logs/
+            build/b08/negative/*.log
+            build/b08/mining/original.json
+            build/b08/mining/nested.json
