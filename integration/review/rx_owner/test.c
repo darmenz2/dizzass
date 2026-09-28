@@ -11,26 +11,40 @@ static unsigned cases;
 static int receive_fd=-1;
 static size_t read_cap;
 static _Atomic int fail_read, fail_poll, fail_eventfd, fail_create, fail_strdup=-1;
+/* GCC/glibc may use fortified ABI entries instead of read/poll. Preserve
+ * their real object-bound checks and kernel I/O; apply the SAME test controls. */
 ssize_t __real_read(int,void *,size_t);
-ssize_t __wrap_read(int fd,void *p,size_t n)
+ssize_t __real___read_chk(int,void *,size_t,size_t);
+static ssize_t intercept_read(int fd,void *p,size_t n,bool fortified,size_t extent)
 {
+    if(fortified && n>extent) return __real___read_chk(fd,p,n,extent);
     if(fd==receive_fd) {
         atomic_fetch_add(&raw_reads,1);
         int e=atomic_exchange(&fail_read,0);
         if(e) { if(e==-1) return 0; errno=e; return -1; }
         if(read_cap && n>read_cap) n=read_cap;
     }
-    ssize_t r=__real_read(fd,p,n);
+    ssize_t r=fortified ? __real___read_chk(fd,p,n,extent) : __real_read(fd,p,n);
     if(fd==receive_fd && r>0) atomic_fetch_add(&raw_bytes,(unsigned)r);
     return r;
 }
+ssize_t __wrap_read(int fd,void *p,size_t n)
+{ return intercept_read(fd,p,n,false,0); }
+ssize_t __wrap___read_chk(int fd,void *p,size_t n,size_t extent)
+{ return intercept_read(fd,p,n,true,extent); }
 int __real_poll(struct pollfd *,nfds_t,int);
-int __wrap_poll(struct pollfd *p,nfds_t n,int timeout)
+int __real___poll_chk(struct pollfd *,nfds_t,int,size_t);
+static int intercept_poll(struct pollfd *p,nfds_t n,int timeout,bool fortified,size_t extent)
 {
+    if(fortified && n>extent/sizeof *p) return __real___poll_chk(p,n,timeout,extent);
     if(n==2) { atomic_fetch_add(&raw_polls,1); int e=atomic_exchange(&fail_poll,0);
         if(e) { errno=e; return -1; } }
-    return __real_poll(p,n,timeout);
+    return fortified ? __real___poll_chk(p,n,timeout,extent) : __real_poll(p,n,timeout);
 }
+int __wrap_poll(struct pollfd *p,nfds_t n,int timeout)
+{ return intercept_poll(p,n,timeout,false,0); }
+int __wrap___poll_chk(struct pollfd *p,nfds_t n,int timeout,size_t extent)
+{ return intercept_poll(p,n,timeout,true,extent); }
 int __real_eventfd(unsigned,int);
 int __wrap_eventfd(unsigned n,int flags)
 { int e=atomic_exchange(&fail_eventfd,0); if(e) {errno=e;return -1;} return __real_eventfd(n,flags); }
@@ -309,6 +323,11 @@ static void guards(void)
     struct termios term,original;Q(tcgetattr(e.f.host,&term)==0);original=term;
     term.c_lflag|=ICANON;Q(tcsetattr(e.f.host,TCSANOW,&term)==0);Q(dizzass_rx_owner_create(&c,&e.owner)==EINVAL);
     Q(tcsetattr(e.f.host,TCSANOW,&original)==0);
+    /* Exercise both fortified entries even when this compiler uses plain ABI. */
+    uint8_t byte=0x31,got=0;peer_write(&e,&byte,1);
+    struct pollfd checked[2]={{e.f.host,POLLIN,0},{-1,0,0}};
+    Q(__wrap___poll_chk(checked,2,1000,sizeof checked)==1);
+    Q(__wrap___read_chk(e.f.host,&got,1,sizeof got)==1 && got==byte);
     atomic_store(&fail_eventfd,EMFILE);Q(dizzass_rx_owner_create(&c,&e.owner)==EMFILE && !e.owner);
     Q(dizzass_rx_owner_create(&c,&e.owner)==0);atomic_store(&fail_create,EAGAIN);
     Q(dizzass_rx_owner_start(e.owner)==EAGAIN);Q(dizzass_rx_owner_start(e.owner)==0);

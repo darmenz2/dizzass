@@ -123,6 +123,8 @@ def main():
         run('configure',configure);run('core',['make','-j2']);run('version',['./cgminer','--version'])
         make=['make','-f','Makefile','-f',str(REL/'suite.mk'),'CC='+a.cc]
         flags=['RO_DIR=build/check']+(['SANITIZE=1'] if a.sanitize else [])
+        run('owner-build',make+flags+['build/check/test'])
+        run('owner-imports',['nm','--undefined-only','build/check/integration/native/rx_owner.o'])
         text=run('owner',make+flags+['rx-owner-test'])
         match=re.search(r'R04_PASS cases=38 checks=(\d+) native_calls=51 ',text)
         if not match:raise RuntimeError('missing complete owner result')
@@ -133,7 +135,8 @@ def main():
         required={'copy_work_noffset','_free_work','test_nonce','fulltest','submit_nonce',
             'dizzass_submitter_run_captured','dizzass_early_rx_dispatch','dizzass_native_job_channel_send',
             'dizzass_rx_owner_start','dizzass_rx_owner_join','dizzass_rx_owner_request_stop',
-            '__wrap_socket','__wrap_connect','__wrap_libusb_init','__wrap_read','__wrap_poll','__wrap_submit_nonce'}
+            '__wrap_socket','__wrap_connect','__wrap_libusb_init','__wrap_read','__wrap_poll','__wrap_submit_nonce',
+            '__wrap___read_chk','__wrap___poll_chk'}
         if not required<=names or 'r01_unused_cgminer_main' in names:raise RuntimeError('symbol boundary mismatch')
         report['symbols']=sorted(required)
         if not a.sanitize:
