@@ -32,6 +32,10 @@ jobs:
           set -euo pipefail
           cd "$SOURCE_ROOT"
           make -f integration/uart-posix.mk CC=${{ matrix.cc }} UP_DIR=build/a13 uart-posix-test uart-posix-negative
+          make -f integration/uart-posix.mk CC=${{ matrix.cc }} UP_DIR=build/a13-san SANITIZE=1 build/a13-san/unit build/a13-san/pty
+          ${{ matrix.cc }} --version | head -n 1
+          nm --undefined-only build/a13-san/unit
+          objdump -d build/a13-san/unit | grep -E 'call.*(poll|write|fcntl|tcgetattr|clock_gettime)' || true
           make -f integration/uart-posix.mk CC=${{ matrix.cc }} UP_DIR=build/a13-san SANITIZE=1 uart-posix-test
           python3 integration/tests/test_uart_posix_negative.py --staging-checks
           python3 -O integration/tests/test_uart_posix_negative.py --staging-checks
