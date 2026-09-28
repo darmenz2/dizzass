@@ -15,12 +15,18 @@ permissions:
 jobs:
   native-job:
     if: github.repository == 'darmenz2/dizzass'
-    runs-on: ubuntu-22.04
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
-        cc: [gcc, clang]
+        include:
+          - cc: gcc
+            os: ubuntu-22.04
+            compiler_packages: gcc
+          - cc: clang-17
+            os: ubuntu-24.04
+            compiler_packages: clang-17 libclang-rt-17-dev
     steps:
       - name: Fetch exact source and four read-only dependencies
         shell: bash
@@ -38,8 +44,8 @@ jobs:
       - name: Install native host build dependencies
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y build-essential autoconf automake libtool pkg-config libcurl4-openssl-dev libusb-1.0-0-dev libudev-dev zlib1g-dev python3 clang
-      - name: Independent canceled-thread sanitizer diagnostic
+          sudo apt-get install -y build-essential autoconf automake libtool pkg-config libcurl4-openssl-dev libusb-1.0-0-dev libudev-dev zlib1g-dev python3 ${{ matrix.compiler_packages }}
+      - name: Independent canceled-thread sanitizer health check
         shell: bash
         run: |
           set -euo pipefail
@@ -87,7 +93,11 @@ jobs:
           set -e
           cat build/independent-cancel-probe.log
           printf 'INDEPENDENT_CANCEL_PROBE_EXIT=%s\n' "$result"
-          # Diagnostic only: the complete application suite below remains required.
+          # A-16 Clang14/jammy failed this independent probe as well as the
+          # application suite. Both original failures are retained in PR #58.
+          # The selected toolchain MUST pass the probe and the unchanged full
+          # cancellation/ASan/UBSan application suite, without suppression.
+          test "$result" -eq 0
       - name: Build the unchanged native core with Icarus baseline
         shell: bash
         run: |
@@ -122,8 +132,8 @@ jobs:
         run: |
           set -euo pipefail
           cd "$SOURCE_ROOT"
-          if [ '${{ matrix.cc }}' = clang ]; then
-            clang --analyze -Ibuild/a16-deps -I. -Iinclude -std=c11 -pthread -Xanalyzer -analyzer-output=text integration/native/native_job_channel_tx.c
+          if [[ '${{ matrix.cc }}' == clang* ]]; then
+            ${{ matrix.cc }} --analyze -Ibuild/a16-deps -I. -Iinclude -std=c11 -pthread -Xanalyzer -analyzer-output=text integration/native/native_job_channel_tx.c
           fi
           python3 integration/test_native_core.py
           python3 tools/prepare_native_job_channel.py --check
