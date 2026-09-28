@@ -1,0 +1,75 @@
+name: Check A-13 POSIX UART binding on host PTYs
+on:
+  pull_request:
+    branches: [work/reconstruction]
+permissions:
+  contents: read
+jobs:
+  posix:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 8
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+    steps:
+      - name: Fetch exact proposed revision and B-01 without credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/uart-posix-$GITHUB_RUN_ID-${{ matrix.cc }}-$GITHUB_RUN_ATTEMPT"
+          mkdir "$root"; cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          git -c gc.auto=0 -c maintenance.auto=false fetch --depth=1 --no-tags origin "$GITHUB_SHA" 2c8ed9672c711ad643c56d22b235d799cee28a09 12446bed78a060a49364a80bcbfb4340b13f4f27
+          git checkout -q --detach "$GITHUB_SHA"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          python3 tools/prepare_uart_posix.py
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Syscall scripts and actual PTY round trips
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/uart-posix.mk CC=${{ matrix.cc }} UP_DIR=build/a13 uart-posix-test uart-posix-negative
+          make -f integration/uart-posix.mk CC=${{ matrix.cc }} UP_DIR=build/a13-san SANITIZE=1 uart-posix-test
+          python3 integration/tests/test_uart_posix_negative.py --staging-checks
+          python3 -O integration/tests/test_uart_posix_negative.py --staging-checks
+      - name: Independently rerun unchanged B-01 tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          review="$RUNNER_TEMP/b01-review-$GITHUB_RUN_ID-${{ matrix.cc }}-$GITHUB_RUN_ATTEMPT"
+          mkdir "$review"
+          git archive HEAD | tar -x -C "$review"
+          cp -R build/a13-deps/integration/* "$review/integration/"
+          cd "$review"; mkdir -p build
+          inputs=(integration/native/uart_safe.c libbitmain/src/chip/chip1398.c libbitmain/src/aml/chip.c libbitmain/src/reg_cache.c reconstruction/support/crc5.c integration/tests/test_uart_safe.c)
+          ${{ matrix.cc }} -I. -Iinclude -std=c11 -O1 -g -Wall -Wextra -Wpedantic -Werror "${inputs[@]}" -o build/b01-test
+          build/b01-test
+          ${{ matrix.cc }} -I. -Iinclude -std=c11 -O1 -g -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer "${inputs[@]}" -o build/b01-san
+          ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 build/b01-san
+          python3 integration/tests/test_uart_safe_negative.py --cc ${{ matrix.cc }} --out build/b01-negative
+      - name: Unchanged transport and original UART regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/transport-dispatch-135.mk CC=${{ matrix.cc }} TRANSPORT135_DIR=build/a13-old dizzass-dispatch135-original dizzass-dispatch135-test dizzass-dispatch135-negative
+          cp build/a13-old/libtransport.so build/libvn135_recovered.so
+          python3 tests/test_stage5_uart_differential.py
+          python3 tests/test_stage5_aml_uart_differential.py
+      - name: Analyzer and source boundaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          if [ "${{ matrix.cc }}" = clang ]; then
+            clang --analyze -I. -Ibuild/a13-deps -std=c11 -Wall -Wextra -Wpedantic -Werror -Xanalyzer -analyzer-output=text integration/native/uart_posix.c
+          fi
+          python3 integration/test_native_core.py
+          python3 tools/prepare_uart_posix.py --check
+          test -z "$(git diff --name-only --diff-filter=MDR 12446bed78a060a49364a80bcbfb4340b13f4f27 HEAD)"
+          git diff --exit-code
+          echo 'Host PTYs only: no physical UART, ASIC, production driver, pool or merge.'
