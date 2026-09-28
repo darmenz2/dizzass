@@ -43,3 +43,15 @@ $(R01_DIR)/test: $(R01_OBJECTS) $(DIZZASS_CORE_OTHER)
 .PHONY: r01-test
 r01-test: $(R01_DIR)/test
 	ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 timeout 30 $(R01_DIR)/test
+
+# Actual A-16 entry, reusing the unchanged baseline object list except its main.
+R01_A16_OBJECTS = $(filter-out $(R01_DIR)/test.o,$(R01_OBJECTS)) $(R01_DIR)/actual-test.o $(R01_DIR)/a16.o
+$(R01_DIR)/actual-test.o: integration/review/native_uart_stack/test_actual_a16.c integration/review/native_uart_stack/test_stack.c config.h integration/review/native_uart_stack/suite.mk | $(R01_DIR)
+	$(CC) $(DIZZASS_NATIVE_CPP) $(R01_FLAGS) -fno-builtin-strdup -I$(R01_DEPS) -std=gnu11 -c $< -o $@
+$(R01_DIR)/a16.o: $(R01_DEPS)/integration/native/native_job_channel_tx.c config.h integration/review/native_uart_stack/suite.mk | $(R01_DIR)
+	$(CC) $(DIZZASS_NATIVE_CPP) $(R01_FLAGS) -I$(R01_DEPS) -std=gnu11 -c $< -o $@
+$(R01_DIR)/actual-a16: $(R01_A16_OBJECTS) $(DIZZASS_CORE_OTHER)
+	$(CC) $(R01_FLAGS) $(cgminer_LDFLAGS) $(LDFLAGS) -Wl,--gc-sections,--wrap=write,--wrap=socket,--wrap=connect,--wrap=libusb_init,--undefined=__wrap_socket,--undefined=__wrap_connect,--undefined=__wrap_libusb_init,--wrap=strdup,--wrap=dizzass_jobs_prepare_tx88,--wrap=dizzass_jobs_finish -o $@ $(R01_A16_OBJECTS) $(DIZZASS_CORE_OTHER) $(cgminer_LDADD) $(LIBS) -lutil
+.PHONY: r01-actual-a16
+r01-actual-a16: $(R01_DIR)/actual-a16
+	ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 timeout 45 $(R01_DIR)/actual-a16

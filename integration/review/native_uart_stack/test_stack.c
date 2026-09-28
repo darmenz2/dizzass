@@ -281,6 +281,8 @@ static void r01_slots(void)
     free_work(w); r01_close(&f); ++r01_cases;
     puts("R01_SLOTS count=32 no_in_epoch_reuse=1 stale_epoch_rejected=1 hardware_drain_unproved=1");
 }
+/* Baseline entry is excluded only when embedding these test helpers. */
+#ifndef R01_STACK_EMBED
 int main(void)
 {
     mutex_init(&stats_lock); mutex_init(&console_lock); cglock_init(&control_lock);
@@ -292,3 +294,4 @@ int main(void)
         r01_cases,atomic_load(&r01_checks));
     return 0;
 }
+#endif

@@ -1,0 +1,234 @@
+{
+  "status": "HOST_A16_PASS_SANITIZER_HEALTH_BLOCKED",
+  "date": "2026-09-28",
+  "review_parent": "54b8c034f1325565067f094a5f60ca5243fc98ca",
+  "base": "12446bed78a060a49364a80bcbfb4340b13f4f27",
+  "base_tree": "2e73cb80b2ccbb15d24d9a7deb3c51f65bcd23ac",
+  "actual_a16": "0977235d48dfa01011e81db658d1ae4f83e7d676",
+  "physical_asic": false,
+  "pool_submission": false,
+  "runs": [
+    {
+      "name": "actual-gcc-controls",
+      "status": "PASS",
+      "compiler_version": "gcc (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+      "actual_a16_executed": true,
+      "mutants": [
+        {
+          "name": "late-full-as-written",
+          "semantic_rejection": true
+        },
+        {
+          "name": "uncertain-as-not-sent",
+          "semantic_rejection": true
+        },
+        {
+          "name": "omit-finish",
+          "semantic_rejection": true
+        },
+        {
+          "name": "omit-stop",
+          "semantic_rejection": true
+        },
+        {
+          "name": "omit-cancel-guard",
+          "semantic_rejection": true
+        }
+      ],
+      "report_sha256": "88e651e45a93e380eecf687062a20649b62d3a2c556c56714408315998a9f52a",
+      "integration_markers": [
+        "R01_A16_EARLY fragment=1 pause=0 retained_until_finish=1",
+        "R01_A16_EARLY fragment=2 pause=0 retained_until_finish=1",
+        "R01_A16_EARLY fragment=3 pause=0 retained_until_finish=1",
+        "R01_A16_EARLY fragment=4 pause=0 retained_until_finish=1",
+        "R01_A16_EARLY fragment=5 pause=0 retained_until_finish=1",
+        "R01_A16_EARLY fragment=6 pause=0 retained_until_finish=1",
+        "R01_A16_EARLY fragment=7 pause=0 retained_until_finish=1",
+        "R01_A16_EARLY fragment=8 pause=0 retained_until_finish=1",
+        "R01_A16_EARLY fragment=9 pause=0 retained_until_finish=1",
+        "R01_A16_EARLY fragment=10 pause=0 retained_until_finish=1",
+        "R01_A16_EARLY fragment=11 pause=0 retained_until_finish=1",
+        "R01_A16_EARLY fragment=1 pause=1 retained_until_finish=1",
+        "R01_A16_CANCEL point=1 finish_once=1 receipt_delivered=1",
+        "R01_A16_CANCEL point=2 finish_once=1 receipt_delivered=1",
+        "R01_A16_CANCEL point=3 finish_once=1 receipt_delivered=1",
+        "R01_A16_CANCEL point=4 finish_once=1 receipt_delivered=1",
+        "R01_A16_CANCEL point=5 finish_once=1 receipt_delivered=1",
+        "R01_A16_UNCERTAIN bytes=5 quarantined=1 stop_requested=1",
+        "R01_A16_UNCERTAIN bytes=88 quarantined=1 stop_requested=1",
+        "R01_A16_REJECT kind=0 no_reservation_or_tx=1",
+        "R01_A16_REJECT kind=1 no_reservation_or_tx=1",
+        "R01_A16_REJECT kind=2 no_reservation_or_tx=1",
+        "R01_A16_REFUSED stopped=0 bytes=0 quarantine=1",
+        "R01_A16_REFUSED stopped=1 bytes=0 quarantine=1",
+        "R01_A16_QUEUE timeout=1 stop_timeout=1 fd_retained_until_owner_return=1",
+        "R01_A16_SLOTS count=32 retained_copies_checked=32 old_epoch_rejected=1",
+        "R01_A16_PASS cases=26 checks=3375 actual_a16=1 real_pty=1 physical_asic=0 pool_submission=0"
+      ],
+      "error": null
+    },
+    {
+      "name": "actual-gcc-san",
+      "status": "BLOCKED_SANITIZER_HEALTH",
+      "compiler_version": "gcc (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+      "actual_a16_executed": false,
+      "mutants": [],
+      "report_sha256": "18ff109e39e1db7c8a2d630a854e337888da8183f582300e6a4ffc7ce65dd4c4",
+      "integration_markers": [],
+      "error": "sanitizer-health-run failed; see /tmp/dizzass-r01-a16-ra7sjf8q/repo/build/actual-gcc-san/logs/sanitizer-health-run.log"
+    },
+    {
+      "name": "actual-clang-controls",
+      "status": "PASS",
+      "compiler_version": "Ubuntu clang version 14.0.0-1ubuntu1.1",
+      "actual_a16_executed": true,
+      "mutants": [
+        {
+          "name": "late-full-as-written",
+          "semantic_rejection": true
+        },
+        {
+          "name": "uncertain-as-not-sent",
+          "semantic_rejection": true
+        },
+        {
+          "name": "omit-finish",
+          "semantic_rejection": true
+        },
+        {
+          "name": "omit-stop",
+          "semantic_rejection": true
+        },
+        {
+          "name": "omit-cancel-guard",
+          "semantic_rejection": true
+        }
+      ],
+      "report_sha256": "8f03382fc269afb49c75370af435cb319a2faa8f41f3864b0975a869287ff879",
+      "integration_markers": [
+        "R01_A16_EARLY fragment=1 pause=0 retained_until_finish=1",
+        "R01_A16_EARLY fragment=2 pause=0 retained_until_finish=1",
+        "R01_A16_EARLY fragment=3 pause=0 retained_until_finish=1",
+        "R01_A16_EARLY fragment=4 pause=0 retained_until_finish=1",
+        "R01_A16_EARLY fragment=5 pause=0 retained_until_finish=1",
+        "R01_A16_EARLY fragment=6 pause=0 retained_until_finish=1",
+        "R01_A16_EARLY fragment=7 pause=0 retained_until_finish=1",
+        "R01_A16_EARLY fragment=8 pause=0 retained_until_finish=1",
+        "R01_A16_EARLY fragment=9 pause=0 retained_until_finish=1",
+        "R01_A16_EARLY fragment=10 pause=0 retained_until_finish=1",
+        "R01_A16_EARLY fragment=11 pause=0 retained_until_finish=1",
+        "R01_A16_EARLY fragment=1 pause=1 retained_until_finish=1",
+        "R01_A16_CANCEL point=1 finish_once=1 receipt_delivered=1",
+        "R01_A16_CANCEL point=2 finish_once=1 receipt_delivered=1",
+        "R01_A16_CANCEL point=3 finish_once=1 receipt_delivered=1",
+        "R01_A16_CANCEL point=4 finish_once=1 receipt_delivered=1",
+        "R01_A16_CANCEL point=5 finish_once=1 receipt_delivered=1",
+        "R01_A16_UNCERTAIN bytes=5 quarantined=1 stop_requested=1",
+        "R01_A16_UNCERTAIN bytes=88 quarantined=1 stop_requested=1",
+        "R01_A16_REJECT kind=0 no_reservation_or_tx=1",
+        "R01_A16_REJECT kind=1 no_reservation_or_tx=1",
+        "R01_A16_REJECT kind=2 no_reservation_or_tx=1",
+        "R01_A16_REFUSED stopped=0 bytes=0 quarantine=1",
+        "R01_A16_REFUSED stopped=1 bytes=0 quarantine=1",
+        "R01_A16_QUEUE timeout=1 stop_timeout=1 fd_retained_until_owner_return=1",
+        "R01_A16_SLOTS count=32 retained_copies_checked=32 old_epoch_rejected=1",
+        "R01_A16_PASS cases=26 checks=3375 actual_a16=1 real_pty=1 physical_asic=0 pool_submission=0"
+      ],
+      "error": null
+    },
+    {
+      "name": "actual-clang-san",
+      "status": "BLOCKED_SANITIZER_HEALTH",
+      "compiler_version": "Ubuntu clang version 14.0.0-1ubuntu1.1",
+      "actual_a16_executed": false,
+      "mutants": [],
+      "report_sha256": "0978ea98d8fa1e762237eba5efe96a822ac25d48fee2e43be36f7ff1a412ed4f",
+      "integration_markers": [],
+      "error": "sanitizer-health-run failed; see /tmp/dizzass-r01-a16-ra7sjf8q/repo/build/actual-clang-san/logs/sanitizer-health-run.log"
+    }
+  ],
+  "repeats": [
+    {
+      "compiler": "gcc",
+      "repeat": 1,
+      "exit": 0,
+      "log_sha256": "b4d0600e6385ae7b554fea5cce0b24b1d9d93b9457000dc00136bdfb9b5ce9a5"
+    },
+    {
+      "compiler": "gcc",
+      "repeat": 2,
+      "exit": 0,
+      "log_sha256": "b4d0600e6385ae7b554fea5cce0b24b1d9d93b9457000dc00136bdfb9b5ce9a5"
+    },
+    {
+      "compiler": "gcc",
+      "repeat": 3,
+      "exit": 0,
+      "log_sha256": "b4d0600e6385ae7b554fea5cce0b24b1d9d93b9457000dc00136bdfb9b5ce9a5"
+    },
+    {
+      "compiler": "clang",
+      "repeat": 1,
+      "exit": 0,
+      "log_sha256": "b4d0600e6385ae7b554fea5cce0b24b1d9d93b9457000dc00136bdfb9b5ce9a5"
+    },
+    {
+      "compiler": "clang",
+      "repeat": 2,
+      "exit": 0,
+      "log_sha256": "b4d0600e6385ae7b554fea5cce0b24b1d9d93b9457000dc00136bdfb9b5ce9a5"
+    },
+    {
+      "compiler": "clang",
+      "repeat": 3,
+      "exit": 0,
+      "log_sha256": "b4d0600e6385ae7b554fea5cce0b24b1d9d93b9457000dc00136bdfb9b5ce9a5"
+    }
+  ],
+  "runner_integrity": [
+    {
+      "optimized": false,
+      "exit": 0
+    },
+    {
+      "optimized": true,
+      "exit": 0
+    }
+  ],
+  "actual_runner_control_tests": [
+    {
+      "optimized": false,
+      "exit": 0
+    },
+    {
+      "optimized": true,
+      "exit": 0
+    }
+  ],
+  "legacy_regression": {
+    "exit": 0,
+    "status": "PASS",
+    "scenarios": 8,
+    "mutants": 4
+  },
+  "files": {
+    "test_actual_a16.c": "e5be95734671889cacdb1387c6e892862c515ca09b0bd6f21a0f4b52603dc5d3",
+    "test_stack.c": "630c3fc6c62aa29353183408be145b077410521431f1c21e0a754a6fb1d48513",
+    "suite.mk": "89c7b63b0c692b82012456e57b2f5e85452fa4b13e4972acdf92da0d9ae78171",
+    "run.py": "6d5d561a5bc48ba5602030b7e95d73926bc1799da01e52e1696a5eec52658474",
+    "run_a16.py": "945fbd829cf95a887d1322f7cecfd7b94e043dbb6c0408c245dc0a02addbbefe",
+    "test_a16_runner.py": "d24b73492ba6a64a10c83af7f273d520234c1421df4ed03d8e2d3fa74228390d",
+    "manifest_a16.json": "eca22b288ef7605a1143ac24ff34d2931720d62a8ccfe7a83110d3cd8762f4c0"
+  },
+  "full_evidence": {
+    "file": "a16-review-evidence.tar.gz",
+    "location": "MainPC Downloads/dizzass-review-a16-20260928",
+    "sha256": "1a5e7b997b8aef0bbd8f5899847ac560e72684c9661808cff3e32ff33c3943b1"
+  },
+  "limits": [
+    "Normal GCC11.4 and Clang14 tests are complete. Sanitized application tests did NOT execute because the required independent cancellation probe failed on both installed runtimes.",
+    "Real PTYs, scripted fixture replies, five-byte/EIO and full-late return hooks: not physical ASIC evidence.",
+    "Source retained through actual A-16 return or thread join; no assumption that cancellation must deliver the receipt.",
+    "Early decoded reply retained by test caller only; production deferral, overflow, submission freshness, physical drain, target ARM and end-to-end driver remain outside acceptance."
+  ]
+}
