@@ -39,6 +39,55 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y build-essential autoconf automake libtool pkg-config libcurl4-openssl-dev libusb-1.0-0-dev libudev-dev zlib1g-dev python3 clang
+      - name: Independent canceled-thread sanitizer diagnostic
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          cat > build/independent-cancel-probe.c <<'PROBE'
+          #define _POSIX_C_SOURCE 200809L
+          #include <pthread.h>
+          #include <stdio.h>
+          #include <stdlib.h>
+          #include <unistd.h>
+          struct receipt { unsigned char bytes[128]; };
+          static void check(int e) { if(e) abort(); }
+          __attribute__((noinline)) static struct receipt transaction(void) {
+              struct receipt r = {{0}};
+              int saved;
+              check(pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &saved));
+              r.bytes[0] = 7;
+              check(pthread_cancel(pthread_self()));
+              __asm__ volatile ("" : "+m"(r) : : "memory");
+              check(pthread_setcancelstate(saved, NULL));
+              return r;
+          }
+          static void *worker(void *unused) {
+              (void)unused;
+              volatile struct receipt r = transaction();
+              (void)r;
+              pthread_testcancel();
+              return NULL;
+          }
+          int main(void) {
+              pthread_t thread; void *value;
+              alarm(10);
+              check(pthread_create(&thread, NULL, worker, NULL));
+              check(pthread_join(thread, &value));
+              if(value != PTHREAD_CANCELED) return 2;
+              puts("INDEPENDENT_CANCEL_PROBE_PASS");
+              return 0;
+          }
+          PROBE
+          ${{ matrix.cc }} --version | head -n 1
+          ${{ matrix.cc }} -std=gnu11 -O1 -g -pthread -fsanitize=address,undefined -fno-omit-frame-pointer build/independent-cancel-probe.c -o build/independent-cancel-probe
+          set +e
+          ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 build/independent-cancel-probe > build/independent-cancel-probe.log 2>&1
+          result=$?
+          set -e
+          cat build/independent-cancel-probe.log
+          printf 'INDEPENDENT_CANCEL_PROBE_EXIT=%s\n' "$result"
+          # Diagnostic only: the complete application suite below remains required.
       - name: Build the unchanged native core with Icarus baseline
         shell: bash
         run: |
