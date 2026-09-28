@@ -1,7 +1,8 @@
 name: C-01 combined development source
 on:
   push:
-    branches: [integration/consolidation-20260928, main]
+    # Frozen C-01 checkpoint, not an evergreen gate on future main changes.
+    branches: [integration/consolidation-20260928]
   pull_request:
     branches: [main, work/reconstruction]
     paths: ['integration/consolidation/**', '.github/workflows/consolidated-source.yml']
