@@ -1,0 +1,78 @@
+name: Check A-12 resume temperature and explicit shutdown
+on:
+  pull_request:
+    branches: [work/reconstruction]
+    paths:
+      - integration/native/resume_temperature_135.c
+      - integration/resume_temperature_135.h
+      - integration/resume-temperature-135.mk
+      - integration/evidence/resume_temperature_135.json
+      - tools/prepare_resume_temperature_135.py
+      - integration/tests/resume_temperature_fixture_135.h
+      - integration/tests/test_resume_temperature_135.c
+      - integration/tests/test_resume_temperature_135.py
+      - integration/tests/test_resume_temperature_negative_135.py
+      - integration/RESUME_TEMPERATURE_135_RU.md
+      - .github/workflows/resume-temperature-135.yml
+permissions:
+  contents: read
+jobs:
+  resume-temperature:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+    steps:
+      - name: Fetch proposed revision and four exact dependency commits
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/resume-temperature-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-${{ matrix.cc }}"
+          mkdir "$root"; cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          git -c gc.auto=0 fetch --depth=1 --no-tags origin "$GITHUB_SHA" \
+            c592003ab672bcce6325e55ba6a86f3172c5f508 \
+            2d44981e65bafce0c3dabb264a57dc49e1198280 \
+            fcd7d638aa0e291c304fad8128020d713bb48749 \
+            8b911dd4ec1c361b072f80b24e3e2e99aa96a513
+          git checkout -q --detach "$GITHUB_SHA"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          python3 tools/prepare_resume_temperature_135.py --out build/a12-deps
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Combined original lifecycle and adapter negative controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          python3 integration/tests/test_resume_temperature_135.py --staging-checks
+          python3 -O integration/tests/test_resume_temperature_135.py --staging-checks
+          make -f integration/resume-temperature-135.mk CC=${{ matrix.cc }} RT135_DIR=build/a12-ci resume-temperature-original resume-temperature-test resume-temperature-negative
+      - name: Native address and undefined behavior checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/resume-temperature-135.mk CC=${{ matrix.cc }} RT135_DIR=build/a12-ci-san SANITIZE=1 resume-temperature-test
+      - name: Unchanged resume sensor and common-shutdown regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/backend-resume-135.mk CC=${{ matrix.cc }} RESUME135_DIR=build/a12-ci-resume dizzass-resume135-original dizzass-resume135-test
+          make -f integration/thermal-sensors-135.mk CC=${{ matrix.cc }} THERMAL135_DIR=build/a12-ci-sensors dizzass-thermal135-original dizzass-thermal135-test
+          make -f integration/thermal-completion-135.mk CC=${{ matrix.cc }} COMPLETION135_DIR=build/a12-ci-shutdown build/a12-ci-shutdown/libshutdown.so dizzass-completion135-test
+          python3 integration/tests/test_backend_shutdown_135.py build/a12-ci-shutdown/libshutdown.so --summary build/a12-ci-shutdown/original.json
+      - name: Static analysis and immutable dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          clang --analyze -Ibuild/a12-deps -I. -std=c11 -Xanalyzer -analyzer-output=text integration/native/resume_temperature_135.c
+          python3 integration/test_native_core.py
+          python3 tools/prepare_resume_temperature_135.py --out build/a12-deps --check
+          git diff --exit-code
+          printf '%s\n' 'Offline lifecycle composition only. No real threads, registry, devices or accepted shares.'

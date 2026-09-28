@@ -1,0 +1,88 @@
+{
+  "base_commit": "12446bed78a060a49364a80bcbfb4340b13f4f27",
+  "base_tree": "2e73cb80b2ccbb15d24d9a7deb3c51f65bcd23ac",
+  "dependency_status": "unmerged candidates, not accepted by this test",
+  "dependencies": [
+    {
+      "pr": 27,
+      "commit": "2d44981e65bafce0c3dabb264a57dc49e1198280",
+      "path": "integration/temperature_setup_135.h",
+      "blob": "4f28f915ed1e548632724f21c4b5561a55df90dd",
+      "sha256": "e60aaf9ddf86faca0289a415df7cb6e9130b1be625adaa5644eb3ac0ff3efe1e"
+    },
+    {
+      "pr": 27,
+      "commit": "2d44981e65bafce0c3dabb264a57dc49e1198280",
+      "path": "src/backend/temperature-setup.c",
+      "blob": "7d1300113d2bcbbbe7deb7ac00f5aa6cde16a975",
+      "sha256": "b21709caf2203921e7f01e7a88cfe593d8ffa40523aea3f5c62d0609e1f1c814"
+    },
+    {
+      "pr": 31,
+      "commit": "fcd7d638aa0e291c304fad8128020d713bb48749",
+      "path": "integration/chain_temperature_setup_135.h",
+      "blob": "22dc324c9ffad3ee27c3e9723862456a4ef7116b",
+      "sha256": "1a026f04e38c4ba9b6ef93590c5a60c535ac6c51c43fa7fcc408a176f75a6fcd"
+    },
+    {
+      "pr": 31,
+      "commit": "fcd7d638aa0e291c304fad8128020d713bb48749",
+      "path": "src/backend/chain-temperature-setup.c",
+      "blob": "3d891b187142ef7fcb3a7afd39cc22e80a31c57f",
+      "sha256": "8d9936264de43d03da00fa8a908f8cc30a87a5bc3b59ea9dc8556b38f30ab141"
+    },
+    {
+      "pr": 45,
+      "commit": "8b911dd4ec1c361b072f80b24e3e2e99aa96a513",
+      "path": "integration/chip_sensor_check_135.h",
+      "blob": "2c5676cebcceff665c60b9ea87f964bef4b622a8",
+      "sha256": "0c245a63042aad20e83dc0bd8ac6cc46a94446cff9ed1b78fd103a410fa204db"
+    },
+    {
+      "pr": 45,
+      "commit": "8b911dd4ec1c361b072f80b24e3e2e99aa96a513",
+      "path": "src/backend/chip-sensor-check.c",
+      "blob": "cd124d8ce0cdf6af24b8333cd62e57d0765439a7",
+      "sha256": "1cfa410b74ee4bad63ac17091d0704c5557041cd2640528e025286af2c1c309e"
+    },
+    {
+      "pr": 47,
+      "commit": "c592003ab672bcce6325e55ba6a86f3172c5f508",
+      "path": "integration/native/temperature_start_composition_135.c",
+      "blob": "0e5d7f3210e09061d03049ab9ca39a4e446009a3",
+      "sha256": "6225bea4d8664bd0a8bc6129abc5dfff1c6598466d356e4cd81861e0ad5b5f90"
+    },
+    {
+      "pr": 47,
+      "commit": "c592003ab672bcce6325e55ba6a86f3172c5f508",
+      "path": "integration/temperature_start_composition_135.h",
+      "blob": "93ec690303af1e836fb2fc2d0de0e600e3c7afed",
+      "sha256": "e99f8318ee929af8d066c3ad3f4747ee8c61c974052345a52f8c5b5f19f32814"
+    }
+  ],
+  "immutable": {
+    "AGENTS.md": "e829c42302bd775cfb9b705dc653429973888535b849d9a4965e9e6461bf746b",
+    "Makefile.am": "8601830e23e231cdadd770a9bea4c1216d281ace5aa930010f0e61983daa8995",
+    "cgminer.c": "214148c972c380af38cd667c02ccffad5c3a0b2790d5b54eeb0316af455411e4",
+    "src/backend/base.c": "d936fe0a4ab0fa8b8593b914025fa79886c21563ca78202a95a8f8528ce81a5d",
+    "src/backend/temp.c": "e41668a8a8f9a49ffb0d7d85cfe24c0cd68c60de6bf4cf82dc3817fb01920a30",
+    "integration/general_monitor_135.h": "aa98ae39a5cd9a2443ee45fc1c4e7384d4ba85e640cc11ae9bd993b8a753ee74",
+    "integration/monitor_handlers_135.h": "55588128bd5672b2b560e89b7ca816ae6598431724a2bf1066a78c42aa1596a8",
+    "integration/backend_resume_135.h": "a9296bcc543651fdfa4a91b1e72373a9cf6b2c89cb2a6b23eeb8935b80830424",
+    "integration/thermal_sensors_135.h": "d55730051f5d7ed92313edaaea9d86e13ca735b77e487c1fde048b7e7b1943d8",
+    "integration/thermal_routes_135.h": "e4e284b80fea953815830ae3eef71e0efd9a6fecee15837714942cbd65ece3f8",
+    "integration/tests/test_thermal_sensors_135.py": "a287baa8d989dc4e8002fce8640a2754396e85b84ae55bf6c2f0dcb91101e403",
+    "integration/tests/test_thermal_routes_135.py": "cb9b61c843d5e0d1ba78ec7e8b237bb084eb3c084687b4ce279012e3e417106b",
+    "integration/tests/test_general_monitor_135.py": "4e730c3ea31ca6941ef520425b6bfef444c2325b1ab15fae3e1f3a3c6f75b047",
+    "integration/tests/test_monitor_handlers_135.py": "b703c47d91aab2f6e529987ba8cb29bfa5583a6164d82ef8e937af147eefd3f6",
+    "integration/tests/test_backend_resume_135.py": "c364148dd52dc0eacec606d66f20ba5a20f65f0c6f9a23d169830b445309f353",
+    "integration/tests/backend_resume_135_oracle.py": "b78894f41d596f11e8d755c1667e2afafbb195c6be4a4f022b34b8212b2cca7b",
+    "tools/elf32.py": "a67edcb47712252e3f11cf503416b149910587ab181313e01400bde30258e9a3",
+    "tools/arm32_subset.py": "6c4599c648634daea665d0ee84e97661720843d5c38fa2340c123d4df261a48b",
+    "tools/arm32_difficulty_subset.py": "a5b5631cfa251f22c8b6a0e2797a98d5b35df4e14a9b9fe3d81d829036f62176",
+    "reference/cgminer.vendor.elf": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+    "integration/backend_shutdown_135.h": "27a3c80b9b07d209cf46b2be9fb9372c2a5681c9b0f004df8dd83150665a21a5",
+    "integration/tests/test_backend_shutdown_135.py": "a545992ce29a8e995ded42e69cfa0b1006513b429e51d1d517f0d315747bc6e1"
+  },
+  "scope": "A-12 existing resume + nested temperature composition; explicit subsequent common shutdown. No real devices/threads/registry or implicit rollback."
+}
