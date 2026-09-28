@@ -1,0 +1,69 @@
+name: Check B-12 original template publication
+on:
+  pull_request:
+    branches: [work/reconstruction]
+    paths:
+      - src/backend/work-gen/template-publication.c
+      - integration/template_publication_135.h
+      - integration/template-publication-135.mk
+      - integration/TEMPLATE_PUBLICATION_135_RU.md
+      - integration/evidence/template_publication_135.json
+      - integration/tests/*template_publication*135*
+      - reconstruction/support/record_fifo.c
+      - reconstruction/support/nonce_fifo.c
+      - include/xminer/recovery/nonce_fifo.h
+      - tools/arm32_subset.py
+      - tools/elf32.py
+      - reference/cgminer.vendor.elf
+      - .github/workflows/template-publication-135.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  template135:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Original instructions, native and semantic mutants
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build/b12-logs
+          git rev-parse HEAD | tee build/b12-logs/head.txt
+          ${{ matrix.cc }} --version | tee build/b12-logs/compiler.txt
+          make -f integration/template-publication-135.mk CC=${{ matrix.cc }} TEMPLATE_DIR=build/b12 all negative 2>&1 | tee build/b12-logs/new.log
+      - name: ASan and UBSan
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -f integration/template-publication-135.mk CC=${{ matrix.cc }} TEMPLATE_DIR=build/b12 sanitize 2>&1 | tee build/b12-logs/sanitizers.log
+      - name: Existing FIFO and route regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -f integration/template-publication-135.mk CC=${{ matrix.cc }} TEMPLATE_DIR=build/b12 regressions 2>&1 | tee build/b12-logs/regressions.log
+      - name: Static analysis
+        if: matrix.cc == 'clang'
+        shell: bash
+        run: |
+          set -euo pipefail
+          clang --analyze -I. -Iinclude -std=c11 -Wall -Wextra -Wpedantic -Xanalyzer -analyzer-output=text src/backend/work-gen/template-publication.c 2>&1 | tee build/b12-logs/analyzer.log
+      - name: Save exact head logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: template-publication-${{ matrix.cc }}-${{ github.run_id }}
+          retention-days: 7
+          path: |
+            build/b12-logs/
+            build/b12/negative/*.log
