@@ -1,0 +1,70 @@
+name: Check A-03 existing sensor cleanup binding
+on:
+  pull_request:
+    branches: [work/reconstruction]
+    paths:
+      - reconstruction/support/sensor_cleanup_binding_135.c
+      - reconstruction/support/sensor_cleanup_135.c
+      - src/backend/base.c
+      - src/backend/temp.c
+      - integration/sensor_cleanup_binding_135.h
+      - integration/sensor-cleanup-binding-135.mk
+      - integration/tests/*sensor_cleanup_binding*135*
+      - integration/evidence/sensor_cleanup_binding_135.json
+      - .github/workflows/sensor-cleanup-binding-135.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: a03-cleanup-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  cleanup135:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+    steps:
+      - name: Fetch exact public source without credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/a03-${{ matrix.cc }}"
+          mkdir "$root"
+          cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          git fetch --depth=1 --no-tags origin "$GITHUB_SHA"
+          git checkout -q --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          echo "SOURCE_ROOT=$root" >> "$GITHUB_ENV"
+      - name: Original helper binding and nested shutdown comparisons
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/sensor-cleanup-binding-135.mk CC=${{ matrix.cc }} dizzass-cleanup135-original dizzass-cleanup135-test dizzass-cleanup135-negative
+      - name: Native address and undefined behavior checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/sensor-cleanup-binding-135.mk CC=${{ matrix.cc }} SANITIZE=1 dizzass-cleanup135-test
+      - name: Unchanged temperature transport and pre-exit regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/transport-monitor-135.mk CC=${{ matrix.cc }} dizzass-transport135-original dizzass-transport135-test
+          make -f integration/exit-cleanup-135.mk CC=${{ matrix.cc }} dizzass-exit135-original dizzass-exit135-test
+      - name: Static analysis and unchanged dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          clang --analyze -I. -std=c11 -DVN135_SENSOR_CLEANUP_BINDING_135 -Xanalyzer -analyzer-output=text reconstruction/support/sensor_cleanup_binding_135.c
+          python3 integration/tests/check_sensor_cleanup_binding_evidence_135.py
+          git diff --exit-code
