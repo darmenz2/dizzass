@@ -1,0 +1,70 @@
+name: Check opt-in UART write-all
+
+on:
+  pull_request:
+    branches: [work/reconstruction]
+    paths:
+      - integration/native/uart_safe.*
+      - integration/tests/test_uart_safe*
+      - integration/uart-safe.mk
+      - integration/UART_SAFE_RU.md
+      - .github/workflows/uart-safe.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  uart-safe:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Check out the exact proposed commit
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Deterministic byte-write scripts and negative controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build/uart-safe-logs
+          git rev-parse HEAD | tee build/uart-safe-logs/head.txt
+          ${{ matrix.cc }} --version | tee build/uart-safe-logs/compiler.txt
+          make -f integration/uart-safe.mk CC=${{ matrix.cc }} UART_SAFE_DIR=build/uart-safe-${{ matrix.cc }} uart-safe-test uart-safe-negative 2>&1 | tee build/uart-safe-logs/new.log
+      - name: Address and undefined behavior sanitizers
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -f integration/uart-safe.mk CC=${{ matrix.cc }} SANITIZE=1 UART_SAFE_DIR=build/uart-safe-${{ matrix.cc }}-san uart-safe-test 2>&1 | tee build/uart-safe-logs/sanitizers.log
+      - name: Unchanged original UART and transport regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -f integration/transport-dispatch-135.mk CC=${{ matrix.cc }} TRANSPORT135_DIR=build/uart-safe-legacy dizzass-dispatch135-original dizzass-dispatch135-test dizzass-dispatch135-negative 2>&1 | tee build/uart-safe-logs/legacy-transport.log
+          cp build/uart-safe-legacy/libtransport.so build/libvn135_recovered.so
+          python3 tests/test_stage5_uart_differential.py 2>&1 | tee build/uart-safe-logs/legacy-uart.log
+          python3 tests/test_stage5_aml_uart_differential.py 2>&1 | tee build/uart-safe-logs/legacy-aml.log
+      - name: Analyze the new adapter
+        if: matrix.cc == 'clang'
+        shell: bash
+        run: |
+          set -euo pipefail
+          clang --analyze -I. -std=c11 -Wall -Wextra -Wpedantic -Werror -Xanalyzer -analyzer-output=text integration/native/uart_safe.c 2>&1 | tee build/uart-safe-logs/analyzer.log
+      - name: Save logs and negative-control results
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: uart-safe-${{ matrix.cc }}-${{ github.run_id }}
+          retention-days: 7
+          path: |
+            build/uart-safe-logs/
+            build/uart-safe-${{ matrix.cc }}/negative/*.log
+            build/uart-safe-${{ matrix.cc }}/negative/results.json
+            build/uart-safe-legacy/original.json
