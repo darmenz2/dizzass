@@ -1,0 +1,64 @@
+name: Check A-10 original chip sensor availability
+on:
+  pull_request:
+    branches: [work/reconstruction]
+    paths:
+      - 'src/backend/chip-sensor-check.c'
+      - 'integration/chip_sensor_check_135.h'
+      - 'integration/chip-sensor-check-135.mk'
+      - 'integration/CHIP_SENSOR_CHECK_135_RU.md'
+      - 'integration/evidence/chip_sensor_check_135.json'
+      - 'integration/tests/*chip_sensor_check*'
+      - '.github/workflows/chip-sensor-check-135.yml'
+permissions:
+  contents: read
+jobs:
+  chipsense135:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+    steps:
+      - name: Fetch exact public source without credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/chipsense-$GITHUB_RUN_ID-${{ matrix.cc }}"
+          mkdir "$root"
+          cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          git fetch --depth=1 --no-tags origin "$GITHUB_SHA"
+          git checkout -q --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Original predicate and whole general monitor comparisons
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/chip-sensor-check-135.mk CC=${{ matrix.cc }} CHIPSENSE135_DIR=build/a10 dizzass-chipsense135-original dizzass-chipsense135-test dizzass-chipsense135-negative
+      - name: Address and undefined behavior checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/chip-sensor-check-135.mk CC=${{ matrix.cc }} SANITIZE=1 CHIPSENSE135_DIR=build/a10-san dizzass-chipsense135-test
+      - name: Unchanged general monitor and thermal routes
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/general-monitor-135.mk CC=${{ matrix.cc }} GENERAL135_DIR=build/a10-general dizzass-general135-original dizzass-general135-test
+          make -f integration/thermal-routes-135.mk CC=${{ matrix.cc }} ROUTES135_DIR=build/a10-thermal dizzass-routes135-original dizzass-routes135-test
+      - name: Static analysis and immutable dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          clang --analyze -I. -std=c11 -DVN135_CHIP_SENSOR_CHECK_135 -Xanalyzer -analyzer-output=text src/backend/chip-sensor-check.c
+          python3 integration/tests/check_chip_sensor_check_evidence_135.py
+          git diff --exit-code
