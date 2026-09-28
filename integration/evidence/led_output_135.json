@@ -1,0 +1,72 @@
+{
+  "base_commit": "12446bed78a060a49364a80bcbfb4340b13f4f27",
+  "base_tree": "2e73cb80b2ccbb15d24d9a7deb3c51f65bcd23ac",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "ranges": [
+    {
+      "start": "0xf9840",
+      "end_exclusive": "0xf98b8",
+      "role": "set with literals",
+      "sha256": "a919d495f8857d92f3aef38622c97eb622a832a28cc4234dee4fa39ab35168be"
+    },
+    {
+      "start": "0xf98b8",
+      "end_exclusive": "0xf9a18",
+      "role": "clear with literals",
+      "sha256": "f7c46458dc7d707493199b8add2feae49f6a28210493e8216aa85d62d64e151f"
+    },
+    {
+      "start": "0xf96a0",
+      "end_exclusive": "0xf9840",
+      "role": "initializer, provenance only",
+      "sha256": "e9e535d3bfabbf43cda78d6e9d63dd3f4b6f118d7d0a2d05c633a83fea51768a"
+    },
+    {
+      "start": "0x124ba4",
+      "end_exclusive": "0x124d64",
+      "role": "existing GPIO writer",
+      "sha256": "81e0fd95b3a81467f337414077bafa50993e56551f4945c61a6b533ea9bf7a92"
+    }
+  ],
+  "source_path": {
+    "address": "0x5ecefa",
+    "xor": 71,
+    "text": "/tmp/build/libbitmain/src/led.c"
+  },
+  "addresses": {
+    "pins": "0x654aa8",
+    "ready": "0x654ab0"
+  },
+  "unchanged": {
+    "AGENTS.md": "e829c42302bd775cfb9b705dc653429973888535b849d9a4965e9e6461bf746b",
+    "Makefile.am": "8601830e23e231cdadd770a9bea4c1216d281ace5aa930010f0e61983daa8995",
+    "cgminer.c": "214148c972c380af38cd667c02ccffad5c3a0b2790d5b54eeb0316af455411e4",
+    "libbitmain/src/led.c": "33f2d8515cf4b5f5e649994921d5791b9c49e12754b2a03990668e4ea47389f0",
+    "libbitmain/src/gpio.c": "321966c180e07442e06b13a741e52f371c67387dd955fd2e38d417949a85bd93",
+    "integration/gpio_power_135.h": "f9a725ff09a998d139f9aac9e422da4b99787ec46dd8bdf2bc35fb52d07a888c",
+    "src/backend/base.c": "d936fe0a4ab0fa8b8593b914025fa79886c21563ca78202a95a8f8528ce81a5d",
+    "integration/backend_shutdown_135.h": "27a3c80b9b07d209cf46b2be9fb9372c2a5681c9b0f004df8dd83150665a21a5",
+    "integration/tests/gpio_power_135_oracle.py": "d635f9f8009e5e58a7aa54f95fa9c58ea48c6cab02172f22019e4221f6b08e53",
+    "integration/tests/test_gpio_power_135.py": "649bfbcaaa701fad643c611b6422d28ac3306ddd2ad70a7b937fa222ba3c5db3",
+    "integration/tests/test_exit_cleanup_135.py": "714c8eb6176c65eefa84269b0baab226cb36017eb17cc3dc3f2c0ea15e268775",
+    "integration/tests/test_backend_shutdown_135.py": "a545992ce29a8e995ded42e69cfa0b1006513b429e51d1d517f0d315747bc6e1",
+    "integration/tests/test_stop_policy_135.py": "5de341fbb70292a8db1b1705065eb2a55d1c5d553e44be712c3c58c66c2d5f49",
+    "evidence/modules/libbitmain/src/led.c.json": "9df050a0c76caa7fc03b112aef6c086fd4d51160740ec7fbce59eb17014b2eb6",
+    "tools/arm32_subset.py": "6c4599c648634daea665d0ee84e97661720843d5c38fa2340c123d4df261a48b",
+    "tools/arm32_rebuild_subset.py": "b25457d11e4b959fd2b267fd4e0b86f563196599179ec0953769649b7d709608",
+    "tools/arm32_nonce_subset.py": "9d2c8a320332831c2e6da019ae15bb511980f7f0b100ab3196e1e8a045ab8401",
+    "tools/arm32_rx_subset.py": "d1944972347f5b4e64ba3b291bdaf7d924dfb3096c4075845b2162f80400cdf6",
+    "tools/arm32_verify_subset.py": "470c7f83f0c9d860138cbf50c61924607858340de5507a9bab1d0e1a55a2943c",
+    "tools/arm32_vfp_subset.py": "4460e7432511b115c5002288548d5a5cd0a9800cee5a2c48e9b46729b9778a58",
+    "tools/arm32_difficulty_subset.py": "a5b5631cfa251f22c8b6a0e2797a98d5b35df4e14a9b9fe3d81d829036f62176",
+    "tools/arm32_freshness_subset.py": "979304096427929fb1a5bd6a877b7177a5b18a3da61121e987517323641e6d0f",
+    "tools/elf32.py": "a67edcb47712252e3f11cf503416b149910587ab181313e01400bde30258e9a3"
+  },
+  "limitations": [
+    "GPIO effects are scripted; no device/filesystem binding",
+    "Initializer provenance is not a recovered initialization body",
+    "Parent comparison stops at set_value; nested GPIO body has a separate group",
+    "Opaque arithmetic compared for observable calls/state, not timing or return registers",
+    "No merge, full firmware equivalence or T21 acceptance"
+  ]
+}

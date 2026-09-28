@@ -1,0 +1,72 @@
+name: Check A-11 combined temperature startup
+on:
+  pull_request:
+    branches: [work/reconstruction]
+    paths:
+      - integration/native/temperature_start_composition_135.c
+      - integration/temperature_start_composition_135.h
+      - integration/temperature-start-composition-135.mk
+      - integration/evidence/temperature_start_composition_135.json
+      - integration/tests/test_temperature_start_composition_135.py
+      - integration/tests/test_temperature_start_composition_135.c
+      - integration/tests/test_temperature_start_composition_negative_135.py
+      - tools/prepare_temperature_start_composition_135.py
+      - integration/TEMPERATURE_START_COMPOSITION_135_RU.md
+      - .github/workflows/temperature-start-composition-135.yml
+permissions:
+  contents: read
+jobs:
+  composition:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+    steps:
+      - name: Fetch exact public revision and pinned dependency commits
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/temperature-composition-$GITHUB_RUN_ID-${{ matrix.cc }}"
+          mkdir "$root"; cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          git fetch --depth=1 --no-tags origin "$GITHUB_SHA"
+          git checkout -q --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          for ref in 2d44981e65bafce0c3dabb264a57dc49e1198280 fcd7d638aa0e291c304fad8128020d713bb48749 8b911dd4ec1c361b072f80b24e3e2e99aa96a513; do
+            git fetch --depth=1 --no-tags origin "$ref"
+          done
+          python3 tools/prepare_temperature_start_composition_135.py --out build/a11-deps
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Full original startup composition and binding negative controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/temperature-start-composition-135.mk CC=${{ matrix.cc }} TC135_DIR=build/a11 temperature-composition-original temperature-composition-test temperature-composition-negative
+      - name: Native address and undefined behavior checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/temperature-start-composition-135.mk CC=${{ matrix.cc }} TC135_DIR=build/a11-san SANITIZE=1 temperature-composition-test
+      - name: Unchanged sensor and resume regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/thermal-sensors-135.mk CC=${{ matrix.cc }} THERMAL135_DIR=build/a11-thermal dizzass-thermal135-original dizzass-thermal135-test
+          make -f integration/backend-resume-135.mk CC=${{ matrix.cc }} RESUME135_DIR=build/a11-resume dizzass-resume135-original dizzass-resume135-test
+      - name: Static analysis and immutable source checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          clang --analyze -Ibuild/a11-deps -I. -std=c11 -DVN135_GENERAL_MONITOR_135 -DVN135_MONITOR_HANDLERS_135 -DVN135_CHAIN_TEMPERATURE_SETUP_135 -DVN135_CHIP_SENSOR_CHECK_135 -Xanalyzer -analyzer-output=text integration/native/temperature_start_composition_135.c
+          python3 tools/prepare_temperature_start_composition_135.py --out build/a11-deps --check
+          python3 integration/test_native_core.py
+          git diff --exit-code
+          printf '%s\n' 'Offline combined startup only; no real sensors, registry, driver or T21 run.'

@@ -1,0 +1,64 @@
+name: Check A-06 BM1368 reply key and lifecycle edges
+on:
+  pull_request:
+    branches: [work/reconstruction]
+    paths:
+      - libbitmain/src/chip/chip1368-reply-key.c
+      - src/backend/base.c
+      - integration/*135.h
+      - integration/bm1368-reply-key-135.mk
+      - integration/evidence/bm1368_reply_key_135.json
+      - integration/tests/*bm1368_reply_key*135*
+      - integration/tests/test_exit_cleanup_135.py
+      - tools/arm32*.py
+      - tools/elf32.py
+      - reference/cgminer.vendor.elf
+      - .github/workflows/bm1368-reply-key-135.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: reply-key135-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  reply-key135:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        cc: [gcc, clang]
+    steps:
+      - name: Fetch exact public source without credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/dizzass-reply-key135-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-${{ matrix.cc }}"
+          mkdir "$root"
+          cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          git fetch --depth=1 --no-tags origin "$GITHUB_SHA"
+          git checkout -q --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Original getter table registration and shutdown comparisons
+        run: |
+          cd "$SOURCE_ROOT"
+          make -f integration/bm1368-reply-key-135.mk CC=${{ matrix.cc }} dizzass-key135-original dizzass-key135-test dizzass-key135-negative
+      - name: Native address and undefined behavior checks
+        run: |
+          cd "$SOURCE_ROOT"
+          make -f integration/bm1368-reply-key-135.mk CC=${{ matrix.cc }} SANITIZE=1 dizzass-key135-test
+      - name: Unchanged shutdown and existing temperature reply regressions
+        run: |
+          cd "$SOURCE_ROOT"
+          make -f integration/exit-cleanup-135.mk CC=${{ matrix.cc }} dizzass-exit135-original dizzass-exit135-test
+          make -f integration/thermal-routes-135.mk CC=${{ matrix.cc }} dizzass-routes135-original dizzass-routes135-test
+          python3 integration/tests/test_thermal_request_route_135.py
+      - name: Static analysis and immutable dependencies
+        run: |
+          cd "$SOURCE_ROOT"
+          clang --analyze -I. -std=c11 -DVN135_BM1368_REPLY_KEY_135 -Xanalyzer -analyzer-output=text libbitmain/src/chip/chip1368-reply-key.c
+          python3 integration/tests/check_bm1368_reply_key_evidence_135.py
+          git diff --exit-code

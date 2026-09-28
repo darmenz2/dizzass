@@ -1,0 +1,94 @@
+{
+  "base_commit": "12446bed78a060a49364a80bcbfb4340b13f4f27",
+  "base_tree": "2e73cb80b2ccbb15d24d9a7deb3c51f65bcd23ac",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "ranges": [
+    {
+      "name": "coordinator",
+      "start": "0x58b50",
+      "end": "0x58d08",
+      "sha256": "19fd10bed60d2bc835b65025867a76f86f341685ae301d8076a01ae441cf57a1"
+    },
+    {
+      "name": "model_getter",
+      "start": "0xa720c",
+      "end": "0xa7218",
+      "sha256": "75cf4ac24b47097c94faca34d348431b77cdb0c00154c46e861f1b6fba5d93f4"
+    },
+    {
+      "name": "existing_initializer",
+      "start": "0xb7798",
+      "end": "0xb80a8",
+      "sha256": "c8bdc420e0d0986ded4134da9e28fe350d6429a339344b32eda8e76bd330a550"
+    }
+  ],
+  "immutable": {
+    "AGENTS.md": "c9d99ca8e95e34f3644fb37e2fdeea359e61ec3d",
+    "src/backend/base.c": "9dd2d25122e3cd7a35f3ab4f0f709ce07422d1a7",
+    "src/backend/chain.c": "9448f6acf934566577c6f9248841a78274931d04",
+    "src/backend/temp.c": "52c17558b8289e2d16682228e76c0592bf183e9c",
+    "integration/general_monitor_135.h": "56998462cbd559604a83f25edc1693501d050a91",
+    "integration/thermal_routes_135.h": "a890810c4d62bb7041569b55fdbf3471a00b8de8",
+    "integration/thermal_sensors_135.h": "95ded117952950f98bdde2bc15d1572ee4505f20",
+    "integration/thermal_reader_135.h": "ea2cf2121e80c4ae256edb5e04dd666c4ee55d2d",
+    "integration/tests/test_general_monitor_135.py": "5e8750922d63e738e505d81ac16697ff2d302056",
+    "integration/tests/test_thermal_routes_135.py": "da6d06ecadca8567516783cf69a1f08456ac1ce6",
+    "integration/tests/test_thermal_sensors_135.py": "d43a238a26b978e5cc74b07558a0a109e4fc0503",
+    "integration/tests/test_thermal_reader_135.py": "78682a2ee3fcc83ad972eb47b5056e67618e62b3",
+    "integration/evidence/thermal_sensors_135.json": "2e2f250c254bc089ae01697dd101aff7015c4001",
+    "integration/evidence/thermal_routes_135.json": "760a7171303edfb235b0861e453d6bf9fdbaf561",
+    "integration/evidence/thermal_completion_135.json": "d86eb8ecb6392f75cf3c00740a843099e494928f",
+    "tools/elf32.py": "57b0a77098e2125340a755e90bac194830f75203",
+    "tools/arm32_subset.py": "e18a97222c1a8406fd61d5baac9763c3166f7e4b",
+    "tools/arm32_difficulty_subset.py": "94b359f6e1e8d7e2c11e22d640e36a97e7c22b37",
+    "tools/arm32_vfp_subset.py": "d1df89081dfa172ea41c84cae46e51ad099d74d8",
+    "cgminer.c": "54739e4139294c526af0c73aa9a02ba9762ca4f2",
+    "Makefile.am": "17d2fbde26b5e8cb614b61908b84d5937af48325",
+    "integration/check_native_core.py": "f8ded2a8a47d9e50fa731b5e89f09ce246eabe2c"
+  },
+  "strings": [
+    {
+      "address": "0x5e4267",
+      "xor_key": 183,
+      "text": "/tmp/build/src/backend/chain.c"
+    },
+    {
+      "address": "0x5e486f",
+      "xor_key": 238,
+      "text": "chain#%d sen#%d - failed to init"
+    }
+  ],
+  "instruction_words": {
+    "0x58b6c": "0xeb0139a6",
+    "0x58b84": "0xe5952020",
+    "0x58b90": "0x3a000051",
+    "0x58b98": "0xe5917018",
+    "0x58be4": "0xe5950290",
+    "0x58c64": "0xeb017acb",
+    "0x58cb8": "0xeb028501",
+    "0x58cc4": "0xe5040025",
+    "0x58ccc": "0xe3510002",
+    "0x58cd0": "0x1514101d"
+  },
+  "literal_edges": [
+    [
+      363768,
+      363668,
+      6178927
+    ],
+    [
+      363776,
+      363696,
+      6177383
+    ]
+  ],
+  "disassembly_command": "llvm-objdump -d --start-address=0x58b50 --stop-address=0x58d08 reference/cgminer.vendor.elf",
+  "disassembly": "\nreference/cgminer.vendor.elf:\tfile format elf32-littlearm\n\nDisassembly of section .text:\n\n00010100 <.text>:\n   58b50: e92d4ff0     \tpush\t{r4, r5, r6, r7, r8, r9, r10, r11, lr}\n   58b54: e28db01c     \tadd\tr11, sp, #28\n   58b58: e24dd014     \tsub\tsp, sp, #20\n   58b5c: e1a05000     \tmov\tr5, r0\n   58b60: e590001c     \tldr\tr0, [r0, #0x1c]\n   58b64: e58d1010     \tstr\tr1, [sp, #0x10]\n   58b68: e5900018     \tldr\tr0, [r0, #0x18]\n   58b6c: eb0139a6     \tbl\t0xa720c <.text+0x9710c> @ imm = #0x4e698\n   58b70: e5d52024     \tldrb\tr2, [r5, #0x24]\n   58b74: e1a01000     \tmov\tr1, r0\n   58b78: e3a00000     \tmov\tr0, #0\n   58b7c: e3520000     \tcmp\tr2, #0\n   58b80: 0a000055     \tbeq\t0x58cdc <.text+0x48bdc> @ imm = #0x154\n   58b84: e5952020     \tldr\tr2, [r5, #0x20]\n   58b88: e2422003     \tsub\tr2, r2, #3\n   58b8c: e3520003     \tcmp\tr2, #3\n   58b90: 3a000051     \tblo\t0x58cdc <.text+0x48bdc> @ imm = #0x144\n   58b94: e5911020     \tldr\tr1, [r1, #0x20]\n   58b98: e5917018     \tldr\tr7, [r1, #0x18]\n   58b9c: e3570001     \tcmp\tr7, #1\n   58ba0: ba00004d     \tblt\t0x58cdc <.text+0x48bdc> @ imm = #0x134\n   58ba4: e59f9144     \tldr\tr9, [pc, #0x144]        @ 0x58cf0 <.text+0x48bf0>\n   58ba8: e3a06000     \tmov\tr6, #0\n   58bac: e3a08051     \tmov\tr8, #81\n   58bb0: e79f9009     \tldr\tr9, [pc, r9]\n   58bb4: e59fa138     \tldr\tr10, [pc, #0x138]       @ 0x58cf4 <.text+0x48bf4>\n   58bb8: e79fa00a     \tldr\tr10, [pc, r10]\n   58bbc: ea000003     \tb\t0x58bd0 <.text+0x48ad0> @ imm = #0xc\n   58bc0: e2577001     \tsubs\tr7, r7, #1\n   58bc4: e2888080     \tadd\tr8, r8, #128\n   58bc8: e2866001     \tadd\tr6, r6, #1\n   58bcc: 0a000044     \tbeq\t0x58ce4 <.text+0x48be4> @ imm = #0x110\n   58bd0: e5990000     \tldr\tr0, [r9]\n   58bd4: e2401001     \tsub\tr1, r0, #1\n   58bd8: e0000190     \tmul\tr0, r0, r1\n   58bdc: e3100001     \ttst\tr0, #1\n   58be0: e5991000     \tldr\tr1, [r9]\n   58be4: e5950290     \tldr\tr0, [r5, #0x290]\n   58be8: e2412001     \tsub\tr2, r1, #1\n   58bec: e0804008     \tadd\tr4, r0, r8\n   58bf0: e0020291     \tmul\tr2, r1, r2\n   58bf4: e5141021     \tldr\tr1, [r4, #-0x21]\n   58bf8: e3120001     \ttst\tr2, #1\n   58bfc: 0a000002     \tbeq\t0x58c0c <.text+0x48b0c> @ imm = #0x8\n   58c00: e59a2000     \tldr\tr2, [r10]\n   58c04: e3520009     \tcmp\tr2, #9\n   58c08: cafffff4     \tbgt\t0x58be0 <.text+0x48ae0> @ imm = #-0x30\n   58c0c: e3510000     \tcmp\tr1, #0\n   58c10: 13510003     \tcmpne\tr1, #3\n   58c14: 0affffe9     \tbeq\t0x58bc0 <.text+0x48ac0> @ imm = #-0x5c\n   58c18: e3510004     \tcmp\tr1, #4\n   58c1c: 1a00000e     \tbne\t0x58c5c <.text+0x48b5c> @ imm = #0x38\n   58c20: e5991000     \tldr\tr1, [r9]\n   58c24: e2412001     \tsub\tr2, r1, #1\n   58c28: e0010291     \tmul\tr1, r1, r2\n   58c2c: e3110001     \ttst\tr1, #1\n   58c30: e5991000     \tldr\tr1, [r9]\n   58c34: e2412001     \tsub\tr2, r1, #1\n   58c38: e0020291     \tmul\tr2, r1, r2\n   58c3c: e7d01008     \tldrb\tr1, [r0, r8]\n   58c40: e3120001     \ttst\tr2, #1\n   58c44: 0a000002     \tbeq\t0x58c54 <.text+0x48b54> @ imm = #0x8\n   58c48: e59a2000     \tldr\tr2, [r10]\n   58c4c: e3520009     \tcmp\tr2, #9\n   58c50: cafffff6     \tbgt\t0x58c30 <.text+0x48b30> @ imm = #-0x28\n   58c54: e3510000     \tcmp\tr1, #0\n   58c58: 0affffd8     \tbeq\t0x58bc0 <.text+0x48ac0> @ imm = #-0xa0\n   58c5c: e2441051     \tsub\tr1, r4, #81\n   58c60: e1a00005     \tmov\tr0, r5\n   58c64: eb017acb     \tbl\t0xb7798 <.text+0xa7698> @ imm = #0x5eb2c\n   58c68: e3500000     \tcmp\tr0, #0\n   58c6c: 0affffd3     \tbeq\t0x58bc0 <.text+0x48ac0> @ imm = #-0xb4\n   58c70: e3a02002     \tmov\tr2, #2\n   58c74: e5140039     \tldr\tr0, [r4, #-0x39]\n   58c78: e5951018     \tldr\tr1, [r5, #0x18]\n   58c7c: e30034b8     \tmovw\tr3, #0x4b8\n   58c80: e58d2000     \tstr\tr2, [sp]\n   58c84: e2800001     \tadd\tr0, r0, #1\n   58c88: e59f2068     \tldr\tr2, [pc, #0x68]         @ 0x58cf8 <.text+0x48bf8>\n   58c8c: e2811001     \tadd\tr1, r1, #1\n   58c90: e58d1008     \tstr\tr1, [sp, #0x8]\n   58c94: e08f2002     \tadd\tr2, pc, r2\n   58c98: e58d2004     \tstr\tr2, [sp, #0x4]\n   58c9c: e58d000c     \tstr\tr0, [sp, #0xc]\n   58ca0: e59f0054     \tldr\tr0, [pc, #0x54]         @ 0x58cfc <.text+0x48bfc>\n   58ca4: e59f1054     \tldr\tr1, [pc, #0x54]         @ 0x58d00 <.text+0x48c00>\n   58ca8: e59f2054     \tldr\tr2, [pc, #0x54]         @ 0x58d04 <.text+0x48c04>\n   58cac: e08f0000     \tadd\tr0, pc, r0\n   58cb0: e08f1001     \tadd\tr1, pc, r1\n   58cb4: e08f2002     \tadd\tr2, pc, r2\n   58cb8: eb028501     \tbl\t0xfa0c4 <.text+0xe9fc4> @ imm = #0xa1404\n   58cbc: e59d1010     \tldr\tr1, [sp, #0x10]\n   58cc0: e3a00003     \tmov\tr0, #3\n   58cc4: e5040025     \tstr\tr0, [r4, #-0x25]\n   58cc8: e3e00000     \tmvn\tr0, #0\n   58ccc: e3510002     \tcmp\tr1, #2\n   58cd0: 1514101d     \tldrne\tr1, [r4, #-0x1d]\n   58cd4: 13510002     \tcmpne\tr1, #2\n   58cd8: 1affffb8     \tbne\t0x58bc0 <.text+0x48ac0> @ imm = #-0x120\n   58cdc: e24bd01c     \tsub\tsp, r11, #28\n   58ce0: e8bd8ff0     \tpop\t{r4, r5, r6, r7, r8, r9, r10, r11, pc}\n   58ce4: e3a00000     \tmov\tr0, #0\n   58ce8: e24bd01c     \tsub\tsp, r11, #28\n   58cec: e8bd8ff0     \tpop\t{r4, r5, r6, r7, r8, r9, r10, r11, pc}\n   58cf0: 00586f38     \tsubseq\tr6, r8, r8, lsr pc\n   58cf4: 00586558     \tsubseq\tr6, r8, r8, asr r5\n   58cf8: 0058bbd3     \tldrsbeq\tr11, [r8], #-179\n   58cfc: 0058b5ac     \tsubseq\tr11, r8, r12, lsr #11\n   58d00: 0058b5af     \tsubseq\tr11, r8, pc, lsr #11\n   58d04: 0058b5ca     \tsubseq\tr11, r8, r10, asr #11\n",
+  "boundaries": {
+    "direct": "b7798 and log scripted; actual model getter",
+    "nested": "b7798 executes; actual existing C initializer; lower register/clock operations scripted",
+    "production": false,
+    "upper_6ec4c_not_included": true,
+    "pending_pr_dependencies": false
+  }
+}

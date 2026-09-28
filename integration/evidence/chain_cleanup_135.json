@@ -1,0 +1,63 @@
+{
+  "base_commit": "12446bed78a060a49364a80bcbfb4340b13f4f27",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "ranges": [
+    {
+      "name": "cleanup",
+      "start": "0x5a9fc",
+      "end": "0x5ac80",
+      "sha256": "94f17f89efd33e0804e5193dc39a26dfa2c339efe46deca39601d6589b63ccf9"
+    },
+    {
+      "name": "auxiliary",
+      "start": "0x545a0",
+      "end": "0x54924",
+      "sha256": "8c03211327bea88737324c154cca04ea619b8c27b50d054033eea10e8194caf0"
+    },
+    {
+      "name": "board_flag",
+      "start": "0x5e524",
+      "end": "0x5e53c",
+      "sha256": "71d55acc8452996b4ef7454031d62cb021aaddf3b80e03519196cdc6456762f8"
+    },
+    {
+      "name": "board_view",
+      "start": "0xa720c",
+      "end": "0xa7218",
+      "sha256": "75cf4ac24b47097c94faca34d348431b77cdb0c00154c46e861f1b6fba5d93f4"
+    }
+  ],
+  "strings": [
+    {
+      "address": "0x5e4267",
+      "xor": 183,
+      "text": "/tmp/build/src/backend/chain.c\u0000"
+    },
+    {
+      "address": "0x5e4ae3",
+      "xor": 68,
+      "text": "chain#%d - powering off the chain\u0000"
+    },
+    {
+      "address": "0x5e4b05",
+      "xor": 221,
+      "text": "chain#%d - failed to power off the chain\u0000"
+    }
+  ],
+  "unchanged_files": {
+    "AGENTS.md": "c9d99ca8e95e34f3644fb37e2fdeea359e61ec3d",
+    "Makefile.am": "17d2fbde26b5e8cb614b61908b84d5937af48325",
+    "cgminer.c": "54739e4139294c526af0c73aa9a02ba9762ca4f2",
+    "src/backend/base.c": "9dd2d25122e3cd7a35f3ab4f0f709ce07422d1a7",
+    "src/backend/chain.c": "9448f6acf934566577c6f9248841a78274931d04",
+    "integration/general_monitor_135.h": "56998462cbd559604a83f25edc1693501d050a91",
+    "integration/thermal_routes_135.h": "a890810c4d62bb7041569b55fdbf3471a00b8de8",
+    "tools/elf32.py": "57b0a77098e2125340a755e90bac194830f75203",
+    "tools/arm32_subset.py": "e18a97222c1a8406fd61d5baac9763c3166f7e4b",
+    "integration/tests/test_thermal_routes_135.py": "da6d06ecadca8567516783cf69a1f08456ac1ce6",
+    "integration/tests/test_general_monitor_135.py": "5e8750922d63e738e505d81ac16697ff2d302056",
+    "integration/tests/test_exit_cleanup_135.py": "6f5bb620dd1568593554ea4264b94adb391696dc",
+    "integration/evidence/exit_cleanup_135.json": "e27ba50749c7a476e30f451153e3fb4783e8b5f4"
+  },
+  "scope": "5a9fc and composed existing 545a0; no hardware, no 5ac80 or fe218, no production binding"
+}

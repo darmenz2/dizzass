@@ -1,0 +1,67 @@
+name: Check A-15 shared command and work TX
+on:
+  pull_request:
+    branches: [work/reconstruction]
+    paths:
+      - integration/native/protocol_channel_tx.*
+      - integration/tests/test_protocol_channel_tx*
+      - integration/protocol-channel-tx.mk
+      - integration/evidence/protocol_channel_tx_dependencies.json
+      - tools/prepare_protocol_channel_tx.py
+      - integration/PROTOCOL_CHANNEL_TX_RU.md
+      - .github/workflows/protocol-channel-tx.yml
+permissions:
+  contents: read
+jobs:
+  protocol:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+    steps:
+      - name: Fetch proposal and exact dependencies without credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/protocol-tx-$GITHUB_RUN_ID-${{ matrix.cc }}-$GITHUB_RUN_ATTEMPT"
+          mkdir "$root"; cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          git -c gc.auto=0 -c maintenance.auto=false fetch --depth=1 --no-tags origin "$GITHUB_SHA" 12446bed78a060a49364a80bcbfb4340b13f4f27 eb1cd4ef625f1e28a560d132d2a76bab3162d723 4de412bdc0f2e4230d6c0e84b633a97105b15d21 2c8ed9672c711ad643c56d22b235d799cee28a09
+          git checkout -q --detach "$GITHUB_SHA"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          python3 tools/prepare_protocol_channel_tx.py
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Shared channel fault scripts and actual mixed PTY frames
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/protocol-channel-tx.mk CC=${{ matrix.cc }} PT_DIR=build/a15 protocol-tx-test protocol-tx-negative
+          make -f integration/protocol-channel-tx.mk CC=${{ matrix.cc }} PT_DIR=build/a15-san SANITIZE=1 protocol-tx-test
+          python3 integration/tests/test_protocol_channel_tx_negative.py --staging-checks
+          python3 -O integration/tests/test_protocol_channel_tx_negative.py --staging-checks
+      - name: Unchanged command work-encoder and transport regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/bm1368-control.mk CC=${{ matrix.cc }} DIZZASS_CONTROL_DIR=build/a15-control dizzass-control-bounds dizzass-control-original
+          make -f integration/work-route.mk CC=${{ matrix.cc }} top_srcdir=. DIZZASS_ROUTE_DIR=build/a15-route dizzass-work-route-original dizzass-work-route-bounds
+          make -f integration/transport-dispatch-135.mk CC=${{ matrix.cc }} TRANSPORT135_DIR=build/a15-transport dizzass-dispatch135-original dizzass-dispatch135-test
+      - name: Analyzer and unchanged source boundaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          if [ "${{ matrix.cc }}" = clang ]; then
+            clang --analyze -Ibuild/a15-deps -I. -Iinclude -std=c11 -pthread -Wall -Wextra -Wpedantic -Werror -Xanalyzer -analyzer-output=text integration/native/protocol_channel_tx.c
+          fi
+          python3 integration/test_native_core.py
+          python3 tools/prepare_protocol_channel_tx.py --check
+          test -z "$(git diff --name-only --diff-filter=MDR 12446bed78a060a49364a80bcbfb4340b13f4f27 HEAD)"
+          git diff --exit-code
+          echo 'Host PTYs only. No physical UART, native job publication, production driver or share.'

@@ -1,0 +1,75 @@
+{
+  "task": "A-10",
+  "base_commit": "12446bed78a060a49364a80bcbfb4340b13f4f27",
+  "base_tree": "2e73cb80b2ccbb15d24d9a7deb3c51f65bcd23ac",
+  "reference": "reference/cgminer.vendor.elf",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "ranges": [
+    {
+      "name": "chip_sensor_predicate",
+      "start": "0x78eb8",
+      "end_exclusive": "0x790bc",
+      "sha256": "951bd352fd29c2827613b8daa645e60d385577c3e13fa10543a45ca300c8d9cc"
+    },
+    {
+      "name": "chain_usable",
+      "start": "0x56fcc",
+      "end_exclusive": "0x57030",
+      "sha256": "bb894dbfda03d815a67c72d95c0e0fffef2c3d3cb39182e50ca7ab43954e3e74"
+    },
+    {
+      "name": "model_getter",
+      "start": "0xa720c",
+      "end_exclusive": "0xa7218",
+      "sha256": "75cf4ac24b47097c94faca34d348431b77cdb0c00154c46e861f1b6fba5d93f4"
+    },
+    {
+      "name": "general_monitor",
+      "start": "0x79778",
+      "end_exclusive": "0x7bb44",
+      "sha256": "8853cd91bec235b61e96b3e9eb82ed5720ea4fd5c4babfdfea0e23fe3f126151"
+    }
+  ],
+  "unchanged_files": {
+    "AGENTS.md": "c9d99ca8e95e34f3644fb37e2fdeea359e61ec3d",
+    "src/backend/base.c": "9dd2d25122e3cd7a35f3ab4f0f709ce07422d1a7",
+    "src/backend/temp.c": "52c17558b8289e2d16682228e76c0592bf183e9c",
+    "integration/general_monitor_135.h": "56998462cbd559604a83f25edc1693501d050a91",
+    "integration/thermal_routes_135.h": "a890810c4d62bb7041569b55fdbf3471a00b8de8",
+    "integration/thermal_sensors_135.h": "95ded117952950f98bdde2bc15d1572ee4505f20",
+    "integration/general-monitor-135.mk": "e73d4df8c0fb87862217e309993d88e6dab37bbd",
+    "integration/thermal-routes-135.mk": "f68baf7a096b3b261e6249600b726eb120bebfbb",
+    "integration/tests/test_general_monitor_135.py": "5e8750922d63e738e505d81ac16697ff2d302056",
+    "integration/tests/test_general_monitor_135.c": "80f3ab776bd065801ecbcb1719e32e59ed44d596",
+    "integration/tests/test_thermal_routes_135.py": "da6d06ecadca8567516783cf69a1f08456ac1ce6",
+    "integration/tests/test_thermal_sensors_135.py": "d43a238a26b978e5cc74b07558a0a109e4fc0503",
+    "tools/elf32.py": "57b0a77098e2125340a755e90bac194830f75203",
+    "tools/arm32_subset.py": "e18a97222c1a8406fd61d5baac9763c3166f7e4b",
+    "tools/arm32_difficulty_subset.py": "94b359f6e1e8d7e2c11e22d640e36a97e7c22b37",
+    "tools/arm32_rebuild_subset.py": "37fc528e01f10754b18a43f1a1ddff32d445a5b4",
+    "tools/arm32_vfp_subset.py": "d1df89081dfa172ea41c84cae46e51ad099d74d8",
+    "tools/arm32_nonce_subset.py": "84e86cb15dcc9a45819ef8448f8c89077cbd7548",
+    "integration/CGMINER_FIRST_RU.md": "567e8cd6cbb26bf761a27ab7ecc15b2fdb7265f7",
+    "Makefile.am": "17d2fbde26b5e8cb614b61908b84d5937af48325",
+    "cgminer.c": "54739e4139294c526af0c73aa9a02ba9762ca4f2",
+    "miner.h": "6e0ce27844029a28b3dc031fcd0d6c82e9c7d5b5"
+  },
+  "semantic_witnesses": {
+    "0x78ecc": "Original a720c resolves model+38; next loads model+58 and sensor count +18.",
+    "0x78ed8": "One fe668 call after count capture. No-chain result is zero.",
+    "0x78f64": "Current backend+230 bank; 56fcc checks present and unsigned state-3 > 2.",
+    "0x78fc0": "Capture sensors at chain+290 only for eligible chain and positive count.",
+    "0x79018": "Unsigned kind-1 <= 1, followed by role == 2.",
+    "0x78fd0": "State != 3 returns one immediately; no measurements, freshness, mutex or bus access.",
+    "0x7909c": "No match returns zero.",
+    "0x790a8": "Existential match returns one."
+  },
+  "disassembly": "\nreference/cgminer.vendor.elf:\tfile format elf32-littlearm\n\nDisassembly of section .text:\n\n00010100 <.text>:\n   78eb8: e92d4ff0     \tpush\t{r4, r5, r6, r7, r8, r9, r10, r11, lr}\n   78ebc: e28db01c     \tadd\tr11, sp, #28\n   78ec0: e24dd004     \tsub\tsp, sp, #4\n   78ec4: e1a0a000     \tmov\tr10, r0\n   78ec8: e5900018     \tldr\tr0, [r0, #0x18]\n   78ecc: eb00b8ce     \tbl\t0xa720c <.text+0x9710c> @ imm = #0x2e338\n   78ed0: e5900020     \tldr\tr0, [r0, #0x20]\n   78ed4: e5909018     \tldr\tr9, [r0, #0x18]\n   78ed8: eb0215e2     \tbl\t0xfe668 <.text+0xee568> @ imm = #0x85788\n   78edc: e3500001     \tcmp\tr0, #1\n   78ee0: e58d0000     \tstr\tr0, [sp]\n   78ee4: ba00006c     \tblt\t0x7909c <.text+0x68f9c> @ imm = #0x1b0\n   78ee8: e59f51c4     \tldr\tr5, [pc, #0x1c4]        @ 0x790b4 <.text+0x68fb4>\n   78eec: e79f5005     \tldr\tr5, [pc, r5]\n   78ef0: e5950000     \tldr\tr0, [r5]\n   78ef4: e2401001     \tsub\tr1, r0, #1\n   78ef8: e0000190     \tmul\tr0, r0, r1\n   78efc: e3100001     \ttst\tr0, #1\n   78f00: e5950000     \tldr\tr0, [r5]\n   78f04: e59f71ac     \tldr\tr7, [pc, #0x1ac]        @ 0x790b8 <.text+0x68fb8>\n   78f08: e2401001     \tsub\tr1, r0, #1\n   78f0c: e0000190     \tmul\tr0, r0, r1\n   78f10: e79f7007     \tldr\tr7, [pc, r7]\n   78f14: e3100001     \ttst\tr0, #1\n   78f18: 0a000002     \tbeq\t0x78f28 <.text+0x68e28> @ imm = #0x8\n   78f1c: e5970000     \tldr\tr0, [r7]\n   78f20: e3500009     \tcmp\tr0, #9\n   78f24: cafffff5     \tbgt\t0x78f00 <.text+0x68e00> @ imm = #-0x2c\n   78f28: e3a04000     \tmov\tr4, #0\n   78f2c: e3a08e32     \tmov\tr8, #800\n   78f30: ea000003     \tb\t0x78f44 <.text+0x68e44> @ imm = #0xc\n   78f34: e59d0000     \tldr\tr0, [sp]\n   78f38: e2844001     \tadd\tr4, r4, #1\n   78f3c: e1540000     \tcmp\tr4, r0\n   78f40: 0a000055     \tbeq\t0x7909c <.text+0x68f9c> @ imm = #0x154\n   78f44: e5950000     \tldr\tr0, [r5]\n   78f48: e2401001     \tsub\tr1, r0, #1\n   78f4c: e0000190     \tmul\tr0, r0, r1\n   78f50: e3100001     \ttst\tr0, #1\n   78f54: 0a000002     \tbeq\t0x78f64 <.text+0x68e64> @ imm = #0x8\n   78f58: e5970000     \tldr\tr0, [r7]\n   78f5c: e3500009     \tcmp\tr0, #9\n   78f60: ca000010     \tbgt\t0x78fa8 <.text+0x68ea8> @ imm = #0x40\n   78f64: e59a0230     \tldr\tr0, [r10, #0x230]\n   78f68: e0260894     \tmla\tr6, r4, r8, r0\n   78f6c: e1a00006     \tmov\tr0, r6\n   78f70: ebff7815     \tbl\t0x56fcc <.text+0x46ecc> @ imm = #-0x21fac\n   78f74: e5951000     \tldr\tr1, [r5]\n   78f78: e2200001     \teor\tr0, r0, #1\n   78f7c: e3590001     \tcmp\tr9, #1\n   78f80: e2412001     \tsub\tr2, r1, #1\n   78f84: e0010291     \tmul\tr1, r1, r2\n   78f88: e3a02000     \tmov\tr2, #0\n   78f8c: b3002001     \tmovwlt\tr2, #0x1\n   78f90: e1820000     \torr\tr0, r2, r0\n   78f94: e3110001     \ttst\tr1, #1\n   78f98: 0a000006     \tbeq\t0x78fb8 <.text+0x68eb8> @ imm = #0x18\n   78f9c: e5971000     \tldr\tr1, [r7]\n   78fa0: e3510009     \tcmp\tr1, #9\n   78fa4: da000003     \tble\t0x78fb8 <.text+0x68eb8> @ imm = #0xc\n   78fa8: e59a0230     \tldr\tr0, [r10, #0x230]\n   78fac: e0200894     \tmla\tr0, r4, r8, r0\n   78fb0: ebff7805     \tbl\t0x56fcc <.text+0x46ecc> @ imm = #-0x21fec\n   78fb4: eaffffea     \tb\t0x78f64 <.text+0x68e64> @ imm = #-0x58\n   78fb8: e3500000     \tcmp\tr0, #0\n   78fbc: 1a000029     \tbne\t0x79068 <.text+0x68f68> @ imm = #0xa4\n   78fc0: e5960290     \tldr\tr0, [r6, #0x290]\n   78fc4: e1a01009     \tmov\tr1, r9\n   78fc8: e280002c     \tadd\tr0, r0, #44\n   78fcc: ea000004     \tb\t0x78fe4 <.text+0x68ee4> @ imm = #0x10\n   78fd0: e3520003     \tcmp\tr2, #3\n   78fd4: 1a000033     \tbne\t0x790a8 <.text+0x68fa8> @ imm = #0xcc\n   78fd8: e2511001     \tsubs\tr1, r1, #1\n   78fdc: e2800080     \tadd\tr0, r0, #128\n   78fe0: 0a000020     \tbeq\t0x79068 <.text+0x68f68> @ imm = #0x80\n   78fe4: e5952000     \tldr\tr2, [r5]\n   78fe8: e2423001     \tsub\tr3, r2, #1\n   78fec: e0020392     \tmul\tr2, r2, r3\n   78ff0: e3120001     \ttst\tr2, #1\n   78ff4: e5952000     \tldr\tr2, [r5]\n   78ff8: e2423001     \tsub\tr3, r2, #1\n   78ffc: e0030392     \tmul\tr3, r2, r3\n   79000: e5902004     \tldr\tr2, [r0, #0x4]\n   79004: e3130001     \ttst\tr3, #1\n   79008: 0a000002     \tbeq\t0x79018 <.text+0x68f18> @ imm = #0x8\n   7900c: e5973000     \tldr\tr3, [r7]\n   79010: e3530009     \tcmp\tr3, #9\n   79014: cafffff6     \tbgt\t0x78ff4 <.text+0x68ef4> @ imm = #-0x28\n   79018: e2422001     \tsub\tr2, r2, #1\n   7901c: e3520001     \tcmp\tr2, #1\n   79020: 8affffec     \tbhi\t0x78fd8 <.text+0x68ed8> @ imm = #-0x50\n   79024: e5902008     \tldr\tr2, [r0, #0x8]\n   79028: e3520002     \tcmp\tr2, #2\n   7902c: 1affffe9     \tbne\t0x78fd8 <.text+0x68ed8> @ imm = #-0x5c\n   79030: e5952000     \tldr\tr2, [r5]\n   79034: e2423001     \tsub\tr3, r2, #1\n   79038: e0020392     \tmul\tr2, r2, r3\n   7903c: e3120001     \ttst\tr2, #1\n   79040: e5952000     \tldr\tr2, [r5]\n   79044: e2423001     \tsub\tr3, r2, #1\n   79048: e0030392     \tmul\tr3, r2, r3\n   7904c: e5902000     \tldr\tr2, [r0]\n   79050: e3130001     \ttst\tr3, #1\n   79054: 0affffdd     \tbeq\t0x78fd0 <.text+0x68ed0> @ imm = #-0x8c\n   79058: e5973000     \tldr\tr3, [r7]\n   7905c: e3530009     \tcmp\tr3, #9\n   79060: cafffff6     \tbgt\t0x79040 <.text+0x68f40> @ imm = #-0x28\n   79064: eaffffd9     \tb\t0x78fd0 <.text+0x68ed0> @ imm = #-0x9c\n   79068: e5950000     \tldr\tr0, [r5]\n   7906c: e2401001     \tsub\tr1, r0, #1\n   79070: e0000190     \tmul\tr0, r0, r1\n   79074: e3100001     \ttst\tr0, #1\n   79078: e5950000     \tldr\tr0, [r5]\n   7907c: e2401001     \tsub\tr1, r0, #1\n   79080: e0000190     \tmul\tr0, r0, r1\n   79084: e3100001     \ttst\tr0, #1\n   79088: 0affffa9     \tbeq\t0x78f34 <.text+0x68e34> @ imm = #-0x15c\n   7908c: e5970000     \tldr\tr0, [r7]\n   79090: e3500009     \tcmp\tr0, #9\n   79094: cafffff7     \tbgt\t0x79078 <.text+0x68f78> @ imm = #-0x24\n   79098: eaffffa5     \tb\t0x78f34 <.text+0x68e34> @ imm = #-0x16c\n   7909c: e3a00000     \tmov\tr0, #0\n   790a0: e24bd01c     \tsub\tsp, r11, #28\n   790a4: e8bd8ff0     \tpop\t{r4, r5, r6, r7, r8, r9, r10, r11, pc}\n   790a8: e3a00001     \tmov\tr0, #1\n   790ac: e24bd01c     \tsub\tsp, r11, #28\n   790b0: e8bd8ff0     \tpop\t{r4, r5, r6, r7, r8, r9, r10, r11, pc}\n   790b4: 00565b70     \tsubseq\tr5, r6, r0, ror r11\n   790b8: 00566dec     \tsubseq\tr6, r6, r12, ror #27\n",
+  "limits": [
+    "Project filename, not a source filename literal found in this body.",
+    "Original count effect scripted; original model getter and chain predicate run unmodified.",
+    "Stable valid arrays; counts fit allocated objects. No real concurrent memory changes.",
+    "No pending A-07/A-08/A-04/Codex PR source dependency; parent composition is the published general monitor.",
+    "Predicate true is not a measurement, freshness check, hardware ACK or production acceptance."
+  ]
+}

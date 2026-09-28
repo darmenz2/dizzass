@@ -1,0 +1,144 @@
+name: Check A-16 native work and owned TX
+on:
+  pull_request:
+    branches: [work/reconstruction]
+    paths:
+      - integration/native/native_job_channel_tx.*
+      - integration/tests/*native_job_channel*
+      - integration/native-job-channel-tx.mk
+      - integration/evidence/native_job_channel_dependencies.json
+      - integration/NATIVE_JOB_CHANNEL_TX_RU.md
+      - tools/prepare_native_job_channel.py
+      - .github/workflows/native-job-channel-tx.yml
+permissions:
+  contents: read
+jobs:
+  native-job:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - cc: gcc
+            os: ubuntu-22.04
+            compiler_packages: gcc
+          - cc: clang-17
+            os: ubuntu-24.04
+            compiler_packages: clang-17 libclang-rt-17-dev
+    steps:
+      - name: Fetch exact source and four read-only dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/native-job-$GITHUB_RUN_ID-${{ matrix.cc }}-$GITHUB_RUN_ATTEMPT"
+          mkdir "$root"; cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          git -c gc.auto=0 -c maintenance.auto=false fetch --depth=1 --no-tags origin "$GITHUB_SHA" 12446bed78a060a49364a80bcbfb4340b13f4f27 96437ca959aa2c4331591e9b6b4a5e57491f8553 eb1cd4ef625f1e28a560d132d2a76bab3162d723 4de412bdc0f2e4230d6c0e84b633a97105b15d21 2c8ed9672c711ad643c56d22b235d799cee28a09
+          git checkout -q --detach "$GITHUB_SHA"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          python3 tools/prepare_native_job_channel.py
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Install native host build dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y build-essential autoconf automake libtool pkg-config libcurl4-openssl-dev libusb-1.0-0-dev libudev-dev zlib1g-dev python3 ${{ matrix.compiler_packages }}
+      - name: Independent canceled-thread sanitizer health check
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          cat > build/independent-cancel-probe.c <<'PROBE'
+          #define _POSIX_C_SOURCE 200809L
+          #include <pthread.h>
+          #include <stdio.h>
+          #include <stdlib.h>
+          #include <unistd.h>
+          struct receipt { unsigned char bytes[128]; };
+          static void check(int e) { if(e) abort(); }
+          __attribute__((noinline)) static struct receipt transaction(void) {
+              struct receipt r = {{0}};
+              int saved;
+              check(pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &saved));
+              r.bytes[0] = 7;
+              check(pthread_cancel(pthread_self()));
+              __asm__ volatile ("" : "+m"(r) : : "memory");
+              check(pthread_setcancelstate(saved, NULL));
+              return r;
+          }
+          static void *worker(void *unused) {
+              (void)unused;
+              volatile struct receipt r = transaction();
+              (void)r;
+              pthread_testcancel();
+              return NULL;
+          }
+          int main(void) {
+              pthread_t thread; void *value;
+              alarm(10);
+              check(pthread_create(&thread, NULL, worker, NULL));
+              check(pthread_join(thread, &value));
+              if(value != PTHREAD_CANCELED) return 2;
+              puts("INDEPENDENT_CANCEL_PROBE_PASS");
+              return 0;
+          }
+          PROBE
+          ${{ matrix.cc }} --version | head -n 1
+          ${{ matrix.cc }} -std=gnu11 -O1 -g -pthread -fsanitize=address,undefined -fno-omit-frame-pointer build/independent-cancel-probe.c -o build/independent-cancel-probe
+          set +e
+          ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 build/independent-cancel-probe > build/independent-cancel-probe.log 2>&1
+          result=$?
+          set -e
+          cat build/independent-cancel-probe.log
+          printf 'INDEPENDENT_CANCEL_PROBE_EXIT=%s\n' "$result"
+          # A-16 Clang14/jammy failed this independent probe as well as the
+          # application suite. Both original failures are retained in PR #58.
+          # The selected toolchain MUST pass the probe and the unchanged full
+          # cancellation/ASan/UBSan application suite, without suppression.
+          test "$result" -eq 0
+      - name: Build the unchanged native core with Icarus baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          autoreconf -fi
+          ./configure CC=${{ matrix.cc }} --enable-icarus --disable-curses CFLAGS='-O1 -g -fcommon -ffunction-sections -fdata-sections'
+          make -j2
+          make -s -f Makefile -f integration/native-check.mk dizzass-core-sources > build/core-sources.txt
+          nm --defined-only cgminer > build/core-symbols.txt
+          python3 integration/check_native_core.py --sources build/core-sources.txt --symbols build/core-symbols.txt
+          ./cgminer --version
+      - name: Actual native work with scripted outcomes and allocated PTYs
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f Makefile -f integration/native-job-channel-tx.mk CC=${{ matrix.cc }} NJ_DIR=build/a16 native-job-test native-job-negative
+          make -f Makefile -f integration/native-job-channel-tx.mk CC=${{ matrix.cc }} NJ_DIR=build/a16-san SANITIZE=1 native-job-test
+          python3 integration/tests/test_native_job_channel_negative.py --staging-checks
+          python3 -O integration/tests/test_native_job_channel_negative.py --staging-checks
+      - name: Unchanged native job and nonce regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f Makefile -f integration/native-jobs.mk CC=${{ matrix.cc }} dizzass-native-jobs-test
+          make -f Makefile -f integration/native-jobs.mk CC=${{ matrix.cc }} SANITIZE=1 dizzass-native-jobs-test
+          make -f integration/work-route.mk CC=${{ matrix.cc }} top_srcdir=. DIZZASS_ROUTE_DIR=build/a16-route dizzass-work-route-original dizzass-work-route-bounds
+      - name: Analyzer and tracked source boundaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          if [[ '${{ matrix.cc }}' == clang* ]]; then
+            ${{ matrix.cc }} --analyze -Ibuild/a16-deps -I. -Iinclude -std=c11 -pthread -Xanalyzer -analyzer-output=text integration/native/native_job_channel_tx.c
+          fi
+          python3 integration/test_native_core.py
+          python3 tools/prepare_native_job_channel.py --check
+          test -z "$(git diff --name-only --diff-filter=MDR 12446bed78a060a49364a80bcbfb4340b13f4f27 HEAD)"
+          # Autoreconf may regenerate vendored generated inputs in this checkout.
+          # The commit-to-base check above and pinned runtime hashes stay strict.
+          git diff --stat
+          echo 'Native helper/PTY tests only. No physical UART, ASIC driver registration, pool or merge.'

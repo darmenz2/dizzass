@@ -1,0 +1,141 @@
+{
+  "base_commit": "12446bed78a060a49364a80bcbfb4340b13f4f27",
+  "base_tree": "2e73cb80b2ccbb15d24d9a7deb3c51f65bcd23ac",
+  "pending": [
+    {
+      "commit": "96437ca959aa2c4331591e9b6b4a5e57491f8553",
+      "path": "integration/native/protocol_channel_tx.c",
+      "blob": "110a285b60497e22c50e385757746b59fba9e1e0",
+      "sha256": "50aaf9aaa1ae7576dcd1ba614ffdc0af48808aea7baa59deb44597a1b66160fa"
+    },
+    {
+      "commit": "96437ca959aa2c4331591e9b6b4a5e57491f8553",
+      "path": "integration/native/protocol_channel_tx.h",
+      "blob": "75266b9f768f4f18168b9d7d4fac3bf672b4a7f7",
+      "sha256": "e37fa7e575731d2562913c5471a76782545861c53d5ff081c0c951b5d3cf2990"
+    },
+    {
+      "commit": "eb1cd4ef625f1e28a560d132d2a76bab3162d723",
+      "path": "integration/native/uart_channel.c",
+      "blob": "ef68d507d0d393b6a5b1fc0cb3eaff349ed3e376",
+      "sha256": "7c46d6e7a7d691fa250e4673c3fb7ca6bb92564197b5d3e9d1a926e09d7f50f2"
+    },
+    {
+      "commit": "eb1cd4ef625f1e28a560d132d2a76bab3162d723",
+      "path": "integration/native/uart_channel.h",
+      "blob": "78963f8b5ab11c9c171f601b138b91c7fc3688aa",
+      "sha256": "e8e42c8d4a05458054a99392c2990b4cdd57705f63de3691e4b03f700ceabb1b"
+    },
+    {
+      "commit": "4de412bdc0f2e4230d6c0e84b633a97105b15d21",
+      "path": "integration/native/uart_posix.c",
+      "blob": "994c54c1fab4a541bf5e7febe0e91666b15c0358",
+      "sha256": "e29207c757d1f0257e2fdec9a270afadadb43a15280bbd57f1fb22e88daf0642"
+    },
+    {
+      "commit": "4de412bdc0f2e4230d6c0e84b633a97105b15d21",
+      "path": "integration/native/uart_posix.h",
+      "blob": "9d7739d52768ace25b2538b6b690edbb5c11a549",
+      "sha256": "141f5f2f29f95511935d800c91e290b454c2f337a20292be17217750de3bc6e9"
+    },
+    {
+      "commit": "2c8ed9672c711ad643c56d22b235d799cee28a09",
+      "path": "integration/native/uart_safe.c",
+      "blob": "092e26250da9c3ae01d276d0cf247c76085e709a",
+      "sha256": "a33e6cf131eb8719f961b58ce986662ec4e6b0e52ce7537243c60bd53ffed00b"
+    },
+    {
+      "commit": "2c8ed9672c711ad643c56d22b235d799cee28a09",
+      "path": "integration/native/uart_safe.h",
+      "blob": "659faedc44a31e15d21c2b6a9f004417f853cc32",
+      "sha256": "5666f8eb17e3ef43e4cae12399988227b64605ae215f1f71f6c915e3f5e254b9"
+    }
+  ],
+  "unchanged": [
+    {
+      "path": "miner.h",
+      "sha256": "46975a24967eb0d0d5b0171b210b875b0adc60feba93131e491fc0deeb72745c",
+      "blob": "6e0ce27844029a28b3dc031fcd0d6c82e9c7d5b5"
+    },
+    {
+      "path": "cgminer.c",
+      "sha256": "214148c972c380af38cd667c02ccffad5c3a0b2790d5b54eeb0316af455411e4",
+      "blob": "54739e4139294c526af0c73aa9a02ba9762ca4f2"
+    },
+    {
+      "path": "Makefile.am",
+      "sha256": "8601830e23e231cdadd770a9bea4c1216d281ace5aa930010f0e61983daa8995",
+      "blob": "17d2fbde26b5e8cb614b61908b84d5937af48325"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "e829c42302bd775cfb9b705dc653429973888535b849d9a4965e9e6461bf746b",
+      "blob": "c9d99ca8e95e34f3644fb37e2fdeea359e61ec3d"
+    },
+    {
+      "path": "integration/native_jobs.c",
+      "sha256": "198c0ea4c1a12faac623592610f43ef15f9a0d2f3f813e7efcf8d84d90f8d8cc",
+      "blob": "95617b216e75e88b592d4c24b84508864794f3ce"
+    },
+    {
+      "path": "integration/native_jobs.h",
+      "sha256": "b7cfceea4bda47701cc48dbc82e95796e27d7366215b07f2a5d4165595b636e3",
+      "blob": "f5b05bd711c2ed2d47731528154fbd7b2248631f"
+    },
+    {
+      "path": "integration/native_work_tx88.c",
+      "sha256": "32ee0222b92b9f38f5544cf7a39694f9355068f3e83c7cef159cdafd31857c9a",
+      "blob": "ab45a33e10006537dd4b3bccb78299920efd1433"
+    },
+    {
+      "path": "integration/native_work_tx88.h",
+      "sha256": "bb32df7d35e44ac2d96b2ae8a8b3bea172dcb27117eecb845464cbf0b4bf8224",
+      "blob": "b29891c7a329345cbb020c6bcba905cc83cfea6b"
+    },
+    {
+      "path": "integration/native_nonce.c",
+      "sha256": "aecd9f09f6651aa37548c63d80192e366dd3ca3c175c3d1d69f098b1156062c7",
+      "blob": "4556d1cef380f31c86d2d967e6f6fbaf364b3f58"
+    },
+    {
+      "path": "integration/native_nonce.h",
+      "sha256": "1e120934d31a39851979fb5162f49ec7b3c8eaf3a89c4ea2ca5a5e620e322b0e",
+      "blob": "cd5ff0a636d85b5e5dc23bdd66b2e82b9cfc729a"
+    },
+    {
+      "path": "integration/native_tx_channel.c",
+      "sha256": "e7071a8e34baad212b07d027b2e3081ebbaa54b3a0a7903dbe8f1afbdb7a24bc",
+      "blob": "78392bf57d58cb84a9c64ef08f44ed18531ca728"
+    },
+    {
+      "path": "integration/native_tx_channel.h",
+      "sha256": "cf95b04898d083a008835abc7a62b0368e3e8531263b66bec97e6d03ee2be622",
+      "blob": "d985772ebaf1f97a0fd0482dcfc99a05cade2ff5"
+    },
+    {
+      "path": "integration/work_route.c",
+      "sha256": "14b6b5768279c7e4065927866ed7c209e43cb349e69d0844036cd33737e96c67",
+      "blob": "c078a164c9fd2a9dc08dc196915ae7bac0e1e441"
+    },
+    {
+      "path": "integration/work_tx88.c",
+      "sha256": "1f481801c478ffbeea3047c24d16b31e0970e1b175fb65f17a17b74d8bfbc9b1",
+      "blob": "e6308a58a24d4f9bb987601f9a11c7fa10e609c7"
+    },
+    {
+      "path": "integration/bm1368_control.c",
+      "sha256": "6311c43f27b482114b7e18826727e2cd024b2bea4a74b911b5d73887757808f3",
+      "blob": "20b4b0476beb3968be590373f884e91b7d6fe46f"
+    },
+    {
+      "path": "reconstruction/support/crc5.c",
+      "sha256": "d03fe3a245dffeddb2d644d91671b44430ca81a007ad15b49db294c1a700e1a2",
+      "blob": "1912ec8906fb520f7d7c5196ea5a7ec122aaeda8"
+    },
+    {
+      "path": "tests/fixtures/genesis_work.h",
+      "sha256": "7a3169c8bfd83c206bc47fd1266bcc25a8b90716574249dbcbc69656e68761bb",
+      "blob": "c64ed6f495cb00acca98e2b51f0c4762d3e57394"
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "base_commit": "12446bed78a060a49364a80bcbfb4340b13f4f27",
+  "base_tree": "2e73cb80b2ccbb15d24d9a7deb3c51f65bcd23ac",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "ranges": [
+    {
+      "name": "reset",
+      "start": "0xb8e54",
+      "end": "0xb90a8",
+      "sha256": "48b54433b728c463b13dfd177834b0a83c481eaa778f13d760f4a969cb8e226f"
+    },
+    {
+      "name": "allocator_provenance",
+      "start": "0xb86fc",
+      "end": "0xb89c0",
+      "sha256": "b377a116a21a26c6318ebe216b30b72c646c659f1e84f0c55350bd1f222018a5"
+    },
+    {
+      "name": "parent",
+      "start": "0x663cc",
+      "end": "0x66504",
+      "sha256": "5940454bd83dde6a2719a7e1fafdeefeeead7f4806aefb6cfd897bec108bb9ef"
+    }
+  ],
+  "pc_relative_links": [
+    {
+      "literal": "0xb9094",
+      "pc": "0xb8e84",
+      "target": "0x612aa0"
+    },
+    {
+      "literal": "0xb90a4",
+      "pc": "0xb907c",
+      "target": "0x612aa0"
+    },
+    {
+      "literal": "0xb90a0",
+      "pc": "0xb8edc",
+      "target": "0x5df6ac",
+      "value": "0x68be68"
+    },
+    {
+      "literal": "0xb8984",
+      "pc": "0xb8730",
+      "target": "0x612aa0"
+    },
+    {
+      "literal": "0xb8988",
+      "pc": "0xb8750",
+      "target": "0x5df6ac",
+      "value": "0x68be68"
+    },
+    {
+      "literal": "0xb8998",
+      "pc": "0xb87cc",
+      "target": "0x5e9376"
+    }
+  ],
+  "unchanged_files": {
+    "AGENTS.md": "c9d99ca8e95e34f3644fb37e2fdeea359e61ec3d",
+    "Makefile.am": "17d2fbde26b5e8cb614b61908b84d5937af48325",
+    "cgminer.c": "54739e4139294c526af0c73aa9a02ba9762ca4f2",
+    "src/backend/base.c": "9dd2d25122e3cd7a35f3ab4f0f709ce07422d1a7",
+    "src/backend/throttling.c": "2a33fed573132f27e5acd398fddf53194aa6e14f",
+    "integration/general_monitor_135.h": "56998462cbd559604a83f25edc1693501d050a91",
+    "integration/monitor_handlers_135.h": "593bbc343c1ff3812630e0d839cbc493f7febd83",
+    "integration/mining_stop_135.h": "ff8c93d95895d2463425d3598b85df46d71e7e91",
+    "integration/backend_shutdown_135.h": "30ba5a57e9dd8f900f2f0753040945d8694cb413",
+    "tools/arm32_subset.py": "e18a97222c1a8406fd61d5baac9763c3166f7e4b",
+    "tools/elf32.py": "57b0a77098e2125340a755e90bac194830f75203",
+    "integration/tests/test_general_monitor_135.py": "5e8750922d63e738e505d81ac16697ff2d302056",
+    "integration/tests/test_mining_stop_135.py": "5007e1ecfd675d141659c697fa69599e58ceeb80",
+    "integration/tests/test_monitor_handlers_135.py": "9094c6a5dcfe1dd4dc42d13f0a025318f7532b2a",
+    "integration/tests/test_backend_shutdown_135.py": "5587b7c68f6c29c232206485d8f5e8049ffad4f3",
+    "integration/tests/test_rescue_stop_135.py": "88fe26db212c25232bbae07025c97fb60ae83221",
+    "integration/evidence/mining_stop_135.json": "d79f42d4a863af50aa972b72ef92e993cd951908",
+    "evidence/modules/src/backend/throttling.c.json": "9151985cd4b1c357d27233d08684f8facaa62159"
+  },
+  "scope": "b8e54 reset + nested 663cc; successful allocator paths only as provenance; no hardware/OS or production binding"
+}

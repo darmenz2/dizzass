@@ -1,0 +1,73 @@
+name: Check B-11 original per-chain UART reader
+on:
+  pull_request:
+    branches: [work/reconstruction]
+    paths:
+      - src/backend/work-gen/chain-uart-reader.c
+      - src/backend/work-gen/work-gen.c
+      - include/xminer/recovery/work_rx.h
+      - reconstruction/support/record_fifo.c
+      - include/xminer/recovery/nonce_fifo.h
+      - libbitmain/src/uart.c
+      - include/xminer/recovery/uart.h
+      - integration/chain_uart_reader_135.h
+      - integration/chain-uart-reader-135.mk
+      - integration/CHAIN_UART_READER_135_RU.md
+      - integration/evidence/chain_uart_reader_135.json
+      - integration/tests/*chain_uart_reader*135*
+      - tools/arm32*subset.py
+      - tools/elf32.py
+      - reference/cgminer.vendor.elf
+      - .github/workflows/chain-uart-reader-135.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  chainreader135:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Original instructions, native and semantic mutants
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build/b11-logs
+          git rev-parse HEAD | tee build/b11-logs/head.txt
+          ${{ matrix.cc }} --version | tee build/b11-logs/compiler.txt
+          make -f integration/chain-uart-reader-135.mk CC=${{ matrix.cc }} CHAIN_READER_DIR=build/b11 all negative 2>&1 | tee build/b11-logs/new.log
+      - name: ASan and UBSan
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -f integration/chain-uart-reader-135.mk CC=${{ matrix.cc }} CHAIN_READER_DIR=build/b11 sanitize 2>&1 | tee build/b11-logs/sanitizers.log
+      - name: Existing route, UART and FIFO regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -f integration/chain-uart-reader-135.mk CC=${{ matrix.cc }} CHAIN_READER_DIR=build/b11 regressions 2>&1 | tee build/b11-logs/regressions.log
+      - name: Static analysis
+        if: matrix.cc == 'clang'
+        shell: bash
+        run: |
+          set -euo pipefail
+          clang --analyze -I. -Iinclude -std=c11 -Wall -Wextra -Wpedantic -Xanalyzer -analyzer-output=text src/backend/work-gen/chain-uart-reader.c 2>&1 | tee build/b11-logs/analyzer.log
+      - name: Save exact head logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: chain-uart-reader-${{ matrix.cc }}-${{ github.run_id }}
+          retention-days: 7
+          path: |
+            build/b11-logs/
+            build/b11/negative/*.log
+            build/b11/symbols.txt

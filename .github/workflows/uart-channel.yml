@@ -1,0 +1,68 @@
+name: Check A-14 frame ownership and graceful TX stop
+on:
+  pull_request:
+    branches: [work/reconstruction]
+    paths:
+      - integration/native/uart_channel.*
+      - integration/tests/test_uart_channel*
+      - integration/uart-channel.mk
+      - integration/UART_CHANNEL_RU.md
+      - integration/evidence/uart_channel_dependencies.json
+      - tools/prepare_uart_channel.py
+      - .github/workflows/uart-channel.yml
+permissions:
+  contents: read
+jobs:
+  channel:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+    steps:
+      - name: Fetch exact proposal and pinned read-only dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/uart-channel-$GITHUB_RUN_ID-${{ matrix.cc }}-$GITHUB_RUN_ATTEMPT"
+          mkdir "$root"; cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          git -c gc.auto=0 -c maintenance.auto=false fetch --depth=1 --no-tags origin "$GITHUB_SHA" 12446bed78a060a49364a80bcbfb4340b13f4f27 4de412bdc0f2e4230d6c0e84b633a97105b15d21 2c8ed9672c711ad643c56d22b235d799cee28a09
+          git checkout -q --detach "$GITHUB_SHA"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          python3 tools/prepare_uart_channel.py
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Actual pthread ownership and host PTY transfers
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/uart-channel.mk CC=${{ matrix.cc }} UC_DIR=build/a14 uart-channel-test uart-channel-negative
+          make -f integration/uart-channel.mk CC=${{ matrix.cc }} UC_DIR=build/a14-san SANITIZE=1 uart-channel-test
+          python3 integration/tests/test_uart_channel_negative.py --staging-checks
+          python3 -O integration/tests/test_uart_channel_negative.py --staging-checks
+      - name: Unchanged transport and UART regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/transport-dispatch-135.mk CC=${{ matrix.cc }} TRANSPORT135_DIR=build/a14-old dizzass-dispatch135-original dizzass-dispatch135-test dizzass-dispatch135-negative
+          cp build/a14-old/libtransport.so build/libvn135_recovered.so
+          python3 tests/test_stage5_uart_differential.py
+          python3 tests/test_stage5_aml_uart_differential.py
+      - name: Static analysis and unchanged baseline boundaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          if [ "${{ matrix.cc }}" = clang ]; then
+            clang --analyze -I. -Ibuild/a14-deps -std=c11 -pthread -Wall -Wextra -Wpedantic -Werror -Xanalyzer -analyzer-output=text integration/native/uart_channel.c
+          fi
+          python3 integration/test_native_core.py
+          python3 tools/prepare_uart_channel.py --check
+          test -z "$(git diff --name-only --diff-filter=MDR 12446bed78a060a49364a80bcbfb4340b13f4f27 HEAD)"
+          git diff --exit-code
+          echo 'Host pthreads and PTYs only. No physical UART, ASIC, production driver or merge.'
