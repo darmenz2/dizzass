@@ -1,0 +1,47 @@
+name: Check A-09 autotuner boundary audit
+on:
+  pull_request:
+    branches: [work/reconstruction]
+    paths:
+      - tools/audit_autotune_boundary_135.py
+      - tools/elf32.py
+      - tools/arm32*.py
+      - integration/tests/test_autotune_boundary_audit_135.py
+      - integration/evidence/autotune_boundary_135.json
+      - integration/AUTOTUNE_BINARY_BOUNDARY_135_RU.md
+      - evidence/modules/src/backend/tuner/**
+      - reference/cgminer.vendor.elf
+      - .github/workflows/autotune-boundary-135.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    steps:
+      - name: Read exact public revision without credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/autotune-audit-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$root"
+          cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          git fetch --depth=1 --no-tags origin "$GITHUB_SHA"
+          git checkout -q --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Reproduce pinned report and bounded witness tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          python3 tools/audit_autotune_boundary_135.py --check
+          python3 integration/tests/test_autotune_boundary_audit_135.py
+          python3 -O integration/tests/test_autotune_boundary_audit_135.py
+          python3 integration/test_native_core.py
+          git diff --exit-code
+          printf '%s\n' 'Static audit and finite interpreter windows only. No tuner extraction, loader, hardware or mining run.'
