@@ -35,8 +35,9 @@ int dizzass_uart_channel_create(struct dizzass_uart_channel **out, int fd);
  *
  * Deferred pthread cancellation is DISABLED across admission, wait and active
  * I/O, and restored only after gate bookkeeping and unlock. Pending cancellation
- * can then prevent delivery of the return value: consult last after joining.
- * Do not use pthread_cancel as frame abort/retry. Async cancellation, signal
+ * can then prevent delivery of the return value. Snapshot is CHANNEL-last, not
+ * a per-request receipt: later sends can overwrite it. Do not infer a canceled
+ * frame's outcome from it unless other sends were excluded. Async cancellation, signal
  * handler use, fork during activity and reentrant use are unsupported.
  */
 struct dizzass_uart_result dizzass_uart_channel_send(struct dizzass_uart_channel *,
