@@ -1,0 +1,63 @@
+name: Check D-01 no-device ARM diagnostic
+on:
+  pull_request:
+    paths:
+      - 'integration/diagnostics/t21_noio/**'
+      - '.github/workflows/t21-noio-diagnostic.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  diagnostic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Exact read-only checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/d01-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$root"
+          cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          git -c gc.auto=0 fetch --depth=1 --no-tags origin "$GITHUB_SHA"
+          git checkout -q --detach "$GITHUB_SHA"
+          echo "SOURCE_ROOT=$root" >> "$GITHUB_ENV"
+      - name: Install host-only toolchain
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y clang-17 lld-17 gcc binutils python3 qemu-user
+      - name: Build, native errors and sanitizers
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          export PATH="/usr/lib/llvm-17/bin:$PATH"
+          d=integration/diagnostics/t21_noio
+          python3 "$d/build.py" --cc clang-17 --out build/d01
+          python3 "$d/verify.py" build/d01/dizzass-noio-*
+          python3 "$d/test_verify.py" --build build/d01
+          python3 -O "$d/test_verify.py" --build build/d01
+          python3 "$d/check_vectors.py"
+          python3 -O "$d/check_vectors.py"
+          python3 "$d/test.py" --cc gcc --out build/d01-gcc
+          python3 "$d/test.py" --cc clang-17 --out build/d01-clang
+          python3 "$d/test.py" --cc gcc --sanitize --out build/d01-gcc-san
+          python3 "$d/test.py" --cc clang-17 --sanitize --out build/d01-clang-san
+      - name: Execute diagnostic on five emulated CPUs
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          python3 integration/diagnostics/t21_noio/qemu_test.py --build build/d01 --out build/d01-qemu
+          git diff --exit-code
+          echo 'Diagnostic only; no ASIC, miner, port opening or pool.'
+      - name: Preserve exact binaries and full test receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: d01-no-device-arm-diagnostic
+          path: ${{ env.SOURCE_ROOT }}/build/d01*
+          if-no-files-found: error
+          retention-days: 30

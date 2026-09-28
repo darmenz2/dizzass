@@ -1,0 +1,14 @@
+{
+  "base": "bf8cd0513440f91f8a34c69137d0436e6fc30c8a",
+  "pure_sources": {
+    "integration/work_tx88.c": "1f481801c478ffbeea3047c24d16b31e0970e1b175fb65f17a17b74d8bfbc9b1",
+    "integration/work_tx88.h": "3bf34158b83b101564f0f94d4c39cbe0729e4f9ac0aee6680f836fe41659621b",
+    "integration/bm1368_control.c": "6311c43f27b482114b7e18826727e2cd024b2bea4a74b911b5d73887757808f3",
+    "integration/bm1368_control.h": "11ddb580caab82219f4df5d480ac17d74386a55ba798aaa47e54390c02aa351a",
+    "reconstruction/support/crc5.c": "d03fe3a245dffeddb2d644d91671b44430ca81a007ad15b49db294c1a700e1a2",
+    "include/xminer/recovery/chip1398.h": "57c25fb7b8e234f1b3fc0eef972338398f4e6027dcee0e38f6c1eb6c5eadef14",
+    "include/xminer/recovery/pll.h": "96cb204b3a846ad82c09c8be5e480e0069751d1a79b191e53fa3dc2618a5602d",
+    "include/xminer/recovery/reg_cache.h": "37aae34cab018e6c6f2282a8083aa01d6fd04da10e37f46d39b6162766a37ba6"
+  },
+  "scope": "diagnostic-only, no hardware, no production linkage"
+}
