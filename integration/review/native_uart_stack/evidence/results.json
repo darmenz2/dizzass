@@ -1,0 +1,194 @@
+{
+  "status": "HOST_INTEGRATION_PASS_WITH_OPEN_GCC_ASAN_DIAGNOSTIC",
+  "date": "2026-09-28",
+  "base": "12446bed78a060a49364a80bcbfb4340b13f4f27",
+  "base_tree": "2e73cb80b2ccbb15d24d9a7deb3c51f65bcd23ac",
+  "test_files": {
+    "test_stack.c": "7b5610f15ef7b8d1d9b382d801cfed289f61cde44298d426d9fc3d15d7f9adcc",
+    "suite.mk": "d49ab220431c2b514e54dcc5bcd8b0e4ec1c9838c475d2b93e6e50ec2411ce53"
+  },
+  "baseline": "ANTS2 host, no driver execution; --disable-curses --disable-libcurl",
+  "support_objects_sanitized": false,
+  "runs": [
+    {
+      "name": "gcc-controls-v2",
+      "status": "PASS",
+      "compiler": "gcc",
+      "sanitized": false,
+      "test_exit": 0,
+      "host_scenarios_passed": 8,
+      "semantic_mutants_rejected": [
+        "uncertain-as-written",
+        "never-publish-written",
+        "ignore-received-epoch",
+        "ignore-stopped-gate"
+      ],
+      "complete_report_sha256": "7a555c81ed5f7220e4d8a6851d8789aab3891ae14fdddcf1ac0f887afbe448c7",
+      "integration_log_sha256": "1fa252385395174808c32098e25bf3fc54a6181c3b56156b848c1c9c90b62f99"
+    },
+    {
+      "name": "clang-controls-v2",
+      "status": "PASS",
+      "compiler": "clang",
+      "sanitized": false,
+      "test_exit": 0,
+      "host_scenarios_passed": 8,
+      "semantic_mutants_rejected": [
+        "uncertain-as-written",
+        "never-publish-written",
+        "ignore-received-epoch",
+        "ignore-stopped-gate"
+      ],
+      "complete_report_sha256": "65581827f54bf07a60a2c2c715815de9849e640b2e43fe41526c42a07cfd581a",
+      "integration_log_sha256": "709ff62bda3938f1a8a1b1a14d53c4577c9117dd79abb0225414ffd2b92c86d7"
+    },
+    {
+      "name": "clang-san-v2",
+      "status": "PASS",
+      "compiler": "clang",
+      "sanitized": true,
+      "test_exit": 0,
+      "host_scenarios_passed": 8,
+      "semantic_mutants_rejected": [],
+      "complete_report_sha256": "9dfbcbb05729673140b51695c83413fcfdcb782aaccc1a3def1e013ed432000d",
+      "integration_log_sha256": "acea6d1fca3515efa8e392ed959120b7f42fe72823ecb56c49c238d530e77189"
+    },
+    {
+      "name": "gcc-san-v2",
+      "status": "FAIL",
+      "compiler": "gcc",
+      "sanitized": true,
+      "test_exit": 2,
+      "host_scenarios_passed": null,
+      "semantic_mutants_rejected": [],
+      "complete_report_sha256": "c9cff2d94f75048031cd9cd82ded32d45fb613484856d45fb7f9624603129095",
+      "integration_log_sha256": "7d100c7a7a49474d8409144e702a86ccd1b2a03afdd4a3555ccc3a1321e9c86e"
+    }
+  ],
+  "reproduction": "run.py records exact commands, exit codes and full logs in a fresh output directory; complete executed reports are in the local archive identified below.",
+  "existing_a15_gcc": {
+    "head": "96437ca959aa2c4331591e9b6b4a5e57491f8553",
+    "exit": 0,
+    "control_cases": 1478,
+    "checks": 14283,
+    "pty_cases": 6,
+    "log_sha256": "8e0f977a5686e7d92c6afb303398ec4b48d8e7ae0e899d9ad0d6dd5af1ca2b99"
+  },
+  "runner_tests": {
+    "python": {
+      "tests": 6,
+      "exit": 0
+    },
+    "python_optimized": {
+      "tests": 6,
+      "exit": 0
+    }
+  },
+  "clang_sanitized_repeats": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "empty_main_probes": [
+    {
+      "compiler": "gcc",
+      "no_pie": false,
+      "exit_codes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "compiler": "gcc",
+      "no_pie": true,
+      "exit_codes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "compiler": "clang",
+      "no_pie": false,
+      "exit_codes": [
+        -11,
+        0,
+        0,
+        0,
+        0,
+        -11,
+        0,
+        -11
+      ]
+    },
+    {
+      "compiler": "clang",
+      "no_pie": true,
+      "exit_codes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "cancellation_probe": [
+    {
+      "compiler": "gcc",
+      "exit_codes": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "first_diagnostic": "==32141==AddressSanitizer CHECK failed: ../../../../src/libsanitizer/asan/asan_thread.cpp:367 \"((ptr[0] == kCurrentStackFrameMagic)) != (0)\" (0x0, 0x0)",
+      "diagnostic_sha256": "ab3f61cc0de604efd7e3bbfe27e9634d1597e29d17f0bb99188232e5a517e4bd"
+    },
+    {
+      "compiler": "clang",
+      "exit_codes": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "first_diagnostic": "==32154==ERROR: AddressSanitizer: stack-buffer-overflow on address 0x7e82365fed90 at pc 0x00000047e19f bp 0x7e82365fed60 sp 0x7e82365fe530",
+      "diagnostic_sha256": "ec9b603b435385bde70491b14e37c2db3fec3a61c8a7a245c353b64c190ad044"
+    }
+  ],
+  "initial_clang_pie_result": "FAIL: SIGSEGV without a sanitizer diagnostic; remains failed",
+  "evidence_archive": {
+    "file": "full-review-evidence.tar.gz",
+    "location": "MainPC Downloads/dizzass-review-r01-20260928",
+    "sha256": "5d6b1c4872dc8abc2ae5e5af3d04a3e146e246a6b35275f966856791eaa5f7ff"
+  },
+  "a16_tested": false,
+  "physical_asic": false,
+  "pool_submission": false,
+  "limitations": [
+    "No A-16 source linked or accepted",
+    "No ASIC, pool, firmware execution or production registration",
+    "Scripted fixture peer is not a hardware ACK",
+    "GCC sanitizer failure is unresolved; neither failure is relabelled PASS",
+    "Clang full-harness sanitized passes do not erase independent cancellation-probe reports"
+  ]
+}
