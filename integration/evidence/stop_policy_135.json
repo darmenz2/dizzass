@@ -1,0 +1,210 @@
+{
+  "reference": "reference/cgminer.vendor.elf",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "base_commit": "eeaf7a4270fb3befd7520efee3f028c95edacb9b",
+  "base_tree": "2da2a5f97d6b3b553a648c0a1d75ddc07902fbeb",
+  "base_source": {
+    "path": "src/backend/base.c",
+    "length": 45646,
+    "git_blob": "6f745f8845612d9d259c355535bfd83e13ef2cd3"
+  },
+  "ranges": [
+    {
+      "name": "exit entry through terminal call",
+      "start": "0x10110",
+      "end_exclusive": "0x1012c",
+      "sha256": "d984dd4262f89f1d21abd722004b64790f2c4f6de5b3bf2d63a5c9929e1d25ba"
+    },
+    {
+      "name": "terminal syscall loop",
+      "start": "0x5a89d8",
+      "end_exclusive": "0x5a89f4",
+      "sha256": "f0cefb709201bcd51e05aeea20d2875879febd63b24bb4e2cbb4f6934e9a4376"
+    },
+    {
+      "name": "stop decision including literal pool",
+      "start": "0x5e92c",
+      "end_exclusive": "0x5f0fc",
+      "sha256": "c4a0be7b258b3f66b582f7140c79dfdc8844b8904a9a16893c35769e2c22d126"
+    },
+    {
+      "name": "retry-count writer including literal pool",
+      "start": "0x5cea8",
+      "end_exclusive": "0x5cf34",
+      "sha256": "87123137f706572f2e29800bf898cfdbc2fb59c38fa5107cafac212c44f06d98"
+    },
+    {
+      "name": "parent chain preflight",
+      "start": "0x60730",
+      "end_exclusive": "0x60a2c",
+      "sha256": "a1127dd288140f8aa62aa78f00ead844d6a425ead2c162f8e06524713f743dbc"
+    },
+    {
+      "name": "nested chain decision",
+      "start": "0x60a2c",
+      "end_exclusive": "0x60d58",
+      "sha256": "3ad8766f12dfd86c0608b7dd7207bda13d712c398888204efcc39db095a4c941"
+    },
+    {
+      "name": "active chain predicate",
+      "start": "0x56fcc",
+      "end_exclusive": "0x57030",
+      "sha256": "bb894dbfda03d815a67c72d95c0e0fffef2c3d3cb39182e50ca7ab43954e3e74"
+    },
+    {
+      "name": "state-3 predicate",
+      "start": "0x57030",
+      "end_exclusive": "0x5708c",
+      "sha256": "818cbcd11f9d0389dce33e1770ce41f4a6feb048ee342986835788ac2e5ae728"
+    },
+    {
+      "name": "board config accessor",
+      "start": "0xa720c",
+      "end_exclusive": "0xa7218",
+      "sha256": "75cf4ac24b47097c94faca34d348431b77cdb0c00154c46e861f1b6fba5d93f4"
+    },
+    {
+      "name": "profile accessor",
+      "start": "0xa71e8",
+      "end_exclusive": "0xa71f4",
+      "sha256": "7fd21807c9f30f779576f50ea7e2ff4f04688091fd64fb8f3a0c7b80e0cdeb09"
+    },
+    {
+      "name": "original atoi",
+      "start": "0x5a24d4",
+      "end_exclusive": "0x5a2544",
+      "sha256": "7826262ea8b517c1a70cd5c0a1180b7efbbd70b899cf14aa7ade0f1afa26dfab"
+    }
+  ],
+  "literals": [
+    {
+      "address": "0x5e50a6",
+      "length": 19,
+      "xor_key": 124,
+      "decoded": "/tmp/restart_count",
+      "sha256": "25dfa0b51f59d031c03d89ec8e3631cdb32c4295faa9e06953e43593fcc08bff"
+    },
+    {
+      "address": "0x5e602d",
+      "length": 3,
+      "xor_key": 241,
+      "decoded": "rb",
+      "sha256": "21817e5a4831821a24c91c8f7c550271da618b0bfc267be82ad288e41cd0db31"
+    },
+    {
+      "address": "0x5e50b9",
+      "length": 2,
+      "xor_key": 201,
+      "decoded": "w",
+      "sha256": "e7bc884756768f5595c7f28180d400f83e6a220ba6545a38100a222c9f2001fe"
+    },
+    {
+      "address": "0x5e50bb",
+      "length": 3,
+      "xor_key": 60,
+      "decoded": "%d",
+      "sha256": "ab21bb3bd294facb98a8127434dd757560fbb8c7d7ba408593d99f5096ac2ccc"
+    },
+    {
+      "address": "0x5e51e0",
+      "length": 7,
+      "xor_key": 79,
+      "decoded": "status",
+      "sha256": "e83b01d0bca40b1e2bab75cf09beab933247eef08096f9529d3e97c17a8df19a"
+    },
+    {
+      "address": "0x5e50be",
+      "length": 30,
+      "xor_key": 245,
+      "decoded": "/tmp/build/src/backend/base.c",
+      "sha256": "a3922dfb59ced1364db6fd1b31bc23cc40b7976764ca96a9eb96e4e5cacad4a8"
+    },
+    {
+      "address": "0x5e50e3",
+      "length": 11,
+      "xor_key": 245,
+      "decoded": "[redacted]",
+      "sha256": "6a0860124733113a7a80bc8b899850bfa881adbf8e0e2aed883a7bd72f8f74d7"
+    },
+    {
+      "address": "0x5e5200",
+      "length": 27,
+      "xor_key": 232,
+      "decoded": "Failed to raise preset: %s",
+      "sha256": "4b8df94109709958afc3b2a77f7c9db1c1330186e4199d1e5bafa530e796efd9"
+    },
+    {
+      "address": "0x5e521b",
+      "length": 26,
+      "xor_key": 237,
+      "decoded": "Lowering top preset to %s",
+      "sha256": "7c7c872548999d754c9c093fdfbe3cb1da5acae92620093f1f629bc353f09edb"
+    },
+    {
+      "address": "0x5e5235",
+      "length": 27,
+      "xor_key": 189,
+      "decoded": "Restarting (%d of %d) - %s",
+      "sha256": "694471a9fccececadec132acd6c6ce92948005cb565c56c2f42aef85e69dbd9e"
+    },
+    {
+      "address": "0x5e5250",
+      "length": 9,
+      "xor_key": 67,
+      "decoded": "disabled",
+      "sha256": "b8a9229bf27a7a4a495c1c2a706c85f0b524535de86528d4fe0ee4846ac88393"
+    },
+    {
+      "address": "0x5e5259",
+      "length": 61,
+      "xor_key": 54,
+      "decoded": "Chain break detected, the current profile will be retuned %s",
+      "sha256": "3985a96dc2e7751c43940cfcedf15e0cb0cac774957fec1b21fda26b854b2748"
+    }
+  ],
+  "unchanged_files": {
+    "Makefile.am": "17d2fbde26b5e8cb614b61908b84d5937af48325",
+    "cgminer.c": "54739e4139294c526af0c73aa9a02ba9762ca4f2",
+    "integration/general_monitor_135.h": "56998462cbd559604a83f25edc1693501d050a91",
+    "integration/monitor_handlers_135.h": "593bbc343c1ff3812630e0d839cbc493f7febd83",
+    "integration/backend_shutdown_135.h": "30ba5a57e9dd8f900f2f0753040945d8694cb413",
+    "integration/gpio_power_135.h": "abf540a7462d434ef17572841b49bba263e36706",
+    "integration/backend_resume_135.h": "4ab5ce67c3f46278fe3d44c82c7ce30619dd73b2",
+    "tools/elf32.py": "57b0a77098e2125340a755e90bac194830f75203",
+    "tools/arm32_subset.py": "e18a97222c1a8406fd61d5baac9763c3166f7e4b",
+    "tools/arm32_difficulty_subset.py": "94b359f6e1e8d7e2c11e22d640e36a97e7c22b37",
+    "integration/tests/test_general_monitor_135.py": "5e8750922d63e738e505d81ac16697ff2d302056",
+    "integration/tests/test_monitor_handlers_135.py": "9094c6a5dcfe1dd4dc42d13f0a025318f7532b2a",
+    "integration/tests/test_monitor_handlers_135.c": "4d8c9b3c8e6e3c21b2aec91cb611dd749c1c7f82"
+  },
+  "source_fields": {
+    "event_record": "backend+0x10b4, event captured at entry",
+    "word_30": "distinct from general.mode at +0x50",
+    "text_3c": "profile selection argument",
+    "retry_limit_88": "signed int32",
+    "text_90": "pointer to shared prepare/resume slot; not a second field",
+    "byte_b0": "existing handlers.minimum_enabled_b0",
+    "byte_c8": "top-raise failure gate",
+    "byte_104": "retune gate"
+  },
+  "control_edges": {
+    "normal_return": "call 0x5fc54 then return",
+    "process_exit": "call 0x5f0fc then NONRETURNING 0x10110(0)",
+    "retune_event": 2008,
+    "description_bytes": 512,
+    "probe_words": 5
+  },
+  "boundaries": [
+    "49e94 event getter",
+    "49bd8 event description",
+    "82ee8/82d68 profile selection",
+    "4dedc top preset action",
+    "83080 profile probe and any allocated objects",
+    "94090 retune preparation",
+    "5f0fc teardown",
+    "fopen/fscanf/fprintf/fclose real filesystem effects",
+    "10110 actual process exit and any external supervisor restart",
+    "full native hardware driver and real thread concurrency"
+  ],
+  "scope": "isolated caller reconstruction; no new retry timing, autotune, hardware, native ABI or success stub"
+}

@@ -1,0 +1,125 @@
+{
+  "reference": "reference/cgminer.vendor.elf",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "base_commit": "890a3ce41208024e8dad494b88dbada00c0f18f4",
+  "base_tree": "8bb98a8e89f47e2b5a5d5198b91e2a0301af59c2",
+  "base_source": {
+    "path": "src/backend/base.c",
+    "length": 49360,
+    "git_blob": "9efbf51a213213d0fbbc2d94755cecb891f29760"
+  },
+  "ranges": [
+    {
+      "name": "pre-exit body and literal pool",
+      "start": "0x5f0fc",
+      "end_exclusive": "0x5fc54",
+      "sha256": "9fa53c8d279f843ae1814aabe3dd3866b0bd5000c415981e9fa25d7efafc828b"
+    },
+    {
+      "name": "power-stop body",
+      "start": "0x6b778",
+      "end_exclusive": "0x6b8d4",
+      "sha256": "8578d037ba6c0ac03d8fa9be8caf7259fdb96ee28b22b5db24fbf16fac9452ce"
+    },
+    {
+      "name": "common shutdown comparison",
+      "start": "0x5fc54",
+      "end_exclusive": "0x60730",
+      "sha256": "3238c9313a6402183d47543e81dd88b246d8f3281c47b9f2be21db5d222ea11b"
+    },
+    {
+      "name": "model accessors",
+      "start": "0xa71dc",
+      "end_exclusive": "0xa7218",
+      "sha256": "887925075d03bfba99cb6e02091fc5113b48ec6f2b71ec4c1e0750682a347a07"
+    },
+    {
+      "name": "parent stop policy",
+      "start": "0x5e92c",
+      "end_exclusive": "0x5f0fc",
+      "sha256": "c4a0be7b258b3f66b582f7140c79dfdc8844b8904a9a16893c35769e2c22d126"
+    },
+    {
+      "name": "nested counter writer",
+      "start": "0x5cea8",
+      "end_exclusive": "0x5cf34",
+      "sha256": "87123137f706572f2e29800bf898cfdbc2fb59c38fa5107cafac212c44f06d98"
+    }
+  ],
+  "literals": [
+    {
+      "address": "0x5e50dc",
+      "length": 7,
+      "xor_key": 173,
+      "decoded": "driver",
+      "sha256": "3b9a1fe3057c503f18531d92f63dc3198404974172fb44cb64dfb36984c39678"
+    },
+    {
+      "address": "0x5e50be",
+      "length": 30,
+      "xor_key": 245,
+      "decoded": "/tmp/build/src/backend/base.c",
+      "sha256": "a3922dfb59ced1364db6fd1b31bc23cc40b7976764ca96a9eb96e4e5cacad4a8"
+    },
+    {
+      "address": "0x5e50e3",
+      "length": 11,
+      "xor_key": 245,
+      "decoded": "[redacted]",
+      "sha256": "6a0860124733113a7a80bc8b899850bfa881adbf8e0e2aed883a7bd72f8f74d7"
+    },
+    {
+      "address": "0x5e5cf2",
+      "length": 24,
+      "xor_key": 112,
+      "decoded": "Shutting down the miner",
+      "sha256": "ff9d3710c8d4dfe8e4ece305d4f670c9325afaccbccddc7bb1c828c87297c3db"
+    }
+  ],
+  "unchanged_files": {
+    "Makefile.am": "17d2fbde26b5e8cb614b61908b84d5937af48325",
+    "cgminer.c": "54739e4139294c526af0c73aa9a02ba9762ca4f2",
+    "integration/backend_shutdown_135.h": "30ba5a57e9dd8f900f2f0753040945d8694cb413",
+    "integration/gpio_power_135.h": "abf540a7462d434ef17572841b49bba263e36706",
+    "integration/stop_policy_135.h": "e43e75a8921e28bf72e0b6d57754b07f9b4e9981",
+    "integration/monitor_handlers_135.h": "593bbc343c1ff3812630e0d839cbc493f7febd83",
+    "integration/general_monitor_135.h": "56998462cbd559604a83f25edc1693501d050a91",
+    "integration/tests/test_stop_policy_135.py": "b9e2f98f92e420338e64504f79328447ce00b4f0",
+    "integration/tests/test_stop_policy_135.c": "ac9d7e50368b880c905b2d25e0d11b7eb4331672",
+    "integration/tests/stop_policy_bridge_135.c": "6a86894433aba49fcc73f8561fd5bce294f8a667",
+    "integration/tests/test_backend_shutdown_135.py": "5587b7c68f6c29c232206485d8f5e8049ffad4f3",
+    "tools/arm32_freshness_subset.py": "1f6f58ad83ad26cce28036382977421764bb4582",
+    "tools/arm32_vfp_subset.py": "d1df89081dfa172ea41c84cae46e51ad099d74d8",
+    "tools/arm32_rx_subset.py": "175bfc14a4413f84895ed983a45289b4c426e588",
+    "tools/arm32_rebuild_subset.py": "37fc528e01f10754b18a43f1a1ddff32d445a5b4",
+    "tools/arm32_nonce_subset.py": "84e86cb15dcc9a45819ef8448f8c89077cbd7548",
+    "tools/arm32_difficulty_subset.py": "94b359f6e1e8d7e2c11e22d640e36a97e7c22b37",
+    "tools/arm32_verify_subset.py": "284fd7169697e3643d963300063eb7a156c57fb5",
+    "tools/arm32_subset.py": "e18a97222c1a8406fd61d5baac9763c3166f7e4b",
+    "tools/elf32.py": "57b0a77098e2125340a755e90bac194830f75203"
+  },
+  "thread_handle_offsets": [
+    "0x1044",
+    "0x1014",
+    "0x100c",
+    "0xffc",
+    "0x101c",
+    "0x1004",
+    "0x102c",
+    "0xff4",
+    "0x103c"
+  ],
+  "not_processed_slot": "0x1050",
+  "boundaries": [
+    "real trylock/unlock/sleep, self/detach/cancel/join",
+    "8291c/860b8 subsystem state",
+    "a6080/663cc/287a4 teardown",
+    "58d08 chain cleanup",
+    "indirect backend+19c and 108b40 lower cleanup",
+    "5a9fc chain cleanup when board+4f is set",
+    "102b04 physical PSU off and 55370 chain reset",
+    "f98b8(2) final subsystem operation",
+    "10110 process exit, libc exit handlers and external supervisor"
+  ],
+  "scope": "Full ordinary pre-exit caller flow and nested recovered power-stop; original mutable field views. No hardware I/O, real threads, filesystem, host process exit or device_drv integration."
+}

@@ -1,0 +1,41 @@
+{
+  "base_commit": "b1ec979c801dc0736a1712763c838b6d9749de14",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "entry": "0x65fcc",
+  "end_exclusive": "0x66210",
+  "body_sha256": "6bde46530bedbe677dfd09103f15b417eebab4efbb51589609db605928da6ebc",
+  "literal_pool_sha256": "cdc5a5b3a7cafc45d9ebc2fc6638b3f25b0480a8dfbe15a50ff61aab0c94c872",
+  "read_only_dependencies": {
+    "src/backend/base.c": "9dd2d25122e3cd7a35f3ab4f0f709ce07422d1a7",
+    "integration/frequency_fall_135.h": "28128db6a855e2936355ddb1c3206267836ed5db",
+    "integration/monitor_handlers_135.h": "593bbc343c1ff3812630e0d839cbc493f7febd83",
+    "integration/general_monitor_135.h": "56998462cbd559604a83f25edc1693501d050a91",
+    "cgminer.c": "54739e4139294c526af0c73aa9a02ba9762ca4f2",
+    "Makefile.am": "17d2fbde26b5e8cb614b61908b84d5937af48325",
+    "tools/arm32_subset.py": "e18a97222c1a8406fd61d5baac9763c3166f7e4b",
+    "tools/arm32_difficulty_subset.py": "94b359f6e1e8d7e2c11e22d640e36a97e7c22b37"
+  },
+  "decoded_literals": {
+    "0x5e6328": {
+      "length": 14,
+      "key": 49,
+      "text": "fall_freq@btm\u0000"
+    },
+    "0x5e635e": {
+      "length": 32,
+      "key": 149,
+      "text": "Failed to set minimum frequency\u0000"
+    }
+  },
+  "new_opcode_scope": {
+    "pc": "0x6603c",
+    "word": "0xe750f014",
+    "meaning": "SMMUL r0,r4,r0, signed product high word"
+  },
+  "bounds": {
+    "real_threads": false,
+    "hardware_io": false,
+    "production_linkage_changed": false,
+    "parent_partial_create_lifetime_fixed": false
+  }
+}

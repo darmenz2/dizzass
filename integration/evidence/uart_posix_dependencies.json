@@ -1,0 +1,27 @@
+{
+  "base_commit": "12446bed78a060a49364a80bcbfb4340b13f4f27",
+  "dependency_pr": 5,
+  "dependency_commit": "2c8ed9672c711ad643c56d22b235d799cee28a09",
+  "files": [
+    {
+      "path": "integration/native/uart_safe.c",
+      "blob": "092e26250da9c3ae01d276d0cf247c76085e709a",
+      "sha256": "a33e6cf131eb8719f961b58ce986662ec4e6b0e52ce7537243c60bd53ffed00b"
+    },
+    {
+      "path": "integration/native/uart_safe.h",
+      "blob": "659faedc44a31e15d21c2b6a9f004417f853cc32",
+      "sha256": "5666f8eb17e3ef43e4cae12399988227b64605ae215f1f71f6c915e3f5e254b9"
+    },
+    {
+      "path": "integration/tests/test_uart_safe.c",
+      "blob": "f73a1909d322e755326b0d0a437eb9de653e1196",
+      "sha256": "fa1765be3b3b3e22e9376d493faba5da91a33eea5fcab6e280ff9c3fde20f69b"
+    },
+    {
+      "path": "integration/tests/test_uart_safe_negative.py",
+      "blob": "b343b689434e10bf398b0db4a9ec97c089894a7a",
+      "sha256": "5a8bc102c241750b1f10a6de42db26bae71ccddc66f40e315ae4a706fe589e73"
+    }
+  ]
+}

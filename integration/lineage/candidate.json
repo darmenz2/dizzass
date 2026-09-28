@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "firmware_component": "cgminer_btm",
+  "firmware_marker": "9f9b64d5",
+  "firmware_sha256": "20fabdd66255889315e61ae2a33ff2e4623566ca430f1cb8c90d9b938dc7b43c",
+  "components_sha256": "aa3c60ea1f40c5461ac6a7ab254212b72f8b3e65c4615cb32c72eda1462635dc",
+  "candidate": {
+    "repository": "ckolivas/cgminer",
+    "commit": "9f9b64d5abddad481c7a64c9c5668e2da9d882ef",
+    "tree": "121fe8d2bb9476f989e0372a5a4ea04c48ce813e",
+    "parents": [
+      "31047bd95c0f794fc7ad4e803a86e7e404e0ca75",
+      "9de831350aa5d439082163512bcef8b5c4daec98"
+    ],
+    "version": "4.10.0",
+    "blobs": {
+      "cgminer.c": "e5d5501d4fc9a021702f846869338803c02cd333",
+      "configure.ac": "51dc23c110a08e9c60f2d70f209711955a8709bb"
+    }
+  },
+  "baseline": {
+    "repository": "ckolivas/cgminer",
+    "commit": "b8491c66e7e22f23a9edf095dd1337ee581e88bd"
+  },
+  "libbitmain": {
+    "marker": "1a52239",
+    "full_commit": null,
+    "public_repository": null
+  },
+  "qualification": "Public candidate matching the firmware short marker. Vendor binary ancestry and exact private modifications are not proven."
+}

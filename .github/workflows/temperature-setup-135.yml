@@ -1,0 +1,61 @@
+name: Check A-07 original temperature setup coordinator
+on:
+  pull_request:
+    branches: [work/reconstruction]
+    paths:
+      - src/backend/temperature-setup.c
+      - src/backend/base.c
+      - integration/*135.h
+      - integration/temperature-setup-135.mk
+      - integration/tests/*temperature_setup*135*
+      - integration/evidence/temperature_setup_135.json
+      - tools/arm32*.py
+      - tools/elf32.py
+      - reference/cgminer.vendor.elf
+      - .github/workflows/temperature-setup-135.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: temperature-setup135-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  setup135:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    strategy:
+      matrix:
+        cc: [gcc, clang]
+    steps:
+      - name: Fetch exact public source without credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/dizzass-setup135-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-${{ matrix.cc }}"
+          mkdir "$root"
+          cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          git fetch --depth=1 --no-tags origin "$GITHUB_SHA"
+          git checkout -q --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Original coordinator and existing chain decision
+        run: |
+          cd "$SOURCE_ROOT"
+          make -f integration/temperature-setup-135.mk CC=${{ matrix.cc }} dizzass-setup135-original dizzass-setup135-test dizzass-setup135-negative
+      - name: Native memory checks and bounded resume routing
+        run: |
+          cd "$SOURCE_ROOT"
+          make -f integration/temperature-setup-135.mk CC=${{ matrix.cc }} SANITIZE=1 dizzass-setup135-test
+      - name: Unchanged handler and resume regressions
+        run: |
+          cd "$SOURCE_ROOT"
+          make -f integration/monitor-handlers-135.mk CC=${{ matrix.cc }} dizzass-handlers135-original dizzass-handlers135-test
+          make -f integration/backend-resume-135.mk CC=${{ matrix.cc }} dizzass-resume135-original dizzass-resume135-test
+      - name: Static analysis and immutable dependencies
+        run: |
+          cd "$SOURCE_ROOT"
+          clang --analyze -I. -std=c11 -DVN135_GENERAL_MONITOR_135 -DVN135_MONITOR_HANDLERS_135 -Xanalyzer -analyzer-output=text src/backend/temperature-setup.c
+          python3 integration/tests/check_temperature_setup_evidence_135.py

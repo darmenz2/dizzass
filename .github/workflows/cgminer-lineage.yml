@@ -1,0 +1,80 @@
+name: Verify and preserve public cgminer candidate
+
+on:
+  push:
+    branches: [work/reconstruction]
+    paths:
+      - integration/lineage/**
+      - .github/workflows/cgminer-lineage.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cgminer-lineage-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  lineage:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 12
+    permissions:
+      contents: write
+    steps:
+      - name: Fetch exact project scripts without retaining credentials
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/dizzass-lineage-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$root"
+          git -C "$root" init -q
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -C "$root" -c "http.extraheader=AUTHORIZATION: basic $auth" fetch --depth=1 --no-tags "https://github.com/$GITHUB_REPOSITORY.git" "$GITHUB_SHA"
+          git -C "$root" checkout -q --detach FETCH_HEAD
+          test "$(git -C "$root" rev-parse HEAD)" = "$GITHUB_SHA"
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Test source comparison utility
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT/integration/lineage"
+          python3 -m unittest -v test_audit
+      - name: Fetch public candidate and baseline with complete history
+        shell: bash
+        run: |
+          set -euo pipefail
+          objects="$RUNNER_TEMP/cgminer-public-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT.git"
+          git init --bare -q "$objects"
+          git -C "$objects" fetch --no-tags https://github.com/ckolivas/cgminer.git 9f9b64d5abddad481c7a64c9c5668e2da9d882ef:refs/heads/candidate b8491c66e7e22f23a9edf095dd1337ee581e88bd:refs/heads/baseline
+          test "$(git -C "$objects" rev-parse --is-shallow-repository)" = false
+          printf 'PUBLIC_OBJECTS=%s\n' "$objects" >> "$GITHUB_ENV"
+      - name: Verify pinned objects and compare native source functions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "$SOURCE_ROOT/integration/lineage/audit.py" --repo "$PUBLIC_OBJECTS" --metadata "$SOURCE_ROOT/integration/lineage/candidate.json" --output "$RUNNER_TEMP/lineage-audit.json"
+          printf '%s\n' 'Candidate code was read as Git data only; it was not built or executed.'
+      - name: Preserve candidate in a separate branch without rewriting development
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          ref=refs/heads/upstream/candidate-9f9b64d5
+          candidate=9f9b64d5abddad481c7a64c9c5668e2da9d882ef
+          url="https://github.com/$GITHUB_REPOSITORY.git"
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          existing=$(git -C "$PUBLIC_OBJECTS" -c "http.extraheader=AUTHORIZATION: basic $auth" ls-remote "$url" "$ref" | cut -f1)
+          if [ -n "$existing" ]; then
+            test "$existing" = "$candidate" || { echo 'Refusing to replace a different candidate branch'; exit 1; }
+          else
+            git -C "$PUBLIC_OBJECTS" -c "http.extraheader=AUTHORIZATION: basic $auth" push "$url" "$candidate:$ref"
+          fi
+          actual=$(git -C "$PUBLIC_OBJECTS" -c "http.extraheader=AUTHORIZATION: basic $auth" ls-remote "$url" "$ref" | cut -f1)
+          test "$actual" = "$candidate"
+          echo "LINEAGE_CANDIDATE_PRESERVED $actual $ref"
+          echo 'No force-push, merge, rebase or production-source replacement performed.'

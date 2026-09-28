@@ -1,0 +1,107 @@
+{
+  "base_commit": "975f609f7e34adedb5e80a055c97333f0706fd8e",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "whole_entries": {
+    "sensor_reset": "0xb71a8",
+    "accept_sample": "0xb71e4",
+    "initialize_direct_sensor": "0xb7798",
+    "single_sensor_freshness": "0xb76d8",
+    "group_freshness": "0xb7400",
+    "sensor_timeout_decision": "0x591c8",
+    "chain_overheat_decision": "0x58e68"
+  },
+  "bounded_paths": {
+    "reader": "entry 0xb5f40; access_kind == 1, remote_enabled == 0 only; not the full reader"
+  },
+  "confirmed_source": "/tmp/build/src/backend/temp.c",
+  "unknown_source_filename": [
+    "0x58e68",
+    "0x591c8"
+  ],
+  "ranges": [
+    {
+      "name": "read_local_domain_and_unrecovered_alternate_routes",
+      "start": "0xb5f40",
+      "end_exclusive": "0xb71a8",
+      "sha256": "5317219cf1d88c90bf8905835b8763df50848836b6c30b08a0687d79ecca5e39"
+    },
+    {
+      "name": "reset",
+      "start": "0xb71a8",
+      "end_exclusive": "0xb71e4",
+      "sha256": "09ce67738a5107818dacb586b3117cbba6320bdacfc123f1d29bc789b7ff7d57"
+    },
+    {
+      "name": "accept_and_literals",
+      "start": "0xb71e4",
+      "end_exclusive": "0xb7400",
+      "sha256": "dc13a1a7650b7eb7c70b3babb60eaf7cdd50ebe3beffbf5344d19d6eb341f6d8"
+    },
+    {
+      "name": "group_fresh_and_literals",
+      "start": "0xb7400",
+      "end_exclusive": "0xb76d8",
+      "sha256": "9bd31e8bf5a9bad718e39d4a31f3eb5f5d1c9c77eb307353c17b7138b3b1a11d"
+    },
+    {
+      "name": "fresh_and_literals",
+      "start": "0xb76d8",
+      "end_exclusive": "0xb7798",
+      "sha256": "0a9407363d7557709a3b37dbc1b44a50496d55e311aff65a8c21322650e50d74"
+    },
+    {
+      "name": "initialize_and_literals",
+      "start": "0xb7798",
+      "end_exclusive": "0xb80a8",
+      "sha256": "c8bdc420e0d0986ded4134da9e28fe350d6429a339344b32eda8e76bd330a550"
+    },
+    {
+      "name": "source_string_constructor_and_literals",
+      "start": "0xb80a8",
+      "end_exclusive": "0xb86d0",
+      "sha256": "52b6b123ba5d9747c123a1149fbcb7b1b7b3483a3dbfa627ea2e9ed352dfc336"
+    },
+    {
+      "name": "overheat_and_literals",
+      "start": "0x58e68",
+      "end_exclusive": "0x591c8",
+      "sha256": "a89120ea2ef296cca050b8992782794e6ffe46f19e3fabdf7c9188500362e05e"
+    },
+    {
+      "name": "timeouts_and_literals",
+      "start": "0x591c8",
+      "end_exclusive": "0x594f8",
+      "sha256": "a5c9cb7659c529bef4573e4ae39a0d9bab0dfd289b34083f0ac43ef8d4658929"
+    },
+    {
+      "name": "temperature_description_getter",
+      "start": "0xa720c",
+      "end_exclusive": "0xa7218",
+      "sha256": "75cf4ac24b47097c94faca34d348431b77cdb0c00154c46e861f1b6fba5d93f4"
+    },
+    {
+      "name": "chip_selector_helper",
+      "start": "0x6687c",
+      "end_exclusive": "0x668a8",
+      "sha256": "f0609f7a832c2996e1aa4cb9a9af1f874e19858db88658788adbf4e1e9f7f92a"
+    }
+  ],
+  "external_boundaries": [
+    "bus configuration and register read/write",
+    "chain-stop body",
+    "time, mutex and diagnostics",
+    "overall device driver and physical sensor mapping"
+  ],
+  "unrecovered": [
+    "remote-channel and chip-tunnel reading routes",
+    "physical sensor transport",
+    "global monitoring workers",
+    "complete emergency hardware shutdown",
+    "safe hardware job-slot reuse"
+  ],
+  "domain": "finite nonoverflowing binary64 time arithmetic, ordinary rounding, valid objects and array capacities, stable profile/counts/pointers, serialized lifetime; 32-bit integer wrapping retained",
+  "new_local_instruction_model": "A32 SXTB, byte rotations; 1024 arithmetic fixtures",
+  "hardware_io": false,
+  "firmware_process": false,
+  "production_linkage_changed": false
+}

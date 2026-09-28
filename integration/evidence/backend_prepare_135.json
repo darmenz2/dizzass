@@ -1,0 +1,189 @@
+{
+  "schema": 1,
+  "base_commit": "4a7e00422d5689fd5088521ea5d31a359ae24db9",
+  "reference_elf": "reference/cgminer.vendor.elf",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "ranges": [
+    {
+      "name": "prepare",
+      "start": "0x7409c",
+      "end_exclusive": "0x74acc",
+      "sha256": "1b7eb49e0e5ddcde4d17ebbfc29977968049cc1827449b70c3692d1ec584b21d"
+    },
+    {
+      "name": "fan_poll",
+      "start": "0x7755c",
+      "end_exclusive": "0x776d0",
+      "sha256": "0b29e4d41ba11ff5e52c88a7d44b63b6481db2ed1209862b8660f7bdd01ed43d"
+    },
+    {
+      "name": "fan_getter",
+      "start": "0xa71dc",
+      "end_exclusive": "0xa71e8",
+      "sha256": "7cde20106a077963e93ad4702b0946a4f870b63d3dafb6c817ec32e84cb1c553"
+    },
+    {
+      "name": "store_mode",
+      "start": "0xfe114",
+      "end_exclusive": "0xfe190",
+      "sha256": "98a726bca50381269d8fc8ba2f31a73110a1bfc54c3667c6d5ddc2d4b5a69cfd"
+    }
+  ],
+  "data": [
+    {
+      "name": "prepare_literals",
+      "address": "0x74acc",
+      "size": 320,
+      "sha256": "d567afb8cadc3975734df2148a180040ac9b109635bf0138153364adf00d6c76"
+    }
+  ],
+  "worker": "0x7bfc0",
+  "policy_changes": [],
+  "not_recovered": [
+    "bodies of config/LED/fan init/worker",
+    "physical GPIO and sensors",
+    "physical PSU acceptance",
+    "full startup",
+    "safe job slot reuse"
+  ],
+  "decoded_literals": [
+    {
+      "address": "0x5e5089",
+      "xor": 47,
+      "text": "/config/stopped",
+      "sha256": "76c97123fa154c11bac8ca58f1f599a2280d3981f28674799ab274090178ad97"
+    },
+    {
+      "address": "0x5e5099",
+      "xor": 44,
+      "text": "/tmp/stopped",
+      "sha256": "8d31b454def08521102031da3665c35b91f32b46bbf419334b4c079393b9a45f"
+    },
+    {
+      "address": "0x5e6cf5",
+      "xor": 35,
+      "text": "/config/serial",
+      "sha256": "95ba7e78937194053517bb78d521d071f7879b91816e9584500249f3a4e9b0ff"
+    },
+    {
+      "address": "0x5e6d04",
+      "xor": 178,
+      "text": "r",
+      "sha256": "688a9dcc1f1fe35203303edf13cbc56d30bd4708ca720b96a8d188abd3fb050d"
+    },
+    {
+      "address": "0x5e6d06",
+      "xor": 9,
+      "text": "%255s",
+      "sha256": "56dbaa60b267643c599600ba9cffaae09d4436d0636d5d0c640d7005238ee76c"
+    },
+    {
+      "address": "0x5e5f20",
+      "xor": 227,
+      "text": "Failed to initialize the leds",
+      "sha256": "a57339c40ec4b389873434d2519d06c2d0b34961bacf4b3450de85c7f82d2e75"
+    },
+    {
+      "address": "0x5e5f3e",
+      "xor": 2,
+      "text": "Failed to initialize the fans",
+      "sha256": "4e3c45d7098d2f47939bee5dca351a22d803e9061b4dfa66dc5c239c0748c08d"
+    },
+    {
+      "address": "0x5e6d1d",
+      "xor": 236,
+      "text": "Checking fans",
+      "sha256": "3462c08a8e64a98c555aff71717a73734bed9143dd47109ed1572584852ec388"
+    },
+    {
+      "address": "0x5e6d2b",
+      "xor": 40,
+      "text": "lost",
+      "sha256": "2c777f270e508cb89c5a11ed725d34419850a0e1265bf8697fc1e13ba227f14f"
+    },
+    {
+      "address": "0x5e6d30",
+      "xor": 99,
+      "text": "ok",
+      "sha256": "bca4a57647d2986501bd623e44b02e7f34eaa6550007d6907f8c808cd979fb28"
+    },
+    {
+      "address": "0x5e6d33",
+      "xor": 79,
+      "text": "fan#%d - %s",
+      "sha256": "9c598e263025a797f966a4f4deafb26f1a3dad556212072513fbbf1148e2f7af"
+    },
+    {
+      "address": "0x5e6d3f",
+      "xor": 60,
+      "text": "Only %d fans of %d detected",
+      "sha256": "23681dea7246dde5f196d2faae78aa4e811fbfd78347c094089b1ec179f9c917"
+    },
+    {
+      "address": "0x5e5f5c",
+      "xor": 62,
+      "text": "Failed to detect all the fans",
+      "sha256": "2c67fc79e2162eec9313637815ee09569dbf1aed1cdc226b81c6d8e13654c2c2"
+    }
+  ],
+  "literal_scope": "XOR byte identity validated; string constructors are not executed in this new suite.",
+  "direct_calls": [
+    {"pc":"0x74124","target":"0x4f2d0"},
+    {"pc":"0x741a0","target":"0x4f2d0"},
+    {"pc":"0x741e4","target":"0xfa0c4"},
+    {"pc":"0x741fc","target":"0xb86d0"},
+    {"pc":"0x74230","target":"0x59d97c"},
+    {"pc":"0x74244","target":"0x5a38a0"},
+    {"pc":"0x74250","target":"0x82d60"},
+    {"pc":"0x74254","target":"0xfe114"},
+    {"pc":"0x7426c","target":"0x100fc4"},
+    {"pc":"0x742ac","target":"0xfa0c4"},
+    {"pc":"0x742c0","target":"0x49c98"},
+    {"pc":"0x742c8","target":"0x5e92c"},
+    {"pc":"0x7430c","target":"0xb9148"},
+    {"pc":"0x74368","target":"0x59e5b0"},
+    {"pc":"0x74384","target":"0x59e958"},
+    {"pc":"0x743c4","target":"0xfa0c4"},
+    {"pc":"0x743d0","target":"0x59e084"},
+    {"pc":"0x743fc","target":"0xf96a0"},
+    {"pc":"0x74428","target":"0xf96a0"},
+    {"pc":"0x744b0","target":"0xfa0c4"},
+    {"pc":"0x744c4","target":"0x49c98"},
+    {"pc":"0x744cc","target":"0x5e92c"},
+    {"pc":"0x74524","target":"0xfa0c4"},
+    {"pc":"0x74538","target":"0x49c98"},
+    {"pc":"0x74540","target":"0x5e92c"},
+    {"pc":"0x7454c","target":"0xb4c58"},
+    {"pc":"0x7457c","target":"0xb4c58"},
+    {"pc":"0x745c4","target":"0xa71dc"},
+    {"pc":"0x745d8","target":"0xf8b60"},
+    {"pc":"0x745e4","target":"0xf8a30"},
+    {"pc":"0x7461c","target":"0xfa0c4"},
+    {"pc":"0x74634","target":"0x7755c"},
+    {"pc":"0x7463c","target":"0x10ef3c"},
+    {"pc":"0x746b4","target":"0x5a6108"},
+    {"pc":"0x746c0","target":"0x5a66c4"},
+    {"pc":"0x7471c","target":"0xfa0c4"},
+    {"pc":"0x747dc","target":"0xfa0c4"},
+    {"pc":"0x747f0","target":"0x49c98"},
+    {"pc":"0x747f8","target":"0x5e92c"},
+    {"pc":"0x74850","target":"0xfa0c4"},
+    {"pc":"0x74864","target":"0x49c98"},
+    {"pc":"0x7486c","target":"0x5e92c"},
+    {"pc":"0x74874","target":"0xa1fe0"},
+    {"pc":"0x748a0","target":"0xa1fe0"},
+    {"pc":"0x748e4","target":"0xfa0c4"},
+    {"pc":"0x74914","target":"0x5a55cc"},
+    {"pc":"0x74954","target":"0xfa0c4"},
+    {"pc":"0x74968","target":"0x49c98"},
+    {"pc":"0x74970","target":"0x5e92c"},
+    {"pc":"0x749b0","target":"0xfa0c4"},
+    {"pc":"0x749cc","target":"0x49c98"},
+    {"pc":"0x749ec","target":"0xfa0c4"},
+    {"pc":"0x749f8","target":"0x5e92c"},
+    {"pc":"0x74a6c","target":"0xfa0c4"},
+    {"pc":"0x74a88","target":"0x49c98"},
+    {"pc":"0x74aa8","target":"0xfa0c4"},
+    {"pc":"0x74ab4","target":"0x5e92c"}
+  ]
+}

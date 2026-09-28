@@ -1,0 +1,67 @@
+{
+  "base_commit": "174fcc64acd17878b4fd6dfba73b33a6c2dacf42",
+  "base_tree": "e9031d8f9b6112d2486756fb3130252d7fb426ef",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "ranges": [
+    {
+      "start": "0x57a10",
+      "end": "0x57d34",
+      "sha256": "021236cea1aae410329424288663d4d42b3955636fd6ba44b1534e2f85fa8e0d"
+    },
+    {
+      "start": "0x57d34",
+      "end": "0x57d68",
+      "sha256": "610d31de67019933f531b7a9b28e34910d81382afb22f12a246831045b3353bc"
+    },
+    {
+      "start": "0xd21dc",
+      "end": "0xd24ec",
+      "sha256": "db8b6d91f89e11850aa3bcec8c9b8a77e488d1dca606d059687fe7eb36bb1da4"
+    },
+    {
+      "start": "0xe1450",
+      "end": "0xe16b8",
+      "sha256": "d1e526e4c773e51a22151a4082d3800142244982a9f7bfbc15ede6081b21559f"
+    }
+  ],
+  "immutable": {
+    "src/backend/base.c": "9dd2d25122e3cd7a35f3ab4f0f709ce07422d1a7",
+    "src/backend/chain.c": "9448f6acf934566577c6f9248841a78274931d04",
+    "src/backend/frequency-worker.c": "d980efc0f798a9eb971b36045308f54e42ac1d8d",
+    "integration/general_monitor_135.h": "56998462cbd559604a83f25edc1693501d050a91",
+    "integration/thermal_routes_135.h": "a890810c4d62bb7041569b55fdbf3471a00b8de8",
+    "integration/frequency_worker_135.h": "c02e560e670a36781d164385bf52cbe99391d519",
+    "tools/arm32_subset.py": "e18a97222c1a8406fd61d5baac9763c3166f7e4b",
+    "tools/arm32_vfp_subset.py": "d1df89081dfa172ea41c84cae46e51ad099d74d8",
+    "tools/arm32_difficulty_subset.py": "94b359f6e1e8d7e2c11e22d640e36a97e7c22b37",
+    "tools/arm32_verify_subset.py": "284fd7169697e3643d963300063eb7a156c57fb5",
+    "tools/arm32_rebuild_subset.py": "37fc528e01f10754b18a43f1a1ddff32d445a5b4",
+    "cgminer.c": "54739e4139294c526af0c73aa9a02ba9762ca4f2",
+    "Makefile.am": "17d2fbde26b5e8cb614b61908b84d5937af48325"
+  },
+  "literals": [
+    {
+      "address": "0x5e4267",
+      "xor": 183,
+      "text": "/tmp/build/src/backend/chain.c"
+    },
+    {
+      "address": "0x5e47ef",
+      "xor": 160,
+      "text": "chain#%d - failed to set freq to %.02f Mhz"
+    },
+    {
+      "address": "0x5e481a",
+      "xor": 144,
+      "text": "chain#%d - failed to set pulse width"
+    }
+  ],
+  "bounds": {
+    "finite_frequency_only": true,
+    "nonnegative_chip_count": true,
+    "serialized_callbacks": true,
+    "physical_IO": false,
+    "vendor_ABI": false,
+    "parent_argument_lifetime_fixed": false
+  }
+}

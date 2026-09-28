@@ -1,0 +1,73 @@
+name: Check original 1.3.5 frequency fall dispatch
+on:
+  push:
+    branches: [work/reconstruction]
+    paths:
+      - src/backend/base.c
+      - src/backend/volt-ctrl.c
+      - src/frontend/rescue.c
+      - integration/*135.h
+      - integration/frequency-fall-135.mk
+      - integration/tests/*frequency_fall*135*
+      - integration/tests/test_mining_stop_135.c
+      - integration/tests/test_mining_stop_135.py
+      - integration/tests/test_exit_cleanup_135.c
+      - integration/tests/stop_policy_bridge_135.c
+      - integration/evidence/frequency_fall_135.json
+      - reference/cgminer.vendor.elf
+      - tools/arm32*.py
+      - tools/elf32.py
+      - .github/workflows/frequency-fall-135.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: frequency-fall135-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  fall135:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    strategy:
+      matrix:
+        cc: [gcc, clang]
+    steps:
+      - name: Fetch exact source without persistent credentials
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/dizzass-fall135-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-${{ matrix.cc }}"
+          mkdir "$root"
+          cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c "http.extraheader=AUTHORIZATION: basic $auth" fetch --depth=1 --no-tags origin "$GITHUB_SHA"
+          git checkout -q --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Original dispatch nested mining stop native composition and negative controls
+        run: |
+          cd "$SOURCE_ROOT"
+          make -f integration/frequency-fall-135.mk CC=${{ matrix.cc }} dizzass-fall135-original dizzass-fall135-test dizzass-fall135-negative
+      - name: Native guarded allocation with address and undefined behavior sanitizers
+        run: |
+          cd "$SOURCE_ROOT"
+          make -f integration/frequency-fall-135.mk CC=${{ matrix.cc }} SANITIZE=1 dizzass-fall135-test
+      - name: Previous mining voltage rescue cleanup and policy regressions
+        run: |
+          cd "$SOURCE_ROOT"
+          make -f integration/mining-stop-135.mk CC=${{ matrix.cc }} dizzass-mining135-original dizzass-mining135-test
+          make -f integration/voltage-stop-135.mk CC=${{ matrix.cc }} dizzass-voltage135-original dizzass-voltage135-test
+          make -f integration/rescue-stop-135.mk CC=${{ matrix.cc }} dizzass-rescue135-original dizzass-rescue135-test
+          make -f integration/exit-cleanup-135.mk CC=${{ matrix.cc }} dizzass-exit135-original dizzass-exit135-test
+          make -f integration/stop-policy-135.mk CC=${{ matrix.cc }} dizzass-stop135-original dizzass-stop135-test
+      - name: Static analysis and immutable production boundary
+        run: |
+          cd "$SOURCE_ROOT"
+          clang --analyze -I. -std=c11 -DVN135_GENERAL_MONITOR_135 -DVN135_FREQUENCY_FALL_135 -Xanalyzer -analyzer-output=text src/backend/base.c
+          python3 integration/tests/check_frequency_fall_evidence_135.py
+          printf '%s\n' 'Offline dispatcher only; 65fcc worker, thread lifetime, live frequency changes and hardware stop are not accepted.'

@@ -1,0 +1,81 @@
+name: Check SHA256 work route and TX88 preparation
+
+on:
+  push:
+    branches: [work/reconstruction]
+    paths:
+      - integration/**
+      - .github/workflows/work-route.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: work-route-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  work-route:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      - name: Fetch exact source without persisting credentials
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/dizzass-route-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$root"
+          cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c "http.extraheader=AUTHORIZATION: basic $auth" fetch --depth=1 --no-tags origin "$GITHUB_SHA"
+          git checkout -q --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y build-essential autoconf automake libtool pkg-config libcurl4-openssl-dev libusb-1.0-0-dev libudev-dev zlib1g-dev python3 clang
+      - name: Build unchanged native core
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          test "$(git hash-object Makefile.am)" = 17d2fbde26b5e8cb614b61908b84d5937af48325
+          test "$(git hash-object cgminer.c)" = 54739e4139294c526af0c73aa9a02ba9762ca4f2
+          autoreconf -fi
+          ./configure --enable-icarus --disable-curses CFLAGS='-O1 -g -fcommon -ffunction-sections -fdata-sections'
+          make -j2
+          ./cgminer --version
+      - name: Original algorithm dispatch, worker entries, TX88 and native registry
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f Makefile -f integration/work-route.mk dizzass-work-route-original dizzass-work-route-bounds dizzass-work-route-native
+      - name: Native lifetime and pure framing with ASan and UBSan
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f Makefile -f integration/work-route.mk SANITIZE=1 dizzass-work-route-bounds dizzass-work-route-native
+      - name: Repeat new objects and original comparisons with Clang
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f Makefile -f integration/work-route.mk CC=clang DIZZASS_ROUTE_DIR=build/work-route-clang DIZZASS_JOBS_DIR=build/route-jobs-clang DIZZASS_NONCE_DIR=build/route-nonce-clang dizzass-work-route-original dizzass-work-route-bounds dizzass-work-route-native
+      - name: Keep hardware and historical core outside production
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -s -f Makefile -f integration/native-check.mk dizzass-core-sources > "$RUNNER_TEMP/route-sources.txt"
+          nm --defined-only cgminer > "$RUNNER_TEMP/route-symbols.txt"
+          python3 integration/check_native_core.py --sources "$RUNNER_TEMP/route-sources.txt" --symbols "$RUNNER_TEMP/route-symbols.txt"
+          printf '%s\n' 'Offline routing/preparation only. No physical detector, UART write, slot reuse or live pool. ASan/UBSan and Clang cover new units, registry/adapter and included core; not all prebuilt dependencies.'

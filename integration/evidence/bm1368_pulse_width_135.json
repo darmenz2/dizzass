@@ -1,0 +1,115 @@
+{
+  "base_commit": "6ba87a19d83d024453d725aab91c071cbacdf274",
+  "base_tree": "d7985e09361cf61bfd741a925c32ec362295923b",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "source_vendor_module": "libbitmain/src/chip/chip1368.c",
+  "ranges": [
+    {
+      "start": "0xe34cc",
+      "end": "0xe35b4",
+      "sha256": "592a6ee272182eec05eb000ba9bb65f1e0de4fa6498ccab302f1ac9ef8328401"
+    },
+    {
+      "start": "0xe4a74",
+      "end": "0xe4c04",
+      "sha256": "08d1b07979a62ae97d7023382859e8a3e6f1d3f486b354184af3725c186ab1c2"
+    },
+    {
+      "start": "0xd26ac",
+      "end": "0xd275c",
+      "sha256": "a08835c2e018c572ff272d52000796d6efbc2f4af086242b09bae23b43216b9f"
+    },
+    {
+      "start": "0x117f7c",
+      "end": "0x118184",
+      "sha256": "a6adc583b51eb3d374867436e4814239f7ccd7fe91e7185111a39971b36c5182"
+    },
+    {
+      "start": "0x10e6c0",
+      "end": "0x10e938",
+      "sha256": "1faefeb1f0743139f9992f6c4410f70aae515c158395db435ba071782e990b78"
+    }
+  ],
+  "strings": [
+    {
+      "address": "0x5eb3e7",
+      "length": 42,
+      "xor_key": 216,
+      "text": "/tmp/build/libbitmain/src/chip/chip1368.c"
+    },
+    {
+      "address": "0x5eb8b0",
+      "length": 39,
+      "xor_key": 103,
+      "text": "chain#%d - failed to send core command"
+    },
+    {
+      "address": "0x5eb4ba",
+      "length": 42,
+      "xor_key": 216,
+      "text": "chain#%d - failed to set CLOCK_DELAY_CTRL"
+    }
+  ],
+  "immutable": {
+    "AGENTS.md": "c9d99ca8e95e34f3644fb37e2fdeea359e61ec3d",
+    "cgminer.c": "54739e4139294c526af0c73aa9a02ba9762ca4f2",
+    "Makefile.am": "17d2fbde26b5e8cb614b61908b84d5937af48325",
+    "driver-bitmain.c": "9e2bb0251f30148e158978227eb224391384985d",
+    "src/backend/base.c": "9dd2d25122e3cd7a35f3ab4f0f709ce07422d1a7",
+    "src/backend/chain.c": "9448f6acf934566577c6f9248841a78274931d04",
+    "src/backend/chain-frequency.c": "3a0dffcc3135aa9fdd3417806d0f033d448677e3",
+    "src/backend/frequency-worker.c": "d980efc0f798a9eb971b36045308f54e42ac1d8d",
+    "libbitmain/src/chip/chip1368.c": "c64374454e6e458ec1a175f21f03af141e29a3aa",
+    "libbitmain/src/chip/chip1368-frequency.c": "57c6905a31980629c698ade20062e23362e2b355",
+    "libbitmain/src/chip/chip1368-register-write.c": "5979c0c7efdbd575b8820674c9099e3aff4721c1",
+    "libbitmain/src/transport-dispatch.c": "8ceb8405390e3eaf9f7b34480eb3cdd040a3b0ef",
+    "libbitmain/src/aml/chip.c": "8a8614a9d356c6279b2e3d8e98aa61753b02b5e6",
+    "libbitmain/src/uart.c": "7fdec4cf83867bbbbc69a1b2b8731663d85eb318",
+    "libbitmain/src/reg_cache.c": "6a89d72ae27505f64dc804b5b3b72c455865406e",
+    "libbitmain/src/pll.c": "0c8fbcd6dfc64c342675c8ae3542a826e1fddbfd",
+    "integration/bm1368_control.c": "20b4b0476beb3968be590373f884e91b7d6fe46f",
+    "reconstruction/support/crc5.c": "1912ec8906fb520f7d7c5196ea5a7ec122aaeda8",
+    "tools/arm32_subset.py": "e18a97222c1a8406fd61d5baac9763c3166f7e4b",
+    "tools/arm32_vfp_subset.py": "d1df89081dfa172ea41c84cae46e51ad099d74d8",
+    "tools/arm32_difficulty_subset.py": "94b359f6e1e8d7e2c11e22d640e36a97e7c22b37",
+    "integration/tests/test_transport_dispatch_135.c": "2bc3cb9e8abf24b983b68cae428db4ffa10ac5a0",
+    "integration/tests/test_transport_dispatch_135.py": "47fced071735945cfa0f3db56c7a5eb3ece132cb",
+    "integration/tests/test_bm1368_register_write_135.py": "c1223e65fdfedc54aaf9b68081b77f4dce165e9a"
+  },
+  "contract": {
+    "fourth_argument": "overwritten before use",
+    "register": "0x3c",
+    "mode": 1,
+    "chip": null,
+    "base_word": "0x80008000",
+    "pulse_mask": "0x3",
+    "delay_mask": "0x7",
+    "logs": [
+      387,
+      569
+    ]
+  },
+  "boundaries": [
+    "scripted system operations; no actual UART or threads",
+    "legacy internal cache/UART logs excluded from compared trace",
+    "parent first frequency-setting method is scripted in new native parent fixture"
+  ],
+  "original_summary": {
+    "direct_cases": 2502,
+    "direct_events": 6989,
+    "direct_steps": 126294,
+    "nested_cases": 251,
+    "nested_events": 3807,
+    "nested_steps": 484652,
+    "excluded_internal_diagnostics": {
+      "28": 1,
+      "796": 4,
+      "801": 4
+    },
+    "visited_instructions": 532,
+    "passed": true,
+    "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+    "hardware_io": false,
+    "live_threads": false
+  }
+}

@@ -1,0 +1,68 @@
+name: Check B-07 original work-thread startup
+on:
+  pull_request:
+    branches: [work/reconstruction]
+    paths:
+      - src/backend/work-gen/work-start.c
+      - integration/work_start_135.h
+      - integration/work-start-135.mk
+      - integration/WORK_START_135_RU.md
+      - integration/evidence/work_start_135.json
+      - integration/tests/*work_start*135*
+      - tools/arm32_subset.py
+      - tools/elf32.py
+      - reference/cgminer.vendor.elf
+      - .github/workflows/work-start-135.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  start135:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Original instructions, native and semantic mutants
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build/b07-logs
+          git rev-parse HEAD | tee build/b07-logs/head.txt
+          ${{ matrix.cc }} --version | tee build/b07-logs/compiler.txt
+          make -f integration/work-start-135.mk CC=${{ matrix.cc }} START_DIR=build/b07 all negative 2>&1 | tee build/b07-logs/new.log
+      - name: ASan and UBSan
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -f integration/work-start-135.mk CC=${{ matrix.cc }} START_DIR=build/b07 sanitize 2>&1 | tee build/b07-logs/sanitizers.log
+      - name: Existing route and backend regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -f integration/work-start-135.mk CC=${{ matrix.cc }} START_DIR=build/b07 regressions backend-regressions 2>&1 | tee build/b07-logs/regressions.log
+      - name: Static analysis
+        if: matrix.cc == 'clang'
+        shell: bash
+        run: |
+          set -euo pipefail
+          clang --analyze -I. -Iinclude -std=c11 -Wall -Wextra -Wpedantic -Xanalyzer -analyzer-output=text src/backend/work-gen/work-start.c 2>&1 | tee build/b07-logs/analyzer.log
+      - name: Save exact head logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: work-start-${{ matrix.cc }}-${{ github.run_id }}
+          retention-days: 7
+          path: |
+            build/b07-logs/
+            build/b07/negative/*.log
+            build/b07/resume/original.json
+            build/b07/prepare/original.json

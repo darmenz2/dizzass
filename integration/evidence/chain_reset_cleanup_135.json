@@ -1,0 +1,118 @@
+{
+  "base_commit": "12446bed78a060a49364a80bcbfb4340b13f4f27",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "ranges": [
+    {
+      "name": "reset_cleanup",
+      "start": "0x5ac80",
+      "end": "0x5b150",
+      "sha256": "0a68efc1d461916d29a24ca67a34ad7cbd6b4f13be60d370727bf081a4007ba5"
+    },
+    {
+      "name": "auxiliary",
+      "start": "0x545a0",
+      "end": "0x54924",
+      "sha256": "8c03211327bea88737324c154cca04ea619b8c27b50d054033eea10e8194caf0"
+    },
+    {
+      "name": "board_flag",
+      "start": "0x5e524",
+      "end": "0x5e53c",
+      "sha256": "71d55acc8452996b4ef7454031d62cb021aaddf3b80e03519196cdc6456762f8"
+    },
+    {
+      "name": "board_view",
+      "start": "0xa720c",
+      "end": "0xa7218",
+      "sha256": "75cf4ac24b47097c94faca34d348431b77cdb0c00154c46e861f1b6fba5d93f4"
+    },
+    {
+      "name": "aggregate",
+      "start": "0x58700",
+      "end": "0x58b50",
+      "sha256": "4e5088f8169cdd79c80b8c43ab67f4d27a5b03c77bd287344c831f6fbe795e7a"
+    },
+    {
+      "name": "aggregate_signed_divide",
+      "start": "0x590ef0",
+      "end": "0x590fbc",
+      "sha256": "d980a4686c88eda4640bf2007e51d2fe29a7029000be53e82a207ecfc07ad6dc"
+    }
+  ],
+  "strings": [
+    {
+      "address": "0x5e4267",
+      "xor": 183,
+      "text": "/tmp/build/src/backend/chain.c\u0000"
+    },
+    {
+      "address": "0x5e4ae3",
+      "xor": 68,
+      "text": "chain#%d - powering off the chain\u0000"
+    },
+    {
+      "address": "0x5e4b05",
+      "xor": 221,
+      "text": "chain#%d - failed to power off the chain\u0000"
+    }
+  ],
+  "unchanged_files": {
+    "AGENTS.md": "c9d99ca8e95e34f3644fb37e2fdeea359e61ec3d",
+    "Makefile.am": "17d2fbde26b5e8cb614b61908b84d5937af48325",
+    "cgminer.c": "54739e4139294c526af0c73aa9a02ba9762ca4f2",
+    "src/backend/base.c": "9dd2d25122e3cd7a35f3ab4f0f709ce07422d1a7",
+    "src/backend/chain.c": "9448f6acf934566577c6f9248841a78274931d04",
+    "integration/general_monitor_135.h": "56998462cbd559604a83f25edc1693501d050a91",
+    "integration/thermal_routes_135.h": "a890810c4d62bb7041569b55fdbf3471a00b8de8",
+    "tools/elf32.py": "57b0a77098e2125340a755e90bac194830f75203",
+    "tools/arm32_subset.py": "e18a97222c1a8406fd61d5baac9763c3166f7e4b",
+    "integration/tests/test_thermal_routes_135.py": "da6d06ecadca8567516783cf69a1f08456ac1ce6",
+    "integration/tests/test_general_monitor_135.py": "5e8750922d63e738e505d81ac16697ff2d302056",
+    "integration/tests/test_exit_cleanup_135.py": "6f5bb620dd1568593554ea4264b94adb391696dc",
+    "integration/evidence/exit_cleanup_135.json": "e27ba50749c7a476e30f451153e3fb4783e8b5f4",
+    "integration/thermal_sensors_135.h": "95ded117952950f98bdde2bc15d1572ee4505f20",
+    "integration/tests/test_thermal_sensors_135.py": "d43a238a26b978e5cc74b07558a0a109e4fc0503",
+    "tools/arm32_difficulty_subset.py": "94b359f6e1e8d7e2c11e22d640e36a97e7c22b37",
+    "tools/arm32_rebuild_subset.py": "37fc528e01f10754b18a43f1a1ddff32d445a5b4",
+    "src/backend/temp.c": "52c17558b8289e2d16682228e76c0592bf183e9c",
+    "reconstruction/support/thermal_routes_135.c": "cca9265e4ad44da954e7d6d5c125c62599de93ca",
+    "integration/thermal-routes-135.mk": "f68baf7a096b3b261e6249600b726eb120bebfbb"
+  },
+  "scope": "5ac80 with original 545a0 and 60 composed 58700 scenarios. Lower OS/transport/clock effects scripted. No production/hardware, no new full 5f0fc composition.",
+  "archive_receipt": {
+    "archive": "vnishnet-t21-aml-nand-v1.3.5.tar.gz",
+    "archive_sha256": "20fabdd66255889315e61ae2a33ff2e4623566ca430f1cb8c90d9b938dc7b43c",
+    "elf_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+    "elf_bytes": 6228004,
+    "equal": true,
+    "executed": false
+  },
+  "sensor_clear_offsets": [
+    "0x2c:4",
+    "0x3c:4",
+    "0x40:4",
+    "0x4c:4",
+    "0x58:8",
+    "0x60:4",
+    "0x68:8",
+    "0x70:2",
+    "0x74:4",
+    "0x78:4"
+  ],
+  "sensor_gates": "preserve access_kind 0 and 3; preserve kind 4 only when byte +51 is zero; clear all other kinds regardless of state",
+  "opaque_predicate": "x*(x-1) is even modulo 2^32 for all x. No concurrent mutation between a load and its register arithmetic is introduced.",
+  "ghidra": {
+    "version": "12.1.4",
+    "release": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_12.1.4_build",
+    "zip_sha256": "ddac49f903da9d5bac833e5cc79395098b9c33cfd3279be5f31bd00387d2d4db",
+    "java": "Temurin 25.0.4.1+1",
+    "language": "ARM:LE:32:v8",
+    "compiler": "default",
+    "analysis": "noanalysis; disassemble/createFunction for selected original entries; decompile 5ac80 only",
+    "command": "JAVA_HOME=<jdk> <ghidra>/support/analyzeHeadless <project-dir> vn135-b03 -import reference/cgminer.vendor.elf -noanalysis -scriptPath <script-dir> -postScript InspectChainReset.java <output-dir> -max-cpu 2",
+    "script": "// Headless inspection of the original ELF as data; no firmware execution.\nimport ghidra.app.script.GhidraScript;\nimport ghidra.app.decompiler.*;\nimport ghidra.program.model.listing.*;\nimport java.nio.file.*;\nimport java.nio.charset.StandardCharsets;\n\npublic class InspectChainReset extends GhidraScript {\n    public void run() throws Exception {\n        long[] entries = {0x5ac80L,0x545a0L,0x5e524L,0xa720cL,0x58700L};\n        for(long entry:entries){\n            disassemble(toAddr(entry));\n            if(getFunctionAt(toAddr(entry))==null) createFunction(toAddr(entry),null);\n        }\n        DecompInterface decomp=new DecompInterface();\n        decomp.openProgram(currentProgram);\n        Function function=getFunctionAt(toAddr(0x5ac80L));\n        DecompileResults result=decomp.decompileFunction(function,120,monitor);\n        if(!result.decompileCompleted())throw new Exception(result.getErrorMessage());\n        Path out=Paths.get(getScriptArgs()[0]);\n        Files.createDirectories(out);\n        Files.writeString(out.resolve(\"5ac80.ghidra.c\"),result.getDecompiledFunction().getC(),StandardCharsets.UTF_8);\n        StringBuilder asm=new StringBuilder();\n        InstructionIterator it=currentProgram.getListing().getInstructions(function.getBody(),true);\n        while(it.hasNext()) {Instruction ins=it.next();asm.append(ins.getAddress()).append(\"  \").append(ins).append(\"\\n\");}\n        Files.writeString(out.resolve(\"5ac80.ghidra.asm\"),asm.toString(),StandardCharsets.UTF_8);\n        println(\"DIZZASS_GHIDRA_DONE language=\"+currentProgram.getLanguageID()+\" compiler=\"+currentProgram.getCompilerSpec().getCompilerSpecID()+\" function=\"+function.getBody());\n        decomp.dispose();\n    }\n}\n",
+    "decompiled_c": "\n/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */\n\nvoid FUN_0005ac80(int param_1)\n\n{\n  char cVar1;\n  int iVar2;\n  int iVar3;\n  undefined4 *puVar4;\n  int iVar5;\n  int iVar6;\n  uint uVar7;\n  int *piVar8;\n  int *piVar9;\n  undefined4 uVar10;\n  undefined4 extraout_s1;\n  undefined4 extraout_s1_00;\n  \n  piVar9 = *(int **)(_UNK_0005b11c + 0x5ac9c);\n  piVar8 = *(int **)(_UNK_0005b120 + 0x5acb0);\n  if (((*piVar9 * (*piVar9 + -1) & 1U) != 0) && (9 < *piVar8)) goto LAB_0005acfc;\n  while( true ) {\n    func_0x000fde14(*(undefined4 *)(param_1 + 0x18),1);\n    func_0x0010ed2c(100);\n    iVar2 = FUN_0005e524(*(undefined4 *)(param_1 + 0x1c));\n    if (((*piVar9 * (*piVar9 + -1) & 1U) == 0) || (*piVar8 < 10)) break;\nLAB_0005acfc:\n    func_0x000fde14(*(undefined4 *)(param_1 + 0x18),1);\n    func_0x0010ed2c(100);\n    FUN_0005e524(*(undefined4 *)(param_1 + 0x1c));\n  }\n  cVar1 = '\\0';\n  if (iVar2 != 0) {\n    cVar1 = *(char *)(param_1 + 0x24);\n  }\n  if (iVar2 != 0 && cVar1 != '\\0') {\n    func_0x000fa0c4(_UNK_0005b124 + 0x5ae58,_UNK_0005b128 + 0x5ae60,_UNK_0005b12c + 0x5ae68,0x730,3,\n                    _UNK_0005b130 + 0x5ae70,*(int *)(param_1 + 0x18) + 1);\n    iVar2 = FUN_000545a0(param_1);\n    if (iVar2 != 0) {\n      iVar2 = _UNK_0005b134 + 0x5aea0;\n      if (((*piVar9 * (*piVar9 + -1) & 1U) != 0) && (9 < *piVar8)) goto LAB_0005af0c;\n      while ((func_0x000fa0c4(_UNK_0005b138 + 0x5aecc,_UNK_0005b13c + 0x5aed4,\n                              _UNK_0005b140 + 0x5aed8,0x733,1,iVar2,*(int *)(param_1 + 0x18) + 1),\n             (*piVar9 * (*piVar9 + -1) & 1U) != 0 && (9 < *piVar8))) {\nLAB_0005af0c:\n        func_0x000fa0c4(_UNK_0005b144 + 0x5af24,_UNK_0005b148 + 0x5af2c,_UNK_0005b14c + 0x5af30,\n                        0x733,1,iVar2,*(int *)(param_1 + 0x18) + 1);\n      }\n    }\n  }\n  func_0x005a6108(param_1);\n  *(undefined4 *)(param_1 + 0x8c) = 0;\n  *(undefined1 *)(param_1 + 0x25) = 0;\n  *(undefined4 *)(param_1 + 0x80) = 0;\n  *(undefined4 *)(param_1 + 0x30) = 0;\n  *(undefined4 *)(param_1 + 0x34) = 0;\n  *(undefined4 *)(param_1 + 0x38) = 0;\n  *(undefined4 *)(param_1 + 0x28) = 0;\n  func_0x005a348c(param_1 + 0x40,0,0x30);\n  uVar10 = func_0x0001ed58();\n  *(ulonglong *)(param_1 + 0x70) = CONCAT44(extraout_s1,uVar10);\n  uVar10 = func_0x0001ed58();\n  *(ulonglong *)(param_1 + 0x78) = CONCAT44(extraout_s1_00,uVar10);\n  if (2 < *(int *)(param_1 + 0x20) - 3U) {\n    *(undefined4 *)(param_1 + 0x20) = 2;\n  }\n  iVar2 = FUN_000a720c(*(undefined4 *)(*(int *)(param_1 + 0x1c) + 0x18));\n  if (0 < *(int *)(iVar2 + 0x10)) {\n    do {\n      if ((*piVar9 * (*piVar9 + -1) & 1U) == 0) break;\n    } while (9 < *piVar8);\n    iVar6 = 0;\n    iVar5 = 0;\n    do {\n      iVar3 = *(int *)(param_1 + 0x88) + iVar6;\n      *(undefined4 *)(iVar3 + 0x58) = 0;\n      *(undefined4 *)(iVar3 + 0x5c) = 0;\n      *(undefined1 *)(iVar3 + 0x50) = 0;\n      *(undefined4 *)(iVar3 + 8) = 0;\n      func_0x005a348c(iVar3 + 0x18,0,0x2c);\n      iVar5 = iVar5 + 1;\n      iVar6 = iVar6 + 0x60;\n    } while (iVar5 < *(int *)(iVar2 + 0x10));\n  }\n  if (((*piVar9 * (*piVar9 + -1) & 1U) != 0) && (9 < *piVar8)) goto LAB_0005af7c;\n  while( true ) {\n    iVar2 = FUN_000a720c(*(undefined4 *)(*(int *)(param_1 + 0x1c) + 0x18));\n    iVar2 = *(int *)(*(int *)(iVar2 + 0x20) + 0x18);\n    if (((*piVar9 * (*piVar9 + -1) & 1U) == 0) || (*piVar8 < 10)) break;\nLAB_0005af7c:\n    FUN_000a720c(*(undefined4 *)(*(int *)(param_1 + 0x1c) + 0x18));\n  }\n  if (0 < iVar2) {\n    do {\n      if ((*piVar9 * (*piVar9 + -1) & 1U) == 0) break;\n    } while (9 < *piVar8);\n    iVar5 = 0x78;\n    do {\n      iVar6 = *(int *)(param_1 + 0x290);\n      uVar7 = iVar6 + iVar5;\n      iVar3 = *(int *)(uVar7 - 0x48);\n      if (iVar3 != 0 && iVar3 != 3) {\n        if (iVar3 == 4) {\n          uVar7 = (uint)*(byte *)(uVar7 - 0x27);\n        }\n        if (iVar3 != 4 || uVar7 != 0) {\n          if (((*piVar9 * (*piVar9 + -1) & 1U) != 0) && (9 < *piVar8)) goto LAB_0005b078;\n          while( true ) {\n            puVar4 = (undefined4 *)(iVar6 + iVar5);\n            *puVar4 = 0;\n            puVar4[-8] = 0;\n            puVar4[-7] = 0;\n            puVar4[-6] = 0;\n            puVar4[-0xf] = 0;\n            puVar4[-0xe] = 0;\n            puVar4[-0x13] = 0;\n            puVar4[-0xb] = 0;\n            puVar4[-4] = 0;\n            puVar4[-3] = 0;\n            puVar4[-1] = 0;\n            *(undefined2 *)(puVar4 + -2) = 0;\n            if (((*piVar9 * (*piVar9 + -1) & 1U) == 0) || (*piVar8 < 10)) break;\nLAB_0005b078:\n            puVar4 = (undefined4 *)(iVar6 + iVar5);\n            *puVar4 = 0;\n            puVar4[-8] = 0;\n            puVar4[-7] = 0;\n            puVar4[-6] = 0;\n            puVar4[-0xf] = 0;\n            puVar4[-0xe] = 0;\n            puVar4[-0x13] = 0;\n            puVar4[-0xb] = 0;\n            puVar4[-4] = 0;\n            puVar4[-3] = 0;\n            puVar4[-1] = 0;\n            *(undefined2 *)(puVar4 + -2) = 0;\n          }\n        }\n      }\n      iVar2 = iVar2 + -1;\n      iVar5 = iVar5 + 0x80;\n    } while (iVar2 != 0);\n  }\n  if (((*piVar9 * (*piVar9 + -1) & 1U) != 0) && (9 < *piVar8)) goto LAB_0005b100;\n  while( true ) {\n    func_0x005a66c4(param_1);\n    FUN_00058700(param_1);\n    if (((*piVar9 * (*piVar9 + -1) & 1U) == 0) || (*piVar8 < 10)) break;\nLAB_0005b100:\n    func_0x005a66c4(param_1);\n    FUN_00058700(param_1);\n  }\n  return;\n}\n\n",
+    "assembly": "0005ac80  stmdb sp!,{r4,r5,r6,r7,r8,r9,r10,r11,lr}\n0005ac84  add r11,sp,#0x1c\n0005ac88  sub sp,sp,#0xc\n0005ac8c  ldr r9,[0x5b11c]\n0005ac90  cpy r4,r0\n0005ac94  ldr r9,[pc,r9]\n0005ac98  ldr r0,[r9,#0x0]\n0005ac9c  ldr r8,[0x5b120]\n0005aca0  sub r1,r0,#0x1\n0005aca4  mul r0,r0,r1\n0005aca8  ldr r8,[pc,r8]\n0005acac  tst r0,#0x1\n0005acb0  beq 0x0005acc0\n0005acb4  ldr r0,[r8,#0x0]\n0005acb8  cmp r0,#0x9\n0005acbc  bgt 0x0005acfc\n0005acc0  ldr r0,[r4,#0x18]\n0005acc4  mov r1,#0x1\n0005acc8  bl 0x000fde14\n0005accc  mov r0,#0x64\n0005acd0  bl 0x0010ed2c\n0005acd4  ldr r0,[r4,#0x1c]\n0005acd8  bl 0x0005e524\n0005acdc  ldr r1,[r9,#0x0]\n0005ace0  sub r2,r1,#0x1\n0005ace4  mul r1,r1,r2\n0005ace8  tst r1,#0x1\n0005acec  beq 0x0005ad1c\n0005acf0  ldr r1,[r8,#0x0]\n0005acf4  cmp r1,#0x9\n0005acf8  ble 0x0005ad1c\n0005acfc  ldr r0,[r4,#0x18]\n0005ad00  mov r1,#0x1\n0005ad04  bl 0x000fde14\n0005ad08  mov r0,#0x64\n0005ad0c  bl 0x0010ed2c\n0005ad10  ldr r0,[r4,#0x1c]\n0005ad14  bl 0x0005e524\n0005ad18  b 0x0005acc0\n0005ad1c  cmp r0,#0x0\n0005ad20  ldrbne r0,[r4,#0x24]\n0005ad24  cmpne r0,#0x0\n0005ad28  bne 0x0005ae40\n0005ad2c  cpy r0,r4\n0005ad30  bl 0x005a6108\n0005ad34  mov r0,#0x0\n0005ad38  mov r1,#0x0\n0005ad3c  str r0,[r4,#0x8c]\n0005ad40  mov r2,#0x30\n0005ad44  strb r0,[r4,#0x25]\n0005ad48  str r0,[r4,#0x80]\n0005ad4c  str r0,[r4,#0x30]\n0005ad50  str r0,[r4,#0x34]\n0005ad54  str r0,[r4,#0x38]\n0005ad58  str r0,[r4,#0x28]\n0005ad5c  add r0,r4,#0x40\n0005ad60  bl 0x005a348c\n0005ad64  bl 0x0001ed58\n0005ad68  vstr.64 d0,[r4,#0x70]\n0005ad6c  bl 0x0001ed58\n0005ad70  ldr r0,[r4,#0x20]\n0005ad74  vstr.64 d0,[r4,#0x78]\n0005ad78  sub r0,r0,#0x3\n0005ad7c  cmp r0,#0x3\n0005ad80  movcs r0,#0x2\n0005ad84  strcs r0,[r4,#0x20]\n0005ad88  ldr r0,[r4,#0x1c]\n0005ad8c  ldr r0,[r0,#0x18]\n0005ad90  bl 0x000a720c\n0005ad94  cpy r10,r0\n0005ad98  ldr r0,[r0,#0x10]\n0005ad9c  cmp r0,#0x1\n0005ada0  blt 0x0005ae1c\n0005ada4  ldr r0,[r9,#0x0]\n0005ada8  sub r1,r0,#0x1\n0005adac  mul r0,r0,r1\n0005adb0  tst r0,#0x1\n0005adb4  ldr r0,[r9,#0x0]\n0005adb8  sub r1,r0,#0x1\n0005adbc  mul r0,r0,r1\n0005adc0  tst r0,#0x1\n0005adc4  beq 0x0005add4\n0005adc8  ldr r0,[r8,#0x0]\n0005adcc  cmp r0,#0x9\n0005add0  bgt 0x0005adb4\n0005add4  mov r7,#0x0\n0005add8  mov r6,#0x0\n0005addc  mov r5,#0x0\n0005ade0  ldr r0,[r4,#0x88]\n0005ade4  mov r1,#0x0\n0005ade8  mov r2,#0x2c\n0005adec  add r0,r0,r6\n0005adf0  str r7,[r0,#0x58]\n0005adf4  str r7,[r0,#0x5c]\n0005adf8  strb r7,[r0,#0x50]\n0005adfc  str r7,[r0,#0x8]\n0005ae00  add r0,r0,#0x18\n0005ae04  bl 0x005a348c\n0005ae08  ldr r0,[r10,#0x10]\n0005ae0c  add r5,r5,#0x1\n0005ae10  add r6,r6,#0x60\n0005ae14  cmp r5,r0\n0005ae18  blt 0x0005ade0\n0005ae1c  ldr r0,[r9,#0x0]\n0005ae20  sub r1,r0,#0x1\n0005ae24  mul r0,r0,r1\n0005ae28  tst r0,#0x1\n0005ae2c  beq 0x0005af48\n0005ae30  ldr r0,[r8,#0x0]\n0005ae34  cmp r0,#0x9\n0005ae38  bgt 0x0005af7c\n0005ae3c  b 0x0005af48\n0005ae40  ldr r0,[0x5b124]\n0005ae44  mov r6,#0x3\n0005ae48  ldr r1,[0x5b128]\n0005ae4c  ldr r2,[0x5b12c]\n0005ae50  add r0,pc,r0\n0005ae54  ldr r3,[r4,#0x18]\n0005ae58  add r1,pc,r1\n0005ae5c  ldr r7,[0x5b130]\n0005ae60  add r2,pc,r2\n0005ae64  add r3,r3,#0x1\n0005ae68  add r7,pc,r7\n0005ae6c  stmia sp,{r6,r7}\n0005ae70  str r3,[sp,#0x8]\n0005ae74  mov r3,#0x730\n0005ae78  bl 0x000fa0c4\n0005ae7c  cpy r0,r4\n0005ae80  bl 0x000545a0\n0005ae84  cmp r0,#0x0\n0005ae88  beq 0x0005ad2c\n0005ae8c  ldr r0,[r9,#0x0]\n0005ae90  ldr r5,[0x5b134]\n0005ae94  sub r1,r0,#0x1\n0005ae98  add r5,pc,r5\n0005ae9c  mul r0,r0,r1\n0005aea0  tst r0,#0x1\n0005aea4  beq 0x0005aeb4\n0005aea8  ldr r0,[r8,#0x0]\n0005aeac  cmp r0,#0x9\n0005aeb0  bgt 0x0005af0c\n0005aeb4  ldr r0,[0x5b138]\n0005aeb8  mov r7,#0x1\n0005aebc  ldr r1,[0x5b13c]\n0005aec0  ldr r2,[0x5b140]\n0005aec4  add r0,pc,r0\n0005aec8  ldr r3,[r4,#0x18]\n0005aecc  add r1,pc,r1\n0005aed0  add r2,pc,r2\n0005aed4  str r7,[sp,#0x0]\n0005aed8  add r3,r3,#0x1\n0005aedc  str r3,[sp,#0x8]\n0005aee0  movw r3,#0x733\n0005aee4  str r5,[sp,#0x4]\n0005aee8  bl 0x000fa0c4\n0005aeec  ldr r0,[r9,#0x0]\n0005aef0  sub r1,r0,#0x1\n0005aef4  mul r0,r0,r1\n0005aef8  tst r0,#0x1\n0005aefc  beq 0x0005ad2c\n0005af00  ldr r0,[r8,#0x0]\n0005af04  cmp r0,#0x9\n0005af08  ble 0x0005ad2c\n0005af0c  ldr r0,[0x5b144]\n0005af10  mov r7,#0x1\n0005af14  ldr r1,[0x5b148]\n0005af18  ldr r2,[0x5b14c]\n0005af1c  add r0,pc,r0\n0005af20  ldr r3,[r4,#0x18]\n0005af24  add r1,pc,r1\n0005af28  add r2,pc,r2\n0005af2c  str r7,[sp,#0x0]\n0005af30  add r3,r3,#0x1\n0005af34  str r3,[sp,#0x8]\n0005af38  movw r3,#0x733\n0005af3c  str r5,[sp,#0x4]\n0005af40  bl 0x000fa0c4\n0005af44  b 0x0005aeb4\n0005af48  ldr r0,[r4,#0x1c]\n0005af4c  ldr r0,[r0,#0x18]\n0005af50  bl 0x000a720c\n0005af54  ldr r1,[r9,#0x0]\n0005af58  ldr r0,[r0,#0x20]\n0005af5c  sub r2,r1,#0x1\n0005af60  mul r1,r1,r2\n0005af64  ldr r0,[r0,#0x18]\n0005af68  tst r1,#0x1\n0005af6c  beq 0x0005af8c\n0005af70  ldr r1,[r8,#0x0]\n0005af74  cmp r1,#0x9\n0005af78  ble 0x0005af8c\n0005af7c  ldr r0,[r4,#0x1c]\n0005af80  ldr r0,[r0,#0x18]\n0005af84  bl 0x000a720c\n0005af88  b 0x0005af48\n0005af8c  cmp r0,#0x1\n0005af90  blt 0x0005b0b0\n0005af94  ldr r1,[r9,#0x0]\n0005af98  sub r2,r1,#0x1\n0005af9c  mul r1,r1,r2\n0005afa0  tst r1,#0x1\n0005afa4  ldr r1,[r9,#0x0]\n0005afa8  sub r2,r1,#0x1\n0005afac  mul r1,r1,r2\n0005afb0  tst r1,#0x1\n0005afb4  beq 0x0005afc4\n0005afb8  ldr r1,[r8,#0x0]\n0005afbc  cmp r1,#0x9\n0005afc0  bgt 0x0005afa4\n0005afc4  mov r1,#0x78\n0005afc8  mov r2,#0x0\n0005afcc  b 0x0005afdc\n0005afd0  subs r0,r0,#0x1\n0005afd4  add r1,r1,#0x80\n0005afd8  beq 0x0005b0b0\n0005afdc  ldr r5,[r4,#0x290]\n0005afe0  add r7,r5,r1\n0005afe4  ldr r6,[r7,#-0x48]\n0005afe8  cmp r6,#0x0\n0005afec  cmpne r6,#0x3\n0005aff0  beq 0x0005afd0\n0005aff4  cmp r6,#0x4\n0005aff8  ldrbeq r7,[r7,#-0x27]\n0005affc  cmpeq r7,#0x0\n0005b000  beq 0x0005afd0\n0005b004  ldr r7,[r9,#0x0]\n0005b008  sub r6,r7,#0x1\n0005b00c  mul r7,r7,r6\n0005b010  tst r7,#0x1\n0005b014  beq 0x0005b024\n0005b018  ldr r7,[r8,#0x0]\n0005b01c  cmp r7,#0x9\n0005b020  bgt 0x0005b078\n0005b024  cpy r3,r5\n0005b028  str r2,[r3,r1]!\n0005b02c  str r2,[r3,#-0x20]\n0005b030  str r2,[r3,#-0x1c]\n0005b034  str r2,[r3,#-0x18]\n0005b038  str r2,[r3,#-0x3c]\n0005b03c  str r2,[r3,#-0x38]\n0005b040  str r2,[r3,#-0x4c]\n0005b044  str r2,[r3,#-0x2c]\n0005b048  str r2,[r3,#-0x10]\n0005b04c  str r2,[r3,#-0xc]\n0005b050  str r2,[r3,#-0x4]\n0005b054  strh r2,[r3,#-0x8]\n0005b058  ldr r3,[r9,#0x0]\n0005b05c  sub r7,r3,#0x1\n0005b060  mul r3,r3,r7\n0005b064  tst r3,#0x1\n0005b068  beq 0x0005afd0\n0005b06c  ldr r3,[r8,#0x0]\n0005b070  cmp r3,#0x9\n0005b074  ble 0x0005afd0\n0005b078  cpy r3,r5\n0005b07c  str r2,[r3,r1]!\n0005b080  str r2,[r3,#-0x20]\n0005b084  str r2,[r3,#-0x1c]\n0005b088  str r2,[r3,#-0x18]\n0005b08c  str r2,[r3,#-0x3c]\n0005b090  str r2,[r3,#-0x38]\n0005b094  str r2,[r3,#-0x4c]\n0005b098  str r2,[r3,#-0x2c]\n0005b09c  str r2,[r3,#-0x10]\n0005b0a0  str r2,[r3,#-0xc]\n0005b0a4  str r2,[r3,#-0x4]\n0005b0a8  strh r2,[r3,#-0x8]\n0005b0ac  b 0x0005b024\n0005b0b0  ldr r0,[r9,#0x0]\n0005b0b4  sub r1,r0,#0x1\n0005b0b8  mul r0,r0,r1\n0005b0bc  tst r0,#0x1\n0005b0c0  beq 0x0005b0d0\n0005b0c4  ldr r0,[r8,#0x0]\n0005b0c8  cmp r0,#0x9\n0005b0cc  bgt 0x0005b100\n0005b0d0  cpy r0,r4\n0005b0d4  bl 0x005a66c4\n0005b0d8  cpy r0,r4\n0005b0dc  bl 0x00058700\n0005b0e0  ldr r0,[r9,#0x0]\n0005b0e4  sub r1,r0,#0x1\n0005b0e8  mul r0,r0,r1\n0005b0ec  tst r0,#0x1\n0005b0f0  beq 0x0005b114\n0005b0f4  ldr r0,[r8,#0x0]\n0005b0f8  cmp r0,#0x9\n0005b0fc  ble 0x0005b114\n0005b100  cpy r0,r4\n0005b104  bl 0x005a66c4\n0005b108  cpy r0,r4\n0005b10c  bl 0x00058700\n0005b110  b 0x0005b0d0\n0005b114  sub sp,r11,#0x1c\n0005b118  ldmia sp!,{r4,r5,r6,r7,r8,r9,r10,r11,pc}\n",
+    "limits": "Unknown callee types are provisional; clock stores confirmed independently by VSTR D0 at 5ad68/5ad74, not inferred from undefined4 CONCAT output."
+  }
+}

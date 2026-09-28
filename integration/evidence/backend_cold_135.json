@@ -1,0 +1,89 @@
+{
+  "schema": 1,
+  "base_commit": "f69c2264c0b7018261164aae83908b398d2d2f5d",
+  "reference_elf": "reference/cgminer.vendor.elf",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "ranges": [
+    {
+      "name": "constructor_and_literal_pool",
+      "start": "0x730d8",
+      "end_exclusive": "0x7409c",
+      "sha256": "e279b07ce4487061ed9f2bfd2710230da14a7a593a9ccd9c4744909a113fbab6"
+    },
+    {
+      "name": "model_getters",
+      "start": "0xa71dc",
+      "end_exclusive": "0xa7228",
+      "sha256": "bc7d14aafab7ef27522b62adc403ffeec87f1d2963f05b1c8064ec46f863cba8"
+    },
+    {
+      "name": "chip_identifier",
+      "start": "0xa72b4",
+      "end_exclusive": "0xa7364",
+      "sha256": "73262ead54e7265b06eece4553ab58e0007393e199f1eac2cb3da95d129de144"
+    },
+    {
+      "name": "chip_word4_multiply",
+      "start": "0x53d98",
+      "end_exclusive": "0x53da0",
+      "sha256": "f3242611f2edc75bed097e419f3977e0a9323c3f5751698547c6e4b1ec10ddf5"
+    },
+    {
+      "name": "configure_and_literals",
+      "start": "0x6c61c",
+      "end_exclusive": "0x6c89c",
+      "sha256": "2c5ec17386e35918cceace9e6aa18accd02d36d67107e8a526f4057f968eaee7"
+    },
+    {
+      "name": "aggregate_and_literals",
+      "start": "0x5db54",
+      "end_exclusive": "0x5de64",
+      "sha256": "10d2051477fb62193375c3d84471ababcd5fccd1b713acc6cf206f5250c89692"
+    },
+    {
+      "name": "chain_predicate",
+      "start": "0x56fcc",
+      "end_exclusive": "0x57030",
+      "sha256": "bb894dbfda03d815a67c72d95c0e0fffef2c3d3cb39182e50ca7ab43954e3e74"
+    },
+    {
+      "name": "runtime_prepare_prefix",
+      "start": "0x7409c",
+      "end_exclusive": "0x74278",
+      "sha256": "3dcda8a081a2f2814da74f270c219bd4fa9d78b394801b553293410aed03aff9"
+    },
+    {
+      "name": "constructor_wrapper",
+      "start": "0xb5a4c",
+      "end_exclusive": "0xb5ad4",
+      "sha256": "bbfe83c49ca06772b7007290190fc886998066ec0667c2db9ec035a52b8df25b"
+    }
+  ],
+  "data": [
+    {
+      "name": "chip_identifier_table",
+      "address": "0x5b0928",
+      "size": 32,
+      "sha256": "6b8bf30d15788f794ee72cbb0e38505af2d9c14918f10d9a23f41296ff195585"
+    },
+    {
+      "name": "runtime_prepare_pointer",
+      "address": "0x5e9108",
+      "size": 4,
+      "hex": "9c400700",
+      "sha256": "fdbd4f3729422b5c2246320f9966781051735a50dadc33622722f8793c277b85"
+    }
+  ],
+  "recovered_entries": [
+    "0x730d8",
+    "0xa72b4",
+    "0x6c61c",
+    "0x5db54"
+  ],
+  "untranslated_runtime_entry": "0x7409c",
+  "terminal_boundary": "0x72bf4",
+  "new_arm_opcodes": 0,
+  "physical_io": false,
+  "policy_changes": [],
+  "scope": "Offline control/data projections; unresolved callees explicit; original terminal handler not executed; constructor is not the complete cold hardware startup."
+}

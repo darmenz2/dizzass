@@ -1,0 +1,163 @@
+{
+  "base_commit": "fb5049784cf70ad71cc245f87519788c6bc5fe18",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "whole_entries": {
+    "lookup": "0x53da4",
+    "gated_accept": "0x58df0",
+    "aggregate": "0x58700",
+    "decoded_temperature_reply": "0x78aa4",
+    "auxiliary_stop": "0x545a0",
+    "chain_stop": "0x56d18",
+    "aml_reset": "0x11bc14"
+  },
+  "bounded_paths": {
+    "entry": "0xb5f40",
+    "access_kinds": [
+      0,
+      3
+    ],
+    "remote_enabled": false,
+    "full_reader": false
+  },
+  "ranges": [
+    {
+      "name": "lookup",
+      "start": "0x53da4",
+      "end_exclusive": "0x53ebc",
+      "sha256": "f9d3c8eae6605c1dfa1cb01a3296ba90bd0097d0fb03badf1f8d3034680488fa"
+    },
+    {
+      "name": "auxiliary_stop",
+      "start": "0x545a0",
+      "end_exclusive": "0x54984",
+      "sha256": "bc9f71bde716b07e4b6c7206de25d648ea46dd68bf83634df2bfc9319ef08e52"
+    },
+    {
+      "name": "chain_stop",
+      "start": "0x56d18",
+      "end_exclusive": "0x56fc4",
+      "sha256": "bcef8f27f6e02dc23767e8bfb2867956e1e4d7aef9832fe67a6ffdead81e3131"
+    },
+    {
+      "name": "aggregate",
+      "start": "0x58700",
+      "end_exclusive": "0x58b50",
+      "sha256": "4e5088f8169cdd79c80b8c43ab67f4d27a5b03c77bd287344c831f6fbe795e7a"
+    },
+    {
+      "name": "gated_accept",
+      "start": "0x58df0",
+      "end_exclusive": "0x58e68",
+      "sha256": "9e21c0c3dd837573bb8ce2d32f313c9ea4e51839a53b7a70ac80968bdb3ca227"
+    },
+    {
+      "name": "reply",
+      "start": "0x78aa4",
+      "end_exclusive": "0x78eb8",
+      "sha256": "3a97db009155e573337de9a4e847e083c0034b3109206ac09fbd4fc9547b1b44"
+    },
+    {
+      "name": "reset_dispatch",
+      "start": "0xfde14",
+      "end_exclusive": "0xfdea4",
+      "sha256": "a88da3e6015a5077551639cf57aa31c88965e4b6e193650a018aa3a55cabad27"
+    },
+    {
+      "name": "aml_reset",
+      "start": "0x11bc14",
+      "end_exclusive": "0x11bd64",
+      "sha256": "4d148f2f5d715505837da5f884a8c06777f5510aa8a536072ec1ab398bd024b4"
+    },
+    {
+      "name": "direct_reader_parent",
+      "start": "0xb5f40",
+      "end_exclusive": "0xb71a8",
+      "sha256": "5317219cf1d88c90bf8905835b8763df50848836b6c30b08a0687d79ecca5e39"
+    },
+    {
+      "name": "existing_accept",
+      "start": "0xb71e4",
+      "end_exclusive": "0xb73f4",
+      "sha256": "fe647c59398e5a29ee7c3ef5361319a475120db589fe40ff4bce3783e7357234"
+    },
+    {
+      "name": "platform_selection_prefix",
+      "start": "0xfb994",
+      "end_exclusive": "0xfd784",
+      "sha256": "d6b3015ee9f0b81c068be966e245ea04df05018cf54924e18bf4a913f8144fea"
+    },
+    {
+      "name": "delay_100_prefix",
+      "start": "0x10ed2c",
+      "end_exclusive": "0x10ee1c",
+      "sha256": "430c623f244b2d4a6f49856cf9572e3c173c08370b7e36f1dee6486be8b796c4"
+    }
+  ],
+  "data": [
+    {
+      "name": "aml_chain_reset_pins",
+      "address": "0x5b29d8",
+      "size": 12,
+      "sha256": "26286c9cb9d706ff4db35004fdfbf77529d664e7985e32806d8d28c760b50780"
+    }
+  ],
+  "source_paths": [
+    {
+      "address": "0x5e4267",
+      "xor_key": 183,
+      "size": 30,
+      "path": "/tmp/build/src/backend/chain.c",
+      "sha256": "3bcbe995f38057d35246335bde80d942f628c94880158d4fc1f486cbd2fa10d4",
+      "basis": "decoded bytes plus original logging path pointer; constructor not executed here"
+    },
+    {
+      "address": "0x5ee737",
+      "xor_key": 136,
+      "size": 40,
+      "path": "/tmp/build/libbitmain/src/aml/platform.c",
+      "sha256": "92de91137b7e102a26603094e25bd4877beea29b7efa7c611c8714c9d61afd74",
+      "basis": "decoded bytes plus original logging path pointer; constructor not executed here"
+    },
+    {
+      "address": "0x5e50be",
+      "xor_key": 245,
+      "size": 29,
+      "path": "/tmp/build/src/backend/base.c",
+      "sha256": "d628bc37a65dad19bf023aceb2d490c4f7ac4041981e82b3cc9a26be6202e7f5",
+      "basis": "decoded bytes plus original logging path pointer; constructor not executed here"
+    }
+  ],
+  "dispatch": {
+    "platform_selector": 2,
+    "entry": "0xfb994",
+    "stop_before": "0xfd784",
+    "selected_slot": "0x654b5c",
+    "target": "0x11bc14"
+  },
+  "scope": {
+    "vendor_process_executed": false,
+    "physical_io": false,
+    "raw_uart_decoder_included": false,
+    "proof_of_slot_drain": false,
+    "all_temperature_routes": false,
+    "production_linkage": false,
+    "differential_external_boundaries": [
+      "GPIO writer",
+      "overheat callee",
+      "backend action",
+      "OS/bus/time/thread effects"
+    ],
+    "native_composition": [
+      "decoded reply",
+      "lookup",
+      "existing sample updater",
+      "aggregate",
+      "existing thermal trip",
+      "chain stop",
+      "AML reset",
+      "existing GPIO helper",
+      "existing fan emergency",
+      "existing AML PWM setter"
+    ]
+  }
+}

@@ -1,0 +1,81 @@
+name: C-01 combined development source
+on:
+  push:
+    # Frozen C-01 checkpoint, not an evergreen gate on future main changes.
+    branches: [integration/consolidation-20260928]
+  pull_request:
+    branches: [main, work/reconstruction]
+    paths: ['integration/consolidation/**', '.github/workflows/consolidated-source.yml']
+permissions:
+  contents: read
+jobs:
+  verify:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ${{ matrix.toolchain.os }}
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain:
+          - {cc: gcc, os: ubuntu-22.04, packages: gcc}
+          - {cc: clang-17, os: ubuntu-24.04, packages: 'clang-17 libclang-rt-17-dev'}
+        group:
+          - {name: thermal, stages: '6,9,10,13,14,20,24,27,31,35,45,47,49'}
+          - {name: workers, stages: '17,22,26,29,33,37,39,41,43'}
+          - {name: native-uart, stages: '5,51,53,55,58'}
+    name: ${{ matrix.group.name }} / ${{ matrix.toolchain.cc }}
+    steps:
+      - name: Read-only exact checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/c01-$GITHUB_RUN_ID-${{ matrix.toolchain.cc }}-${{ matrix.group.name }}-$GITHUB_RUN_ATTEMPT"
+          mkdir "$root"; cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          git -c gc.auto=0 fetch --depth=1 --no-tags origin "$GITHUB_SHA" 12446bed78a060a49364a80bcbfb4340b13f4f27
+          git checkout -q --detach "$GITHUB_SHA"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          python3 -c "import json,subprocess; p=json.load(open('integration/consolidation/manifest.json')); subprocess.run(['git','-c','gc.auto=0','fetch','--depth=1','--no-tags','origin']+[i['head'] for i in p['order']],check=True)"
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Install host build dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y build-essential autoconf automake libtool pkg-config libcurl4-openssl-dev libusb-1.0-0-dev libudev-dev zlib1g-dev python3 ${{ matrix.toolchain.packages }}
+      - name: Build unchanged upstream core, without hardware startup
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"; mkdir -p build
+          autoreconf -fi
+          ./configure CC=${{ matrix.toolchain.cc }} --enable-icarus --disable-curses CFLAGS='-O1 -g -fcommon -ffunction-sections -fdata-sections'
+          make -j2
+          make -s -f Makefile -f integration/native-check.mk dizzass-core-sources > build/core-sources.txt
+          nm --defined-only cgminer > build/core-symbols.txt
+          python3 integration/check_native_core.py --sources build/core-sources.txt --symbols build/core-symbols.txt
+          ./cgminer --version
+      - name: Current-tree tests, semantic controls and sanitizers
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          python3 integration/consolidation/test_runner.py
+          python3 integration/consolidation/run.py --cc '${{ matrix.toolchain.cc }}' --out build/c01 --stages '${{ matrix.group.stages }}'
+      - name: Preserve complete results including failed commands
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: c01-${{ matrix.group.name }}-${{ matrix.toolchain.cc }}-${{ github.run_attempt }}
+          path: |
+            ${{ env.SOURCE_ROOT }}/build/c01/*.log
+            ${{ env.SOURCE_ROOT }}/build/c01/results.json
+            ${{ env.SOURCE_ROOT }}/build/core-*.txt
+          if-no-files-found: warn
+          retention-days: 7
+  accepted-source-tree:
+    name: All combined source groups passed
+    needs: verify
+    if: always()
+    runs-on: ubuntu-22.04
+    steps:
+      - run: test '${{ needs.verify.result }}' = success

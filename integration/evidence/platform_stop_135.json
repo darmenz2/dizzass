@@ -1,0 +1,112 @@
+{
+  "base_commit": "12446bed78a060a49364a80bcbfb4340b13f4f27",
+  "base_tree": "2e73cb80b2ccbb15d24d9a7deb3c51f65bcd23ac",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "ranges": [
+    {
+      "start": "0xfe218",
+      "end": "0xfe228",
+      "sha256": "f4cd03b9cc11383d1c0b85a784b5d8852e43ce874fee838c9c66c268d5f48a56"
+    },
+    {
+      "start": "0x115d88",
+      "end": "0x115e20",
+      "sha256": "41f7f9feafeb56a30b0b844da88a6fcf81fb092fd1967860a074804c1d52eacd"
+    },
+    {
+      "start": "0x11fda4",
+      "end": "0x11fde0",
+      "sha256": "74d0cf7ff04c6889346b23088aa6fe9e33c72288a493b655cd3871ee36a052c3"
+    },
+    {
+      "start": "0x11bfbc",
+      "end": "0x11bfc0",
+      "sha256": "379bec29dccd0a93c94826144d7ef6e42fab64ef195a3b8313a16926f66f388f"
+    },
+    {
+      "start": "0x1238cc",
+      "end": "0x1238d0",
+      "sha256": "379bec29dccd0a93c94826144d7ef6e42fab64ef195a3b8313a16926f66f388f"
+    },
+    {
+      "start": "0x10cf34",
+      "end": "0x10cf38",
+      "sha256": "379bec29dccd0a93c94826144d7ef6e42fab64ef195a3b8313a16926f66f388f"
+    },
+    {
+      "start": "0xfe024",
+      "end": "0xfe038",
+      "sha256": "0d25bc6738ff8bbf72de200afdf35edcc86fa1a391a0b212f12f333aed17e374"
+    },
+    {
+      "start": "0xfb994",
+      "end": "0xfddfc",
+      "sha256": "aecb46dcb6dd18cc92e684c043e6bdc6fa9b3c8c2d4026639347c0100201384c"
+    },
+    {
+      "start": "0x663cc",
+      "end": "0x66504",
+      "sha256": "5940454bd83dde6a2719a7e1fafdeefeeead7f4806aefb6cfd897bec108bb9ef"
+    }
+  ],
+  "immutable": {
+    "AGENTS.md": "c9d99ca8e95e34f3644fb37e2fdeea359e61ec3d",
+    "Makefile.am": "17d2fbde26b5e8cb614b61908b84d5937af48325",
+    "cgminer.c": "54739e4139294c526af0c73aa9a02ba9762ca4f2",
+    "driver-bitmain.c": "9e2bb0251f30148e158978227eb224391384985d",
+    "integration/backend_cold_135.h": "ff6a884bc56a19de8b924e162cf26265ca54526b",
+    "integration/backend_peripheral_135.h": "e62411e9a7418f8c67c6157b270684f90e9fa506",
+    "integration/backend_prepare_135.h": "957f31ddc87efc36880c8b19045bbcb66200b69b",
+    "integration/backend_resume_135.h": "4ab5ce67c3f46278fe3d44c82c7ce30619dd73b2",
+    "integration/backend_shutdown_135.h": "30ba5a57e9dd8f900f2f0753040945d8694cb413",
+    "integration/exit_cleanup_135.h": "82612eb35cb241bcc55b1cf772a6a283548e9fcb",
+    "integration/fan_control_135.h": "fc66a85301757c38885df383271cf90be05a5e97",
+    "integration/general_monitor_135.h": "56998462cbd559604a83f25edc1693501d050a91",
+    "integration/gpio_power_135.h": "abf540a7462d434ef17572841b49bba263e36706",
+    "integration/mining-stop-135.mk": "4f2a27f8a07c8495382f1f506e065648a2570a29",
+    "integration/mining_stop_135.h": "ff8c93d95895d2463425d3598b85df46d71e7e91",
+    "integration/monitor_handlers_135.h": "593bbc343c1ff3812630e0d839cbc493f7febd83",
+    "integration/rescue_stop_135.h": "b901d774a60553c5ef2b66384c7aed8c47bee377",
+    "integration/stop_policy_135.h": "e43e75a8921e28bf72e0b6d57754b07f9b4e9981",
+    "integration/tests/test_aml_fans_135.py": "558d84da5ce0b115c7d6dcc64d6f8b05fec32257",
+    "integration/tests/test_backend_shutdown_135.py": "5587b7c68f6c29c232206485d8f5e8049ffad4f3",
+    "integration/tests/test_general_monitor_135.py": "5e8750922d63e738e505d81ac16697ff2d302056",
+    "integration/tests/test_mining_stop_135.py": "5007e1ecfd675d141659c697fa69599e58ceeb80",
+    "integration/tests/test_monitor_handlers_135.py": "9094c6a5dcfe1dd4dc42d13f0a025318f7532b2a",
+    "integration/tests/test_rescue_stop_135.py": "88fe26db212c25232bbae07025c97fb60ae83221",
+    "integration/tests/test_thermal_routes_135.py": "da6d06ecadca8567516783cf69a1f08456ac1ce6",
+    "integration/tests/test_thermal_sensors_135.py": "d43a238a26b978e5cc74b07558a0a109e4fc0503",
+    "integration/thermal_routes_135.h": "a890810c4d62bb7041569b55fdbf3471a00b8de8",
+    "integration/thermal_sensors_135.h": "95ded117952950f98bdde2bc15d1572ee4505f20",
+    "integration/voltage_stop_135.h": "7ce500e48e31fe538bbf52aae5e96bcf25980dc9",
+    "src/backend/base.c": "9dd2d25122e3cd7a35f3ab4f0f709ce07422d1a7",
+    "src/backend/volt-ctrl.c": "610fbae01ea3371e54b6a61548eaf9d3ad187df8",
+    "src/frontend/rescue.c": "fcfa108440527bb3f683ed6e065bd4b3ece2f177",
+    "tools/arm32_difficulty_subset.py": "94b359f6e1e8d7e2c11e22d640e36a97e7c22b37",
+    "tools/arm32_freshness_subset.py": "1f6f58ad83ad26cce28036382977421764bb4582",
+    "tools/arm32_nonce_subset.py": "84e86cb15dcc9a45819ef8448f8c89077cbd7548",
+    "tools/arm32_rebuild_subset.py": "37fc528e01f10754b18a43f1a1ddff32d445a5b4",
+    "tools/arm32_rx_subset.py": "175bfc14a4413f84895ed983a45289b4c426e588",
+    "tools/arm32_subset.py": "e18a97222c1a8406fd61d5baac9763c3166f7e4b",
+    "tools/arm32_verify_subset.py": "284fd7169697e3643d963300063eb7a156c57fb5",
+    "tools/arm32_vfp_subset.py": "d1df89081dfa172ea41c84cae46e51ad099d74d8",
+    "tools/elf32.py": "57b0a77098e2125340a755e90bac194830f75203"
+  },
+  "dispatch_slot": "0x654b34",
+  "skip_byte": "0x654b22",
+  "selection": {
+    "0": "0x115d88",
+    "1": "0x11fda4",
+    "2": "0x11bfbc",
+    "3": "0x1238cc",
+    "4": "0x10cf34"
+  },
+  "boundary": [
+    "full platform initialization NOT reconstructed",
+    "no NULL fallback",
+    "original incidental return register not a status",
+    "115d88 lower register/flag effects are callbacks",
+    "no physical shutdown proof",
+    "A-01 and Codex files not modified"
+  ]
+}

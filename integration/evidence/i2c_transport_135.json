@@ -1,0 +1,77 @@
+{
+  "schema": 1,
+  "base_commit": "bc68fd7e89cf5c7a87f0513079292a88dcb5caef",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "ranges": [
+    {
+      "name": "hw_close",
+      "start": "0x125c64",
+      "end": "0x125cf4",
+      "sha256": "7f43deda8c1e66738dc0c8112c89c999ce2796aa4c249fdb6bc9595ca0b5f37f"
+    },
+    {
+      "name": "hw_open",
+      "start": "0x125cf4",
+      "end": "0x125e74",
+      "sha256": "4012498c4929b3c61becb0be3c60b066839e209f267bd14d4ffc3227e42f931d"
+    },
+    {
+      "name": "aml_block_read",
+      "start": "0x11a6b0",
+      "end": "0x11ab24",
+      "sha256": "ff5724e4498b8c47b97fbb1bac3ae4f0e0dbe5f36cbfea3e0fe41aca873fa24f"
+    },
+    {
+      "name": "aml_block_write",
+      "start": "0x11ab24",
+      "end": "0x11af60",
+      "sha256": "df2365978aee3545aee5054ea44f2f5fe977a1b776b460fa5f530ce910a7436e"
+    },
+    {
+      "name": "block_dispatchers",
+      "start": "0xfe528",
+      "end": "0xfe548",
+      "sha256": "c7819053ff43e041e53fcec762e1af8190e915287ed5a7b92bef7bd070cd6950"
+    },
+    {
+      "name": "psu_response_check",
+      "start": "0x102bd0",
+      "end": "0x102ec0",
+      "sha256": "178e9757727ae2b293387db412443f7daff8ea4dfca24c571128d9bc471a2779"
+    },
+    {
+      "name": "psu_exchange_block",
+      "start": "0x10560c",
+      "end": "0x105938",
+      "sha256": "ff1cef6d9a678392264d9ba5bfb6b8fad6735166b1203c5b3e19f2400b4cbb86"
+    }
+  ],
+  "strings": [
+    {
+      "address": "0x5ee434",
+      "xor": 86,
+      "text": "/tmp/build/libbitmain/src/aml/i2c.c"
+    },
+    {
+      "address": "0x5ef374",
+      "xor": 23,
+      "text": "/tmp/build/libbitmain/src/i2c.c"
+    },
+    {
+      "address": "0x5ee422",
+      "xor": 65,
+      "text": "/dev/i2c-1"
+    },
+    {
+      "address": "0x5ef3b9",
+      "xor": 38,
+      "text": "/dev/"
+    }
+  ],
+  "policy_changes": [],
+  "physical_i2c_tested": false,
+  "singleton_pointer_slot": "0x5dfbe8",
+  "singleton_iface": "0x68c180",
+  "fd_offset": "0x24",
+  "composed_dispatch": "Explicitly seeded original block callbacks; full platform initializer not executed."
+}

@@ -1,0 +1,142 @@
+{
+  "reference": "reference/cgminer.vendor.elf",
+  "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "base_commit": "ec93c6728895c724f91c7e90df8341dfc8002774",
+  "base_source": {
+    "path": "src/backend/base.c",
+    "length": 28195,
+    "git_blob": "aeb6a1671411ecf2122e387f86a25860d48192a0"
+  },
+  "ranges": [
+    {
+      "name": "general worker code and literal pools",
+      "start": "0x79778",
+      "end_exclusive": "0x7bc78",
+      "sha256": "26e8294c8e541d6b53387b3d06b88d867a2bc7038debb1e58fc837d773c0f783"
+    },
+    {
+      "name": "eligible chain predicate",
+      "start": "0x56fcc",
+      "end_exclusive": "0x57028",
+      "sha256": "589d7c137856a63dbe03f5d9dc466784169c0129476cf80e0b6f274c11455d99"
+    },
+    {
+      "name": "fan descriptor accessor",
+      "start": "0xa71dc",
+      "end_exclusive": "0xa71e8",
+      "sha256": "7cde20106a077963e93ad4702b0946a4f870b63d3dafb6c817ec32e84cb1c553"
+    },
+    {
+      "name": "board descriptor accessor",
+      "start": "0xa720c",
+      "end_exclusive": "0xa7218",
+      "sha256": "75cf4ac24b47097c94faca34d348431b77cdb0c00154c46e861f1b6fba5d93f4"
+    }
+  ],
+  "literals": [
+    {
+      "address": "0x5e696a",
+      "length": 15,
+      "xor_key": 222,
+      "decoded": "miner_ctrl@btm",
+      "sha256": "c1fa550d387131aa6af4e3eac32af28b619957f69fd538405a97d2d6c750a553"
+    },
+    {
+      "address": "0x5e55da",
+      "length": 18,
+      "xor_key": 53,
+      "decoded": "Lost temp sensors",
+      "sha256": "68d632601357e1621c0edc5e138b243d050781b0f4f26be2cea601c7b86206b9"
+    },
+    {
+      "address": "0x5e69ab",
+      "length": 46,
+      "xor_key": 143,
+      "decoded": "Chain break detected (%d of %d chips replied)",
+      "sha256": "8f30b608c9aac92b051b4ef4b2a8470c1ca4c587dacf6fcaf981d6f33d848307"
+    },
+    {
+      "address": "0x5e6a21",
+      "length": 21,
+      "xor_key": 57,
+      "decoded": "Chain break detected",
+      "sha256": "21f266a548a61b706690a13b082f976e8aa16b6d10b4b880e126c354cf46c1b9"
+    },
+    {
+      "address": "0x5e50be",
+      "length": 30,
+      "xor_key": 245,
+      "decoded": "/tmp/build/src/backend/base.c",
+      "sha256": "a3922dfb59ced1364db6fd1b31bc23cc40b7976764ca96a9eb96e4e5cacad4a8"
+    }
+  ],
+  "unchanged_files": {
+    "Makefile.am": "17d2fbde26b5e8cb614b61908b84d5937af48325",
+    "cgminer.c": "54739e4139294c526af0c73aa9a02ba9762ca4f2",
+    "libbitmain/src/fan_ctrl.c": "95db3fb6f1e41d5ebe46d6d49a8ee57f38f59a81",
+    "reconstruction/support/pid_135.c": "d23a51a3741818a8b66c393e78b83381b1910512"
+  },
+  "history_locations": {
+    "chain_check": "0x610990",
+    "power_sample": "0x610998",
+    "rate_check": "0x6109a0",
+    "fan_adjust": "0x6109a8",
+    "previous_temperature": "0x6109b0",
+    "psu_sample": "0x6109b8"
+  },
+  "new_bounded_instruction": "LDRSH at three original sites; local test extension only",
+  "oracle_summary": {
+    "cases": {
+      "baseline": 1,
+      "gates": 64,
+      "psu_trip": 200,
+      "fans": 72,
+      "chain_check": 72,
+      "chain_state": 24,
+      "sensors": 24,
+      "counts": 5,
+      "rates": 192,
+      "fan_control": 216,
+      "failures": 39,
+      "multi_lap": 3,
+      "rate_action": 12,
+      "time_boundaries": 18,
+      "integer_wrap": 3,
+      "unchanged_outputs": 5,
+      "boundary_mutation": 918,
+      "late_mutation": 32,
+      "count_mutation": 3,
+      "mixed": 350
+    },
+    "total": 2253,
+    "compared_events": 155735,
+    "original_steps": 3056505,
+    "visited_instruction_addresses": 1667,
+    "signed_halfword_fixtures": 196608,
+    "original_whole_entry": true,
+    "hardware_io": false,
+    "real_threads": false,
+    "unresolved_callees": "explicit scripted callbacks",
+    "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9"
+  },
+  "native_summary": {
+    "scenarios": 789,
+    "assertions": 44602,
+    "composed_cached_collector_and_fan": true
+  },
+  "scope": {
+    "whole_general_worker_control_flow": true,
+    "native_device_driver": false,
+    "physical_hardware": false,
+    "real_thread_scheduling": false,
+    "full_rx_loop": false,
+    "all_lower_callees_recovered": false,
+    "shared_global_abi_recreated": false,
+    "hardware_slot_limit_changed": false
+  },
+  "next": [
+    "lower general-worker callees and state transitions",
+    "common RX and measurement query dispatcher",
+    "native device_drv integration"
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "reference_elf_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "parent_commit": "dfacb2e4e58e432c60a236f34e269d92049047d6",
+  "containing_function": "0x000c0018",
+  "scope": "Packet assembly only. Producer inputs injected; no I/O or hardware dispatch executed.",
+  "memcpy_hook": "0x005a2ee8",
+  "intervals": [
+    {
+      "name": "packet_slice",
+      "start": "0xc069c",
+      "end_exclusive": "0xc07e4",
+      "sha256": "9493e50510be3e0a79abbdd7a75d16bd07fa237d51de8b53ecb2fd30802c3976"
+    },
+    {
+      "name": "reverse_bytes",
+      "start": "0x10f64c",
+      "end_exclusive": "0x10f6b8",
+      "sha256": "d15a7eb2c4e618b996810ddfb822ac86190face2e59f4783e7dfe17582efd6f0"
+    },
+    {
+      "name": "crc16",
+      "start": "0xf7df4",
+      "end_exclusive": "0xf7e90",
+      "sha256": "97cd405039cdf9b3632b146b9663858b092059e24c3410abc8e0d609f5a2ae30"
+    }
+  ],
+  "crc_table": {
+    "address": "0x005b09d8",
+    "size": 512,
+    "sha256": "ea5f177f22d32b7e80c132b498ee4b92882484f891f43f1897075f28bb3da4d9"
+  },
+  "packet": {
+    "length": 86,
+    "preamble": "55aa",
+    "command_byte": "20",
+    "job_id_byte_offset": 3,
+    "body_offset": 4,
+    "body_length": 80,
+    "crc_input_offset": 2,
+    "crc_input_length": 82,
+    "crc_offset": 84,
+    "crc_byte_order": "big-endian",
+    "crc_seed": "ffff",
+    "crc_poly": "1021"
+  },
+  "native_mapping": {
+    "normal_before_reverse": "native work->data[0:76] + four zero bytes",
+    "selector_7_before_reverse": "four zero bytes + native work->data[0:76]",
+    "reversal": "reverse entire 80-byte body, not just 32-bit words",
+    "native_nonce": "input bytes 76..79 are not transmitted"
+  },
+  "not_proven": [
+    "T21 model/controller dispatch to this sender",
+    "raw TX ID to five-bit RX slot mapping",
+    "continuous slot reuse",
+    "hashboard acceptance or timing",
+    "producer integration and live work"
+  ],
+  "new_api_restrictions": [
+    "explicit layout, not inferred model",
+    "raw ID 0..127 only; high-bit values rejected instead of original clamp to 1",
+    "exact 80-byte pure input and output capacity >=86",
+    "no production linkage"
+  ]
+}

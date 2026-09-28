@@ -1,0 +1,83 @@
+name: Check original 1.3.5 PSU identification calibration and voltage
+on:
+  push:
+    branches: [work/reconstruction]
+    paths:
+      - libbitmain/src/psu.c
+      - integration/psu*135*
+      - integration/psu-setup-135.mk
+      - integration/tests/*psu*135*
+      - integration/evidence/psu_setup_135.json
+      - .github/workflows/psu-setup-135.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: psu-setup135-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  psu-setup135:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+      - name: Fetch exact revision without persistent credentials
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/dizzass-psu-setup135-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$root"
+          cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c "http.extraheader=AUTHORIZATION: basic $auth" fetch --depth=1 --no-tags origin "$GITHUB_SHA"
+          git checkout -q --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Verify tools and unchanged native core
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          gcc --version
+          clang --version
+          python3 --version
+          test "$(git hash-object Makefile.am)" = 17d2fbde26b5e8cb614b61908b84d5937af48325
+          test "$(git hash-object cgminer.c)" = 54739e4139294c526af0c73aa9a02ba9762ca4f2
+      - name: Original identification, calibration and setting with GCC
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/psu-setup-135.mk CC=gcc dizzass-setup135-original dizzass-setup135-test dizzass-setup135-arm-forms
+      - name: Native original-domain tests with ASan and UBSan
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/psu-setup-135.mk CC=gcc SANITIZE=1 dizzass-setup135-test
+      - name: Repeat original comparisons and native tests with Clang
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/psu-setup-135.mk CC=clang DIZZASS_SETUP135_DIR=build/psu-setup135-clang dizzass-setup135-original dizzass-setup135-test
+          make -f integration/psu-setup-135.mk CC=clang SANITIZE=1 DIZZASS_SETUP135_DIR=build/psu-setup135-clang-san dizzass-setup135-test
+          clang --analyze -I. -std=c11 -Wall -Wextra -Werror libbitmain/src/psu.c -o "$RUNNER_TEMP/psu135.plist"
+      - name: Previous PSU exchange and read regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/psu-protocol-135.mk CC=gcc dizzass-psu135-original dizzass-psu135-test
+          make -f integration/psu-protocol-135.mk CC=gcc SANITIZE=1 dizzass-psu135-test
+      - name: Preserve binary evidence and state limits
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          printf '%s\n' 'b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9  reference/cgminer.vendor.elf' | sha256sum -c -
+          printf '%s\n' 'Original-domain reconstruction only. No live I2C, voltage change, firmware process, physical PSU or full native-core rebuild in this job.'

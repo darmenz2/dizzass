@@ -1,0 +1,75 @@
+name: Check original 1.3.5 BM1368 pulse width
+on:
+  push:
+    branches: [work/reconstruction]
+    paths:
+      - libbitmain/src/chip/chip1368-pulse-width.c
+      - libbitmain/src/chip/chip1368-register-write.c
+      - libbitmain/src/transport-dispatch.c
+      - libbitmain/src/aml/chip.c
+      - libbitmain/src/uart.c
+      - libbitmain/src/reg_cache.c
+      - src/backend/chain-frequency.c
+      - integration/bm1368_control.c
+      - reconstruction/support/crc5.c
+      - integration/*135.h
+      - integration/bm1368-pulse-width-135.mk
+      - integration/tests/*pulse_width*135*
+      - integration/tests/test_transport_dispatch_135.*
+      - integration/tests/test_bm1368_register_write_135.py
+      - integration/evidence/bm1368_pulse_width_135.json
+      - tools/arm32*.py
+      - tools/elf32.py
+      - reference/cgminer.vendor.elf
+      - .github/workflows/bm1368-pulse-width-135.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pulse1368-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  pulse1368:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+    steps:
+      - name: Fetch exact source without persistent credentials
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/dizzass-pulse135-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-${{ matrix.cc }}"
+          mkdir "$root"
+          cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c "http.extraheader=AUTHORIZATION: basic $auth" fetch --depth=1 --no-tags origin "$GITHUB_SHA"
+          git checkout -q --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Original pulse and nested register AML UART cache comparisons
+        run: |
+          cd "$SOURCE_ROOT"
+          make -f integration/bm1368-pulse-width-135.mk CC=${{ matrix.cc }} dizzass-pulse135-original dizzass-pulse135-test dizzass-pulse135-negative
+      - name: Address and undefined behavior sanitizers
+        run: |
+          cd "$SOURCE_ROOT"
+          make -f integration/bm1368-pulse-width-135.mk CC=${{ matrix.cc }} SANITIZE=1 dizzass-pulse135-test
+      - name: Existing transport register and parent frequency regressions
+        run: |
+          cd "$SOURCE_ROOT"
+          make -f integration/transport-dispatch-135.mk CC=${{ matrix.cc }} dizzass-dispatch135-original dizzass-dispatch135-test
+          make -f integration/bm1368-register-write-135.mk CC=${{ matrix.cc }} dizzass-reg1368-original dizzass-reg1368-test
+          make -f integration/chain-frequency-135.mk CC=${{ matrix.cc }} dizzass-chainfreq135-original dizzass-chainfreq135-test
+      - name: Static analysis and unchanged source evidence
+        run: |
+          cd "$SOURCE_ROOT"
+          clang --analyze -I. -Iinclude -std=c11 -DVN135_BM1368_PULSE_WIDTH_135 -Xanalyzer -analyzer-output=text libbitmain/src/chip/chip1368-pulse-width.c
+          python3 integration/tests/check_bm1368_pulse_width_evidence_135.py
