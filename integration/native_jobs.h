@@ -108,4 +108,25 @@ void dizzass_job_result_clear(struct dizzass_job_result *result);
 /* Snapshot of local liveness ONLY; not an atomic check-and-submit operation. */
 int dizzass_jobs_ticket_live(struct dizzass_jobs *jobs,
     const struct dizzass_job_ticket *ticket);
+
+/* Proposed additive early-RX API. Capture the EXACT current ticket while
+ * PREPARED or WRITTEN under the registry lock. Validate epoch/chain/format and
+ * version without allocating or publishing work. out must be all zero; errors
+ * leave it unchanged. received_epoch is captured by the RX session, never read
+ * from the latest registry state. A capture is NOT hardware freshness proof.
+ * Input objects must be stable/nonoverlapping for the call. Registry lifetime
+ * and cancellation exclusion remain the caller's responsibility.
+ */
+int dizzass_jobs_capture_reply(struct dizzass_jobs *, uint64_t received_epoch,
+    const struct dizzass_nonce_reply *, struct dizzass_job_ticket *out);
+
+/* Validate the captured serial/epoch AND check the reply in ONE critical
+ * section. PENDING remains pending; a replacement in the same slot cannot be
+ * mistaken for the captured job. Success owns native work in out, released by
+ * dizzass_job_result_clear. Same output/ownership rules as jobs_check. This is
+ * not atomic check-and-submit, duplicate suppression, or pool acceptance.
+ */
+int dizzass_jobs_check_captured(struct dizzass_jobs *,
+    const struct dizzass_job_ticket *, const struct dizzass_nonce_reply *,
+    struct dizzass_job_result *out);
 #endif

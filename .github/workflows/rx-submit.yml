@@ -1,13 +1,14 @@
 # On the combined candidate, run the SAME stage tests against TRACKED sources.
 # Original feature refs retain their historical standalone workflow unchanged.
-name: Coordinated software I/O lifecycle
+name: Captured RX submit integration
 on:
   pull_request:
     paths:
-      - 'integration/native/io_lifecycle.*'
-      - 'integration/review/io_lifecycle/**'
-      - 'integration/review/rx_owner/test.c'
-      - '.github/workflows/io-lifecycle.yml'
+      - 'integration/native_jobs.c'
+      - 'integration/native_submit.h'
+      - 'integration/native/early_rx.*'
+      - 'integration/review/rx_submit/**'
+      - '.github/workflows/rx-submit.yml'
   workflow_dispatch:
 permissions:
   contents: read
@@ -15,4 +16,4 @@ jobs:
   current-source:
     uses: ./.github/workflows/combined-rx.yml
     with:
-      groups: io_lifecycle
+      groups: rx_submit

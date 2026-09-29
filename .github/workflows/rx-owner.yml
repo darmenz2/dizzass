@@ -1,97 +1,17 @@
+# On the combined candidate, run the SAME stage tests against TRACKED sources.
+# Original feature refs retain their historical standalone workflow unchanged.
 name: Single RX owner integration
 on:
   pull_request:
-    branches: [work/reconstruction]
-    paths: ['integration/native/rx_owner.*', 'integration/review/rx_owner/**', '.github/workflows/rx-owner.yml']
+    paths:
+      - 'integration/native/rx_owner.*'
+      - 'integration/review/rx_owner/**'
+      - '.github/workflows/rx-owner.yml'
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
-  source-snapshot:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    steps:
-      - name: Exact public source and pending dependency snapshot
-        env:
-          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
-          REPO: ${{ github.repository }}
-        run: |
-          set -eu
-          root="$RUNNER_TEMP/r04-source-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
-          mkdir "$root"; cd "$root"
-          git init -q
-          git remote add origin "https://github.com/$REPO.git"
-          git -c gc.auto=0 -c maintenance.auto=false fetch --depth=1 --no-tags origin "$HEAD" 66869a587e36acfd6e561f75215c1d4f07f071fa cacbc87e18fab159fa5690e96a491341c5485097
-          git checkout --detach "$HEAD"
-          test "$(git rev-parse HEAD)" = "$HEAD"
-          mkdir snapshot
-          git archive --format=tar HEAD | gzip -n > snapshot/source.tar.gz
-          git rev-parse HEAD HEAD^{tree} > snapshot/revision.txt
-          python3 - <<'PY'
-          import hashlib,json,pathlib,subprocess
-          groups={
-            '66869a587e36acfd6e561f75215c1d4f07f071fa': ['integration/native_jobs.c','integration/native_jobs.h','integration/native_submit.h','integration/native/early_rx.c','integration/native/early_rx.h'],
-            'cacbc87e18fab159fa5690e96a491341c5485097': ['integration/review/native_uart_stack/test_stack.c','integration/review/native_uart_stack/evidence/cancel_probe.c']}
-          manifest=[]
-          for sha,names in groups.items():
-              for name in names:
-                  data=subprocess.run(['git','show',sha+':'+name],check=True,stdout=subprocess.PIPE).stdout
-                  p=pathlib.Path('snapshot/deps')/name; p.parent.mkdir(parents=True,exist_ok=True); p.write_bytes(data)
-                  manifest.append({'commit':sha,'path':name,'blob':hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest(),'sha256':hashlib.sha256(data).hexdigest()})
-          pathlib.Path('snapshot/dependencies.json').write_text(json.dumps(manifest,indent=2)+'\n')
-          pathlib.Path('snapshot/source.sha256').write_text(hashlib.sha256(pathlib.Path('snapshot/source.tar.gz').read_bytes()).hexdigest()+'\n')
-          PY
-          echo "SNAPSHOT=$root/snapshot" >> "$GITHUB_ENV"
-      - name: Preserve public source for isolated offline build
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: r04-source-${{ github.event.pull_request.head.sha || github.sha }}
-          path: ${{ env.SNAPSHOT }}
-          retention-days: 7
-  verify:
-    strategy:
-      fail-fast: false
-      matrix:
-        cc: [gcc-14, clang-17]
-    runs-on: ubuntu-24.04
-    timeout-minutes: 20
-    steps:
-      - name: Exact current candidate and explicit pending R-03 dependencies
-        env:
-          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
-          REPO: ${{ github.repository }}
-        run: |
-          set -eu
-          root="$RUNNER_TEMP/r04-${{ matrix.cc }}-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
-          mkdir "$root"; cd "$root"
-          git init -q
-          git remote add origin "https://github.com/$REPO.git"
-          git -c gc.auto=0 -c maintenance.auto=false fetch --depth=1 --no-tags origin "$HEAD" 66869a587e36acfd6e561f75215c1d4f07f071fa cacbc87e18fab159fa5690e96a491341c5485097
-          git checkout --detach "$HEAD"
-          test "$(git rev-parse HEAD)" = "$HEAD"
-          echo "R04_SOURCE=$root" >> "$GITHUB_ENV"
-      - name: Host-only Icarus build dependencies and explicit compiler
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y build-essential autoconf automake libtool pkg-config libcurl4-openssl-dev libusb-1.0-0-dev libudev-dev zlib1g-dev '${{ matrix.cc }}'
-      - name: Runner integrity and real owner/native queue tests
-        run: |
-          set -eu
-          cd "$R04_SOURCE"
-          python3 integration/review/rx_owner/test_runner.py
-          python3 -O integration/review/rx_owner/test_runner.py
-          python3 integration/review/rx_owner/run.py --cc '${{ matrix.cc }}' --baseline icarus --out build/ci-normal --mutants
-      - name: Required sanitizer health and unchanged application scenarios
-        run: |
-          set -eu
-          cd "$R04_SOURCE"
-          python3 integration/review/rx_owner/run.py --cc '${{ matrix.cc }}' --baseline icarus --out build/ci-sanitized --sanitize
-      - name: Preserve complete logs and exact receipts including failures
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: r04-tests-${{ matrix.cc }}-${{ github.run_attempt }}
-          path: |
-            ${{ env.R04_SOURCE }}/build/ci-*/results.json
-            ${{ env.R04_SOURCE }}/build/ci-*/logs/
-          retention-days: 7
+  current-source:
+    uses: ./.github/workflows/combined-rx.yml
+    with:
+      groups: rx_owner

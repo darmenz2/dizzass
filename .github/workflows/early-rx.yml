@@ -1,13 +1,13 @@
 # On the combined candidate, run the SAME stage tests against TRACKED sources.
 # Original feature refs retain their historical standalone workflow unchanged.
-name: Coordinated software I/O lifecycle
+name: Bounded early RX integration
 on:
   pull_request:
     paths:
-      - 'integration/native/io_lifecycle.*'
-      - 'integration/review/io_lifecycle/**'
-      - 'integration/review/rx_owner/test.c'
-      - '.github/workflows/io-lifecycle.yml'
+      - 'integration/native_jobs.*'
+      - 'integration/native/early_rx.*'
+      - 'integration/review/early_rx/**'
+      - '.github/workflows/early-rx.yml'
   workflow_dispatch:
 permissions:
   contents: read
@@ -15,4 +15,4 @@ jobs:
   current-source:
     uses: ./.github/workflows/combined-rx.yml
     with:
-      groups: io_lifecycle
+      groups: early_rx

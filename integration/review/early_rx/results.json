@@ -1,0 +1,306 @@
+{
+  "date": "2026-09-28",
+  "status": "HOST_PASS_SANITIZER_HEALTH_BLOCKED",
+  "base": "12446bed78a060a49364a80bcbfb4340b13f4f27",
+  "a16": "0977235d48dfa01011e81db658d1ae4f83e7d676",
+  "review_helpers": "cacbc87e18fab159fa5690e96a491341c5485097",
+  "runs": [
+    {
+      "name": "gcc",
+      "status": "PASS",
+      "compiler": "gcc (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+      "source_head": "a4f4a0ce3e3c855430b89761e2f36a259f4fd9d9",
+      "source_tree": "c672cd5953bbef9b3129fef9f2cd61b035040e04",
+      "mutants": [
+        "ignore-captured-serial",
+        "pending-reported-empty",
+        "overflow-not-latched",
+        "drop-copy-failure",
+        "erase-captured-epoch"
+      ],
+      "report_sha256": "f27cecf30041c43609447d6d57430d639669536223a76ebc0097d839f8ea28f4",
+      "commands": [
+        {
+          "stage": "compiler",
+          "returncode": 0,
+          "sha256": "9829ba25432aae95cc193accafa14bfab70abb264f797d07c47ba1dcdf4f31a1"
+        },
+        {
+          "stage": "autoreconf",
+          "returncode": 0,
+          "sha256": "4e74c1d5e56e76e291bc7e0211be49161c9cde45b24f4178082ae93ce441fbb2"
+        },
+        {
+          "stage": "configure",
+          "returncode": 0,
+          "sha256": "9fb7b33d70655be664946457e050d23438151e515844c289562298ca8873e621"
+        },
+        {
+          "stage": "core",
+          "returncode": 0,
+          "sha256": "92c3a7e00c56ef0be6bfc829c15a9527baac73e66871807233e97b9de408ffe0"
+        },
+        {
+          "stage": "inbox",
+          "returncode": 0,
+          "sha256": "b6e16db9367a03541e067971a9581b85efeb5c4278ca8f1eec9a5cea4bdc35cc"
+        },
+        {
+          "stage": "symbols",
+          "returncode": 0,
+          "sha256": "5b71ec81bb85cba82fe9165938ceb6c87006da1abf4058b958582318a068e4ec"
+        },
+        {
+          "stage": "old-jobs",
+          "returncode": 0,
+          "sha256": "8723ae739efa62803992e2ba952da23b369b8c7fc9d5257996206fadfb44d9e3"
+        },
+        {
+          "stage": "source-boundaries",
+          "returncode": 0,
+          "sha256": "97a6d29372fe1653833baf6936169373ef2377280622f24d8536b420e0003e3d"
+        },
+        {
+          "stage": "ignore-captured-serial-build",
+          "returncode": 0,
+          "sha256": "4d8b76cee830c679539678ebceffd6dbb667036aa4ee2939b411e46dbc0d9ce1"
+        },
+        {
+          "stage": "ignore-captured-serial",
+          "returncode": 1,
+          "sha256": "f744831561f6deede5916cc6f6bd22e4b190b3d906d3be41c08a6de755417dc7"
+        },
+        {
+          "stage": "pending-reported-empty-build",
+          "returncode": 0,
+          "sha256": "a266999f381cad8872a6b1a472ac93e8cf9bd78374110a38dbe41678c068d28f"
+        },
+        {
+          "stage": "pending-reported-empty",
+          "returncode": 1,
+          "sha256": "cb6b023c31a4aa2a6cfddb0d96c1584c90e000067fd50e62810ec1730e68331c"
+        },
+        {
+          "stage": "overflow-not-latched-build",
+          "returncode": 0,
+          "sha256": "a82c7cf7ae776ba26ba357f33cca0cb83ec49c5e0bf1a209ae5c94152d246682"
+        },
+        {
+          "stage": "overflow-not-latched",
+          "returncode": 1,
+          "sha256": "2f0aeeba918cf81e8f2a8c95620250b423a1a9ee737eb88fede53fdc1dfb6d52"
+        },
+        {
+          "stage": "drop-copy-failure-build",
+          "returncode": 0,
+          "sha256": "2b8452a56cc0c08a95d940fc18c2f2b76952342099b6499b5457a1f91077f077"
+        },
+        {
+          "stage": "drop-copy-failure",
+          "returncode": 1,
+          "sha256": "f86e3a73e733237268c4eef5c6cd53960b9df7da072a84af66147462263c0971"
+        },
+        {
+          "stage": "erase-captured-epoch-build",
+          "returncode": 0,
+          "sha256": "3c6eaa9325dc6a36c8a822f63920882eae2fa160cc608db2e364107b5d74df15"
+        },
+        {
+          "stage": "erase-captured-epoch",
+          "returncode": 1,
+          "sha256": "cb6b023c31a4aa2a6cfddb0d96c1584c90e000067fd50e62810ec1730e68331c"
+        }
+      ]
+    },
+    {
+      "name": "clang",
+      "status": "PASS",
+      "compiler": "Ubuntu clang version 14.0.0-1ubuntu1.1",
+      "source_head": "a4f4a0ce3e3c855430b89761e2f36a259f4fd9d9",
+      "source_tree": "c672cd5953bbef9b3129fef9f2cd61b035040e04",
+      "mutants": [
+        "ignore-captured-serial",
+        "pending-reported-empty",
+        "overflow-not-latched",
+        "drop-copy-failure",
+        "erase-captured-epoch"
+      ],
+      "report_sha256": "0937560fb5ad5e06bbb6cf67b0ee5d1e398f03c38ab1568cdcc5f16b7d9120db",
+      "commands": [
+        {
+          "stage": "compiler",
+          "returncode": 0,
+          "sha256": "a09097b784a9df985ba9b033c4c4650d3052545a7f9fc4e6fa8ce304521383d5"
+        },
+        {
+          "stage": "autoreconf",
+          "returncode": 0,
+          "sha256": "4e74c1d5e56e76e291bc7e0211be49161c9cde45b24f4178082ae93ce441fbb2"
+        },
+        {
+          "stage": "configure",
+          "returncode": 0,
+          "sha256": "0175681506abcbbf43395d7c7a99566eec23c3efe5b054c4cabae5e90424191f"
+        },
+        {
+          "stage": "core",
+          "returncode": 0,
+          "sha256": "21dbf13109fb7ebf0bd6694d692d2853318e46c420623e8e5f45a14faa629870"
+        },
+        {
+          "stage": "inbox",
+          "returncode": 0,
+          "sha256": "89cf6ea23fed1b1b2f49ed29288b0a84d17d83b0767f676b74a8441bb874942a"
+        },
+        {
+          "stage": "symbols",
+          "returncode": 0,
+          "sha256": "d63dd0c30e8524075ef4ae2f379731d6e156277aa63bdfc6f4d72ce1a1166165"
+        },
+        {
+          "stage": "old-jobs",
+          "returncode": 0,
+          "sha256": "5d5a258eafd0767c979b62cc85cf4a0be245be4d891908ff10eac78992d02f10"
+        },
+        {
+          "stage": "source-boundaries",
+          "returncode": 0,
+          "sha256": "bc60cfa2b72552a99b720923fa2336db9acf507623591dc80b78aebdbb151bc2"
+        },
+        {
+          "stage": "ignore-captured-serial-build",
+          "returncode": 0,
+          "sha256": "2fe51e059378169a83dd18fb2d7bb4af2a2252a8af58c3fe2b342ae5a4ef2aac"
+        },
+        {
+          "stage": "ignore-captured-serial",
+          "returncode": 1,
+          "sha256": "f744831561f6deede5916cc6f6bd22e4b190b3d906d3be41c08a6de755417dc7"
+        },
+        {
+          "stage": "pending-reported-empty-build",
+          "returncode": 0,
+          "sha256": "2b7a8aebd4d4e2791e9d2cd71350cdc98d9a2638e42797ca15362e147cca2f51"
+        },
+        {
+          "stage": "pending-reported-empty",
+          "returncode": 1,
+          "sha256": "cb6b023c31a4aa2a6cfddb0d96c1584c90e000067fd50e62810ec1730e68331c"
+        },
+        {
+          "stage": "overflow-not-latched-build",
+          "returncode": 0,
+          "sha256": "5593cc4fc9d1bddf0c66a892d04d601758e5337f2f08078adba9a7d8ed4ff860"
+        },
+        {
+          "stage": "overflow-not-latched",
+          "returncode": 1,
+          "sha256": "2f0aeeba918cf81e8f2a8c95620250b423a1a9ee737eb88fede53fdc1dfb6d52"
+        },
+        {
+          "stage": "drop-copy-failure-build",
+          "returncode": 0,
+          "sha256": "8fbe6a23eb8052662cde01344c38edc4e993cb7f76722b264fa1708cff1d837a"
+        },
+        {
+          "stage": "drop-copy-failure",
+          "returncode": 1,
+          "sha256": "f86e3a73e733237268c4eef5c6cd53960b9df7da072a84af66147462263c0971"
+        },
+        {
+          "stage": "erase-captured-epoch-build",
+          "returncode": 0,
+          "sha256": "0e198a06bf4f1f05f21c1682b60df4a50ff9d5bdc65d633982302182b0b081ee"
+        },
+        {
+          "stage": "erase-captured-epoch",
+          "returncode": 1,
+          "sha256": "cb6b023c31a4aa2a6cfddb0d96c1584c90e000067fd50e62810ec1730e68331c"
+        }
+      ]
+    },
+    {
+      "name": "gcc-san",
+      "status": "BLOCKED_SANITIZER_HEALTH",
+      "compiler": "gcc (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+      "source_head": "a4f4a0ce3e3c855430b89761e2f36a259f4fd9d9",
+      "source_tree": "c672cd5953bbef9b3129fef9f2cd61b035040e04",
+      "mutants": [],
+      "report_sha256": "5c2edddb74804a9073629a3371f29943d31089784253d3984c2a4d303fb9264f",
+      "commands": [
+        {
+          "stage": "compiler",
+          "returncode": 0,
+          "sha256": "9829ba25432aae95cc193accafa14bfab70abb264f797d07c47ba1dcdf4f31a1"
+        },
+        {
+          "stage": "health-build",
+          "returncode": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "sanitizer-health",
+          "returncode": 1,
+          "sha256": "c8ea6d9d4a0eae6d55212580094afe7f03c65d994cec7cbcefbb67a9e1c200cc"
+        }
+      ]
+    },
+    {
+      "name": "clang-san",
+      "status": "BLOCKED_SANITIZER_HEALTH",
+      "compiler": "Ubuntu clang version 14.0.0-1ubuntu1.1",
+      "source_head": "a4f4a0ce3e3c855430b89761e2f36a259f4fd9d9",
+      "source_tree": "c672cd5953bbef9b3129fef9f2cd61b035040e04",
+      "mutants": [],
+      "report_sha256": "d18549797eeb1b010f4f07077d80bc1fadf5bc5f051fb6a2ff8a2a3e2c7a393b",
+      "commands": [
+        {
+          "stage": "compiler",
+          "returncode": 0,
+          "sha256": "a09097b784a9df985ba9b033c4c4650d3052545a7f9fc4e6fa8ce304521383d5"
+        },
+        {
+          "stage": "health-build",
+          "returncode": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "sanitizer-health",
+          "returncode": 1,
+          "sha256": "6b3dbe37a96a96c5c784b91cb37d84ad089f04977505f484c0e8c547b86499a7"
+        }
+      ]
+    }
+  ],
+  "source_hashes": {
+    "integration/native_jobs.c": "138ba36cfaaed648d0262e87d99a920109a448e71f9661ff80f0d309517847f4",
+    "integration/native_jobs.h": "fd57d0a6cfba75f631d878b7d0c602ad48b2ed4e7985cb13195cf5d5cbb330da",
+    "integration/native/early_rx.c": "aaecd9b9b45eb946a058d648c54611e82686fa3403683993e7d5d8aa63ab9538",
+    "integration/native/early_rx.h": "44c7717f44dfc61c6836f115c7c577bf76984a138287f9c443381ab6e1a2d830",
+    "integration/review/early_rx/test.c": "0840593dd84900ab9c7ce1217c30d829b12376fb95b157b94ac1a857eb6243ab",
+    "integration/review/early_rx/suite.mk": "c986fd6781663ca61bd222f5aaf284614c5aa0301ff1ce4d971a4f0f0967eb9b",
+    "integration/review/early_rx/run.py": "e98cbb8d2ae335630d44aaaf2d9b105894e2a00eef348e507c9ad1d304c19b70",
+    "integration/review/early_rx/manifest.json": "5f3c141b500fa5a9a6527d1c1797922bb21721f8541959f3fd1412298bb1bc25",
+    "integration/review/early_rx/host_compat.h": "02e8f79fda266f9153f89d939c39318ac357beef531315a6a3519b018229d4ff"
+  },
+  "new_cases": 25,
+  "queue_assertions_per_run": 1918,
+  "mutants_per_compiler": 5,
+  "archive": {
+    "file": "full-evidence.tar.gz",
+    "location": "MainPC Downloads/dizzass-early-rx-20260928",
+    "sha256": "950b2c4459f66e940a7d3869cc3c6fff3f0802ddb002b4cb3133a91d63353f2d"
+  },
+  "scope": {
+    "physical_asic": false,
+    "pool_submission": false,
+    "driver_registration": false,
+    "shared_branch_write": false
+  },
+  "limitations": [
+    "One externally serialized RX owner; TX uses existing registry synchronization",
+    "Caller excludes deferred cancellation across take and result cleanup",
+    "Captured identity does not establish physical RX freshness or atomic submission",
+    "Local GCC/Clang sanitizer health fails before app execution; not a sanitizer PASS"
+  ]
+}
