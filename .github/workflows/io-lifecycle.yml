@@ -1,0 +1,57 @@
+name: Coordinated software I/O lifecycle
+on:
+  pull_request:
+    branches: [review/rx-owner-loop-20260928]
+    paths: ['integration/native/io_lifecycle.*', 'integration/review/io_lifecycle/**', 'integration/review/rx_owner/test.c', '.github/workflows/io-lifecycle.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc-14, clang-17]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Exact candidate and explicit pending APIs, read only
+        env:
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -eu
+          root="$RUNNER_TEMP/r05-${{ matrix.cc }}-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$root"; cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$REPO.git"
+          git -c gc.auto=0 -c maintenance.auto=false fetch --depth=1 --no-tags origin "$HEAD" 66869a587e36acfd6e561f75215c1d4f07f071fa cacbc87e18fab159fa5690e96a491341c5485097
+          git checkout --detach "$HEAD"
+          test "$(git rev-parse HEAD)" = "$HEAD"
+          echo "R05_SOURCE=$root" >> "$GITHUB_ENV"
+      - name: Host Icarus dependencies and explicit compiler
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y build-essential autoconf automake libtool pkg-config libcurl4-openssl-dev libusb-1.0-0-dev libudev-dev zlib1g-dev '${{ matrix.cc }}'
+      - name: Functional lifecycle, old regressions and semantic controls
+        run: |
+          set -eu
+          cd "$R05_SOURCE"
+          python3 -B integration/review/rx_owner/test_runner.py
+          python3 -B integration/review/io_lifecycle/test_runner.py
+          python3 -O -B integration/review/io_lifecycle/test_runner.py
+          python3 -B integration/review/io_lifecycle/run.py --cc '${{ matrix.cc }}' --baseline icarus --out build/r05-ci-normal --mutants
+      - name: Required sanitizer health and unchanged lifecycle and RX suites
+        run: |
+          set -eu
+          cd "$R05_SOURCE"
+          python3 -B integration/review/io_lifecycle/run.py --cc '${{ matrix.cc }}' --baseline icarus --out build/r05-ci-sanitized --sanitize
+      - name: Preserve exact reports and logs including failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r05-tests-${{ matrix.cc }}-${{ github.run_attempt }}
+          path: |
+            ${{ env.R05_SOURCE }}/build/r05-ci-*/results.json
+            ${{ env.R05_SOURCE }}/build/r05-ci-*/logs/
+          retention-days: 7

@@ -418,6 +418,8 @@ static void pause_pending(void)
     cleanup(&e);++cases;puts("R04_PENDING pause_wakes_rejection_without_new_data=1");
 }
 
+/* Embed the same helpers without altering standalone test assertions. */
+#ifndef R04_OWNER_EMBED
 int main(void)
 {
     mutex_init(&stats_lock);mutex_init(&console_lock);cglock_init(&control_lock);
@@ -429,3 +431,5 @@ int main(void)
     printf("R04_PASS cases=%u checks=%u native_calls=%u actual_thread=1 physical_asic=0\n",cases,atomic_load(&checks),atomic_load(&native_calls));
     return 0;
 }
+
+#endif
