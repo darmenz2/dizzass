@@ -1,0 +1,60 @@
+name: R-07 multi-chain software stop
+on:
+  pull_request:
+    branches: [integration/rx-stack-review-20260929]
+    paths:
+      - 'integration/native/io_stop_many.*'
+      - 'integration/review/device_stop/**'
+      - '.github/workflows/multi-chain-stop.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    if: github.repository == 'darmenz2/dizzass'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc-14, clang-17]
+    steps:
+      - name: Read-only exact candidate checkout
+        env:
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -eu
+          root="$RUNNER_TEMP/r07-$GITHUB_RUN_ID-${{ matrix.cc }}-$GITHUB_RUN_ATTEMPT"
+          mkdir "$root"; cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          git -c gc.auto=0 -c maintenance.auto=false fetch --depth=1 --no-tags origin "$HEAD"
+          git checkout -q --detach "$HEAD"
+          test "$(git rev-parse HEAD)" = "$HEAD"
+          echo "SOURCE_ROOT=$root" >> "$GITHUB_ENV"
+      - name: Host Icarus dependencies and explicit compiler
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y build-essential autoconf automake libtool pkg-config libcurl4-openssl-dev libusb-1.0-0-dev libudev-dev zlib1g-dev '${{ matrix.cc }}'
+      - name: Multi-chain tests and all unchanged current-source regressions
+        run: |
+          set -eu
+          cd "$SOURCE_ROOT"
+          python3 -B integration/review/device_stop/test_runner.py
+          python3 -B -O integration/review/device_stop/test_runner.py
+          python3 -B integration/review/device_stop/run.py --cc '${{ matrix.cc }}' --baseline icarus --out build/r07-ci-normal --mutants
+      - name: Required sanitizer health then the same full test set
+        run: |
+          set -eu
+          cd "$SOURCE_ROOT"
+          python3 -B integration/review/device_stop/run.py --cc '${{ matrix.cc }}' --baseline icarus --out build/r07-ci-sanitized --sanitize
+      - name: Preserve reports, actual compiler inputs and failure logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r07-${{ matrix.cc }}-${{ github.run_attempt }}
+          path: |
+            ${{ env.SOURCE_ROOT }}/build/r07-ci-*/results.json
+            ${{ env.SOURCE_ROOT }}/build/r07-ci-*/logs/
+            ${{ env.SOURCE_ROOT }}/build/r07-ci-*/compile-records/
+          retention-days: 7
