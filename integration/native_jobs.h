@@ -129,4 +129,19 @@ int dizzass_jobs_capture_reply(struct dizzass_jobs *, uint64_t received_epoch,
 int dizzass_jobs_check_captured(struct dizzass_jobs *,
     const struct dizzass_job_ticket *, const struct dizzass_nonce_reply *,
     struct dizzass_job_result *out);
+/* Read-only availability in one existing registry lifetime/epoch. A set bit
+ * denotes SLOT_EMPTY only, not a completed core work or a retired wire job.
+ * Does not reserve a slot. All work admissions must have ONE serialized owner;
+ * prepare still checks the actual state. PAUSED/old epoch/serial exhaustion
+ * return their existing status and leave out unchanged. Capacity zero is OK.
+ * Output/lifetime/cancellation rules are those of the other registry queries.
+ */
+struct dizzass_job_capacity {
+    uint64_t epoch;
+    uint32_t chain_id;
+    uint32_t unused_mask;
+};
+int dizzass_jobs_capacity(struct dizzass_jobs *, uint64_t expected_epoch,
+    struct dizzass_job_capacity *out);
+
 #endif

@@ -496,3 +496,26 @@ int dizzass_submitter_run_captured(struct dizzass_submitter *gate,
     if (!captured) return DIZZASS_SUBMIT_INVALID;
     return submitter_run(gate, jobs, captured->epoch, reply, out, captured);
 }
+
+/* Advisory snapshot only; native prepare remains the admission authority. */
+int dizzass_jobs_capacity(struct dizzass_jobs *jobs, uint64_t expected_epoch,
+    struct dizzass_job_capacity *out)
+{
+    _Static_assert(DIZZASS_JOB_SLOTS == 32u, "capacity mask is 32 bits");
+    if (!jobs || !out) return DIZZASS_JOBS_INVALID;
+    struct dizzass_job_capacity r = {0};
+    jobs_lock(jobs);
+    int rc = epoch_status(jobs, expected_epoch);
+    if (!rc && jobs->paused) rc = DIZZASS_JOBS_PAUSED;
+    if (!rc && jobs->serial == UINT64_MAX) rc = DIZZASS_JOBS_EXHAUSTED;
+    if (!rc) {
+        r.epoch = jobs->epoch;
+        r.chain_id = jobs->chain_id;
+        for (unsigned i = 0; i < DIZZASS_JOB_SLOTS; ++i)
+            if (jobs->slots[i].state == SLOT_EMPTY)
+                r.unused_mask |= UINT32_C(1) << i;
+        *out = r;
+    }
+    jobs_unlock(jobs);
+    return rc;
+}

@@ -1,0 +1,113 @@
+{
+  "parent": "2855ad18b6bc93a1727c587fa35886546e11fa84",
+  "revisions": [
+    {
+      "path": "integration/native_jobs.c",
+      "before": {
+        "commit": "66869a587e36acfd6e561f75215c1d4f07f071fa",
+        "path": "integration/native_jobs.c",
+        "blob": "566529ae9774174659436b0ae6e3cc713f40f467",
+        "sha256": "c4f00c6a7cf1d1f859bde92b8fd35a638e3e824768d5238d67d083de319eaa8f",
+        "origin": "proposed-or-test-helper"
+      },
+      "after": {
+        "path": "integration/native_jobs.c",
+        "blob": "f93f5a438d30a6fbe2748ceddf41afb8a11f1f7f",
+        "sha256": "6850aa3de020e560b0b280b54723eb57a7aa498e006734903fc02d08a6a828da",
+        "origin": "R-11 additive read-only capacity query",
+        "supersedes": {
+          "commit": "66869a587e36acfd6e561f75215c1d4f07f071fa",
+          "path": "integration/native_jobs.c",
+          "blob": "566529ae9774174659436b0ae6e3cc713f40f467",
+          "sha256": "c4f00c6a7cf1d1f859bde92b8fd35a638e3e824768d5238d67d083de319eaa8f",
+          "origin": "proposed-or-test-helper"
+        }
+      }
+    },
+    {
+      "path": "integration/native_jobs.h",
+      "before": {
+        "commit": "66869a587e36acfd6e561f75215c1d4f07f071fa",
+        "path": "integration/native_jobs.h",
+        "blob": "cf6f3c5b21d090bb9a94f679c4528fedee2fa4e5",
+        "sha256": "fd57d0a6cfba75f631d878b7d0c602ad48b2ed4e7985cb13195cf5d5cbb330da",
+        "origin": "proposed-or-test-helper"
+      },
+      "after": {
+        "path": "integration/native_jobs.h",
+        "blob": "f52085443142b552ab60f3412ac3f0436dffce7b",
+        "sha256": "c0bdc2e4b01175ba1c330486f3765bbc4d6e88cb7262cceb45a50ac809f3beea",
+        "origin": "R-11 additive read-only capacity query",
+        "supersedes": {
+          "commit": "66869a587e36acfd6e561f75215c1d4f07f071fa",
+          "path": "integration/native_jobs.h",
+          "blob": "cf6f3c5b21d090bb9a94f679c4528fedee2fa4e5",
+          "sha256": "fd57d0a6cfba75f631d878b7d0c602ad48b2ed4e7985cb13195cf5d5cbb330da",
+          "origin": "proposed-or-test-helper"
+        }
+      }
+    },
+    {
+      "path": "integration/native/io_lifecycle.c",
+      "before": {
+        "path": "integration/native/io_lifecycle.c",
+        "blob": "ebd3c902a899ea98a1ec560474cfff9cf65e98e2",
+        "sha256": "0bc45b7e982a884388c88c4096ac7d324b2328b90e49975392d35c64516b0af4",
+        "origin": "R-10 explicit queue lifetime accounting",
+        "supersedes": {
+          "parent_commit": "48196f27f146087c4d22ce21caf0e0615a897a0e",
+          "blob": "f1e4a61da003ca3876615d040c4c822d72026ca8",
+          "sha256": "cb84f348d880087491ba5ea37a341b35645766099d9e02499492fd6dbbf2b015"
+        }
+      },
+      "after": {
+        "path": "integration/native/io_lifecycle.c",
+        "blob": "8a5f7bec6463013a6096849d521662f4c8f5194d",
+        "sha256": "9313b292e3654d4d978e6e0c5d9e10389dde0b421440b30cc1a3debf8da696c1",
+        "origin": "R-11 additive read-only capacity query",
+        "supersedes": {
+          "path": "integration/native/io_lifecycle.c",
+          "blob": "ebd3c902a899ea98a1ec560474cfff9cf65e98e2",
+          "sha256": "0bc45b7e982a884388c88c4096ac7d324b2328b90e49975392d35c64516b0af4",
+          "origin": "R-10 explicit queue lifetime accounting",
+          "supersedes": {
+            "parent_commit": "48196f27f146087c4d22ce21caf0e0615a897a0e",
+            "blob": "f1e4a61da003ca3876615d040c4c822d72026ca8",
+            "sha256": "cb84f348d880087491ba5ea37a341b35645766099d9e02499492fd6dbbf2b015"
+          }
+        }
+      }
+    },
+    {
+      "path": "integration/native/io_lifecycle.h",
+      "before": {
+        "path": "integration/native/io_lifecycle.h",
+        "blob": "7cfcc2fa8471f471e213c02352ea02d1a915253f",
+        "sha256": "c430a3886e2e543df8c26044e78ab23d9b154a3eb9aecc0d53a2f202fd7578e5",
+        "origin": "R-10 explicit queue lifetime accounting",
+        "supersedes": {
+          "parent_commit": "48196f27f146087c4d22ce21caf0e0615a897a0e",
+          "blob": "0fc0c9e3ec52186c428faad5e8bd9866dad82dee",
+          "sha256": "00bc5804c3ea43218f31a131b775a57ddeb53c82fc0ed2e5a6c272a3542dd794"
+        }
+      },
+      "after": {
+        "path": "integration/native/io_lifecycle.h",
+        "blob": "3acd654ace0c6f4e9a853d5f586f086d40a80a6d",
+        "sha256": "03fe112522b4792d6d8446c391b180f9c4ed06cb5e8dacdd7048c13b40e0eaf1",
+        "origin": "R-11 additive read-only capacity query",
+        "supersedes": {
+          "path": "integration/native/io_lifecycle.h",
+          "blob": "7cfcc2fa8471f471e213c02352ea02d1a915253f",
+          "sha256": "c430a3886e2e543df8c26044e78ab23d9b154a3eb9aecc0d53a2f202fd7578e5",
+          "origin": "R-10 explicit queue lifetime accounting",
+          "supersedes": {
+            "parent_commit": "48196f27f146087c4d22ce21caf0e0615a897a0e",
+            "blob": "0fc0c9e3ec52186c428faad5e8bd9866dad82dee",
+            "sha256": "00bc5804c3ea43218f31a131b775a57ddeb53c82fc0ed2e5a6c272a3542dd794"
+          }
+        }
+      }
+    }
+  ]
+}
