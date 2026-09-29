@@ -6,7 +6,7 @@ LC_FLAGS = $(DIZZASS_NONCE_FLAGS) -std=gnu11 -pthread -fno-builtin-strdup
 ifeq ($(SANITIZE),1)
 LC_FLAGS += -fno-pie -no-pie
 endif
-LC_SOURCES = integration/review/io_lifecycle/test.c integration/native/rx_owner.c integration/native/io_lifecycle.c $(LC_DEPS)/integration/native_jobs.c $(LC_DEPS)/integration/native/early_rx.c integration/native_nonce.c integration/native_work_tx88.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c integration/work_tx88.c integration/work_route.c integration/bm1368_control.c reconstruction/support/crc5.c integration/native/uart_safe.c integration/native/uart_posix.c integration/native/uart_channel.c integration/native/protocol_channel_tx.c integration/native/native_job_channel_tx.c
+LC_SOURCES = integration/review/io_lifecycle/test.c integration/native/rx_owner.c integration/rx_crc5.c integration/native/io_lifecycle.c $(LC_DEPS)/integration/native_jobs.c $(LC_DEPS)/integration/native/early_rx.c integration/native_nonce.c integration/native_work_tx88.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c integration/work_tx88.c integration/work_route.c integration/bm1368_control.c reconstruction/support/crc5.c integration/native/uart_safe.c integration/native/uart_posix.c integration/native/uart_channel.c integration/native/protocol_channel_tx.c integration/native/native_job_channel_tx.c
 LC_OBJECTS = $(addprefix $(LC_DIR)/,$(LC_SOURCES:.c=.o))
 $(LC_DIR)/%.o: %.c integration/review/io_lifecycle/suite.mk config.h
 	mkdir -p $(dir $@)

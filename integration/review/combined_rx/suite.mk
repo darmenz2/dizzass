@@ -6,7 +6,7 @@ C06_FLAGS = $(DIZZASS_NONCE_FLAGS) -std=gnu11 -pthread -fno-builtin-strdup
 ifeq ($(SANITIZE),1)
 C06_FLAGS += -fno-pie -no-pie
 endif
-C06_SOURCES = integration/review/combined_rx/test.c integration/native/rx_owner.c integration/native/io_lifecycle.c $(C06_DEPS)/integration/native_jobs.c $(C06_DEPS)/integration/native/early_rx.c integration/native_nonce.c integration/native_work_tx88.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c integration/work_tx88.c integration/work_route.c integration/bm1368_control.c reconstruction/support/crc5.c integration/native/uart_safe.c integration/native/uart_posix.c integration/native/uart_channel.c integration/native/protocol_channel_tx.c integration/native/native_job_channel_tx.c
+C06_SOURCES = integration/review/combined_rx/test.c integration/native/rx_owner.c integration/rx_crc5.c integration/native/io_lifecycle.c $(C06_DEPS)/integration/native_jobs.c $(C06_DEPS)/integration/native/early_rx.c integration/native_nonce.c integration/native_work_tx88.c src/backend/work-gen/work-gen.c reconstruction/support/work_rx_stream.c integration/work_tx88.c integration/work_route.c integration/bm1368_control.c reconstruction/support/crc5.c integration/native/uart_safe.c integration/native/uart_posix.c integration/native/uart_channel.c integration/native/protocol_channel_tx.c integration/native/native_job_channel_tx.c
 C06_OBJECTS = $(addprefix $(C06_DIR)/,$(C06_SOURCES:.c=.o))
 $(C06_DIR)/%.o: %.c integration/review/combined_rx/suite.mk config.h
 	mkdir -p $(dir $@)
