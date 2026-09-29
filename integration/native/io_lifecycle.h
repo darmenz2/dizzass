@@ -14,9 +14,11 @@ struct dizzass_io_command_receipt {
     struct dizzass_protocol_tx_receipt send;
     int notify_status;
 };
+/* R-10 adds active_queue: rebuild all users; no prebuilt ABI promise. */
 struct dizzass_io_report {
     bool started, stop_requested, quiescent, rx_finished, rx_joined, jobs_paused;
     size_t active_tx; /* Whole wrapper operations, including finish/notify. */
+    size_t active_queue; /* Queued-work scopes through core completion/receipt. */
     int rx_wake_status, initial_tx_stop_status, submit_stop_status;
     int rx_join_status, tx_wait_status, final_tx_stop_status, pause_status;
     int cancel_restore_status;
@@ -65,8 +67,11 @@ int dizzass_io_send_command(struct dizzass_io_lifecycle *,
 int dizzass_io_request_stop(struct dizzass_io_lifecycle *);
 /* Controller-only, NEVER from callback/producer. Closes UART admission, stops
  * shared submitter, joins RX, waits for all admitted wrapper operations, stops
- * UART again, then pauses jobs. Timeout never pauses/reuses live TX slots.
- * tx_deadline_ms bounds TX wait ONLY; RX join/submitter/native locks/callbacks
+ * UART again, then pauses jobs. The wait also covers admitted queued-work
+ * scopes through native work_completed and receipt publication. Neither count
+ * is a hardware-work count. Timeout never pauses/reuses live TX slots.
+ * tx_deadline_ms bounds the managed TX/queue wait only; RX join, submitter and
+ * native locks/callbacks
  * may block: this is NOT a total wall-time or hardware shutdown deadline.
  * Retry with a later deadline after timeout. Full report stored before restoring
  * cancellation; snapshot/repeated stop can recover it if caller was cancelled.

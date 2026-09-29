@@ -1,0 +1,55 @@
+{
+  "parent": "48196f27f146087c4d22ce21caf0e0615a897a0e",
+  "revisions": [
+    {
+      "path": "integration/native/io_lifecycle.c",
+      "before": {
+        "path": "integration/native/io_lifecycle.c",
+        "blob": "f1e4a61da003ca3876615d040c4c822d72026ca8",
+        "sha256": "cb84f348d880087491ba5ea37a341b35645766099d9e02499492fd6dbbf2b015",
+        "origin": "R-08 explicit CRC integration revision",
+        "supersedes": {
+          "parent_commit": "000237f56f9112db10117dd4dade6029c1d44899",
+          "blob": "05fe30734125ac226e4a5e12c64306f4c529e513",
+          "sha256": "2757ede12eeec6034d9721b9f8eb6e5cc893c3376795d12ad149e8cc9e579d5e"
+        }
+      },
+      "after": {
+        "path": "integration/native/io_lifecycle.c",
+        "blob": "ebd3c902a899ea98a1ec560474cfff9cf65e98e2",
+        "sha256": "0bc45b7e982a884388c88c4096ac7d324b2328b90e49975392d35c64516b0af4",
+        "origin": "R-10 explicit queue lifetime accounting",
+        "supersedes": {
+          "parent_commit": "48196f27f146087c4d22ce21caf0e0615a897a0e",
+          "blob": "f1e4a61da003ca3876615d040c4c822d72026ca8",
+          "sha256": "cb84f348d880087491ba5ea37a341b35645766099d9e02499492fd6dbbf2b015"
+        }
+      }
+    },
+    {
+      "path": "integration/native/io_lifecycle.h",
+      "before": {
+        "path": "integration/native/io_lifecycle.h",
+        "blob": "0fc0c9e3ec52186c428faad5e8bd9866dad82dee",
+        "sha256": "00bc5804c3ea43218f31a131b775a57ddeb53c82fc0ed2e5a6c272a3542dd794",
+        "origin": "R-08 explicit CRC integration revision",
+        "supersedes": {
+          "parent_commit": "000237f56f9112db10117dd4dade6029c1d44899",
+          "blob": "c5d72d8a2ec0156543f1f6877142869fb9887870",
+          "sha256": "78860adac411a07a7cf1c21c3595a82e5b9d3cdb6ea7a397a809fe3755840b70"
+        }
+      },
+      "after": {
+        "path": "integration/native/io_lifecycle.h",
+        "blob": "7cfcc2fa8471f471e213c02352ea02d1a915253f",
+        "sha256": "c430a3886e2e543df8c26044e78ab23d9b154a3eb9aecc0d53a2f202fd7578e5",
+        "origin": "R-10 explicit queue lifetime accounting",
+        "supersedes": {
+          "parent_commit": "48196f27f146087c4d22ce21caf0e0615a897a0e",
+          "blob": "0fc0c9e3ec52186c428faad5e8bd9866dad82dee",
+          "sha256": "00bc5804c3ea43218f31a131b775a57ddeb53c82fc0ed2e5a6c272a3542dd794"
+        }
+      }
+    }
+  ]
+}

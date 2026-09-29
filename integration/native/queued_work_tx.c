@@ -2,6 +2,7 @@
 #include "config.h"
 #include "miner.h"
 #include "integration/native/queued_work_tx.h"
+#include "integration/native/io_queue_scope.h"
 #include <errno.h>
 #include <math.h>
 
@@ -26,6 +27,8 @@ int dizzass_queued_work_send(struct thr_info *thr, struct dizzass_io_lifecycle *
     if (rc) goto done;
     if (now >= p->deadline_ms) { rc = ETIMEDOUT; goto done; }
 
+    rc = dizzass_io_queue_enter(io);
+    if (rc) goto done;
     struct dizzass_queued_tx_receipt r = {0};
     struct work *work = get_queued(thr->cgpu);
     if (work) {
@@ -45,6 +48,7 @@ int dizzass_queued_work_send(struct thr_info *thr, struct dizzass_io_lifecycle *
         r.completed = true;
     }
     *out = r;
+    dizzass_io_queue_leave(io);
 done:
     {
         int restore = pthread_setcancelstate(saved, NULL);

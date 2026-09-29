@@ -1,6 +1,7 @@
 /* GPL-3.0-or-later. Compose existing RX/TX/submit, never operate hardware. */
 #define _POSIX_C_SOURCE 200809L
 #include "integration/native/io_lifecycle.h"
+#include "integration/native/io_queue_scope.h"
 #include <errno.h>
 #include <pthread.h>
 #include <stdlib.h>
@@ -77,6 +78,32 @@ int dizzass_io_request_stop(struct dizzass_io_lifecycle *l)
     int restore = pthread_setcancelstate(saved, NULL);
     return e ? e : restore;
 }
+/* Caller holds the queue adapter's cancellation exclusion across this pair.
+ * Separate from active_tx: nested io_send_work must not double-count producers.
+ */
+int dizzass_io_queue_enter(struct dizzass_io_lifecycle *l)
+{
+    if (!l) return EINVAL;
+    int e = 0;
+    lock(l);
+    if (l->state.stop_requested) e = ECANCELED;
+    else if (!l->state.started) e = ENOTCONN;
+    else if (dizzass_rx_owner_finished(l->rx)) {
+        l->state.stop_requested = true; e = EPIPE;
+    } else if (l->state.active_queue == SIZE_MAX) e = EOVERFLOW;
+    else ++l->state.active_queue;
+    unlock(l);
+    return e;
+}
+void dizzass_io_queue_leave(struct dizzass_io_lifecycle *l)
+{
+    lock(l);
+    if (!l->state.active_queue) abort();
+    --l->state.active_queue;
+    if (pthread_cond_broadcast(&l->changed)) abort();
+    unlock(l);
+    /* No reference to l after releasing the scope. */
+}
 /* saved remains disabled until output AND wrapper accounting are committed. */
 static int begin(struct dizzass_io_lifecycle *l, int *saved)
 {
@@ -146,7 +173,7 @@ static int wait_tx(struct dizzass_io_lifecycle *l, uint64_t deadline)
     uint64_t seconds = deadline / 1000;
     int e = 0;
     lock(l);
-    while (l->state.active_tx) {
+    while (l->state.active_tx || l->state.active_queue) {
         if (sizeof(time_t) == 4 && seconds > INT32_MAX) { e = EOVERFLOW; break; }
         uint64_t now;
         e = dizzass_uart_posix_now_ms(&now);
@@ -187,7 +214,7 @@ int dizzass_io_stop(struct dizzass_io_lifecycle *l, uint64_t deadline,
         }
         r.quiescent = !e;
     }
-    lock(l); r.active_tx = l->state.active_tx; r.rx_finished = dizzass_rx_owner_finished(l->rx); l->state = r; *out = r; unlock(l);
+    lock(l); r.active_tx = l->state.active_tx; r.active_queue = l->state.active_queue; r.rx_finished = dizzass_rx_owner_finished(l->rx); l->state = r; *out = r; unlock(l);
     int restore = pthread_setcancelstate(saved, NULL);
     if (restore) { lock(l); l->state.cancel_restore_status = restore;
         out->cancel_restore_status = restore; unlock(l); }
@@ -204,7 +231,7 @@ int dizzass_io_destroy(struct dizzass_io_lifecycle **pointer)
     int saved, e = pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &saved);
     if (e) return e;
     struct dizzass_io_lifecycle *l = *pointer;
-    if (l->state.active_tx || (!l->state.quiescent &&
+    if (l->state.active_tx || l->state.active_queue || (!l->state.quiescent &&
         (l->state.started || l->state.stop_requested))) e = EBUSY;
     else {
         e = dizzass_rx_owner_destroy(&l->rx);
