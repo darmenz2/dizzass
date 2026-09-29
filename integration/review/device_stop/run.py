@@ -20,8 +20,8 @@ original_controls = combined.controls
 CONTROLS = [
     ('omit-fanout', 'r.entries[i].request_status = dizzass_io_request_stop(members[i]);',
      'r.entries[i].request_status = 0;', 'state.stop_requested'),
-    ('stop-at-first-error', '++r.attempted;',
-     '++r.attempted; if (r.entries[i].stop_status) break;', 'r.requested==3 && r.attempted==3'),
+    ('stop-at-first-error', '++r.quiescent;\n    }',
+     '++r.quiescent;\n        if (r.entries[i].stop_status) break;\n    }', 'r.requested==3 && r.attempted==3'),
     ('extend-deadline', 'dizzass_io_stop(members[i], deadline,',
      'dizzass_io_stop(members[i], deadline+1,', 'deadline==same_deadline'),
     ('omit-cancel-guard', 'int saved, e = pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &saved);',
