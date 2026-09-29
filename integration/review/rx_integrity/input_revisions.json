@@ -1,0 +1,92 @@
+[
+  {
+    "path": "integration/native/rx_owner.c",
+    "before": {
+      "path": "integration/native/rx_owner.c",
+      "blob": "aeb47a73a920179e215ba6db3c618414f3c6131a",
+      "sha256": "ddd142d875878290e90c07d83f3f81ebc488f2dd66eb89777b778d0cc0d14bd4",
+      "origin": "unchanged-proposal-input"
+    },
+    "after": {
+      "path": "integration/native/rx_owner.c",
+      "blob": "65de14f05bc0710e6dd55ca96f6f29dc00f311e4",
+      "sha256": "dfddc7216234cb84299d885c4bffa6879f9b8a53050199762d0872aa2fee686a",
+      "origin": "R-08 explicit CRC integration revision"
+    }
+  },
+  {
+    "path": "integration/native/rx_owner.h",
+    "before": {
+      "path": "integration/native/rx_owner.h",
+      "blob": "0394d3183d7be2b94af173aad01c455fd6331eda",
+      "sha256": "c610c80d9745fa5c25c2b596357946e23cda085c2fe3a1841425412860c0c7dd",
+      "origin": "unchanged-proposal-input"
+    },
+    "after": {
+      "path": "integration/native/rx_owner.h",
+      "blob": "0495f38f144b9a9d6e63095f1d8f8630c8ddd717",
+      "sha256": "f810bf8e0f170ef3d53a5d130c97bc1d7a856f72e8b4b752b75d8b6d893d4a33",
+      "origin": "R-08 explicit CRC integration revision"
+    }
+  },
+  {
+    "path": "integration/native/io_lifecycle.c",
+    "before": {
+      "path": "integration/native/io_lifecycle.c",
+      "blob": "05fe30734125ac226e4a5e12c64306f4c529e513",
+      "sha256": "2757ede12eeec6034d9721b9f8eb6e5cc893c3376795d12ad149e8cc9e579d5e",
+      "origin": "unchanged-proposal-input"
+    },
+    "after": {
+      "path": "integration/native/io_lifecycle.c",
+      "blob": "f1e4a61da003ca3876615d040c4c822d72026ca8",
+      "sha256": "cb84f348d880087491ba5ea37a341b35645766099d9e02499492fd6dbbf2b015",
+      "origin": "R-08 explicit CRC integration revision"
+    }
+  },
+  {
+    "path": "integration/native/io_lifecycle.h",
+    "before": {
+      "path": "integration/native/io_lifecycle.h",
+      "blob": "c5d72d8a2ec0156543f1f6877142869fb9887870",
+      "sha256": "78860adac411a07a7cf1c21c3595a82e5b9d3cdb6ea7a397a809fe3755840b70",
+      "origin": "unchanged-proposal-input"
+    },
+    "after": {
+      "path": "integration/native/io_lifecycle.h",
+      "blob": "0fc0c9e3ec52186c428faad5e8bd9866dad82dee",
+      "sha256": "00bc5804c3ea43218f31a131b775a57ddeb53c82fc0ed2e5a6c272a3542dd794",
+      "origin": "R-08 explicit CRC integration revision"
+    }
+  },
+  {
+    "path": "integration/review/rx_owner/suite.mk",
+    "before": {
+      "path": "integration/review/rx_owner/suite.mk",
+      "blob": "67f278ac86780b9845b1b6692f8136ad3c841491",
+      "sha256": "e4a5b85ca071fd99aa6969382d89c7ba54cf175b75159b9f2a9650d9aa0b3a86",
+      "origin": "unchanged-proposal-input"
+    },
+    "after": {
+      "path": "integration/review/rx_owner/suite.mk",
+      "blob": "8b981d5079392ac35017b5bf1e80c1caf17f0fb2",
+      "sha256": "5c326ca25d50e08484416cd50b1839a4fa2e3fa143c60372c47f7880a09e9fcb",
+      "origin": "R-08 explicit CRC integration revision"
+    }
+  },
+  {
+    "path": "integration/review/io_lifecycle/suite.mk",
+    "before": {
+      "path": "integration/review/io_lifecycle/suite.mk",
+      "blob": "d1eb3e4262e614b653301ed01fa94fa7c0a00e67",
+      "sha256": "570fa5689008187023159ca047f83bcc03dce646ba77d1cce036621dfa2b042f",
+      "origin": "unchanged-proposal-input"
+    },
+    "after": {
+      "path": "integration/review/io_lifecycle/suite.mk",
+      "blob": "af571cead538189ac015ce62789e54a7340d5e1f",
+      "sha256": "0902f1c493b2e1856f34c93386b9960bb445c3507bf3c42dca75b0fcc866df61",
+      "origin": "R-08 explicit CRC integration revision"
+    }
+  }
+]

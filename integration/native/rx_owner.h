@@ -8,15 +8,16 @@
 struct dizzass_rx_owner;
 enum dizzass_rx_event_kind {
     DIZZASS_RX_QUEUED = 1, DIZZASS_RX_REJECTED,
-    DIZZASS_RX_DISPATCHED, DIZZASS_RX_REGISTER
+    DIZZASS_RX_DISPATCHED, DIZZASS_RX_REGISTER, DIZZASS_RX_INTEGRITY_REJECTED
 };
 struct dizzass_rx_event {
     enum dizzass_rx_event_kind kind;
     uint64_t epoch;
     int status;
     struct dizzass_nonce_reply reply;
-    vn135_work_rx_message message; /* REGISTER includes FILTERED; NOT CRC checked. */
+    vn135_work_rx_message message; /* REGISTER/FILTERED or untrusted CRC diagnostic. */
     struct dizzass_early_rx_submission submission;
+    bool integrity_verified; /* True only after the strict CRC gate, NOT an ACK. */
 };
 struct dizzass_rx_owner_config {
     int fd; /* Borrow readable O_NONBLOCK raw TTY, VMIN=1, VTIME=0. */
@@ -46,6 +47,8 @@ struct dizzass_rx_owner_report {
     uint64_t offered, rejected, dispatched, copy_retries, callback_calls;
     uint64_t poll_calls, read_calls, wake_reads;
     size_t pending_replies, partial_frame_bytes, unprocessed_batch_bytes;
+    uint64_t crc_checked, crc_rejected; /* Complete framed payloads, not noise. */
+    bool crc5_required; /* Distinguishes strict owner from legacy unchecked path. */
 };
 /* All lifecycle calls are serialized by ONE controller; no concurrent start,
  * join or destroy. Only notify/request_stop/finished may run concurrently with
@@ -57,6 +60,17 @@ struct dizzass_rx_owner_report {
  * not proof of a T21/chip identity. Original parser does not validate CRC.
  */
 int dizzass_rx_owner_create(const struct dizzass_rx_owner_config *,
+    struct dizzass_rx_owner **out);
+/* Explicit strict mode on the SAME owner. Existing BM1368 CRC5 contract only:
+ * chip selector4, variant2, nine-byte payload, special_mode0. Unsupported
+ * profiles fail before fd checks/allocation; no fallback to unchecked mode.
+ * Bad CRC consumes the framed payload and emits INTEGRITY_REJECTED with raw
+ * diagnostic message, without nonce decode, inbox offer or submit. The callback
+ * may request stop; otherwise the next frame is processed. Not byte-loss resync,
+ * authentication, chip detection, freshness or hardware-tested protocol proof.
+ * Legacy create above retains unchecked behavior for other profiles/old tests.
+ */
+int dizzass_rx_owner_create_crc5(const struct dizzass_rx_owner_config *,
     struct dizzass_rx_owner **out);
 int dizzass_rx_owner_start(struct dizzass_rx_owner *);
 /* notify after TX finish/registry progress: replay pending replies even with

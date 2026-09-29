@@ -18,8 +18,8 @@ static void lock(struct dizzass_io_lifecycle *l)
 { if (pthread_mutex_lock(&l->lock)) abort(); }
 static void unlock(struct dizzass_io_lifecycle *l)
 { if (pthread_mutex_unlock(&l->lock)) abort(); }
-int dizzass_io_create(const struct dizzass_rx_owner_config *cfg,
-    struct dizzass_uart_channel *tx, struct dizzass_io_lifecycle **out)
+static int create_lifecycle(const struct dizzass_rx_owner_config *cfg,
+    struct dizzass_uart_channel *tx, struct dizzass_io_lifecycle **out, bool require_crc5)
 {
     if (!cfg || !tx || !out || *out) return EINVAL;
     struct dizzass_io_lifecycle *l = calloc(1, sizeof *l);
@@ -34,7 +34,8 @@ int dizzass_io_create(const struct dizzass_rx_owner_config *cfg,
     int cleanup = pthread_condattr_destroy(&a);
     if (e) goto mutex_fail;
     if (cleanup) { e = cleanup; goto condition_fail; }
-    e = dizzass_rx_owner_create(cfg, &l->rx);
+    e = require_crc5 ? dizzass_rx_owner_create_crc5(cfg, &l->rx) :
+        dizzass_rx_owner_create(cfg, &l->rx);
     if (e) goto condition_fail;
     l->tx = tx; l->config = *cfg; *out = l;
     return 0;
@@ -43,6 +44,12 @@ condition_fail:
 mutex_fail:
     (void)pthread_mutex_destroy(&l->lock); free(l); return e;
 }
+int dizzass_io_create(const struct dizzass_rx_owner_config *cfg,
+    struct dizzass_uart_channel *tx, struct dizzass_io_lifecycle **out)
+{ return create_lifecycle(cfg, tx, out, false); }
+int dizzass_io_create_crc5(const struct dizzass_rx_owner_config *cfg,
+    struct dizzass_uart_channel *tx, struct dizzass_io_lifecycle **out)
+{ return create_lifecycle(cfg, tx, out, true); }
 int dizzass_io_start(struct dizzass_io_lifecycle *l)
 {
     if (!l) return EINVAL;

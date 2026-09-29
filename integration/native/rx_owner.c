@@ -2,6 +2,7 @@
 #define _DEFAULT_SOURCE
 #define _POSIX_C_SOURCE 200809L
 #include "integration/native/rx_owner.h"
+#include "integration/rx_crc5.h"
 #include <errno.h>
 #include <fcntl.h>
 #include <poll.h>
@@ -20,6 +21,7 @@ struct dizzass_rx_owner {
     pthread_t thread;
     atomic_bool stop, finished;
     int wake_fd;
+    bool crc5_required; /* Fixed at creation; no unchecked fallback. */
     bool started, joined; /* Single controller only; never read by worker. */
 };
 static int fail(struct dizzass_rx_owner *o, enum dizzass_rx_exit reason, int detail)
@@ -46,7 +48,8 @@ static bool admission_rejection(int e)
 static int dispatch(struct dizzass_rx_owner *o, unsigned *budget, bool *backoff)
 {
     while (*budget && !*backoff && !stopping(o)) {
-        struct dizzass_rx_event e = {.kind = DIZZASS_RX_DISPATCHED};
+        struct dizzass_rx_event e = {.kind = DIZZASS_RX_DISPATCHED,
+            .integrity_verified = o->crc5_required};
         int rc = dizzass_early_rx_dispatch(o->inbox, o->config.submitter, &e.submission);
         if (rc == DIZZASS_EARLY_RX_EMPTY || rc == DIZZASS_EARLY_RX_WAITING) return 0;
         if (rc == DIZZASS_NONCE_PARTIAL_COPY) {
@@ -65,6 +68,21 @@ static int message(struct dizzass_rx_owner *o, int kind, const vn135_work_rx_mes
     struct dizzass_rx_event e = {0};
     if (kind == VN135_RX_NEED_MORE) return 0;
     if (kind == VN135_RX_DISCARDED) { o->report.noise_bytes += m->consumed; return 0; }
+    /* Framing alone is not integrity. Gate BOTH nonce and register paths
+     * before inbox admission, native work allocation or a trusted callback. */
+    if (o->crc5_required) {
+        ++o->report.crc_checked;
+        int rc = dizzass_bm1368_reply_crc5(o->stream.policy.chip_selector,
+            o->stream.policy.variant, m->payload, m->payload_size);
+        if (rc == DIZZASS_RX_CRC_MISMATCH) {
+            ++o->report.crc_rejected;
+            e.kind = DIZZASS_RX_INTEGRITY_REJECTED; e.status = rc;
+            e.message = *m; /* Untrusted raw diagnostic only. */
+            return emit(o, &e);
+        }
+        if (rc) return fail(o, DIZZASS_RX_PARSE_ERROR, rc);
+        e.integrity_verified = true;
+    }
     if (kind == VN135_RX_REGISTER || kind == VN135_RX_REGISTER_FILTERED) {
         ++o->report.register_frames; e.kind = DIZZASS_RX_REGISTER; e.message = *m;
         return emit(o, &e);
@@ -166,17 +184,25 @@ static int validate_fd(int fd)
         t.c_cc[VMIN] != 1 || t.c_cc[VTIME] != 0) return EINVAL;
     return 0;
 }
-int dizzass_rx_owner_create(const struct dizzass_rx_owner_config *c,
-    struct dizzass_rx_owner **out)
+static int create_owner(const struct dizzass_rx_owner_config *c,
+    struct dizzass_rx_owner **out, bool require_crc5)
 {
     if (!c || !out || *out || !c->jobs || !c->submitter || !c->event ||
         !c->received_epoch || !c->poll_ms || c->poll_ms > 1000 ||
         !c->inbox_capacity || c->inbox_capacity > DIZZASS_EARLY_RX_MAX_CAPACITY ||
         c->board_selector > 4 || c->chip_selector > 8 || c->special_mode > 1) return EINVAL;
+    if (require_crc5) {
+        vn135_work_rx_policy policy;
+        (void)vn135_work_rx_policy_init(&policy, c->board_selector,
+            c->chip_selector, c->special_mode);
+        if (c->chip_selector != 4 || c->special_mode || policy.variant != 2 ||
+            policy.payload_size != 9) return DIZZASS_RX_CRC_UNSUPPORTED;
+    }
     int e = validate_fd(c->fd);
     if (e) return e;
     struct dizzass_rx_owner *o = calloc(1, sizeof *o);
     if (!o) return ENOMEM;
+    o->crc5_required = require_crc5; o->report.crc5_required = require_crc5;
     o->config = *c; atomic_init(&o->stop, false); atomic_init(&o->finished, false);
     e = dizzass_early_rx_create(c->jobs, c->chain_id, c->received_epoch, c->inbox_capacity, &o->inbox);
     if (e) { free(o); return e; }
@@ -187,6 +213,12 @@ int dizzass_rx_owner_create(const struct dizzass_rx_owner_config *c,
     *out = o;
     return 0;
 }
+int dizzass_rx_owner_create(const struct dizzass_rx_owner_config *c,
+    struct dizzass_rx_owner **out)
+{ return create_owner(c, out, false); }
+int dizzass_rx_owner_create_crc5(const struct dizzass_rx_owner_config *c,
+    struct dizzass_rx_owner **out)
+{ return create_owner(c, out, true); }
 int dizzass_rx_owner_start(struct dizzass_rx_owner *o)
 {
     if (!o) return EINVAL;

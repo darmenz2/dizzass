@@ -33,6 +33,13 @@ struct dizzass_io_report {
  */
 int dizzass_io_create(const struct dizzass_rx_owner_config *,
     struct dizzass_uart_channel *, struct dizzass_io_lifecycle **out);
+/* Same lifecycle/ownership, but RX requires the existing chip4/variant2 CRC5
+ * contract via rx_owner_create_crc5. Unsupported profiles fail, not downgrade.
+ * Report.rx exposes strict mode and rejected-frame counters after stop/join.
+ * This does not verify physical identity, configure hardware or add an ACK.
+ */
+int dizzass_io_create_crc5(const struct dizzass_rx_owner_config *,
+    struct dizzass_uart_channel *, struct dizzass_io_lifecycle **out);
 /* One serialized controller calls start/stop/destroy. No restart after start
  * failure, requested stop or RX exit. Failed start must be stopped/destroyed.
  */
