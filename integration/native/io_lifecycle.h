@@ -89,4 +89,14 @@ int dizzass_io_snapshot(struct dizzass_io_lifecycle *, struct dizzass_io_report 
  * No reentrant callback except request_stop/snapshot, no destruction races.
  */
 int dizzass_io_destroy(struct dizzass_io_lifecycle **);
+/* Advisory availability of THIS lifecycle's bound jobs/epoch. No admission,
+ * reservation, core dequeue, allocation, epoch change or hardware access.
+ * Inactive lifecycle returns errno; registry failures retain JOBS statuses.
+ * All errors leave out unchanged. Stop can race this query; one work producer
+ * and the existing prepare/queue-entry checks remain required. External object
+ * references must be excluded/joined before destruction, even after quiescence.
+ */
+int dizzass_io_capacity(struct dizzass_io_lifecycle *,
+    struct dizzass_job_capacity *out);
+
 #endif

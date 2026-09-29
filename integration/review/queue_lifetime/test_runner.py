@@ -21,8 +21,13 @@ class RunnerTests(unittest.TestCase):
         m=json.loads((run.ROOT/'integration/review/combined_rx/manifest.json').read_text())
         bypath={x['path']:x for x in m['inputs']}
         for x in r['revisions']:
-            self.assertEqual(bypath[x['path']],x['after'])
-            self.assertEqual(hashlib.sha256((run.ROOT/x['path']).read_bytes()).hexdigest(),x['after']['sha256'])
+            # Descendants retain this EXACT historical entry in supersedes;
+            # additionally verify today's bytes, not just historical metadata.
+            current=bypath[x['path']];ancestor=current
+            while isinstance(ancestor,dict) and ancestor!=x['after']:
+                ancestor=ancestor.get('supersedes')
+            self.assertEqual(ancestor,x['after'])
+            self.assertEqual(hashlib.sha256((run.ROOT/x['path']).read_bytes()).hexdigest(),current['sha256'])
             self.assertNotEqual(x['before']['sha256'],x['after']['sha256'])
     def test_no_second_queue_implementation(self):
         s=(run.ROOT/'integration/native/queued_work_tx.c').read_text()

@@ -243,3 +243,16 @@ int dizzass_io_destroy(struct dizzass_io_lifecycle **pointer)
     int restore = pthread_setcancelstate(saved, NULL);
     return e ? e : restore;
 }
+
+int dizzass_io_capacity(struct dizzass_io_lifecycle *l,
+    struct dizzass_job_capacity *out)
+{
+    if (!l || !out) return EINVAL;
+    struct dizzass_io_report state;
+    int rc = dizzass_io_snapshot(l, &state);
+    if (rc) return rc;
+    if (state.stop_requested || state.quiescent || state.rx_finished)
+        return ECANCELED;
+    if (!state.started) return ENOTCONN;
+    return dizzass_jobs_capacity(l->config.jobs, l->config.received_epoch, out);
+}
