@@ -35,8 +35,9 @@ struct dizzass_queued_tx_receipt {
  * qlock when calling this helper. Do not retain/use its consumed work pointer.
  *
  * Invalid arguments, expired deadline or already-inactive lifecycle leave out
- * and staged work unchanged. A successful preflight is not an admission token:
- * stop may race get_queued. Once acquired, the work is completed EXACTLY ONCE
+ * and staged work unchanged. Queue-scope admission is rechecked atomically
+ * after preflight, before dequeue. Stop may still race an ADMITTED get_queued.
+ * Once acquired, the work is completed EXACTLY ONCE
  * on success AND rejection using real work_completed. The registry's ordinary
  * native copy (if prepared) then owns RX lifetime; never requeue the original.
  * No extra native copy or manual core hashtable edit occurs here.
@@ -50,7 +51,9 @@ struct dizzass_queued_tx_receipt {
  * Deferred cancellation is disabled through get_queued, metadata validation,
  * existing prepare/send/finish/notify, work_completed and report publication.
  * Restoring cancellation may prevent return; out must outlive cancellation.
- * io quiescence alone does NOT prove this outer core queue call has finished;
+ * Admitted queue ownership is counted by io through completion and receipt
+ * publication, separately from inner TX. Stop waits for both counts. This is
+ * NOT proof the caller returned or that all outside references disappeared:
  * join/exclude ALL callers before freeing cgpu/queues/io/jobs/pools/fd aliases.
  * No async cancellation, callback reentry, automatic retry, slot reclamation,
  * driver registration, hardware initialization/drain or external pool send.

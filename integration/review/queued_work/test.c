@@ -19,6 +19,16 @@ static void cancellation_disabled(void)
     C9(pthread_setcancelstate(PTHREAD_CANCEL_DISABLE,&saved)==0);
     C9(saved==PTHREAD_CANCEL_DISABLE);
 }
+/* R-10: failed preflight must not reach even the paired scope boundary. */
+static _Atomic unsigned q9_scope_attempts;
+#ifndef R10_QUEUE_SCOPE_WRAPPER
+int __real_dizzass_io_queue_enter(struct dizzass_io_lifecycle *);
+int __wrap_dizzass_io_queue_enter(struct dizzass_io_lifecycle *io)
+{
+    cancellation_disabled(); atomic_fetch_add(&q9_scope_attempts,1);
+    return __real_dizzass_io_queue_enter(io);
+}
+#endif
 struct work *__real_get_queued(struct cgpu_info *);
 struct work *__wrap_get_queued(struct cgpu_info *g)
 {
@@ -56,7 +66,7 @@ static void init(struct qenv *q,bool start)
 {
     setup(&q->e);q->io=NULL;
     acquired=NULL;stop_after_get=NULL;block_completion=false;completion_entered=false;completion_release=false;
-    atomic_store(&get_calls,0);atomic_store(&complete_calls,0);atomic_store(&managed_calls,0);
+    atomic_store(&get_calls,0);atomic_store(&complete_calls,0);atomic_store(&managed_calls,0);atomic_store(&q9_scope_attempts,0);
     rwlock_init(&q->e.cgpu.qlock);cglock_init(&q->e.pool.data_lock);
     q->e.pool.swork.job_id=strdup("r01-job"); C9(q->e.pool.swork.job_id);
     struct dizzass_rx_owner_config c=config(&q->e,64);c.board_selector=2;c.chip_selector=4;c.poll_ms=10;
@@ -113,6 +123,7 @@ static void preflight(unsigned which)
     if(which==12)q.e.thr.id=-1;
     C9(dizzass_queued_work_send(t,io,arg,out)==expected);
     C9(!atomic_load(&get_calls) && !atomic_load(&complete_calls));
+    C9(!atomic_load(&q9_scope_attempts));
     C9(q.e.cgpu.unqueued_work==w && !q.e.cgpu.queued_count && !q.e.cgpu.queued_work);
     C9(memcmp(&r,&before,sizeof r)==0);r01_empty(q.e.f.peer);
     q.e.thr.id=0;close_q(&q);++q9_cases;
@@ -214,14 +225,16 @@ static void completion_window(void)
     C9(pthread_mutex_lock(&completion_lock)==0);
     while(!completion_entered)C9(pthread_cond_wait(&completion_cond,&completion_lock)==0);
     C9(pthread_mutex_unlock(&completion_lock)==0);
-    struct dizzass_io_report report;C9(dizzass_io_stop(q.io,r01_now()+1000,&report)==0 && report.quiescent);
+    struct dizzass_io_report report;C9(dizzass_io_stop(q.io,r01_now()+20,&report)==ETIMEDOUT);
+    C9(!report.quiescent && !report.jobs_paused && report.active_queue==1 && report.active_tx==0);
+    C9(dizzass_io_destroy(&q.io)==EBUSY);
     C9(q.e.cgpu.queued_count==1 && find_queued_work_byid(&q.e.cgpu,id));
     C9(!atomic_load(&complete_calls));C9(pthread_cancel(tx)==0);
     C9(pthread_mutex_lock(&completion_lock)==0);completion_release=true;C9(pthread_cond_broadcast(&completion_cond)==0);C9(pthread_mutex_unlock(&completion_lock)==0);
     void *ret;C9(pthread_join(tx,&ret)==0 && ret==PTHREAD_CANCELED);
     C9(s.r.completed && s.r.dequeued && (s.rc==-999 || s.rc==0) && atomic_load(&complete_calls)==1);
     gone(&q);uint8_t b[88];r01_read(q.e.f.peer,b,88);close_q(&q);++q9_cases;
-    puts("R09_OUTER_LIFETIME io_quiescence_is_not_core_queue_completion=1");
+    puts("R09_OUTER_LIFETIME core_queue_completion_counted_by_io=1");
 }
 static void existing_queue(void)
 {
@@ -245,6 +258,7 @@ static void all_slots(void)
     C9(!r.send.send.channel_called && atomic_load(&complete_calls)==33);r01_empty(q.e.f.peer);gone(&q);
     close_q(&q);++q9_cases;puts("R09_SLOTS native_queue_32=1 no_slot_reuse=1");
 }
+#ifndef R09_QUEUED_EMBED
 int main(void)
 {
     mutex_init(&stats_lock);mutex_init(&console_lock);cglock_init(&control_lock);
@@ -259,3 +273,5 @@ int main(void)
     C9(pthread_cond_destroy(&gws_cond)==0);C9(pthread_mutex_destroy(&stage_lock)==0);stgd_lock=NULL;
     printf("R09_PASS cases=%u checks=%u native_calls=%u core_queue=1 physical_asic=0\n",q9_cases,atomic_load(&q9_checks),atomic_load(&native_calls));return 0;
 }
+
+#endif /* R09_QUEUED_EMBED */

@@ -37,3 +37,50 @@ jobs:
           name: r10-source-${{ github.event.pull_request.head.sha || github.sha }}
           path: ${{ env.SOURCE_SNAPSHOT }}
           retention-days: 7
+  verify:
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc-14, clang-17]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Fetch exact candidate only, without saved implementation overlays
+        env:
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -eu
+          root="$RUNNER_TEMP/r10-test-$GITHUB_RUN_ID-${{ matrix.cc }}-$GITHUB_RUN_ATTEMPT"
+          mkdir "$root"; cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          git -c gc.auto=0 -c maintenance.auto=false fetch --depth=1 --no-tags origin "$HEAD"
+          git checkout -q --detach "$HEAD"
+          test "$(git rev-parse HEAD)" = "$HEAD"
+          echo "SOURCE_ROOT=$root" >> "$GITHUB_ENV"
+      - name: Host-only Icarus build dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y build-essential autoconf automake libtool pkg-config libcurl4-openssl-dev libusb-1.0-0-dev libudev-dev zlib1g-dev '${{ matrix.cc }}'
+      - name: Queue ownership and complete current-source regression/control set
+        run: |
+          set -eu
+          cd "$SOURCE_ROOT"
+          python3 -B integration/review/queue_lifetime/test_runner.py
+          python3 -B -O integration/review/queue_lifetime/test_runner.py
+          python3 -B integration/review/queue_lifetime/run.py --cc '${{ matrix.cc }}' --baseline icarus --out build/r10-ci-normal --mutants
+      - name: Required cancellation health and the same application cases
+        run: |
+          set -eu
+          cd "$SOURCE_ROOT"
+          python3 -B integration/review/queue_lifetime/run.py --cc '${{ matrix.cc }}' --baseline icarus --out build/r10-ci-sanitized --sanitize
+      - name: Preserve reports, commands and actual compiler inputs, including failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r10-${{ matrix.cc }}-${{ github.run_attempt }}
+          path: |
+            ${{ env.SOURCE_ROOT }}/build/r10-ci-*/results.json
+            ${{ env.SOURCE_ROOT }}/build/r10-ci-*/logs/
+            ${{ env.SOURCE_ROOT }}/build/r10-ci-*/compile-records/
+          retention-days: 7
