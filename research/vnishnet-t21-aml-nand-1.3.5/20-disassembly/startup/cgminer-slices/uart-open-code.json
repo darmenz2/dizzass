@@ -1,0 +1,21 @@
+{
+  "boundary_evidence": "Saved UART-open instruction listing through return at 0x10e4a4; begins within broader EHABI coverage.",
+  "bytes": 992,
+  "caveat": "Linear static rendering; literal pools may remain in instruction windows. No complete CFG, runtime path, function extent or parity is proved.",
+  "disassembler": "capstone",
+  "disassembler_version": "5.0.6",
+  "end_exclusive": "0x0010e4a8",
+  "evidence_sources": [
+    "https://github.com/darmenz2/dizzass/blob/a482b4637c1bb8e2f201ba7d2a870c0fc10f0185/evidence/stage5/disasm/uart-open.S"
+  ],
+  "file_offset": 1040584,
+  "firmware_executed": false,
+  "mode": "arm",
+  "mode_evidence": "EHABI entry 1016 encodes ARM at interval start; interior code/data boundaries remain unproved.",
+  "name": "uart-open-code",
+  "schema": 1,
+  "segment_flags": 5,
+  "sha256": "0e088092dacd40bece56b764df6fa4d504653740d5822b49e2042993033e2995",
+  "source_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "start": "0x0010e0c8"
+}

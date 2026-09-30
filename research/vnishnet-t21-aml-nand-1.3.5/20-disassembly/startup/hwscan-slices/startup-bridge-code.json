@@ -1,0 +1,19 @@
+{
+  "boundary_evidence": "Direct entry BL target through return at 0x1592c, before referenced literals.",
+  "bytes": 84,
+  "caveat": "Linear static rendering; literal pools may remain in instruction windows. No complete CFG, runtime path, function extent or parity is proved.",
+  "disassembler": "capstone",
+  "disassembler_version": "5.0.6",
+  "end_exclusive": "0x00015930",
+  "evidence_sources": [],
+  "file_offset": 22748,
+  "firmware_executed": false,
+  "mode": "arm",
+  "mode_evidence": "Entry A32 BL at 0x158d4 targets 0x158dc without switching mode.",
+  "name": "startup-bridge-code",
+  "schema": 1,
+  "segment_flags": 5,
+  "sha256": "aae0525ddc576ee51e10b488e68c531dad1ebb48bb553113079e364a3f2b3d33",
+  "source_sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+  "start": "0x000158dc"
+}

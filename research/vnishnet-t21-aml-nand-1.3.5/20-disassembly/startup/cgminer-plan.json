@@ -1,0 +1,183 @@
+{
+  "binary": "cgminer",
+  "ranges": [
+    {
+      "boundary_evidence": "ELF entry through direct BL at 0x10148; following word is PC-relative literal.",
+      "end_exclusive": "0x1014c",
+      "evidence_sources": [],
+      "mode": "arm",
+      "mode_evidence": "ELF e_entry low bit clear; A32 literal references and direct BL target agree.",
+      "name": "entry-code",
+      "sha256": "c3a341b4f989dde8b0919e8882e74872cf81a28c95e7835b212a6d9b52ff2b89",
+      "start": "0x1012c"
+    },
+    {
+      "boundary_evidence": "Selected bounded interval; no complete function extent claimed.",
+      "end_exclusive": "0x10150",
+      "evidence_sources": [],
+      "mode": "data",
+      "mode_evidence": "A32 LDR r1 at 0x10134 refers to 0x1014c.",
+      "name": "entry-literal",
+      "sha256": "b24d753066eeee550d9d0031e40749b70df8ca80201e664f1bb39b64087eb794",
+      "start": "0x1014c"
+    },
+    {
+      "boundary_evidence": "Direct entry BL target through return at 0x101a0, before referenced literals.",
+      "end_exclusive": "0x101a4",
+      "evidence_sources": [],
+      "mode": "arm",
+      "mode_evidence": "Entry A32 BL at 0x10148 targets 0x10150 without switching mode.",
+      "name": "startup-bridge-code",
+      "sha256": "4aea9d0bccbe44cc51075c38d7f4ffbc72a872f8ced97cb07af147d8704ef184",
+      "start": "0x10150"
+    },
+    {
+      "boundary_evidence": "Selected bounded interval; no complete function extent claimed.",
+      "end_exclusive": "0x101b4",
+      "evidence_sources": [],
+      "mode": "data",
+      "mode_evidence": "A32 LDR instructions at 0x10154/158/168/17c refer to these words.",
+      "name": "startup-bridge-literals",
+      "sha256": "3b20181af52c3c742df305b6a073a363bee8eede5ad3b690f9e0ef8cce3aeb48",
+      "start": "0x101a4"
+    },
+    {
+      "boundary_evidence": "Selected bounded interval; no complete function extent claimed.",
+      "end_exclusive": "0x5dff90",
+      "evidence_sources": [],
+      "mode": "data",
+      "mode_evidence": "GOT slot selected by documented static PC-relative base plus literal offset, see STARTUP_ENTRY_MAP.md.",
+      "name": "startup-init-pointer",
+      "sha256": "cc94c34ba02e6118f087a2b3e3dc509b1e384be1315c448737acd564f96b61b9",
+      "start": "0x5dff8c"
+    },
+    {
+      "boundary_evidence": "Selected bounded interval; no complete function extent claimed.",
+      "end_exclusive": "0x5dff7c",
+      "evidence_sources": [],
+      "mode": "data",
+      "mode_evidence": "GOT slot selected by documented static PC-relative base plus literal offset, see STARTUP_ENTRY_MAP.md.",
+      "name": "startup-main-candidate-pointer",
+      "sha256": "a1e2f81142b66c8896eaf90d224a531ddfabcf15cfaaeb6d3c087398b4ee3dab",
+      "start": "0x5dff78"
+    },
+    {
+      "boundary_evidence": "Selected bounded interval; no complete function extent claimed.",
+      "end_exclusive": "0x5deaa0",
+      "evidence_sources": [],
+      "mode": "data",
+      "mode_evidence": "GOT slot selected by documented static PC-relative base plus literal offset, see STARTUP_ENTRY_MAP.md.",
+      "name": "startup-fini-pointer",
+      "sha256": "c89d6688203aed687413229a6dda1343ee4fdac26a01675af029dab11859831f",
+      "start": "0x5dea9c"
+    },
+    {
+      "boundary_evidence": "256-byte prefix at bridge r0 argument loaded from GOT; main name is inferred, not an ELF symbol.",
+      "end_exclusive": "0x3730c",
+      "evidence_sources": [],
+      "mode": "arm",
+      "mode_evidence": "EHABI entry 143 encodes ARM at interval start; interior code/data boundaries remain unproved.",
+      "name": "main-candidate-prefix",
+      "sha256": "85bda797c4804298e038c429133bcee32b5d5818faf1563f59620b0e1f37a8a8",
+      "start": "0x3720c"
+    },
+    {
+      "boundary_evidence": "Exact prior GPIO helper evidence interval, includes multiple entries and possible literal pools.",
+      "end_exclusive": "0x125338",
+      "evidence_sources": [
+        "https://github.com/darmenz2/dizzass/blob/a482b4637c1bb8e2f201ba7d2a870c0fc10f0185/integration/evidence/gpio_power_135.json"
+      ],
+      "mode": "arm",
+      "mode_evidence": "EHABI entry 1221 encodes ARM at interval start; interior code/data boundaries remain unproved.",
+      "name": "gpio-helpers",
+      "sha256": "50abca275f080ac5a5e81856c3cb90c3473dff1df20d490b8527417bfd56fe93",
+      "start": "0x1248e4"
+    },
+    {
+      "boundary_evidence": "Exact prior init/getter evidence interval; includes more than one EHABI start.",
+      "end_exclusive": "0x11c978",
+      "evidence_sources": [
+        "https://github.com/darmenz2/dizzass/blob/a482b4637c1bb8e2f201ba7d2a870c0fc10f0185/integration/evidence/i2c_init_135.json"
+      ],
+      "mode": "arm",
+      "mode_evidence": "EHABI entry 1149 encodes ARM at interval start; interior code/data boundaries remain unproved.",
+      "name": "aml-psu-init-getter",
+      "sha256": "623896d8e6c05f502dfac9ccb9cacae97520fe175bb4bb80593251fdba2221ac",
+      "start": "0x11c5c0"
+    },
+    {
+      "boundary_evidence": "Exact prior on interval and adjacent EHABI range; function end and interior code/data not independently proved.",
+      "end_exclusive": "0x11ca74",
+      "evidence_sources": [
+        "https://github.com/darmenz2/dizzass/blob/a482b4637c1bb8e2f201ba7d2a870c0fc10f0185/integration/evidence/aml_power.json"
+      ],
+      "mode": "arm",
+      "mode_evidence": "EHABI entry 1151 encodes ARM at interval start; interior code/data boundaries remain unproved.",
+      "name": "aml-psu-on",
+      "sha256": "5956c23e3e1999b8a81a6aebdb63ae70397082e987e41d0ff6be2007851f8a02",
+      "start": "0x11c978"
+    },
+    {
+      "boundary_evidence": "Exact prior off interval and adjacent EHABI range; function end and interior code/data not independently proved.",
+      "end_exclusive": "0x11cbe0",
+      "evidence_sources": [
+        "https://github.com/darmenz2/dizzass/blob/a482b4637c1bb8e2f201ba7d2a870c0fc10f0185/integration/evidence/aml_power.json"
+      ],
+      "mode": "arm",
+      "mode_evidence": "EHABI entry 1152 encodes ARM at interval start; interior code/data boundaries remain unproved.",
+      "name": "aml-psu-off",
+      "sha256": "db1734f06e1b33e2384c7b61cbe3f53e20687510cf8b85cf3fb4f51bcfc09129",
+      "start": "0x11ca74"
+    },
+    {
+      "boundary_evidence": "Selected bounded interval; no complete function extent claimed.",
+      "end_exclusive": "0x11bd64",
+      "evidence_sources": [
+        "https://github.com/darmenz2/dizzass/blob/a482b4637c1bb8e2f201ba7d2a870c0fc10f0185/integration/evidence/aml_power.json"
+      ],
+      "mode": "arm",
+      "mode_evidence": "EHABI entry 1141 encodes ARM at interval start; interior code/data boundaries remain unproved.",
+      "name": "aml-chain-reset",
+      "sha256": "4d148f2f5d715505837da5f884a8c06777f5510aa8a536072ec1ab398bd024b4",
+      "start": "0x11bc14"
+    },
+    {
+      "boundary_evidence": "Selected bounded interval; no complete function extent claimed.",
+      "end_exclusive": "0x11b708",
+      "evidence_sources": [
+        "https://github.com/darmenz2/dizzass/blob/a482b4637c1bb8e2f201ba7d2a870c0fc10f0185/integration/evidence/aml_power.json"
+      ],
+      "mode": "arm",
+      "mode_evidence": "EHABI entry 1138 encodes ARM at interval start; interior code/data boundaries remain unproved.",
+      "name": "aml-chain-count",
+      "sha256": "a821d130d717504314f2f6761276d0c153ac1b1ff53dc01b583af770395c9bdf",
+      "start": "0x11b6c8"
+    },
+    {
+      "boundary_evidence": "Saved UART-open instruction listing through return at 0x10e4a4; begins within broader EHABI coverage.",
+      "end_exclusive": "0x10e4a8",
+      "evidence_sources": [
+        "https://github.com/darmenz2/dizzass/blob/a482b4637c1bb8e2f201ba7d2a870c0fc10f0185/evidence/stage5/disasm/uart-open.S"
+      ],
+      "mode": "arm",
+      "mode_evidence": "EHABI entry 1016 encodes ARM at interval start; interior code/data boundaries remain unproved.",
+      "name": "uart-open-code",
+      "sha256": "0e088092dacd40bece56b764df6fa4d504653740d5822b49e2042993033e2995",
+      "start": "0x10e0c8"
+    },
+    {
+      "boundary_evidence": "Selected bounded interval; no complete function extent claimed.",
+      "end_exclusive": "0x10e518",
+      "evidence_sources": [
+        "https://github.com/darmenz2/dizzass/blob/a482b4637c1bb8e2f201ba7d2a870c0fc10f0185/evidence/stage5/disasm/uart-open.S"
+      ],
+      "mode": "data",
+      "mode_evidence": "Selected PC-relative literal-pool interval following return; saved listing also displays these exact bytes.",
+      "name": "uart-open-literals",
+      "sha256": "0267209ed93e5d3e74bf5ac7037b1a20685c776654b225f862aee48eb4d9e130",
+      "start": "0x10e4a8"
+    }
+  ],
+  "schema": 1,
+  "source_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9"
+}

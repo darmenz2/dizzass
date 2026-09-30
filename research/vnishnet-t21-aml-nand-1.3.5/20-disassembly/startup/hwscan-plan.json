@@ -1,0 +1,87 @@
+{
+  "binary": "hwscan",
+  "ranges": [
+    {
+      "boundary_evidence": "ELF entry through direct BL at 0x158d4; following word is PC-relative literal.",
+      "end_exclusive": "0x158d8",
+      "evidence_sources": [],
+      "mode": "arm",
+      "mode_evidence": "ELF e_entry low bit clear; A32 literal references and direct BL target agree.",
+      "name": "entry-code",
+      "sha256": "c3a341b4f989dde8b0919e8882e74872cf81a28c95e7835b212a6d9b52ff2b89",
+      "start": "0x158b8"
+    },
+    {
+      "boundary_evidence": "Selected bounded interval; no complete function extent claimed.",
+      "end_exclusive": "0x158dc",
+      "evidence_sources": [],
+      "mode": "data",
+      "mode_evidence": "A32 LDR r1 at 0x158c0 refers to 0x158d8.",
+      "name": "entry-literal",
+      "sha256": "bae4a648020085be9997af86a275dfa70067793ef3a98a36278f666fc5d7656c",
+      "start": "0x158d8"
+    },
+    {
+      "boundary_evidence": "Direct entry BL target through return at 0x1592c, before referenced literals.",
+      "end_exclusive": "0x15930",
+      "evidence_sources": [],
+      "mode": "arm",
+      "mode_evidence": "Entry A32 BL at 0x158d4 targets 0x158dc without switching mode.",
+      "name": "startup-bridge-code",
+      "sha256": "aae0525ddc576ee51e10b488e68c531dad1ebb48bb553113079e364a3f2b3d33",
+      "start": "0x158dc"
+    },
+    {
+      "boundary_evidence": "Selected bounded interval; no complete function extent claimed.",
+      "end_exclusive": "0x15940",
+      "evidence_sources": [],
+      "mode": "data",
+      "mode_evidence": "A32 LDR instructions at 0x158e0/e4/f4 and 0x15908 refer to these words.",
+      "name": "startup-bridge-literals",
+      "sha256": "c681a8b94d6f519473d140b8b747a2cb39daeaa7b2b06bd5e0ae184dec3e4a6c",
+      "start": "0x15930"
+    },
+    {
+      "boundary_evidence": "Selected bounded interval; no complete function extent claimed.",
+      "end_exclusive": "0x4aff98",
+      "evidence_sources": [],
+      "mode": "data",
+      "mode_evidence": "GOT slot selected by documented static PC-relative base plus literal offset, see STARTUP_ENTRY_MAP.md.",
+      "name": "startup-init-pointer",
+      "sha256": "cc94c34ba02e6118f087a2b3e3dc509b1e384be1315c448737acd564f96b61b9",
+      "start": "0x4aff94"
+    },
+    {
+      "boundary_evidence": "Selected bounded interval; no complete function extent claimed.",
+      "end_exclusive": "0x4afc6c",
+      "evidence_sources": [],
+      "mode": "data",
+      "mode_evidence": "GOT slot selected by documented static PC-relative base plus literal offset, see STARTUP_ENTRY_MAP.md.",
+      "name": "startup-main-candidate-pointer",
+      "sha256": "d26e8fff5f9d2ede91daf57fc9f6678c4339ddc96d72c2d9c2cf0337dfab7718",
+      "start": "0x4afc68"
+    },
+    {
+      "boundary_evidence": "Selected bounded interval; no complete function extent claimed.",
+      "end_exclusive": "0x4af7b8",
+      "evidence_sources": [],
+      "mode": "data",
+      "mode_evidence": "GOT slot selected by documented static PC-relative base plus literal offset, see STARTUP_ENTRY_MAP.md.",
+      "name": "startup-fini-pointer",
+      "sha256": "a27c39d450866e561bb347346ee6ea0097a3a37d99ae34ce6f8c751ff1c2c181",
+      "start": "0x4af7b4"
+    },
+    {
+      "boundary_evidence": "256-byte prefix at bridge r0 argument loaded from GOT; main name is inferred, not an ELF symbol.",
+      "end_exclusive": "0x25528",
+      "evidence_sources": [],
+      "mode": "arm",
+      "mode_evidence": "EHABI entry 95 encodes ARM at interval start; interior code/data boundaries remain unproved.",
+      "name": "main-candidate-prefix",
+      "sha256": "73eb0f190f53c34ec7c65fe908dfc49cd2d9686c6f4332762661ba4fde6ee20b",
+      "start": "0x25428"
+    }
+  ],
+  "schema": 1,
+  "source_sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077"
+}

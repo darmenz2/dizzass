@@ -1,0 +1,21 @@
+{
+  "boundary_evidence": "Selected bounded interval; no complete function extent claimed.",
+  "bytes": 112,
+  "caveat": "Linear static rendering; literal pools may remain in instruction windows. No complete CFG, runtime path, function extent or parity is proved.",
+  "disassembler": "little-endian word rendering",
+  "disassembler_version": "1",
+  "end_exclusive": "0x0010e518",
+  "evidence_sources": [
+    "https://github.com/darmenz2/dizzass/blob/a482b4637c1bb8e2f201ba7d2a870c0fc10f0185/evidence/stage5/disasm/uart-open.S"
+  ],
+  "file_offset": 1041576,
+  "firmware_executed": false,
+  "mode": "data",
+  "mode_evidence": "Selected PC-relative literal-pool interval following return; saved listing also displays these exact bytes.",
+  "name": "uart-open-literals",
+  "schema": 1,
+  "segment_flags": 5,
+  "sha256": "0267209ed93e5d3e74bf5ac7037b1a20685c776654b225f862aee48eb4d9e130",
+  "source_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "start": "0x0010e4a8"
+}
