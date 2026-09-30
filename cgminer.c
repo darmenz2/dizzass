@@ -7563,14 +7563,34 @@ static bool work_emptied;
  * This latch is one-way for the lifetime of a cgpu. It is not hardware stop. */
 int cgminer_request_queued_stop(struct cgpu_info *cgpu)
 {
-	int rc;
+	bool first_stop;
+	int rc, i;
 
 	if (!cgpu || !getq || !stgd_lock)
 		return EINVAL;
 	mutex_lock(stgd_lock);
+	first_stop = !cgpu->queued_stop;
 	cgpu->queued_stop = true;
 	rc = pthread_cond_broadcast(&getq->cond);
 	mutex_unlock(stgd_lock);
+
+	/* Thread publication/teardown is externally excluded. A post persists
+	 * across the pre-wait gap, unlike an unguarded condition broadcast.
+	 * Failed thread_prepare entries are NULL; never post an uninitialised sem.
+	 * Repeat requests retry driver wake but do not accumulate semaphore tokens. */
+	if (first_stop && cgpu->thr) {
+		for (i = 0; i < cgpu->threads; ++i) {
+			if (cgpu->thr[i])
+				cgsem_post(&cgpu->thr[i]->sem);
+		}
+	}
+	/* No staged mutex held across driver code. This is an idempotent wake,
+	 * not a join/IO stop; an existing scanwork may still finish normally. */
+	if (cgpu->drv && cgpu->drv->queued_stop_wake) {
+		int wake_rc = cgpu->drv->queued_stop_wake(cgpu);
+		if (!rc)
+			rc = wake_rc;
+	}
 	return rc;
 }
 
@@ -8293,15 +8313,27 @@ static inline bool abandon_work(struct work *work, struct timeval *wdiff, uint64
 	return false;
 }
 
-static void mt_disable(struct thr_info *mythr, const int thr_id,
-		       struct device_drv *drv)
+static bool mt_disable_common(struct thr_info *mythr, const int thr_id,
+			      struct device_drv *drv, bool stop_aware)
 {
+	if (stop_aware && cgminer_queued_stopped(mythr->cgpu))
+		return false;
 	applog(LOG_WARNING, "Thread %d being disabled", thr_id);
 	mythr->cgpu->rolling = 0;
 	applog(LOG_DEBUG, "Waiting on sem in miner thread");
 	cgsem_wait(&mythr->sem);
+	if (stop_aware && cgminer_queued_stopped(mythr->cgpu))
+		return false;
 	applog(LOG_WARNING, "Thread %d being re-enabled", thr_id);
 	drv->thread_enable(mythr);
+	return true;
+}
+
+/* Non-queued drivers retain the original semaphore/re-enable contract. */
+static void mt_disable(struct thr_info *mythr, const int thr_id,
+		       struct device_drv *drv)
+{
+	(void)mt_disable_common(mythr, thr_id, drv, false);
 }
 
 /* The main hashing loop for devices that are slow enough to work on one work
@@ -8760,8 +8792,13 @@ void hash_queued_work(struct thr_info *mythr)
 		if (cgminer_queued_stopped(cgpu))
 			break;
 
-		if (unlikely(mythr->pause || cgpu->deven != DEV_ENABLED))
-			mt_disable(mythr, thr_id, drv);
+		if (unlikely(mythr->pause || cgpu->deven != DEV_ENABLED)) {
+			if (!mt_disable_common(mythr, thr_id, drv, true))
+				break;
+		}
+		/* A normal thread_enable callback may itself request queued stop. */
+		if (cgminer_queued_stopped(cgpu))
+			break;
 
 		if (mythr->work_update) {
 			drv->update_work(cgpu);
@@ -10147,7 +10184,7 @@ static void hotplug_process(void)
 	// Start threads
 	for (i = 0; i < new_devices; ++i) {
 		struct cgpu_info *cgpu = devices[total_devices];
-		cgpu->thr = cgmalloc(sizeof(*cgpu->thr) * (cgpu->threads+1));
+		cgpu->thr = cgcalloc(cgpu->threads + 1, sizeof(*cgpu->thr));
 		cgpu->thr[cgpu->threads] = NULL;
 		cgpu->status = LIFE_INIT;
 		cgtime(&(cgpu->dev_start_tv));
@@ -10737,7 +10774,7 @@ begin_bench:
 	k = 0;
 	for (i = 0; i < total_devices; ++i) {
 		struct cgpu_info *cgpu = devices[i];
-		cgpu->thr = cgmalloc(sizeof(*cgpu->thr) * (cgpu->threads+1));
+		cgpu->thr = cgcalloc(cgpu->threads + 1, sizeof(*cgpu->thr));
 		cgpu->thr[cgpu->threads] = NULL;
 		cgpu->status = LIFE_INIT;
 
