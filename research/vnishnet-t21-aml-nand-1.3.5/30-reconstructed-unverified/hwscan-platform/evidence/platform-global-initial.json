@@ -1,0 +1,21 @@
+{
+  "boundary_evidence": "File-backed initial value is 5; no claim it remains unchanged at runtime.",
+  "bytes": 4,
+  "caveat": "Linear static rendering; literal pools may remain in instruction windows. No complete CFG, runtime path, function extent or parity is proved.",
+  "disassembler": "little-endian word rendering",
+  "disassembler_version": "1",
+  "end_exclusive": "0x004b0a74",
+  "evidence_sources": [
+    "../README.md"
+  ],
+  "file_offset": 4786800,
+  "firmware_executed": false,
+  "mode": "data",
+  "mode_evidence": "Explicit data table, literal, GOT slot or NUL-terminated string bytes.",
+  "name": "platform-global-initial",
+  "schema": 1,
+  "segment_flags": 6,
+  "sha256": "2594b6a92ebfb1c3312deb7d01c015fb95e9fbe9bd7bc6b527af07813ec7b910",
+  "source_sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+  "start": "0x004b0a70"
+}

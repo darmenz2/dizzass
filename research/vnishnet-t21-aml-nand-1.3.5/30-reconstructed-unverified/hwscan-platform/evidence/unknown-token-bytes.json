@@ -1,0 +1,21 @@
+{
+  "boundary_evidence": "Aligned window containing the complete unk NUL-terminated suffix at 0x47f59f.",
+  "bytes": 8,
+  "caveat": "Linear static rendering; literal pools may remain in instruction windows. No complete CFG, runtime path, function extent or parity is proved.",
+  "disassembler": "little-endian word rendering",
+  "disassembler_version": "1",
+  "end_exclusive": "0x0047f5a4",
+  "evidence_sources": [
+    "../README.md"
+  ],
+  "file_offset": 4650396,
+  "firmware_executed": false,
+  "mode": "data",
+  "mode_evidence": "Explicit data table, literal, GOT slot or NUL-terminated string bytes.",
+  "name": "unknown-token-bytes",
+  "schema": 1,
+  "segment_flags": 5,
+  "sha256": "16547786a57d4dc32bf74f39d38c29762b1a459e0f163291463d2ec8a29529df",
+  "source_sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+  "start": "0x0047f59c"
+}

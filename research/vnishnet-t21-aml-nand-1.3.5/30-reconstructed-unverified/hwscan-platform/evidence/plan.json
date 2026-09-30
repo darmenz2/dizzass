@@ -1,0 +1,151 @@
+{
+  "binary": "hwscan",
+  "ranges": [
+    {
+      "boundary_evidence": "Direct target of BL at 0xe69cc. Eight instructions, both paths return via BX LR, no callees or writes; local control-flow extent ends before referenced literals.",
+      "end_exclusive": "0xe8e44",
+      "evidence_sources": [
+        "../README.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "A32 static instruction encodings, direct branch/call targets and PC+8 literal references; mapping symbols are absent.",
+      "name": "lookup-code",
+      "sha256": "b7fa9305c5db66ea877570161c47102bdcbe623fff06429f77aa97ff4d821e97",
+      "start": "0xe8e24"
+    },
+    {
+      "boundary_evidence": "Two PC-relative literal words used by the lookup; the following address begins a distinct push prologue.",
+      "end_exclusive": "0xe8e4c",
+      "evidence_sources": [
+        "../README.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit data table, literal, GOT slot or NUL-terminated string bytes.",
+      "name": "lookup-literals",
+      "sha256": "8f6513ecd5c8e1c1e80a204e6fdeafdd0539fab215d7ecdb431b946bb5128218",
+      "start": "0xe8e44"
+    },
+    {
+      "boundary_evidence": "Exactly five pointer words used after unsigned input <=4 guard.",
+      "end_exclusive": "0x4aceec",
+      "evidence_sources": [
+        "../README.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit data table, literal, GOT slot or NUL-terminated string bytes.",
+      "name": "lookup-table",
+      "sha256": "e5bc77c1666b3a43231f3cbd4465c5ef691a68b2046d5c40c9e32da919b146cc",
+      "start": "0x4aced8"
+    },
+    {
+      "boundary_evidence": "Aligned window containing the five complete NUL-terminated platform strings plus two preceding bytes.",
+      "end_exclusive": "0x47db04",
+      "evidence_sources": [
+        "../README.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit data table, literal, GOT slot or NUL-terminated string bytes.",
+      "name": "platform-token-bytes",
+      "sha256": "bf001de802fa4f2fc9a70a9e055407d5140392f5a53dfd3ea06ab3d8adf399c4",
+      "start": "0x47daf0"
+    },
+    {
+      "boundary_evidence": "Aligned window containing the complete unk NUL-terminated suffix at 0x47f59f.",
+      "end_exclusive": "0x47f5a4",
+      "evidence_sources": [
+        "../README.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit data table, literal, GOT slot or NUL-terminated string bytes.",
+      "name": "unknown-token-bytes",
+      "sha256": "16547786a57d4dc32bf74f39d38c29762b1a459e0f163291463d2ec8a29529df",
+      "start": "0x47f59c"
+    },
+    {
+      "boundary_evidence": "Bounded caller context including direct BL to lookup at 0xe69cc; caller side effects are not reconstructed.",
+      "end_exclusive": "0xe69d4",
+      "evidence_sources": [
+        "../README.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "A32 static instruction encodings, direct branch/call targets and PC+8 literal references; mapping symbols are absent.",
+      "name": "lookup-caller",
+      "sha256": "dbf828e64e5f3b1697cf72f48a83c2c00561dcbdb31246c9d292d9a40994cacb",
+      "start": "0xe69c4"
+    },
+    {
+      "boundary_evidence": "Pure comparison/ID-decision slice of a larger CLI function; null branch leaves slice at 0xe9184, assignments join at 0xe9140.",
+      "end_exclusive": "0xe9140",
+      "evidence_sources": [
+        "../README.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "A32 static instruction encodings, direct branch/call targets and PC+8 literal references; mapping symbols are absent.",
+      "name": "selection-code",
+      "sha256": "5594186eed661d6ca1d44e9c65d237eb0c37ccea1dfb260f9b729ee9b219ab3e",
+      "start": "0xe907c"
+    },
+    {
+      "boundary_evidence": "Context proves global-store and logging boundary; these effects are excluded from the normalized C helper.",
+      "end_exclusive": "0xe9184",
+      "evidence_sources": [
+        "../README.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "A32 static instruction encodings, direct branch/call targets and PC+8 literal references; mapping symbols are absent.",
+      "name": "selection-store-context",
+      "sha256": "0fc73812034b9254e184ec1137fadb215c6cea4a43d1457f2bd0583dfa3fc57b",
+      "start": "0xe9140"
+    },
+    {
+      "boundary_evidence": "PC-relative literal words for platform strings, unk fallback, logging context and global GOT slot.",
+      "end_exclusive": "0xe93d8",
+      "evidence_sources": [
+        "../README.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit data table, literal, GOT slot or NUL-terminated string bytes.",
+      "name": "selection-literals",
+      "sha256": "f5fe31be52977cb8a1ca219cee834739272629527ba2506e634c925fc41336f9",
+      "start": "0xe93ac"
+    },
+    {
+      "boundary_evidence": "Ten-instruction unsigned-byte NUL-terminated comparison loop; no calls or writes; only equality result is reused.",
+      "end_exclusive": "0x45f804",
+      "evidence_sources": [
+        "../README.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "A32 static instruction encodings, direct branch/call targets and PC+8 literal references; mapping symbols are absent.",
+      "name": "comparison-callee",
+      "sha256": "ec02bcd66319eaa15aa7e7b6c0a36caf87c4308f0df03594ee56bd9e69234b6a",
+      "start": "0x45f7dc"
+    },
+    {
+      "boundary_evidence": "File-backed GOT word points to selected platform global at 0x4b0a70.",
+      "end_exclusive": "0x4afb98",
+      "evidence_sources": [
+        "../README.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit data table, literal, GOT slot or NUL-terminated string bytes.",
+      "name": "platform-global-got",
+      "sha256": "faf2b0768d14c81ef951201cbddb999affdaa4f8976d63e884e07dc590c0020b",
+      "start": "0x4afb94"
+    },
+    {
+      "boundary_evidence": "File-backed initial value is 5; no claim it remains unchanged at runtime.",
+      "end_exclusive": "0x4b0a74",
+      "evidence_sources": [
+        "../README.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit data table, literal, GOT slot or NUL-terminated string bytes.",
+      "name": "platform-global-initial",
+      "sha256": "2594b6a92ebfb1c3312deb7d01c015fb95e9fbe9bd7bc6b527af07813ec7b910",
+      "start": "0x4b0a70"
+    }
+  ],
+  "schema": 1,
+  "source_sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077"
+}

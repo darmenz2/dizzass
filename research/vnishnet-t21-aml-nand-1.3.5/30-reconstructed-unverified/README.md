@@ -1,7 +1,7 @@
-# Reconstructed, unverified tier
+# Reconstructed candidates, explicitly unverified
 
-Status: **no reconstructed implementation included**.
+This tier now contains one small [hwscan platform lookup/selection candidate](hwscan-platform/README.md). It reconstructs an eight-instruction pure name-lookup leaf and normalizes a bounded name-selection decision slice from the separately hashed hwscan ELF. Its C behavior is tested against static-derived vectors; no vendor differential execution or runtime parity is claimed. It is not linked into production and does not implement the scanner, driver, model loader or hardware initialization.
 
-A prior local model-header research candidate was not present in the saved lab checkpoint and could not be recovered after the execution environment reset. Its reported historical assertions, mutants and dependency findings cannot establish verification of files that are not available here. This directory contains no replacement, stub or fabricated recovery.
+The earlier unavailable model candidate remains unrecovered. No lost implementation, historical test report or existing cgminer-only evidence is relabeled as recovered hwscan work. The original full source remains unavailable.
 
-Any future candidate must identify exact source evidence, distinguish hypotheses and new adapter behavior from observed behavior, and receive its own scoped tests and review. It must continue using the real cgminer core, never a parallel miner. Publication in this tier alone is not acceptance, runtime parity or permission for production registration or hardware execution.
+The extracted bytes and disassembly remain separate evidence tiers. Do not execute the vendor inputs, boot scripts or historical instruction-interpreter/model probes to validate this candidate. See its README for exact inputs/outputs, authored API normalization, source identities, tests and limitations.

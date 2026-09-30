@@ -1,0 +1,31 @@
+{
+  "artifact_sha256": {
+    "comparison-callee.asm": "d4b0966a3dca1fbd3307e3f8a0d98f85518d001d9482b134eb51c2aa504fd34f",
+    "comparison-callee.json": "ce73ee13801711b53015deddbc609b05ece20b2b1271024f35a789ee34978f9b",
+    "lookup-caller.asm": "c473900e936f132a1a121238e2e95a3e21b0ae47dfb779d1e1b08d7fac2e0045",
+    "lookup-caller.json": "a63a28e2c4c60c22b47dd611b862d75bb5e6a9ecb387500fe72d92db65b31f34",
+    "lookup-code.asm": "73b45e983f4cf05344079f35bad6910695919bd2afaddc4f7fa8428e91cd9651",
+    "lookup-code.json": "a58bf29c65dd827d6a3bc9add00904afa1506adcc0bae768689690894f3fe9cc",
+    "lookup-literals.asm": "a877d70a5262e32a12dc1260d413ea71c560cbd2d3eab390145989da2bb96ced",
+    "lookup-literals.json": "421f82c85e1cc5f08c7d80abad276852c520521e2cf6afe3178e2e1262e474df",
+    "lookup-table.asm": "bf074d2e1a3bd8ed0078f354f4b734ee744aec30addc745cbef2fb71b46bcdf4",
+    "lookup-table.json": "81284fe741f797374c3d3fc2909ae01dc24089f9d80a2b81885151b24f564786",
+    "platform-global-got.asm": "1c188b675f1fcb671c53095ad11452da8702f317c08596e4bd4e5a47959fe82d",
+    "platform-global-got.json": "33e2af904ee33e3693ac827514a3044abfa8593bb5470f4e14b82373790e661a",
+    "platform-global-initial.asm": "1c5ff3ba01530921e42e5d0c10e2381ed1e332a86af1850f9375e2a2faefbfb9",
+    "platform-global-initial.json": "581045f74a6a192b8a6a7c485ee9d14c3b1aea178a176120b0e1a7f87e52f82d",
+    "platform-token-bytes.asm": "f964f2efedf34a80f66eda72b5e5eda23a3e0605c19b0010e68f08f34bd81180",
+    "platform-token-bytes.json": "6993859e07788dc4bd661ac497a9cb65690b2f247441e7ae65979cd72ad51274",
+    "selection-code.asm": "d52893ecaed4813ee2f7c87ccb16906e06f58a41169d3690decab2b7aedf41a1",
+    "selection-code.json": "8007850a279c632d8d6060170cecb2daa6af612bc5399b90e05a7b8ebb9b73df",
+    "selection-literals.asm": "b1aadc703ccfae6fc479be450ba16b1294e1916c1513142850d6594624ff8bc2",
+    "selection-literals.json": "d2842416358bde60655cecd946356683fdbbf30804ea9b43f132a99d8c8c8a76",
+    "selection-store-context.asm": "5ebb1ee04e7eacbf0b5fab32d1d2ff92db312bed499835c47e82a79a33dddb91",
+    "selection-store-context.json": "3ba79d6d3f9867523700bd486369fdd9c9405ee5aaa4e653a575a81000cec838",
+    "unknown-token-bytes.asm": "0755ae1301683254c263223a7a66b71b3ee23c837d8d4db5b3ba29a820198e18",
+    "unknown-token-bytes.json": "46a172787968c2db6f5a51d0ab662b3775b9f1d6ed9cdc83985f77a6f5357dad"
+  },
+  "firmware_executed": false,
+  "plan_sha256": "2fff2b5e1ec9908e89e6e465af80b88c86090b49996236de57cde8eea4b5f6be",
+  "schema": 1
+}

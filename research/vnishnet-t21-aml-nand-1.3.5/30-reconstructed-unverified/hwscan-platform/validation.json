@@ -1,0 +1,63 @@
+{
+  "arm_interpreter_used": false,
+  "asan_ubsan": {
+    "checks": 75707,
+    "environment": {
+      "ASAN_OPTIONS": "detect_leaks=0",
+      "UBSAN_OPTIONS": "halt_on_error=1"
+    },
+    "failures": 0,
+    "groups": 10,
+    "status": "pass"
+  },
+  "base_commit": "87ff01aebbe58f520be9c9df78b150eb45fe5b68",
+  "candidate_object_undefined_symbols": [
+    "strcmp"
+  ],
+  "clang": {
+    "reason": "clang executable is not installed locally",
+    "status": "not_run"
+  },
+  "development_notes": [
+    "The first leak-enabled sanitizer attempt and the captured final attempt were blocked by the tracing executor; neither is counted as a pass.",
+    "A redundant README no-op path check used the wrong working directory and failed before editing; the already-written README content was unchanged."
+  ],
+  "firmware_executed": false,
+  "frozen_evidence_tests": {
+    "skipped": 0,
+    "status": "pass",
+    "tests": 8
+  },
+  "gcc_version": "gcc (Debian 14.2.0-19) 14.2.0",
+  "hardware_accessed": false,
+  "leak_sanitizer": {
+    "binary_report": "LeakSanitizer does not work under ptrace (strace, gdb, etc)",
+    "ci_default": "detect_leaks=1 retained",
+    "initial_attempt_also_failed": true,
+    "make_exit_code": 2,
+    "status": "blocked"
+  },
+  "logs": {
+    "gcc-asan-ubsan-no-leaks.txt": "fc1128dca2a25fa26b418fde591ef76c5b70351d1474909a4a069ab8ee5ffc50",
+    "gcc-leak-sanitizer-attempt.txt": "afd9b1a584db1bb2474bfa79667445da1835b90640d2acba31465b88fed0bf5b",
+    "gcc-ordinary.txt": "637036ccc98be7346eab3d8de955fc06f29eb7754b665d0d3d37011758de89a1",
+    "reference-static-regeneration.txt": "03bc9fe28240552d9a275df535536159711c6ded71140fcdf3943b452e54d188"
+  },
+  "model_probes_run": false,
+  "ordinary": {
+    "checks": 75707,
+    "failures": 0,
+    "groups": 10,
+    "status": "pass"
+  },
+  "proof_limit": "The only executable under test is newly written host C, checked against static-derived vectors. No vendor differential/parity result is claimed.",
+  "reference_static_regeneration": {
+    "bytes": 460,
+    "ranges": 12,
+    "regenerated_files": 24,
+    "status": "pass",
+    "strings": 6
+  },
+  "schema": 1,
+  "source_sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077"
+}

@@ -1,0 +1,1 @@
+{"suite":"hwscan-platform-135","groups":10,"checks":75707,"failures":0,"oracle":"static-derived-vectors","firmware_executed":false}
