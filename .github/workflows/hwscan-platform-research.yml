@@ -1,0 +1,27 @@
+name: Hwscan platform static reconstruction
+
+on:
+  pull_request:
+    paths:
+      - 'research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/hwscan-platform/**'
+      - '.github/workflows/hwscan-platform-research.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pure-host-candidate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        cc: [gcc, clang]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test only the new pure host reconstruction and frozen evidence
+        working-directory: research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/hwscan-platform
+        run: make test CC=${{ matrix.cc }}
+      - name: Check the same host tests with ASan and UBSan
+        working-directory: research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/hwscan-platform
+        run: make sanitize CC=${{ matrix.cc }}

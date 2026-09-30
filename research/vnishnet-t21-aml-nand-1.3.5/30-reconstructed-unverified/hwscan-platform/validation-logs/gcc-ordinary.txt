@@ -1,0 +1,18 @@
+mkdir -p $WORKSPACE/final-build
+gcc -std=c11 -Wall -Wextra -Werror -Wconversion -Wshadow -pedantic -O2 -I. hwscan_platform_135.c tests/test_hwscan_platform_135.c -o $WORKSPACE/final-build/test_hwscan_platform_135
+python3 -B -m unittest discover -s tests -p 'test_*.py' -v
+test_all_receipts_and_manifest (test_static_evidence.StaticEvidenceTests.test_all_receipts_and_manifest) ... ok
+test_comparison_callee_exact_words (test_static_evidence.StaticEvidenceTests.test_comparison_callee_exact_words) ... ok
+test_direct_lookup_call_word (test_static_evidence.StaticEvidenceTests.test_direct_lookup_call_word) ... ok
+test_exact_lookup_instruction_words (test_static_evidence.StaticEvidenceTests.test_exact_lookup_instruction_words) ... ok
+test_global_initial_value_is_data_only (test_static_evidence.StaticEvidenceTests.test_global_initial_value_is_data_only) ... ok
+test_lookup_literal_and_table_addresses (test_static_evidence.StaticEvidenceTests.test_lookup_literal_and_table_addresses) ... ok
+test_selector_pinned_assignments_and_null_skip (test_static_evidence.StaticEvidenceTests.test_selector_pinned_assignments_and_null_skip) ... ok
+test_string_content_and_source_positions (test_static_evidence.StaticEvidenceTests.test_string_content_and_source_positions) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.003s
+
+OK
+$WORKSPACE/final-build/test_hwscan_platform_135
+{"suite":"hwscan-platform-135","groups":10,"checks":75707,"failures":0,"oracle":"static-derived-vectors","firmware_executed":false}
