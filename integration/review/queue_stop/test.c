@@ -176,6 +176,7 @@ static void active_tx13(void)
     C13(atomic_load(&complete_calls)==1 && atomic_load(&step_calls)==1);
     uint8_t data[88];r01_read(v.q.e.f.peer,data,88);close12(&v);++n13_cases;
 }
+#ifndef R13_STOP_EMBED
 int main(void)
 {
     alarm(55);rwlock_init(&devices_lock);mutex_init(&stats_lock);mutex_init(&console_lock);cglock_init(&control_lock);
@@ -188,3 +189,5 @@ int main(void)
     C13(pthread_cond_destroy(&gws_cond)==0);
     printf("R13_PASS cases=%u checks=%u prewait_schedules=32 core_loop=1 manufactured_work=0 physical_asic=0\n",n13_cases,atomic_load(&n13_checks));return 0;
 }
+
+#endif /* R13_STOP_EMBED */

@@ -1,0 +1,108 @@
+name: R-14 queued-driver cooperative wake
+on:
+  pull_request:
+    branches: [review/native-queued-stop-20260930]
+    paths: ['cgminer.c', 'miner.h', 'integration/review/driver_wake/**', '.r14-source.patch.gz.b64.*', '.github/workflows/driver-wake.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source:
+    if: github.repository == 'darmenz2/dizzass' && (github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    outputs:
+      head: ${{ steps.materialize.outputs.head }}
+    steps:
+      - name: Apply fixed source patch only on this task branch
+        id: materialize
+        env:
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          BRANCH: ${{ github.event.pull_request.head.ref || github.ref_name }}
+          GH_TOKEN: ${{ github.token }}
+        shell: python
+        run: |
+          import base64,gzip,hashlib,json,os,pathlib,subprocess
+          root=pathlib.Path(os.environ['RUNNER_TEMP'])/'r14-source'
+          root.mkdir();os.chdir(root)
+          def git(*a):return subprocess.check_output(['git',*a],text=True).strip()
+          git('init','-q');git('remote','add','origin','https://github.com/darmenz2/dizzass.git')
+          head=os.environ['HEAD'];base='c028671b8a0d532d02a7c563d31d1e348272bc22'
+          git('-c','gc.auto=0','-c','maintenance.auto=false','fetch','--depth=2','--no-tags','origin',head,base)
+          git('checkout','-q','--detach',head)
+          if git('rev-parse','HEAD')!=head:raise RuntimeError('wrong source')
+          packed=[pathlib.Path(p) for p in ['.r14-source.patch.gz.b64.0', '.r14-source.patch.gz.b64.1', '.r14-source.patch.gz.b64.2', '.r14-source.patch.gz.b64.3', '.r14-source.patch.gz.b64.4', '.r14-source.patch.gz.b64.5', '.r14-source.patch.gz.b64.6']]
+          if any(p.exists() for p in packed):
+              if not all(p.is_file() for p in packed):raise RuntimeError('missing patch chunk')
+              branch='review/queued-driver-wake-20260930'
+              if os.environ['BRANCH']!=branch or git('rev-parse','HEAD^')!=base:
+                  raise RuntimeError('not this exact task bootstrap')
+              raw=gzip.decompress(base64.b64decode(''.join(p.read_text().strip() for p in packed),validate=True))
+              if hashlib.sha256(raw).hexdigest()!='9dd706812297bcec25fb2c0fcd4b663219899f2232f2a4b66522b46c30dbb043':raise RuntimeError('patch mismatch')
+              subprocess.run(['git','apply','--index','-'],input=raw,check=True)
+              git('rm','--',*(str(p) for p in packed))
+              expected=json.loads('{"cgminer.c":"27def5aec3c7b4eb6d0b9c1ed315d51e0fccfc8d","integration/review/combined_rx/manifest.json":"0c418087b23ea5aa033f3d699c590ff9654fdf9a","integration/review/driver_wake/.gitignore":"c18dd8d83ceed1806b50b0aaa46beb7e335fff13","integration/review/driver_wake/README_RU.md":"7108bcdd4fee3734bfd5cf8a9e4321db502dff62","integration/review/driver_wake/input_revisions.json":"9b0ed19d63febc0558a67d8bcb845d47e01d9321","integration/review/driver_wake/run.py":"20d3619203fd231d9e052b5d6f76273e5c8c4f9c","integration/review/driver_wake/suite.mk":"18f8c622dddff94dafb631d17d4eddfc74129e67","integration/review/driver_wake/test.c":"a919486e2a89e9cbdf67180b27ef350acb2d9e4e","integration/review/driver_wake/test_runner.py":"199e7cbb406b1f283c9e21a601dd6f69b5ca29b3","integration/review/queue_stop/test.c":"181a12a1fac79cc397136c12bd002ef56ad5612a","integration/review/queue_stop/test_runner.py":"76b5703b278bbc86c878606578de0c702c675f09","miner.h":"8daeb8ecc2a470781d681a0c38e540c0f22b90a5"}')
+              allowed=set(expected)|{'.github/workflows/driver-wake.yml'}
+              if set(git('diff','--cached','--name-only',base).splitlines())!=allowed:raise RuntimeError('path mismatch')
+              for p,sha in expected.items():
+                  if git('rev-parse',':'+p)!=sha:raise RuntimeError('wrong blob '+p)
+              if git('rev-parse',':.github/workflows/driver-wake.yml')!=git('rev-parse',head+':.github/workflows/driver-wake.yml'):
+                  raise RuntimeError('self-modifying workflow forbidden')
+              git('-c','user.name=ChatGPT task builder','-c','user.email=task-builder@users.noreply.github.com','commit','-qm','Apply exact R14 queued-driver wake source; no shared refs')
+              if git('ls-remote','origin','refs/heads/'+branch).split()[0]!=head:raise RuntimeError('task branch moved')
+              ask=root/'.git'/'r14-askpass'
+              ask.write_text('#!/bin/sh\ncase "$1" in *Username*) echo x-access-token;; *) echo "$GH_TOKEN";; esac\n');ask.chmod(0o700)
+              try:
+                  subprocess.run(['git','push','origin','HEAD:refs/heads/'+branch],check=True,
+                    env=dict(os.environ,GIT_ASKPASS=str(ask),GIT_TERMINAL_PROMPT='0',GIT_TRACE='0',GIT_CURL_VERBOSE='0'))
+              finally:ask.unlink()
+              head=git('rev-parse','HEAD')
+          with open(os.environ['GITHUB_OUTPUT'],'a') as f:f.write('head='+head+'\n')
+          print('TEST_SOURCE_HEAD='+head);print('TEST_SOURCE_TREE='+git('rev-parse','HEAD^{tree}'))
+  verify:
+    needs: source
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc-14, clang-17]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Fresh read-only checkout of applied source
+        env:
+          HEAD: ${{ needs.source.outputs.head }}
+        run: |
+          set -eu
+          root="$RUNNER_TEMP/r14-$GITHUB_RUN_ID-${{ matrix.cc }}-$GITHUB_RUN_ATTEMPT"
+          mkdir "$root"; cd "$root"; git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          git -c gc.auto=0 -c maintenance.auto=false fetch --depth=1 --no-tags origin "$HEAD"
+          git checkout -q --detach "$HEAD"; test "$(git rev-parse HEAD)" = "$HEAD"
+          test -z "$(find . -maxdepth 1 -name '.r14-source.patch.gz.b64*' -print)"
+          echo "SOURCE_ROOT=$root" >> "$GITHUB_ENV"
+      - name: Install host-only build dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y build-essential autoconf automake libtool pkg-config libcurl4-openssl-dev libusb-1.0-0-dev libudev-dev zlib1g-dev '${{ matrix.cc }}'
+      - name: Paused native threads, driver wake and every prior regression
+        run: |
+          set -eu; cd "$SOURCE_ROOT"
+          python3 -B integration/review/driver_wake/test_runner.py
+          python3 -B -O integration/review/driver_wake/test_runner.py
+          python3 -B integration/review/queue_stop/test_runner.py
+          python3 -B integration/review/driver_wake/run.py --cc '${{ matrix.cc }}' --baseline icarus --out build/r14-ci-normal --mutants
+      - name: Mandatory sanitizer health and identical full test set
+        run: |
+          set -eu; cd "$SOURCE_ROOT"
+          python3 -B integration/review/driver_wake/run.py --cc '${{ matrix.cc }}' --baseline icarus --out build/r14-ci-sanitized --sanitize
+      - name: Retain complete reports and compiler receipts including failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r14-${{ matrix.cc }}-${{ github.run_attempt }}
+          path: |
+            ${{ env.SOURCE_ROOT }}/build/r14-ci-*/results.json
+            ${{ env.SOURCE_ROOT }}/build/r14-ci-*/logs/
+            ${{ env.SOURCE_ROOT }}/build/r14-ci-*/compile-records/
+          retention-days: 7

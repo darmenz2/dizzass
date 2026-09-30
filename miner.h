@@ -377,6 +377,14 @@ struct device_drv {
 
 	/* Does this device generate work itself and not require stratum work generation? */
 	bool genwork;
+
+	/* Optional native queued-stop wake. Called with queued_stop already set,
+	 * OUTSIDE stgd_lock, on every explicit request (retry after wake errors).
+	 * Use the driver's own predicate/lock to wake scanwork; must be idempotent,
+	 * must not join, wait for completion, perform hardware I/O or reenter stop.
+	 * Return 0 or an errno. NULL preserves a driver's previous scan contract.
+	 * Controller excludes concurrent requests and driver/thread teardown. */
+	int (*queued_stop_wake)(struct cgpu_info *);
 };
 
 extern struct device_drv *copy_drv(struct device_drv*);
@@ -1572,15 +1580,23 @@ extern struct work *take_queued_work_bymidstate(struct cgpu_info *cgpu, char *mi
 extern void flush_queue(struct cgpu_info *cgpu);
 extern void hash_driver_work(struct thr_info *mythr);
 extern void hash_queued_work(struct thr_info *mythr);
-/* Opt-in one-way stop for native fill_queue/hash_queued_work starvation.
- * Requires initialized, stable getq/staged mutex and a live cgpu; no signal
- * handlers and no caller-held staged lock. Request wakes the shared condition
- * but only this cgpu's queued path exits. Generic get_work stays blocking.
- * This is NOT a join, IO stop, hardware drain or cancellation of scanwork/
- * mt_disable. Pair with driver-specific wake/IO stop; join every native owner
- * before freeing cgpu, queues, pools or descriptors. No automatic resume.
- * A work popped before a racing stop can remain in unqueued_work for cleanup.
- * Structure layout changed: rebuild core and all users together. */
+/* Opt-in one-way stop for native queued drivers. Requires initialized stable
+ * getq/stgd_lock, a live cgpu and immutable driver/thread publication. No signal
+ * handlers, caller-held staged/driver wake locks or concurrent hotplug/teardown/requests.
+ * The controller must retain every published thr and its initialized sem;
+ * uncreated entries are NULL. Requests after partial thread publication are
+ * unsupported. The first request posts each published thread sem, including
+ * initial-enable/mt_disable waits; stop-aware queued pause skips re-enabling.
+ * Each request also invokes optional drv->queued_stop_wake OUTSIDE core locks.
+ * A wake failure leaves the stop latch set; return first getq/driver wake error
+ * and retry explicitly. Semaphore post uses the existing core fatal-error policy.
+ * Generic get_work/legacy disable remain unchanged. An arbitrary driver's
+ * scanwork is NOT made interruptible without its cooperative wake callback.
+ * This is NOT a join, IO stop or hardware drain. Already-admitted work/enable/
+ * update callbacks may finish. Pair with IO stop and join/exclude EVERY owner
+ * before freeing cgpu, queues, pools, threads, driver context or descriptors.
+ * No automatic resume, epoch change or wire-slot release. Popped work remains
+ * owned by unqueued_work. Rebuild core and all struct device_drv users together. */
 extern int cgminer_request_queued_stop(struct cgpu_info *cgpu);
 extern bool cgminer_queued_stopped(const struct cgpu_info *cgpu);
 extern void _wlog(const char *str);
