@@ -10060,6 +10060,7 @@ void null_device_drv(struct device_drv *drv)
 	drv->hash_work = &noop_hash_work;
 
 	drv->queue_full = &noop_queue_full;
+	drv->queued_stop_wake = NULL;
 	drv->flush_work = &noop_flush_work;
 	drv->update_work = &noop_update_work;
 

@@ -40,19 +40,25 @@
   "inputs": [
     {
       "path": "cgminer.c",
-      "blob": "27def5aec3c7b4eb6d0b9c1ed315d51e0fccfc8d",
-      "sha256": "e7e44444a139b7a29d36da45f0f7073b20c96041af0d8634c80490644ad983a4",
-      "origin": "R-14 queued driver wake and pause exit",
+      "blob": "34ac6cf0274153fea47dfe752c9ebc2e1a0bfa7f",
+      "sha256": "e5fabec98a39e19427037f4725c3e63a2fd7dd2943a5c82c1d1496237d6e57b4",
+      "origin": "R-15 clear wake callback during native driver neutralization",
       "supersedes": {
         "path": "cgminer.c",
-        "blob": "f6fbb29b361a48b483fd4541728ba9a82d735697",
-        "sha256": "434e1bac9fe46812507ad27e35962d713c4959eae5d7da52678c6c9eb41dc634",
-        "origin": "R-13 native queued-work cooperative stop",
+        "blob": "27def5aec3c7b4eb6d0b9c1ed315d51e0fccfc8d",
+        "sha256": "e7e44444a139b7a29d36da45f0f7073b20c96041af0d8634c80490644ad983a4",
+        "origin": "R-14 queued driver wake and pause exit",
         "supersedes": {
           "path": "cgminer.c",
-          "blob": "54739e4139294c526af0c73aa9a02ba9762ca4f2",
-          "sha256": "214148c972c380af38cd667c02ccffad5c3a0b2790d5b54eeb0316af455411e4",
-          "origin": "accepted-f646f18f"
+          "blob": "f6fbb29b361a48b483fd4541728ba9a82d735697",
+          "sha256": "434e1bac9fe46812507ad27e35962d713c4959eae5d7da52678c6c9eb41dc634",
+          "origin": "R-13 native queued-work cooperative stop",
+          "supersedes": {
+            "path": "cgminer.c",
+            "blob": "54739e4139294c526af0c73aa9a02ba9762ca4f2",
+            "sha256": "214148c972c380af38cd667c02ccffad5c3a0b2790d5b54eeb0316af455411e4",
+            "origin": "accepted-f646f18f"
+          }
         }
       }
     },
