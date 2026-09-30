@@ -1,0 +1,116 @@
+name: R-13 native queued-work cooperative stop
+on:
+  pull_request:
+    branches: [review/native-queue-callback-20260930]
+    paths: ['cgminer.c', 'miner.h', 'integration/review/queue_stop/**', '.r13-prepared.patch.gz.b64.*', '.github/workflows/queued-stop.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source:
+    # One-time, hash-checked materialization on THIS task branch only. The
+    # temporary packed patch is removed; later runs are read-only checkouts.
+    if: github.repository == 'darmenz2/dizzass' && (github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    outputs:
+      head: ${{ steps.materialize.outputs.head }}
+    steps:
+      - name: Apply the exact prepared source patch, never shared refs
+        id: materialize
+        env:
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          BRANCH: ${{ github.event.pull_request.head.ref || github.ref_name }}
+          GH_TOKEN: ${{ github.token }}
+        shell: python
+        run: |
+          import base64,gzip,hashlib,json,os,pathlib,subprocess
+          repo='darmenz2/dizzass'
+          root=pathlib.Path(os.environ['RUNNER_TEMP'])/'r13-publication'
+          root.mkdir();os.chdir(root)
+          def git(*args):
+              return subprocess.check_output(['git',*args],text=True).strip()
+          git('init','-q');git('remote','add','origin','https://github.com/'+repo+'.git')
+          head=os.environ['HEAD'];base='8e49d7cbf37ff0eae269ec351ff059725db01832'
+          git('-c','gc.auto=0','fetch','--depth=2','--no-tags','origin',head,base)
+          git('checkout','-q','--detach',head)
+          if git('rev-parse','HEAD')!=head:raise RuntimeError('wrong checkout')
+          packed=[pathlib.Path('.r13-prepared.patch.gz.b64.'+str(i)) for i in range(3)]
+          if any(p.exists() for p in packed):
+              if not all(p.is_file() for p in packed):raise RuntimeError('incomplete prepared patch')
+              branch='review/native-queued-stop-20260930'
+              if os.environ['BRANCH']!=branch or git('rev-parse','HEAD^')!=base:
+                  raise RuntimeError('not the single task bootstrap')
+              raw=gzip.decompress(base64.b64decode(''.join(p.read_text().strip() for p in packed),validate=True))
+              if hashlib.sha256(raw).hexdigest()!='1a09e95d1d464486b5aea6b15b8873550f7d39a659ece0038dd47728edfea31b':
+                  raise RuntimeError('patch hash mismatch')
+              subprocess.run(['git','apply','--index','--exclude=.github/workflows/queued-stop.yml','-'],input=raw,check=True)
+              git('rm','--',*(str(p) for p in packed))
+              expected=json.loads('{"cgminer.c":"f6fbb29b361a48b483fd4541728ba9a82d735697","integration/review/combined_rx/manifest.json":"e14d4f0928276e23f0b79418743e7d735a1f1534","integration/review/queue_callback/test.c":"4edadc89ead957d8ded58dd8d10deee0e3137ce8","integration/review/queue_stop/.gitignore":"c18dd8d83ceed1806b50b0aaa46beb7e335fff13","integration/review/queue_stop/README_RU.md":"665122ad52e25a73073448ea713b7c9141d5ae52","integration/review/queue_stop/input_revisions.json":"bc8e227ccfb91affbd7f4e8eec9dc5268c266159","integration/review/queue_stop/run.py":"6f7a184e283808f192d45c3ed2ae9bf930f3646c","integration/review/queue_stop/suite.mk":"9a3bb7b71508c7726cb6e564cbd009405871e426","integration/review/queue_stop/test.c":"66d2f8f59e18305ed4e3dd3137522ed616400693","integration/review/queue_stop/test_runner.py":"e662ee0f45ed4f05c2ceadca2fe92d1a7c9db59e","miner.h":"9629c7c18c7763e6edcc567f57846c78b7fdd7af"}')
+              allowed=set(expected)|{'.github/workflows/queued-stop.yml'}
+              actual=set(git('diff','--cached','--name-only',base).splitlines())
+              if actual!=allowed:raise RuntimeError('unexpected changed paths')
+              for path,sha in expected.items():
+                  if git('rev-parse',':'+path)!=sha:raise RuntimeError('wrong resulting blob: '+path)
+              if git('rev-parse',':.github/workflows/queued-stop.yml')!=git('rev-parse',head+':.github/workflows/queued-stop.yml'):
+                  raise RuntimeError('workflow must not be modified by the job')
+              git('-c','user.name=ChatGPT task builder','-c','user.email=task-builder@users.noreply.github.com','commit','-qm','Apply verified R13 native queued-stop source; no shared-ref promotion')
+              current=git('ls-remote','origin','refs/heads/'+branch).split()[0]
+              if current!=head:raise RuntimeError('task branch changed; refusing publication')
+              ask=root/'.git'/'r13-askpass'
+              ask.write_text('#!/bin/sh\ncase "$1" in *Username*) echo x-access-token;; *) echo "$GH_TOKEN";; esac\n')
+              ask.chmod(0o700)
+              try:
+                  env=dict(os.environ,GIT_ASKPASS=str(ask),GIT_TERMINAL_PROMPT='0',GIT_TRACE='0',GIT_CURL_VERBOSE='0')
+                  subprocess.run(['git','push','origin','HEAD:refs/heads/'+branch],check=True,env=env)
+              finally:ask.unlink()
+              head=git('rev-parse','HEAD')
+          with open(os.environ['GITHUB_OUTPUT'],'a') as f:f.write('head='+head+'\n')
+          print('TESTED_SOURCE_HEAD='+head)
+          print('TESTED_SOURCE_TREE='+git('rev-parse','HEAD^{tree}'))
+  verify:
+    needs: source
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc-14, clang-17]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Fetch the resulting exact source commit without credentials
+        env:
+          HEAD: ${{ needs.source.outputs.head }}
+        run: |
+          set -eu
+          root="$RUNNER_TEMP/r13-$GITHUB_RUN_ID-${{ matrix.cc }}-$GITHUB_RUN_ATTEMPT"
+          mkdir "$root"; cd "$root"; git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          git -c gc.auto=0 -c maintenance.auto=false fetch --depth=1 --no-tags origin "$HEAD"
+          git checkout -q --detach "$HEAD"; test "$(git rev-parse HEAD)" = "$HEAD"
+          test ! -e .r13-prepared.patch.gz.b64.0
+          echo "SOURCE_ROOT=$root" >> "$GITHUB_ENV"
+      - name: Install host-only dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y build-essential autoconf automake libtool pkg-config libcurl4-openssl-dev libusb-1.0-0-dev libudev-dev zlib1g-dev '${{ matrix.cc }}'
+      - name: Native stop and all existing regressions and controls
+        run: |
+          set -eu; cd "$SOURCE_ROOT"
+          python3 -B integration/review/queue_stop/test_runner.py
+          python3 -B -O integration/review/queue_stop/test_runner.py
+          python3 -B integration/review/queue_stop/run.py --cc '${{ matrix.cc }}' --baseline icarus --out build/r13-ci-normal --mutants
+      - name: Mandatory sanitizer health and same complete test set
+        run: |
+          set -eu; cd "$SOURCE_ROOT"
+          python3 -B integration/review/queue_stop/run.py --cc '${{ matrix.cc }}' --baseline icarus --out build/r13-ci-sanitized --sanitize
+      - name: Preserve complete reports, inputs and failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r13-${{ matrix.cc }}-${{ github.run_attempt }}
+          path: |
+            ${{ env.SOURCE_ROOT }}/build/r13-ci-*/results.json
+            ${{ env.SOURCE_ROOT }}/build/r13-ci-*/logs/
+            ${{ env.SOURCE_ROOT }}/build/r13-ci-*/compile-records/
+          retention-days: 7

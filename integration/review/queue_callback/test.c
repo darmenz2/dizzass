@@ -248,6 +248,7 @@ static void upstream_block12(void)
     close12(&v);++n12_cases;
     puts("R12_UPSTREAM_WAIT lifecycle_stop_does_not_wake_get_work=1 caller_join_required=1");
 }
+#ifndef R12_CALLBACK_EMBED
 int main(void)
 {
     alarm(55);mutex_init(&stats_lock);mutex_init(&console_lock);cglock_init(&control_lock);
@@ -262,3 +263,5 @@ int main(void)
     C12(pthread_cond_destroy(&gws_cond)==0);
     printf("R12_PASS cases=%u checks=%u real_fill_queue=1 real_get_work=1 native_calls=%u physical_asic=0\n",n12_cases,atomic_load(&n12_checks),atomic_load(&native_calls));return 0;
 }
+
+#endif /* R12_CALLBACK_EMBED */

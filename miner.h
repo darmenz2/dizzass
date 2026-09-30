@@ -551,6 +551,10 @@ struct cgpu_info {
 	unsigned int queued_count;
 
 	bool shutdown;
+	/* Initialized by add_cgpu (zero for isolated fixtures); subsequent accesses
+	 * use core queued-stop APIs under stgd_lock.
+	 * Do not clear while this cgpu or any native queue user is alive. */
+	bool queued_stop;
 
 	struct timeval dev_start_tv;
 
@@ -1568,6 +1572,17 @@ extern struct work *take_queued_work_bymidstate(struct cgpu_info *cgpu, char *mi
 extern void flush_queue(struct cgpu_info *cgpu);
 extern void hash_driver_work(struct thr_info *mythr);
 extern void hash_queued_work(struct thr_info *mythr);
+/* Opt-in one-way stop for native fill_queue/hash_queued_work starvation.
+ * Requires initialized, stable getq/staged mutex and a live cgpu; no signal
+ * handlers and no caller-held staged lock. Request wakes the shared condition
+ * but only this cgpu's queued path exits. Generic get_work stays blocking.
+ * This is NOT a join, IO stop, hardware drain or cancellation of scanwork/
+ * mt_disable. Pair with driver-specific wake/IO stop; join every native owner
+ * before freeing cgpu, queues, pools or descriptors. No automatic resume.
+ * A work popped before a racing stop can remain in unqueued_work for cleanup.
+ * Structure layout changed: rebuild core and all users together. */
+extern int cgminer_request_queued_stop(struct cgpu_info *cgpu);
+extern bool cgminer_queued_stopped(const struct cgpu_info *cgpu);
 extern void _wlog(const char *str);
 extern void _wlogprint(const char *str);
 extern int curses_int(const char *query);
