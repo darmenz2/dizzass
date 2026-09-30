@@ -1,0 +1,350 @@
+{
+  "direct_edges": [
+    {
+      "at": "0x256d0",
+      "instruction_word": "0xebffdc17",
+      "kind": "BL",
+      "role": "main candidate hands callback to trampoline",
+      "target": "0x1c734"
+    },
+    {
+      "at": "0x225c4",
+      "instruction_word": "0xea030fd6",
+      "kind": "B",
+      "role": "one argument-wrapper exit",
+      "target": "0xe6524"
+    },
+    {
+      "at": "0x22630",
+      "instruction_word": "0xeb030fbb",
+      "kind": "BL",
+      "role": "normal argument-wrapper call",
+      "target": "0xe6524"
+    },
+    {
+      "at": "0xe653c",
+      "instruction_word": "0xeb0061de",
+      "kind": "BL",
+      "role": "logging level global write",
+      "target": "0xfecbc"
+    },
+    {
+      "at": "0xe6548",
+      "instruction_word": "0xeb0062d6",
+      "kind": "BL",
+      "role": "logging configuration dependency",
+      "target": "0xff0a8"
+    },
+    {
+      "at": "0xe6560",
+      "instruction_word": "0xeb0dcf81",
+      "kind": "BL",
+      "role": "directory creation after successful log init",
+      "target": "0x45a36c"
+    },
+    {
+      "at": "0xe656c",
+      "instruction_word": "0xeb000a36",
+      "kind": "BL",
+      "role": "CLI parser after directory attempt",
+      "target": "0xe8e4c"
+    },
+    {
+      "at": "0xe659c",
+      "instruction_word": "0xeb006413",
+      "kind": "BL",
+      "role": "nonnegative CLI result -> selected platform init",
+      "target": "0xff5f0"
+    },
+    {
+      "at": "0xe6618",
+      "instruction_word": "0xeb0002fe",
+      "kind": "BL",
+      "role": "context allocation after platform init success",
+      "target": "0xe7218"
+    },
+    {
+      "at": "0xe6628",
+      "instruction_word": "0xebfffecc",
+      "kind": "BL",
+      "role": "chain/PSU/I2C preparation",
+      "target": "0xe6160"
+    },
+    {
+      "at": "0xe6690",
+      "instruction_word": "0xebffff5d",
+      "kind": "BL",
+      "role": "connected-chain checks after preparation success",
+      "target": "0xe640c"
+    },
+    {
+      "at": "0xe67cc",
+      "instruction_word": "0xeb00020b",
+      "kind": "BL",
+      "role": "further detection dependency",
+      "target": "0xe7000"
+    },
+    {
+      "at": "0xe67e0",
+      "instruction_word": "0xeb00024c",
+      "kind": "BL",
+      "role": "first eligible chain-info lookup",
+      "target": "0xe7118"
+    },
+    {
+      "at": "0xe68e0",
+      "instruction_word": "0xeb0002c2",
+      "kind": "BL",
+      "role": "PSU-info dependency",
+      "target": "0xe73f0"
+    },
+    {
+      "at": "0xe69e8",
+      "instruction_word": "0xebfcf576",
+      "kind": "BL",
+      "role": "non-null identifier dependency",
+      "target": "0x23fc8"
+    },
+    {
+      "at": "0xe69f8",
+      "instruction_word": "0xebfcf109",
+      "kind": "BL",
+      "role": "follow-up identifier/config dependency",
+      "target": "0x22e24"
+    },
+    {
+      "at": "0xe6abc",
+      "instruction_word": "0xebfffe21",
+      "kind": "BL",
+      "role": "no-identifier discovery dependency",
+      "target": "0xe6348"
+    },
+    {
+      "at": "0xe61cc",
+      "instruction_word": "0xeb006f22",
+      "kind": "BL",
+      "role": "PSU preparation dependency",
+      "target": "0x101e5c"
+    },
+    {
+      "at": "0xe620c",
+      "instruction_word": "0xeb000621",
+      "kind": "BL",
+      "role": "PSU OFF request",
+      "target": "0xe7a98"
+    },
+    {
+      "at": "0xe624c",
+      "instruction_word": "0xeb006a45",
+      "kind": "BL",
+      "role": "unresolved callback between OFF and ON",
+      "target": "0x100b68"
+    },
+    {
+      "at": "0xe6250",
+      "instruction_word": "0xeb00060f",
+      "kind": "BL",
+      "role": "PSU ON request",
+      "target": "0xe7a94"
+    },
+    {
+      "at": "0xe6294",
+      "instruction_word": "0xeb0002fb",
+      "kind": "BL",
+      "role": "I2C-interface preparation",
+      "target": "0xe6e88"
+    },
+    {
+      "at": "0xe7a94",
+      "instruction_word": "0xea006ce6",
+      "kind": "B",
+      "role": "ON trampoline",
+      "target": "0x102e34"
+    },
+    {
+      "at": "0xe7a98",
+      "instruction_word": "0xea006ce6",
+      "kind": "B",
+      "role": "OFF trampoline",
+      "target": "0x102e38"
+    },
+    {
+      "at": "0x102e34",
+      "instruction_word": "0xeafff76f",
+      "kind": "B",
+      "role": "ON callback dispatch",
+      "target": "0x100bf8"
+    },
+    {
+      "at": "0x102e38",
+      "instruction_word": "0xeafff772",
+      "kind": "B",
+      "role": "OFF callback dispatch",
+      "target": "0x100c08"
+    },
+    {
+      "at": "0xe7abc",
+      "instruction_word": "0xeb000af6",
+      "kind": "BL",
+      "role": "unresolved chain/transport constructor",
+      "target": "0xea69c"
+    },
+    {
+      "at": "0x10dd34",
+      "instruction_word": "0xeb000de1",
+      "kind": "BL",
+      "role": "input GPIO existence query",
+      "target": "0x1114c0"
+    },
+    {
+      "at": "0x10dd44",
+      "instruction_word": "0xeb000ecc",
+      "kind": "BL",
+      "role": "existing input GPIO unexport request",
+      "target": "0x11187c"
+    },
+    {
+      "at": "0x10dd14",
+      "instruction_word": "0xeb000d7b",
+      "kind": "BL",
+      "role": "input GPIO export/direction request",
+      "target": "0x111308"
+    },
+    {
+      "at": "0x10dd8c",
+      "instruction_word": "0xeb000dcb",
+      "kind": "BL",
+      "role": "output GPIO existence query",
+      "target": "0x1114c0"
+    },
+    {
+      "at": "0x10dd9c",
+      "instruction_word": "0xeb000eb6",
+      "kind": "BL",
+      "role": "existing output GPIO unexport request",
+      "target": "0x11187c"
+    },
+    {
+      "at": "0x10dd6c",
+      "instruction_word": "0xeb000d65",
+      "kind": "BL",
+      "role": "output GPIO export/direction request",
+      "target": "0x111308"
+    },
+    {
+      "at": "0x1114f0",
+      "instruction_word": "0xeb0d4882",
+      "kind": "BL",
+      "role": "access syscall wrapper",
+      "target": "0x463700"
+    },
+    {
+      "at": "0x111338",
+      "instruction_word": "0xeb0d25ad",
+      "kind": "BL",
+      "role": "open export stream",
+      "target": "0x45a9f4"
+    },
+    {
+      "at": "0x111388",
+      "instruction_word": "0xeb0d2599",
+      "kind": "BL",
+      "role": "open direction stream",
+      "target": "0x45a9f4"
+    },
+    {
+      "at": "0x1118a8",
+      "instruction_word": "0xeb0d2451",
+      "kind": "BL",
+      "role": "open unexport stream",
+      "target": "0x45a9f4"
+    },
+    {
+      "at": "0x111354",
+      "instruction_word": "0xeb0d25d0",
+      "kind": "BL",
+      "role": "stdio numeric formatting dependency",
+      "target": "0x45aa9c"
+    },
+    {
+      "at": "0x1113b4",
+      "instruction_word": "0xeb0d2628",
+      "kind": "BL",
+      "role": "stdio direction output dependency",
+      "target": "0x45ac5c"
+    },
+    {
+      "at": "0x1118c4",
+      "instruction_word": "0xeb0d2474",
+      "kind": "BL",
+      "role": "stdio unexport formatting dependency",
+      "target": "0x45aa9c"
+    },
+    {
+      "at": "0xe67a0",
+      "instruction_word": "0xeb0068a5",
+      "kind": "BL",
+      "role": "platform cleanup before zero worker return",
+      "target": "0x100a3c"
+    },
+    {
+      "at": "0xe67a4",
+      "instruction_word": "0xeb006245",
+      "kind": "BL",
+      "role": "logger cleanup before zero worker return",
+      "target": "0xff0c0"
+    }
+  ],
+  "firmware_executed": false,
+  "indirect_edges": [
+    {
+      "at": "0x1c738",
+      "basis": "main callback literal plus BLX r0",
+      "target": "0x22424"
+    },
+    {
+      "at": "0x1003b0",
+      "basis": "AML case/GOT callback assignment, BLX r1",
+      "target": "0x10dce8"
+    },
+    {
+      "at": "0x1003c8",
+      "basis": "AML callback assignment to 0x4c80dc",
+      "target": "0x10cfe0"
+    },
+    {
+      "at": "0x100444",
+      "basis": "AML callback assignment to 0x4c80c8",
+      "target": "0x10e2ec"
+    }
+  ],
+  "schema": 1,
+  "scope": "selected static edges only; no full CFG or executed trace",
+  "source_sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+  "syscall_witnesses": [
+    {
+      "at": "0x45a374",
+      "name": "mkdir",
+      "number": 39
+    },
+    {
+      "at": "0x463708",
+      "name": "access",
+      "number": 33
+    },
+    {
+      "at": "0x45aa48",
+      "name": "open",
+      "number": 5
+    }
+  ],
+  "unresolved": [
+    "logger configuration side effects and all earlier runtime initialization",
+    "complete argument-wrapper/ELF process-exit propagation",
+    "GPIO stdio write/flush return semantics and physical effects",
+    "AML post-GPIO dependencies 0x105f3c and 0x112f0c",
+    "I2C/PSU/UART implementations and hardware protocols",
+    "chain constructor 0xea69c before PSU preparation",
+    "model-identifier/record ownership and callees 0x23fc8,0x22e24,0xe6348"
+  ]
+}

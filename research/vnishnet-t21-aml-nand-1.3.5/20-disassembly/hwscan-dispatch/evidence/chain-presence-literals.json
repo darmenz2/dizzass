@@ -1,0 +1,22 @@
+{
+  "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+  "bytes": 24,
+  "caveat": "Linear static rendering; literal pools may remain in instruction windows. No complete CFG, runtime path, function extent or parity is proved.",
+  "disassembler": "little-endian word rendering",
+  "disassembler_version": "1",
+  "end_exclusive": "0x000e6524",
+  "evidence_sources": [
+    "../README.md",
+    "../AML_IO_MAP.md"
+  ],
+  "file_offset": 877836,
+  "firmware_executed": false,
+  "mode": "data",
+  "mode_evidence": "Explicit table, pointer cell or locally identified literal pool.",
+  "name": "chain-presence-literals",
+  "schema": 1,
+  "segment_flags": 5,
+  "sha256": "1428c937624c1436816eecc4b7845ae2942982398f49acd787d8e096563ad14c",
+  "source_sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+  "start": "0x000e650c"
+}

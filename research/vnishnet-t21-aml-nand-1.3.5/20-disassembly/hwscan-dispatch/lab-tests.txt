@@ -1,0 +1,54 @@
+test_ehabi_ranges_are_not_function_extents (test_arm_index.ArmIndexTests.test_ehabi_ranges_are_not_function_extents) ... ok
+test_extab_pointer (test_arm_index.ArmIndexTests.test_extab_pointer) ... ok
+test_index_is_deterministic (test_arm_index.ArmIndexTests.test_index_is_deterministic) ... ok
+test_output_symlink_rejected (test_arm_index.ArmIndexTests.test_output_symlink_rejected) ... ok
+test_plan_arm_thumb_and_data (test_arm_index.ArmIndexTests.test_plan_arm_thumb_and_data) ... ok
+test_plan_rejects_digest_mode_range_and_name (test_arm_index.ArmIndexTests.test_plan_rejects_digest_mode_range_and_name) ... ok
+test_prel31_sign_and_wrap (test_arm_index.ArmIndexTests.test_prel31_sign_and_wrap) ... ok
+test_reject_arch_class_endian_and_relocatable (test_arm_index.ArmIndexTests.test_reject_arch_class_endian_and_relocatable) ... ok
+test_reject_ehabi_high_bit_and_order (test_arm_index.ArmIndexTests.test_reject_ehabi_high_bit_and_order) ... ok
+test_reject_invalid_mappings (test_arm_index.ArmIndexTests.test_reject_invalid_mappings) ... ok
+test_reject_nonexecutable_function (test_arm_index.ArmIndexTests.test_reject_nonexecutable_function) ... ok
+test_reject_truncated_ehabi (test_arm_index.ArmIndexTests.test_reject_truncated_ehabi) ... ok
+test_reject_truncated_load (test_arm_index.ArmIndexTests.test_reject_truncated_load) ... ok
+test_stripped_file_still_indexes_metadata (test_arm_index.ArmIndexTests.test_stripped_file_still_indexes_metadata) ... ok
+test_symbols_thumb_and_mapping (test_arm_index.ArmIndexTests.test_symbols_thumb_and_mapping) ... ok
+test_range_rejected (test_disassembly.DisassemblyTests.test_range_rejected) ... ok
+test_verified_snapshot (test_disassembly.DisassemblyTests.test_verified_snapshot) ... ok
+test_wrong_architecture (test_disassembly.DisassemblyTests.test_wrong_architecture) ... ok
+test_blob_symlink_rejected (test_unpack.SafetyTests.test_blob_symlink_rejected) ... ok
+test_duplicate_tar (test_unpack.SafetyTests.test_duplicate_tar) ... ok
+test_entry_budget (test_unpack.SafetyTests.test_entry_budget) ... ok
+test_file_budget (test_unpack.SafetyTests.test_file_budget) ... ok
+test_inflate_limit (test_unpack.SafetyTests.test_inflate_limit) ... ok
+test_input_budget (test_unpack.SafetyTests.test_input_budget) ... ok
+test_newc_bad_checksum (test_unpack.SafetyTests.test_newc_bad_checksum) ... ok
+test_newc_bad_name_terminator (test_unpack.SafetyTests.test_newc_bad_name_terminator) ... ok
+test_newc_device_metadata_only (test_unpack.SafetyTests.test_newc_device_metadata_only) ... ok
+test_newc_duplicate (test_unpack.SafetyTests.test_newc_duplicate) ... ok
+test_newc_link_identity (test_unpack.SafetyTests.test_newc_link_identity) ... ok
+test_newc_missing_trailer (test_unpack.SafetyTests.test_newc_missing_trailer) ... ok
+test_newc_positive_crc (test_unpack.SafetyTests.test_newc_positive_crc) ... ok
+test_newc_regular (test_unpack.SafetyTests.test_newc_regular) ... ok
+test_newc_strict_hex (test_unpack.SafetyTests.test_newc_strict_hex) ... ok
+test_newc_symlink_metadata_only (test_unpack.SafetyTests.test_newc_symlink_metadata_only) ... ok
+test_newc_trailing_data (test_unpack.SafetyTests.test_newc_trailing_data) ... ok
+test_newc_traversal (test_unpack.SafetyTests.test_newc_traversal) ... ok
+test_newc_truncated (test_unpack.SafetyTests.test_newc_truncated) ... ok
+test_objects_directory_symlink_rejected (test_unpack.SafetyTests.test_objects_directory_symlink_rejected) ... ok
+test_output_and_modes (test_unpack.SafetyTests.test_output_and_modes) ... ok
+test_output_symlink_rejected (test_unpack.SafetyTests.test_output_symlink_rejected) ... ok
+test_path_rejection (test_unpack.SafetyTests.test_path_rejection) ... ok
+test_safe_normalization (test_unpack.SafetyTests.test_safe_normalization) ... ok
+test_tar_hardlink_metadata_only (test_unpack.SafetyTests.test_tar_hardlink_metadata_only) ... ok
+test_tar_missing_end_marker (test_unpack.SafetyTests.test_tar_missing_end_marker) ... ok
+test_tar_nonzero_suffix_rejected (test_unpack.SafetyTests.test_tar_nonzero_suffix_rejected) ... ok
+test_tar_symlink_metadata_only (test_unpack.SafetyTests.test_tar_symlink_metadata_only) ... ok
+test_tar_traversal (test_unpack.SafetyTests.test_tar_traversal) ... ok
+test_uboot_bad_fields (test_unpack.SafetyTests.test_uboot_bad_fields) ... ok
+test_uboot_crc (test_unpack.SafetyTests.test_uboot_crc) ... ok
+
+----------------------------------------------------------------------
+Ran 49 tests in 0.026s
+
+OK
