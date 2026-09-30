@@ -18,7 +18,11 @@ class Tests(unittest.TestCase):
         self.assertEqual({r['before']['path'] for r in rev['revisions']},{'cgminer.c','miner.h'})
         for r in rev['revisions']:
             self.assertEqual(r['after']['supersedes'],r['before'])
-            self.assertEqual(hashlib.sha256((run.ROOT/r['after']['path']).read_bytes()).hexdigest(),r['after']['sha256'])
+            current=next(e for e in json.loads((run.ROOT/'integration/review/combined_rx/manifest.json').read_text())['inputs'] if e['path']==r['after']['path'])
+            self.assertEqual(hashlib.sha256((run.ROOT/current['path']).read_bytes()).hexdigest(),current['sha256'])
+            entry=current
+            while entry != r['after'] and 'supersedes' in entry: entry=entry['supersedes']
+            self.assertEqual(entry,r['after'])
     def test_thread_publication(self):
         code=(run.ROOT/'cgminer.c').read_text()
         self.assertEqual(code.count('cgpu->thr = cgcalloc(cgpu->threads + 1, sizeof(*cgpu->thr));'),2)
