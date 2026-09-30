@@ -1,0 +1,21 @@
+{
+  "boundary_evidence": "Exact prior init/getter evidence interval; includes more than one EHABI start.",
+  "bytes": 952,
+  "caveat": "Linear static rendering; literal pools may remain in instruction windows. No complete CFG, runtime path, function extent or parity is proved.",
+  "disassembler": "capstone",
+  "disassembler_version": "5.0.6",
+  "end_exclusive": "0x0011c978",
+  "evidence_sources": [
+    "https://github.com/darmenz2/dizzass/blob/a482b4637c1bb8e2f201ba7d2a870c0fc10f0185/integration/evidence/i2c_init_135.json"
+  ],
+  "file_offset": 1099200,
+  "firmware_executed": false,
+  "mode": "arm",
+  "mode_evidence": "EHABI entry 1149 encodes ARM at interval start; interior code/data boundaries remain unproved.",
+  "name": "aml-psu-init-getter",
+  "schema": 1,
+  "segment_flags": 5,
+  "sha256": "623896d8e6c05f502dfac9ccb9cacae97520fe175bb4bb80593251fdba2221ac",
+  "source_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "start": "0x0011c5c0"
+}

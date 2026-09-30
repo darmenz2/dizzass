@@ -1,0 +1,19 @@
+{
+  "boundary_evidence": "Selected bounded interval; no complete function extent claimed.",
+  "bytes": 4,
+  "caveat": "Linear static rendering; literal pools may remain in instruction windows. No complete CFG, runtime path, function extent or parity is proved.",
+  "disassembler": "little-endian word rendering",
+  "disassembler_version": "1",
+  "end_exclusive": "0x00010150",
+  "evidence_sources": [],
+  "file_offset": 332,
+  "firmware_executed": false,
+  "mode": "data",
+  "mode_evidence": "A32 LDR r1 at 0x10134 refers to 0x1014c.",
+  "name": "entry-literal",
+  "schema": 1,
+  "segment_flags": 5,
+  "sha256": "b24d753066eeee550d9d0031e40749b70df8ca80201e664f1bb39b64087eb794",
+  "source_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "start": "0x0001014c"
+}

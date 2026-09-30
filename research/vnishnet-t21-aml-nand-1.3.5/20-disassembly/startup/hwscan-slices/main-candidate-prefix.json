@@ -1,0 +1,19 @@
+{
+  "boundary_evidence": "256-byte prefix at bridge r0 argument loaded from GOT; main name is inferred, not an ELF symbol.",
+  "bytes": 256,
+  "caveat": "Linear static rendering; literal pools may remain in instruction windows. No complete CFG, runtime path, function extent or parity is proved.",
+  "disassembler": "capstone",
+  "disassembler_version": "5.0.6",
+  "end_exclusive": "0x00025528",
+  "evidence_sources": [],
+  "file_offset": 87080,
+  "firmware_executed": false,
+  "mode": "arm",
+  "mode_evidence": "EHABI entry 95 encodes ARM at interval start; interior code/data boundaries remain unproved.",
+  "name": "main-candidate-prefix",
+  "schema": 1,
+  "segment_flags": 5,
+  "sha256": "73eb0f190f53c34ec7c65fe908dfc49cd2d9686c6f4332762661ba4fde6ee20b",
+  "source_sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+  "start": "0x00025428"
+}

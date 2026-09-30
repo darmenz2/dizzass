@@ -1,0 +1,23 @@
+{
+  "artifact_sha256": {
+    "entry-code.asm": "ba852d7e027441d25df5ac46d2f00dd44d33f55ceca0870b39903bf71ac0fb45",
+    "entry-code.json": "825bbb5eba40c997f6d52f8a08c4d0c6091186a5ccda8bf6a0a93fc0ef11c1dd",
+    "entry-literal.asm": "28f30b90d072d1ab6cff654ea96b85f9366ad5ae996c90331d4124e6ba0266c3",
+    "entry-literal.json": "3c2a7b37c4f30ed04f7d92a0b224ec4061ea9f90cbfbd016ed8d3ff74cbdf36b",
+    "main-candidate-prefix.asm": "6bbee976e45b79923c32b996f0130d8cbf2093e7cab6d9eb60c0f7e647102d32",
+    "main-candidate-prefix.json": "f7f6171d5f565a6a429c1a3618f4df1f419f03aae07127d36d54343021dda662",
+    "startup-bridge-code.asm": "88dcb3b3b4f2444913d9ee17576bc052900f8654587f8c6d9abd2a6ce1074a09",
+    "startup-bridge-code.json": "aaf39d013340386cc667552e87284f5a7b49d60a07a8fa966fdb038f28ae647c",
+    "startup-bridge-literals.asm": "cc764c1b744a92aead06ccae765cc0332701072f789a8ef448eff6d17f88804d",
+    "startup-bridge-literals.json": "2ae5ef9818a4b95f698a0f0c1580140bbc6b8f135ad54ee96d796c687cb8e863",
+    "startup-fini-pointer.asm": "637d10702e0fdbb5adca3e3fc62e7d9c7013100e3d5645376d25b47a76309e59",
+    "startup-fini-pointer.json": "9620df06fa5a80076d2ba53706c1fbb095af148e91b79b28fea8b91dfc2caf92",
+    "startup-init-pointer.asm": "f79908a753f2fcb9e8b919b90f0d6d14a5b76c28b425eb5db9782ca801f4ca99",
+    "startup-init-pointer.json": "9d7b75f2b70ebbd4c983da9f5d4491851473d887e6c605de553d1a69ede103c7",
+    "startup-main-candidate-pointer.asm": "dcc3a3750f62947ae066384991adb00a598904c656e0e669333589cf49f0ce80",
+    "startup-main-candidate-pointer.json": "c264425775db9e023caa42c244d9fd983faa0c872ca9aa56f6eeaef8f8641ae7"
+  },
+  "firmware_executed": false,
+  "plan_sha256": "2a60e93e7eab4e66a446959c50810a7cfe1ee8d885d83b84ad01db8f480b0a3a",
+  "schema": 1
+}

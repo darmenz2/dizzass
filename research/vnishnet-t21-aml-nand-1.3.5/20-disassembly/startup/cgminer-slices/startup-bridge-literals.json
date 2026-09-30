@@ -1,0 +1,19 @@
+{
+  "boundary_evidence": "Selected bounded interval; no complete function extent claimed.",
+  "bytes": 16,
+  "caveat": "Linear static rendering; literal pools may remain in instruction windows. No complete CFG, runtime path, function extent or parity is proved.",
+  "disassembler": "little-endian word rendering",
+  "disassembler_version": "1",
+  "end_exclusive": "0x000101b4",
+  "evidence_sources": [],
+  "file_offset": 420,
+  "firmware_executed": false,
+  "mode": "data",
+  "mode_evidence": "A32 LDR instructions at 0x10154/158/168/17c refer to these words.",
+  "name": "startup-bridge-literals",
+  "schema": 1,
+  "segment_flags": 5,
+  "sha256": "3b20181af52c3c742df305b6a073a363bee8eede5ad3b690f9e0ef8cce3aeb48",
+  "source_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "start": "0x000101a4"
+}

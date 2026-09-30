@@ -1,0 +1,19 @@
+{
+  "boundary_evidence": "Selected bounded interval; no complete function extent claimed.",
+  "bytes": 4,
+  "caveat": "Linear static rendering; literal pools may remain in instruction windows. No complete CFG, runtime path, function extent or parity is proved.",
+  "disassembler": "little-endian word rendering",
+  "disassembler_version": "1",
+  "end_exclusive": "0x005dff7c",
+  "evidence_sources": [],
+  "file_offset": 6029176,
+  "firmware_executed": false,
+  "mode": "data",
+  "mode_evidence": "GOT slot selected by documented static PC-relative base plus literal offset, see STARTUP_ENTRY_MAP.md.",
+  "name": "startup-main-candidate-pointer",
+  "schema": 1,
+  "segment_flags": 6,
+  "sha256": "a1e2f81142b66c8896eaf90d224a531ddfabcf15cfaaeb6d3c087398b4ee3dab",
+  "source_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "start": "0x005dff78"
+}

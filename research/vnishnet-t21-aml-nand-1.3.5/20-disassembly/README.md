@@ -11,3 +11,7 @@ tools/firmware_lab/.venv/bin/python -B tools/firmware_lab/scripts/disassemble_sl
 ```
 
 Choose a fresh output directory on each run; compare `slice.asm` and `receipt.json` with this directory. Do not execute the input.
+
+## Expanded startup research
+
+The [startup index and bounded slices](startup/README.md) add symbol/EHABI/initialization-array metadata for both cgminer and hwscan, 24 digest-pinned slices, an ELF entry map, and a provenance-linked GPIO/PWM/power/UART safety map. The original 64-byte slice above is retained unchanged. EHABI rows are unwind-coverage records, not proven whole-function boundaries; the expanded result does not claim complete source or runtime parity.

@@ -1,0 +1,58 @@
+{
+  "array_pointer_records": 186,
+  "artifacts_sha256": {
+    "ehabi.tsv": "c57078a39cbc7d64b8469a51c4911da73a895a8cc2045705a21743490648714a",
+    "functions.tsv": "ae3664995b3313bd8d390f89d5233e0c3059b8fef6586141e6d24520c09c6c6f",
+    "init-arrays.tsv": "6bd9ba942f5c84af71dec1771887ab79d3f38f1a45116ce795094b0dc3194182",
+    "mapping-symbols.tsv": "8fce2d0888ece962cec7d873e793f456f0dc09afe2881561d2874daef9abef43"
+  },
+  "caveats": [
+    "EHABI entries can cover multiple functions, especially merged cantunwind ranges; leaf functions can be absent.",
+    "Coverage ends are next EHABI starts, not proven function ends; the final end is unknown.",
+    "Pointer bit zero identifies mode only at that address, not throughout the interval.",
+    "Symbol extents, when present, are declarations in ELF metadata, not independently proven control-flow extents.",
+    "No code execution, unwind interpretation, decompilation, CFG or runtime-equivalence proof is performed."
+  ],
+  "ehabi_descriptors": {
+    "cantunwind": 137,
+    "compact_inline": 707,
+    "extab_pointer": 726
+  },
+  "ehabi_records": 1570,
+  "elf_class": 32,
+  "elf_type": "ET_EXEC",
+  "entry_address": "0x0001012c",
+  "entry_mode": "arm",
+  "entry_pointer": "0x0001012c",
+  "executable_sections": [
+    {
+      "address": "0x000100f4",
+      "file_offset": 244,
+      "name": ".init",
+      "size": 12
+    },
+    {
+      "address": "0x00010100",
+      "file_offset": 256,
+      "name": ".text",
+      "size": 5898588
+    },
+    {
+      "address": "0x005b025c",
+      "file_offset": 5898844,
+      "name": ".fini",
+      "size": 12
+    }
+  ],
+  "firmware_executed": false,
+  "flags": "0x05000400",
+  "function_symbol_records": 0,
+  "little_endian": true,
+  "machine": "EM_ARM",
+  "mapping_symbol_records": 0,
+  "schema": 1,
+  "source_bytes": 6228004,
+  "source_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "symbol_records": 0,
+  "symbol_tables": []
+}

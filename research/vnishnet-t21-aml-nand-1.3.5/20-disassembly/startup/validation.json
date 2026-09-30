@@ -1,0 +1,38 @@
+{
+  "base_commit": "a482b4637c1bb8e2f201ba7d2a870c0fc10f0185",
+  "caveat": "Static parsing, bounded decoding and hashing only; no complete CFG, source recovery, runtime or electrical acceptance.",
+  "existing_evidence_ranges_matched": 25,
+  "existing_uart_listing_words_matched": 276,
+  "firmware_executed": false,
+  "hardware_accessed": false,
+  "model_probes_run": false,
+  "readelf_version": "GNU readelf (GNU Binutils for Debian) 2.44",
+  "schema": 1,
+  "sources": {
+    "cgminer": {
+      "explicit_data_bytes": 144,
+      "readelf_ehabi_addresses_matched": 1570,
+      "rendered_bytes": 6120,
+      "reproduced_index_files": 5,
+      "reproduced_slice_files": 33,
+      "slices": 16,
+      "source_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+      "zero_symbol_tables": true
+    },
+    "hwscan": {
+      "explicit_data_bytes": 32,
+      "readelf_ehabi_addresses_matched": 653,
+      "rendered_bytes": 404,
+      "reproduced_index_files": 5,
+      "reproduced_slice_files": 17,
+      "slices": 8,
+      "source_sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+      "zero_symbol_tables": true
+    }
+  },
+  "startup_got_slots_matched": 6,
+  "test_log_sha256": "9321a1f6a4e7a9594e672e69878686df7ab8730a84ab542e2bac8de30ab334ce",
+  "tests_run": 49,
+  "tests_scope": "34 existing parser/disassembly and 15 new synthetic metadata/plan tests; no vendor execution",
+  "tests_skipped": 0
+}
