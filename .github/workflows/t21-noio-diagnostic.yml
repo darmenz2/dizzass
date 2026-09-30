@@ -53,6 +53,18 @@ jobs:
           python3 integration/diagnostics/t21_noio/qemu_test.py --build build/d01 --out build/d01-qemu
           git diff --exit-code
           echo 'Diagnostic only; no ASIC, miner, port opening or pool.'
+      - name: Package verified binaries and corresponding source
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          d=integration/diagnostics/t21_noio
+          python3 "$d/test_package.py"
+          python3 -O "$d/test_package.py"
+          mkdir build/d01-package
+          python3 "$d/package.py" --build build/d01 --out build/d01-package/dizzass_d01_diagnostic.zip
+          (cd build/d01-package && sha256sum dizzass_d01_diagnostic.zip > SHA256SUMS)
+          git diff --exit-code
       - name: Preserve exact binaries and full test receipts
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
