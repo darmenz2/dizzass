@@ -7558,14 +7558,44 @@ static void pool_resus(struct pool *pool)
 static bool work_filled;
 static bool work_emptied;
 
-/* If this is called non_blocking, it will return NULL for work so that must
- * be handled. */
-static struct work *hash_pop(bool blocking)
+/* Queued-driver cooperative stop. Both the predicate and getq wait use
+ * stgd_lock, so a request cannot be lost between checking and sleeping.
+ * This latch is one-way for the lifetime of a cgpu. It is not hardware stop. */
+int cgminer_request_queued_stop(struct cgpu_info *cgpu)
+{
+	int rc;
+
+	if (!cgpu || !getq || !stgd_lock)
+		return EINVAL;
+	mutex_lock(stgd_lock);
+	cgpu->queued_stop = true;
+	rc = pthread_cond_broadcast(&getq->cond);
+	mutex_unlock(stgd_lock);
+	return rc;
+}
+
+bool cgminer_queued_stopped(const struct cgpu_info *cgpu)
+{
+	bool stopped;
+
+	if (!cgpu || !getq || !stgd_lock)
+		return true;
+	mutex_lock(stgd_lock);
+	stopped = cgpu->queued_stop;
+	mutex_unlock(stgd_lock);
+	return stopped;
+}
+
+/* A NULL stop_cgpu retains the legacy blocking/nonblocking contract.
+ * Only native queued filling supplies a device whose stop can return NULL. */
+static struct work *hash_pop_common(bool blocking, const struct cgpu_info *stop_cgpu)
 {
 	struct work *work = NULL, *tmp;
 	int hc;
 
 	mutex_lock(stgd_lock);
+	if (stop_cgpu && stop_cgpu->queued_stop)
+		goto out_unlock;
 	if (!HASH_COUNT(staged_work)) {
 		work_emptied = true;
 		if (!blocking)
@@ -7578,6 +7608,8 @@ static struct work *hash_pop(bool blocking)
 			timeraddspec(&abstime, &tdiff);
 			pthread_cond_signal(&gws_cond);
 			rc = pthread_cond_timedwait(&getq->cond, stgd_lock, &abstime);
+			if (stop_cgpu && stop_cgpu->queued_stop)
+				goto out_unlock;
 			/* Check again for !no_work as multiple threads may be
 				* waiting on this condition and another may set the
 				* bool separately. */
@@ -7618,6 +7650,12 @@ out_unlock:
 	mutex_unlock(stgd_lock);
 
 	return work;
+}
+
+/* Legacy callers may still wait indefinitely; no per-device stop is used. */
+static struct work *hash_pop(bool blocking)
+{
+	return hash_pop_common(blocking, NULL);
 }
 
 static void gen_hash(unsigned char *data, unsigned char *hash, int len)
@@ -7989,7 +8027,8 @@ static void set_benchmark_work(struct cgpu_info *cgpu, struct work *work)
 		cg_memcpy(work, &bench_lodiff_bins[cgpu->lodiff][0], 160);
 }
 
-struct work *get_work(struct thr_info *thr, const int thr_id)
+static struct work *get_work_common(struct thr_info *thr, const int thr_id,
+				    const struct cgpu_info *stop_cgpu)
 {
 	struct cgpu_info *cgpu = thr->cgpu;
 	struct work *work = NULL;
@@ -7999,7 +8038,9 @@ struct work *get_work(struct thr_info *thr, const int thr_id)
 	applog(LOG_DEBUG, "Popping work from get queue to get work");
 	diff_t = time(NULL);
 	while (!work) {
-		work = hash_pop(true);
+		work = stop_cgpu ? hash_pop_common(true, stop_cgpu) : hash_pop(true);
+		if (!work)
+			break;
 		if (stale_work(work, false)) {
 			discard_work(work);
 			wake_gws();
@@ -8013,6 +8054,10 @@ struct work *get_work(struct thr_info *thr, const int thr_id)
 		applog(LOG_DEBUG, "Get work blocked for %d seconds", (int)diff_t);
 		cgpu->last_device_valid_work += diff_t;
 	}
+	if (!work) {
+		thread_reportin(thr);
+		return NULL;
+	}
 	applog(LOG_DEBUG, "Got work from get queue to get work for thread %d", thr_id);
 
 	work->thr_id = thr_id;
@@ -8024,6 +8069,12 @@ struct work *get_work(struct thr_info *thr, const int thr_id)
 	work->device_diff = MIN(cgpu->drv->max_diff, work->work_difficulty);
 	work->device_diff = MAX(cgpu->drv->min_diff, work->device_diff);
 	return work;
+}
+
+/* The public generic API still never returns NULL for a stopped queue. */
+struct work *get_work(struct thr_info *thr, const int thr_id)
+{
+	return get_work_common(thr, thr_id, NULL);
 }
 
 /* Submit a copy of the tested, statistic recorded work item asynchronously */
@@ -8413,13 +8464,19 @@ static void fill_queue(struct thr_info *mythr, struct cgpu_info *cgpu, struct de
 	do {
 		bool need_work;
 
+		if (cgminer_queued_stopped(cgpu))
+			return;
+
 		/* Do this lockless just to know if we need more unqueued work. */
 		need_work = (!cgpu->unqueued_work);
 
 		/* get_work is a blocking function so do it outside of lock
 		 * to prevent deadlocks with other locks. */
 		if (need_work) {
-			struct work *work = get_work(mythr, thr_id);
+			struct work *work = get_work_common(mythr, thr_id, cgpu);
+
+			if (!work)
+				return;
 
 			wr_lock(&cgpu->qlock);
 			/* Check we haven't grabbed work somehow between
@@ -8433,6 +8490,9 @@ static void fill_queue(struct thr_info *mythr, struct cgpu_info *cgpu, struct de
 			if (unlikely(!need_work))
 				discard_work(work);
 		}
+		/* A work already popped remains owned by unqueued_work on stop. */
+		if (cgminer_queued_stopped(cgpu))
+			return;
 		/* The queue_full function should be used by the driver to
 		 * actually place work items on the physical device if it
 		 * does have a queue. */
@@ -8665,11 +8725,13 @@ void hash_queued_work(struct thr_info *mythr)
 	const int thr_id = mythr->id;
 	int64_t hashes_done = 0;
 
-	while (likely(!cgpu->shutdown)) {
+	while (likely(!cgpu->shutdown) && !cgminer_queued_stopped(cgpu)) {
 		struct timeval diff;
 		int64_t hashes;
 
 		fill_queue(mythr, cgpu, drv, thr_id);
+		if (cgpu->shutdown || cgminer_queued_stopped(cgpu))
+			break;
 
 		hashes = drv->scanwork(mythr);
 
@@ -8694,6 +8756,9 @@ void hash_queued_work(struct thr_info *mythr)
 			hashes_done = 0;
 			copy_time(&tv_start, &tv_end);
 		}
+
+		if (cgminer_queued_stopped(cgpu))
+			break;
 
 		if (unlikely(mythr->pause || cgpu->deven != DEV_ENABLED))
 			mt_disable(mythr, thr_id, drv);
@@ -10012,6 +10077,9 @@ bool add_cgpu(struct cgpu_info *cgpu)
 {
 	static struct _cgpu_devid_counter *devids = NULL;
 	struct _cgpu_devid_counter *d;
+
+	/* Initial registration precedes publication and all queued-work users. */
+	cgpu->queued_stop = false;
 
 	HASH_FIND_STR(devids, cgpu->drv->name, d);
 	if (d)

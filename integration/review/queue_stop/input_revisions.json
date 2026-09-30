@@ -1,0 +1,45 @@
+{
+  "parent": "8e49d7cbf37ff0eae269ec351ff059725db01832",
+  "revisions": [
+    {
+      "before": {
+        "path": "cgminer.c",
+        "blob": "54739e4139294c526af0c73aa9a02ba9762ca4f2",
+        "sha256": "214148c972c380af38cd667c02ccffad5c3a0b2790d5b54eeb0316af455411e4",
+        "origin": "accepted-f646f18f"
+      },
+      "after": {
+        "path": "cgminer.c",
+        "blob": "f6fbb29b361a48b483fd4541728ba9a82d735697",
+        "sha256": "434e1bac9fe46812507ad27e35962d713c4959eae5d7da52678c6c9eb41dc634",
+        "origin": "R-13 native queued-work cooperative stop",
+        "supersedes": {
+          "path": "cgminer.c",
+          "blob": "54739e4139294c526af0c73aa9a02ba9762ca4f2",
+          "sha256": "214148c972c380af38cd667c02ccffad5c3a0b2790d5b54eeb0316af455411e4",
+          "origin": "accepted-f646f18f"
+        }
+      }
+    },
+    {
+      "before": {
+        "path": "miner.h",
+        "blob": "6e0ce27844029a28b3dc031fcd0d6c82e9c7d5b5",
+        "sha256": "46975a24967eb0d0d5b0171b210b875b0adc60feba93131e491fc0deeb72745c",
+        "origin": "accepted-f646f18f"
+      },
+      "after": {
+        "path": "miner.h",
+        "blob": "9629c7c18c7763e6edcc567f57846c78b7fdd7af",
+        "sha256": "df96763c3a28c74dbb91f09ee002298b1c2be00e45c2f4c000d333ea54338128",
+        "origin": "R-13 native queued-work cooperative stop",
+        "supersedes": {
+          "path": "miner.h",
+          "blob": "6e0ce27844029a28b3dc031fcd0d6c82e9c7d5b5",
+          "sha256": "46975a24967eb0d0d5b0171b210b875b0adc60feba93131e491fc0deeb72745c",
+          "origin": "accepted-f646f18f"
+        }
+      }
+    }
+  ]
+}
