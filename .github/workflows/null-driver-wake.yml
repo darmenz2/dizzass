@@ -1,0 +1,33 @@
+name: R-15 neutralized driver wake
+on:
+  pull_request:
+    branches: [review/queued-driver-wake-20260930]
+    paths: ['cgminer.c', 'integration/review/null_driver/**', '.github/workflows/null-driver-wake.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-snapshot:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Export exact source without running application code
+        env:
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -eu
+          root="$RUNNER_TEMP/r15-source-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$root"; cd "$root"; git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          git -c gc.auto=0 -c maintenance.auto=false fetch --depth=1 --no-tags origin "$HEAD"
+          git checkout -q --detach "$HEAD"
+          test "$(git rev-parse HEAD)" = "$HEAD"
+          mkdir snapshot
+          git archive --format=tar HEAD | gzip -n > snapshot/source.tar.gz
+          git rev-parse HEAD HEAD^{tree} > snapshot/revision.txt
+          sha256sum snapshot/source.tar.gz > snapshot/source.sha256
+          echo "SNAPSHOT=$root/snapshot" >> "$GITHUB_ENV"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r15-source-${{ github.run_attempt }}
+          path: ${{ env.SNAPSHOT }}/
+          retention-days: 7
