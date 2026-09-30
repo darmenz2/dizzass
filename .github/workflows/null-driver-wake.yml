@@ -1,5 +1,7 @@
 name: R-15 neutralized driver wake
 on:
+  push:
+    branches: [review/null-driver-wake-20260930]
   pull_request:
     branches: [review/queued-driver-wake-20260930]
     paths: ['cgminer.c', 'integration/review/null_driver/**', '.github/workflows/null-driver-wake.yml']
