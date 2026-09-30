@@ -1,0 +1,22 @@
+{
+  "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+  "bytes": 20,
+  "caveat": "Linear static rendering; literal pools may remain in instruction windows. No complete CFG, runtime path, function extent or parity is proved.",
+  "disassembler": "capstone",
+  "disassembler_version": "5.0.6",
+  "end_exclusive": "0x0045a380",
+  "evidence_sources": [
+    "../README.md",
+    "../AML_IO_MAP.md"
+  ],
+  "file_offset": 4498284,
+  "firmware_executed": false,
+  "mode": "arm",
+  "mode_evidence": "Selected A32 call/literal witnesses; mapping symbols absent.",
+  "name": "mkdir-syscall",
+  "schema": 1,
+  "segment_flags": 5,
+  "sha256": "7574289cd04ce7b716d25af4e42d8ebaca4a51a60b8dd1a0c82037a23a43f273",
+  "source_sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+  "start": "0x0045a36c"
+}

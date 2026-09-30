@@ -1,0 +1,46 @@
+{
+  "arm_interpreter_used": false,
+  "base_commit": "4e12f7ed852c4e524664a90cc01cd57d71f9beb5",
+  "committed_evidence": {
+    "bytes": 7540,
+    "direct_edges": 42,
+    "firmware_executed": false,
+    "indirect_target_witnesses": 4,
+    "proof": "static byte/hash/target checks only",
+    "ranges": 42,
+    "reference_checked": false,
+    "schema": 1,
+    "strings": 32
+  },
+  "existing_lab_tests": {
+    "log_sha256": "d73b3bd4c5f7cade53114971ec459d28b1452c5318d0e39c110bcc3746a3fbcc",
+    "skipped": 0,
+    "status": "pass",
+    "tests_run": 49
+  },
+  "firmware_executed": false,
+  "hardware_accessed": false,
+  "model_probes_run": false,
+  "optimized_python_rejected": true,
+  "proof_limit": "Source byte identities, selected static branch targets, callback/GOT components and syscall instructions only. No executed path, full CFG, process exit-code propagation, successful write or physical effect is established.",
+  "reconstructed_host_code_executed": false,
+  "reference_regeneration": {
+    "bytes": 7540,
+    "direct_edges": 42,
+    "firmware_executed": false,
+    "indirect_target_witnesses": 4,
+    "proof": "static byte/hash/target checks only",
+    "ranges": 42,
+    "reference_checked": true,
+    "schema": 1,
+    "strings": 32
+  },
+  "schema": 1,
+  "source_sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+  "workflow": {
+    "embedded_python_parsed": true,
+    "existing_test_count_unchanged": 49,
+    "new_step": "data-only hwscan dispatch verifier",
+    "yaml_parsed": true
+  }
+}

@@ -1,0 +1,553 @@
+{
+  "binary": "hwscan",
+  "ranges": [
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0x256d4",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Selected A32 call/literal witnesses; mapping symbols absent.",
+      "name": "main-callback",
+      "sha256": "e9f5a40ae6193593468f714a7caf738bea1f0ead6a7b0d6cc4deb2716fe7d790",
+      "start": "0x256c0"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0x2595c",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit table, pointer cell or locally identified literal pool.",
+      "name": "main-callback-literal",
+      "sha256": "fe4e00c3af6493336f105103535df4ddaf28cdd438d6548517cd330b2f8e1f46",
+      "start": "0x25958"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0x1c740",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Selected A32 call/literal witnesses; mapping symbols absent.",
+      "name": "callback-trampoline",
+      "sha256": "ffe81b0551966ba52353cfaac1b722fe4ef81af97f0792454b2ea212a99003e0",
+      "start": "0x1c734"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0x227fc",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Selected A32 call/literal witnesses; mapping symbols absent.",
+      "name": "argument-wrapper",
+      "sha256": "09f38d122f3bfb741f33aa9d5f198c87529504f6b09c844d7cf7228da8f2ca0e",
+      "start": "0x22424"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0xe6b18",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Selected A32 call/literal witnesses; mapping symbols absent.",
+      "name": "worker-code",
+      "sha256": "b6c95e59c7315c72906a1f8dcd34eeae993c5121473c7547d726b8db972c81bb",
+      "start": "0xe6524"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0xe6c3c",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit table, pointer cell or locally identified literal pool.",
+      "name": "worker-literals",
+      "sha256": "f0507634679a0b7be297c9936cb4e1175809433101a7cbe402e413c8683dcb36",
+      "start": "0xe6b18"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0xe62f4",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Selected A32 call/literal witnesses; mapping symbols absent.",
+      "name": "prepare-code",
+      "sha256": "824a5bac92626d2507e9579f058fb7b632db1e30c0cb8e3e7b8f8329426bb12f",
+      "start": "0xe6160"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0xe6348",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit table, pointer cell or locally identified literal pool.",
+      "name": "prepare-literals",
+      "sha256": "e7fa197172ec19d260db15b22521f37bb1037292ab53fce76f0e7ce3f1da8964",
+      "start": "0xe62f4"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0xe650c",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Selected A32 call/literal witnesses; mapping symbols absent.",
+      "name": "chain-presence-code",
+      "sha256": "151e3f5386da30f38609fa212bf32bbe759ad66427fe6b707886ea6ef280d746",
+      "start": "0xe640c"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0xe6524",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit table, pointer cell or locally identified literal pool.",
+      "name": "chain-presence-literals",
+      "sha256": "1428c937624c1436816eecc4b7845ae2942982398f49acd787d8e096563ad14c",
+      "start": "0xe650c"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0x45a380",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Selected A32 call/literal witnesses; mapping symbols absent.",
+      "name": "mkdir-syscall",
+      "sha256": "7574289cd04ce7b716d25af4e42d8ebaca4a51a60b8dd1a0c82037a23a43f273",
+      "start": "0x45a36c"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0xff0c0",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Selected A32 call/literal witnesses; mapping symbols absent.",
+      "name": "log-init-wrapper",
+      "sha256": "037b3003b6de4596c9ed837cd9b31a5564a45c7fac7f7407f34bf4e720db3668",
+      "start": "0xff0a8"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0xff7a0",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Selected A32 call/literal witnesses; mapping symbols absent.",
+      "name": "dispatch-prefix",
+      "sha256": "0f764dc911187f3c18b3c969b961e771c3470a30173862a9f741421582d5357b",
+      "start": "0xff5f0"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0xff7b4",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit table, pointer cell or locally identified literal pool.",
+      "name": "dispatch-jump-table",
+      "sha256": "1be9e96e9cc8c4e87afd6e061e08438c5c77a8166138d922045fb8d4ac979bbb",
+      "start": "0xff7a0"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0x100508",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit table, pointer cell or locally identified literal pool.",
+      "name": "dispatch-prefix-literals",
+      "sha256": "0bc20b858a0b47a45ad54e133db494e99c8edad82174d567bb71904c4fbf918b",
+      "start": "0x100490"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0xffec8",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Selected A32 call/literal witnesses; mapping symbols absent.",
+      "name": "aml-case",
+      "sha256": "45a5bb182b64f13eec21c445ceb6961b9d6cf68000258241e61c7146dba977fb",
+      "start": "0xffc5c"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0x1007dc",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit table, pointer cell or locally identified literal pool.",
+      "name": "aml-case-literals",
+      "sha256": "34d092742cfb6f62b365f11015f19688fdb4655c85a81e5463b32fc574bb3c5a",
+      "start": "0x1006e4"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0x100490",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Selected A32 call/literal witnesses; mapping symbols absent.",
+      "name": "callback-order",
+      "sha256": "e61e29392596d458f544191b4b42d80b2d4222158ba5ed184434382a6918bb26",
+      "start": "0x10039c"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0x100a08",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit table, pointer cell or locally identified literal pool.",
+      "name": "callback-order-literals",
+      "sha256": "831f0bec1312a6a1e96444b2e4f247f27d4dc3e3c61eaeb5fbdaf7181457231a",
+      "start": "0x1009cc"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0x4afdf4",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit table, pointer cell or locally identified literal pool.",
+      "name": "aml-init-got",
+      "sha256": "9b2a274e7e0d0b36856163956ee84442da4d0fbf449d93d9d17fee0ade263adc",
+      "start": "0x4afdf0"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0x4afb0c",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit table, pointer cell or locally identified literal pool.",
+      "name": "aml-i2c-got",
+      "sha256": "d5916eac66f93e40ee0e9413714c6f3ab6d6a1334631fbe7f80ae6a71792e68b",
+      "start": "0x4afb08"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0x4af864",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit table, pointer cell or locally identified literal pool.",
+      "name": "aml-psu-got",
+      "sha256": "730ace161aa919600fb153175673b8fb0759c96072cc7c1006ffab96963df676",
+      "start": "0x4af860"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0x4afb98",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit table, pointer cell or locally identified literal pool.",
+      "name": "platform-selection-got",
+      "sha256": "faf2b0768d14c81ef951201cbddb999affdaa4f8976d63e884e07dc590c0020b",
+      "start": "0x4afb94"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0x10deac",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Selected A32 call/literal witnesses; mapping symbols absent.",
+      "name": "aml-init-code",
+      "sha256": "3cd0b8ca0cbdd04a6c22fd399bbdbeb2c813cf930e539801927a955d6ad78f5d",
+      "start": "0x10dce8"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0x10def4",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit table, pointer cell or locally identified literal pool.",
+      "name": "aml-init-literals",
+      "sha256": "6eb2874371ab074433601c6f07d35bd2abf2824a27054c3bfa0688c443f58863",
+      "start": "0x10deac"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0x4821a0",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit table, pointer cell or locally identified literal pool.",
+      "name": "aml-gpio-tables",
+      "sha256": "ed6f85c1e6e2b052f76a7dea9cca4ff0a9b7d9100e119733ed516ffa3c6eb3cd",
+      "start": "0x482188"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0x111504",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Selected A32 call/literal witnesses; mapping symbols absent.",
+      "name": "gpio-exists-code",
+      "sha256": "28d448b920b3dba7d7067f72fc8309e9d7e4e769e33758b09c7ed0d961ef4bed",
+      "start": "0x1114c0"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0x111508",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit table, pointer cell or locally identified literal pool.",
+      "name": "gpio-exists-literal",
+      "sha256": "44adcce25a891a33db454b2a20f941fcdadc499bb213fc902f2caf2633bba6d9",
+      "start": "0x111504"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0x463714",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Selected A32 call/literal witnesses; mapping symbols absent.",
+      "name": "access-syscall",
+      "sha256": "86d728ca5cbbbad9f9e9991d65bab30d19d668975b8c081e261099ed6511fa2a",
+      "start": "0x463700"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0x111470",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Selected A32 call/literal witnesses; mapping symbols absent.",
+      "name": "gpio-export-code",
+      "sha256": "dac9abd168dcf1eb648039030ffb8307cfce6789c2dc73edb0da1157dee70243",
+      "start": "0x111308"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0x1114c0",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit table, pointer cell or locally identified literal pool.",
+      "name": "gpio-export-literals",
+      "sha256": "f1cbcfe74dc7117d2381df4ea690a338e934790ad84b62587189ff4e01e2d9d9",
+      "start": "0x111470"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0x111940",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Selected A32 call/literal witnesses; mapping symbols absent.",
+      "name": "gpio-unexport-code",
+      "sha256": "d25b8f12036cbfe2965019d79ae1ef125515dcfe077d2c03e84bc64968e9db1c",
+      "start": "0x11187c"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0x11196c",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit table, pointer cell or locally identified literal pool.",
+      "name": "gpio-unexport-literals",
+      "sha256": "84194d08fbb58e480d3f90f9034f4ec2d5ef1bbbd5733d17c94c7f8773288008",
+      "start": "0x111940"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0x45aa98",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Selected A32 call/literal witnesses; mapping symbols absent.",
+      "name": "stream-open-code",
+      "sha256": "98d565a2a5185da208c6856d2bf0e948c50284ac13837c3391e2a6611d1159ce",
+      "start": "0x45a9f4"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0x45aa9c",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit table, pointer cell or locally identified literal pool.",
+      "name": "stream-open-literal",
+      "sha256": "31e45e59f8e14a2e06e4f13eec78b3ae001a3b02c70c6db5bb0a237e3bc2ecf3",
+      "start": "0x45aa98"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0xe7a9c",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Selected A32 call/literal witnesses; mapping symbols absent.",
+      "name": "psu-call-bridges",
+      "sha256": "c9d8ad3d77f69ce23efc1f1f36294bb4d5850e0e37564d0db9ab61f9926dda73",
+      "start": "0xe7a94"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0x102e3c",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Selected A32 call/literal witnesses; mapping symbols absent.",
+      "name": "psu-second-bridges",
+      "sha256": "d0eddad99e26c86bc32e9fa7940703b5de214f7e63c12b0ef804aba52ce5c07b",
+      "start": "0x102e34"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0x100b74",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Selected A32 call/literal witnesses; mapping symbols absent.",
+      "name": "pre-on-indirect-bridge",
+      "sha256": "5c2ff840b7776470af2aeaa7923fa0e2d11b39d940449547a218616573841680",
+      "start": "0x100b68"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0x100b78",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit table, pointer cell or locally identified literal pool.",
+      "name": "pre-on-indirect-literal",
+      "sha256": "1fbc0d7c9e1ab58d34932a3850b2bd96f185f82251cdb7f63d82e3bb2715798d",
+      "start": "0x100b74"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0xe7ac4",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Selected A32 call/literal witnesses; mapping symbols absent.",
+      "name": "chain-setup-bridge",
+      "sha256": "64ca11f5f93864dec6180be4208f32d54097ceb61b2d3c4eff4126948917301a",
+      "start": "0xe7a9c"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0xe9360",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Selected A32 call/literal witnesses; mapping symbols absent.",
+      "name": "model-branch-cli",
+      "sha256": "994cd7580afe99711073f263204e37075a6f53ee17b031591758ee29effb1b7a",
+      "start": "0xe9184"
+    },
+    {
+      "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+      "end_exclusive": "0xe9438",
+      "evidence_sources": [
+        "../README.md",
+        "../AML_IO_MAP.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit table, pointer cell or locally identified literal pool.",
+      "name": "model-cli-literals",
+      "sha256": "7ac0c0130881a9b76c2bc7e4a8aac181794d176c3a9ef01024aa288acd8bd359",
+      "start": "0xe93d8"
+    }
+  ],
+  "schema": 1,
+  "source_sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077"
+}

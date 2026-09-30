@@ -1,0 +1,22 @@
+{
+  "boundary_evidence": "Bounded research window, not a claim of complete function boundaries, all-code interior or full CFG.",
+  "bytes": 256,
+  "caveat": "Linear static rendering; literal pools may remain in instruction windows. No complete CFG, runtime path, function extent or parity is proved.",
+  "disassembler": "capstone",
+  "disassembler_version": "5.0.6",
+  "end_exclusive": "0x000e650c",
+  "evidence_sources": [
+    "../README.md",
+    "../AML_IO_MAP.md"
+  ],
+  "file_offset": 877580,
+  "firmware_executed": false,
+  "mode": "arm",
+  "mode_evidence": "Selected A32 call/literal witnesses; mapping symbols absent.",
+  "name": "chain-presence-code",
+  "schema": 1,
+  "segment_flags": 5,
+  "sha256": "151e3f5386da30f38609fa212bf32bbe759ad66427fe6b707886ea6ef280d746",
+  "source_sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+  "start": "0x000e640c"
+}

@@ -15,3 +15,7 @@ Choose a fresh output directory on each run; compare `slice.asm` and `receipt.js
 ## Expanded startup research
 
 The [startup index and bounded slices](startup/README.md) add symbol/EHABI/initialization-array metadata for both cgminer and hwscan, 24 digest-pinned slices, an ELF entry map, and a provenance-linked GPIO/PWM/power/UART safety map. The original 64-byte slice above is retained unchanged. EHABI rows are unwind-coverage records, not proven whole-function boundaries; the expanded result does not claim complete source or runtime parity.
+
+## Scanner dispatch and first I/O
+
+The [hwscan dispatch checkpoint](hwscan-dispatch/README.md) connects the bounded platform selector to AML GPIO/I2C/PSU initialization, pins the first closed syscall witnesses and distinguishes worker error returns from unproved process/hardware outcomes. Its call graph and slices remain static evidence, with the next missing chain/transport dependency identified explicitly.

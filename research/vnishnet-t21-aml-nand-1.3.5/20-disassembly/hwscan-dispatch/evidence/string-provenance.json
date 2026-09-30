@@ -1,0 +1,230 @@
+{
+  "schema": 1,
+  "source_sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+  "strings": [
+    {
+      "address": "0x47d39e",
+      "bytes_hex": "2f6574632f7a6c6f672f68777363616e2e636f6e6600",
+      "file_offset": 4641694,
+      "sha256": "ed72142d2297cb551531a2057dfd5e094245c5505f6d031efafeb39e0145720a",
+      "value": "/etc/zlog/hwscan.conf"
+    },
+    {
+      "address": "0x47d3b4",
+      "bytes_hex": "2f7661722f72756e2f68777363616e2f00",
+      "file_offset": 4641716,
+      "sha256": "b1a8e9051783602ec7b1321f660c1627fcaa866a9c5f0cabf0a1a164acef3771",
+      "value": "/var/run/hwscan/"
+    },
+    {
+      "address": "0x47d3c5",
+      "bytes_hex": "4661696c656420746f20696e697420636861696e206461746100",
+      "file_offset": 4641733,
+      "sha256": "aab5c434ae6162409462e0f1e0cbade81602304517dec1f9d22ab4c083a7cc67",
+      "value": "Failed to init chain data"
+    },
+    {
+      "address": "0x47d3df",
+      "bytes_hex": "4661696c656420746f2070737520696e697469616c697a6174696f6e00",
+      "file_offset": 4641759,
+      "sha256": "afe3366ba86e376f044465b68d3c3b0e7410e51115e1ca51e26ff0f91f4d2961",
+      "value": "Failed to psu initialization"
+    },
+    {
+      "address": "0x47d3fc",
+      "bytes_hex": "4661696c656420746f2070737520706f776572206f666600",
+      "file_offset": 4641788,
+      "sha256": "79c1e775ebae4d5e179ee808c26b9d4997f01072c5a1ea45d8cf7d7d436489e0",
+      "value": "Failed to psu power off"
+    },
+    {
+      "address": "0x47d414",
+      "bytes_hex": "4661696c656420746f2070737520706f776572206f6e00",
+      "file_offset": 4641812,
+      "sha256": "a6a2cd5e603a09572070a2dfc33e09ea06228207c5b2c8dfd75d8fb20a51b615",
+      "value": "Failed to psu power on"
+    },
+    {
+      "address": "0x47d42b",
+      "bytes_hex": "4661696c656420746f20696e69742069326320696e7465726661636500",
+      "file_offset": 4641835,
+      "sha256": "4d6cdd1f37ce3b4abc38304361f97ea358df4c805008b9a764f269304d061306",
+      "value": "Failed to init i2c interface"
+    },
+    {
+      "address": "0x47d48f",
+      "bytes_hex": "4661696c656420746f20696e697469616c697a65206c6f6700",
+      "file_offset": 4641935,
+      "sha256": "be30a1e683934194014ea2972bc417be7be9abfb5320546c1fbb34d0772ba95a",
+      "value": "Failed to initialize log"
+    },
+    {
+      "address": "0x47d4a8",
+      "bytes_hex": "4661696c656420746f2070617273652068777363616e20617267756d656e747300",
+      "file_offset": 4641960,
+      "sha256": "707ccb6fd0b16d7560458c613bed93707b9a1c1c0db0be3d21df950a6c2d05ac",
+      "value": "Failed to parse hwscan arguments"
+    },
+    {
+      "address": "0x47d4c9",
+      "bytes_hex": "4661696c656420746f20706c6174666f726d20696e697469616c697a6174696f6e00",
+      "file_offset": 4641993,
+      "sha256": "6e4e60ae58c06cd84f58bfc07b4e283b728f3403da265afbb4bc6cbfe76d983c",
+      "value": "Failed to platform initialization"
+    },
+    {
+      "address": "0x47d4eb",
+      "bytes_hex": "4e6f7420656e6f75676820636f6e6e656374656420636861696e7300",
+      "file_offset": 4642027,
+      "sha256": "a348bf2e93befb4f792bb8b2b86fbdfdf18aaad4003235c7aeea6e6456caba67",
+      "value": "Not enough connected chains"
+    },
+    {
+      "address": "0x47d507",
+      "bytes_hex": "4661696c656420746f2067657420636861696e20696e666f00",
+      "file_offset": 4642055,
+      "sha256": "a9b1ceaaebba1e9077580244f1e1b3039f4bf7500f85017bc11ae9a529134490",
+      "value": "Failed to get chain info"
+    },
+    {
+      "address": "0x47d520",
+      "bytes_hex": "44697361626c696e6720707375207761746368646f6700",
+      "file_offset": 4642080,
+      "sha256": "ac86f8683cbf0a5ebc7aeca9ae2bebde3e9bb4ca5939348579d1bf9f195bdbb3",
+      "value": "Disabling psu watchdog"
+    },
+    {
+      "address": "0x47d537",
+      "bytes_hex": "4661696c656420746f2064697361626c6520706f776572207761746368646f6700",
+      "file_offset": 4642103,
+      "sha256": "9282e2f94ba88184331d08767694f34e4d445dd9fd4a7e0e33654ca484f533b1",
+      "value": "Failed to disable power watchdog"
+    },
+    {
+      "address": "0x47d558",
+      "bytes_hex": "4661696c75726520696e69742070696320636f6e74726f6c6c65727300",
+      "file_offset": 4642136,
+      "sha256": "8cf9be4a7053358b844678d47e85385de73ffd226cc688810e235afcd52f1062",
+      "value": "Failure init pic controllers"
+    },
+    {
+      "address": "0x47d575",
+      "bytes_hex": "4661696c656420746f206765742070737520696e666f00",
+      "file_offset": 4642165,
+      "sha256": "10eb9136d2690777bbe82c6e0d755b68d4c081fb7873b8e2c298243012e8b569",
+      "value": "Failed to get psu info"
+    },
+    {
+      "address": "0x47d58c",
+      "bytes_hex": "4661696c656420746f20646574656374206d6f64656c00",
+      "file_offset": 4642188,
+      "sha256": "689e1f03ca48a9b95d6976f269b6435c73fd5ecd685dafd6983ca163fe99b6db",
+      "value": "Failed to detect model"
+    },
+    {
+      "address": "0x47d5a3",
+      "bytes_hex": "4661696c656420746f20646574656374206d6f64656c3a20257300",
+      "file_offset": 4642211,
+      "sha256": "8725c819dd976b428d321080c4f308ad3970b3b123008d6fbc932e48f02e1475",
+      "value": "Failed to detect model: %s"
+    },
+    {
+      "address": "0x47d5be",
+      "bytes_hex": "506c656173652073656e642074686520646961676e6f73746963207265706f727420746f20746563686e6963616c20737570706f727420746f206765742074686973206d6f64656c20737570706f7274656400",
+      "file_offset": 4642238,
+      "sha256": "8e0705639a41356aaba2260f4f9fbe0db5ec1f0bea23af6bf8bd14cc7ebfe141",
+      "value": "Please send the diagnostic report to technical support to get this model supported"
+    },
+    {
+      "address": "0x47d611",
+      "bytes_hex": "4661696c656420746f207061636b2064617461206d696e657200",
+      "file_offset": 4642321,
+      "sha256": "fc267047d71848b870d155a3b35918a84f11611b6d609ea08b1255b7869cc19d",
+      "value": "Failed to pack data miner"
+    },
+    {
+      "address": "0x47d62b",
+      "bytes_hex": "48617264776172652064657465637420636f6d706c6574656400",
+      "file_offset": 4642347,
+      "sha256": "4a107062be6d50dcff000ac669e925f3eef4f9e05613d74a525d5cae11ca8250",
+      "value": "Hardware detect completed"
+    },
+    {
+      "address": "0x47d645",
+      "bytes_hex": "456e61626c696e6720707375207761746368646f6700",
+      "file_offset": 4642373,
+      "sha256": "99fd2b716b1a3a969f98e3808ad26277cf09e1ed06970c6a8964147ec5fa56fa",
+      "value": "Enabling psu watchdog"
+    },
+    {
+      "address": "0x47d65b",
+      "bytes_hex": "4661696c656420746f20656e61626c6520706f776572207761746368646f6700",
+      "file_offset": 4642395,
+      "sha256": "e293bf38d33633d7fa81a0a9c38ce6cd4179a2a6044c0d6572f7586a90db4678",
+      "value": "Failed to enable power watchdog"
+    },
+    {
+      "address": "0x47dcab",
+      "bytes_hex": "4661696c656420746f2066696e64206d6f64656c3a20257300",
+      "file_offset": 4644011,
+      "sha256": "1e3b9c7027f44235d31b2c9da7da833c3a581c81509e6aa3483c845bd5d3acd4",
+      "value": "Failed to find model: %s"
+    },
+    {
+      "address": "0x47dcc4",
+      "bytes_hex": "4e656564207370656369667920706c6174666f726d20746f206465746563742077697468206d6f64656c00",
+      "file_offset": 4644036,
+      "sha256": "5a9deb1958b17508000e4b86401ee3ae2fc5d356a5c79d33c6aaaabf46efdbfc",
+      "value": "Need specify platform to detect with model"
+    },
+    {
+      "address": "0x47f49a",
+      "bytes_hex": "556e6b6e6f776e20636f6e74726f6c20626f61726400",
+      "file_offset": 4650138,
+      "sha256": "21e48cb4478ebab694a038355c5b164f6130213d67dff69f9465dcec698341e4",
+      "value": "Unknown control board"
+    },
+    {
+      "address": "0x47f4c3",
+      "bytes_hex": "4661696c656420746f20696e697469616c697a65206932632062757300",
+      "file_offset": 4650179,
+      "sha256": "41f59a10661affd01f21d284a1ae2c3c410f38024e2ae904e6f9987502206381",
+      "value": "Failed to initialize i2c bus"
+    },
+    {
+      "address": "0x47f4e0",
+      "bytes_hex": "496e697469616c697a696e672050535500",
+      "file_offset": 4650208,
+      "sha256": "c5f406f9992e01582bb76e0624ad3888968fe184024e6a2514a359064df19e5d",
+      "value": "Initializing PSU"
+    },
+    {
+      "address": "0x47f4f1",
+      "bytes_hex": "4661696c656420746f20696e69742050535520696e7465726661636500",
+      "file_offset": 4650225,
+      "sha256": "1c2e2750a8fc8321124798972ee44eb0db9c2d0d32a59ac964d289577afd9847",
+      "value": "Failed to init PSU interface"
+    },
+    {
+      "address": "0x4829e0",
+      "bytes_hex": "2f7379732f636c6173732f6770696f2f6770696f257500",
+      "file_offset": 4663776,
+      "sha256": "37ab95b873e1a1941fe4564d32641ce0e0d0f15b151489d3ef3049b5e9a65069",
+      "value": "/sys/class/gpio/gpio%u"
+    },
+    {
+      "address": "0x482a4d",
+      "bytes_hex": "2f7379732f636c6173732f6770696f2f756e6578706f727400",
+      "file_offset": 4663885,
+      "sha256": "68a963061f15373bc4da8b8f714f5da152a4014474c79e5aa68b00b8dcd5fbf0",
+      "value": "/sys/class/gpio/unexport"
+    },
+    {
+      "address": "0x482c4b",
+      "bytes_hex": "7700",
+      "file_offset": 4664395,
+      "sha256": "8c574afa5655a72c151c567933f694a98d120cc08b462f418dcdda3172ee0c20",
+      "value": "w"
+    }
+  ]
+}
