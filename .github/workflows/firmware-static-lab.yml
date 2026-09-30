@@ -1,0 +1,42 @@
+name: Firmware static lab
+
+on:
+  pull_request:
+    paths:
+      - 'tools/firmware_lab/**'
+      - 'research/vnishnet-t21-aml-nand-1.3.5/**'
+      - '.github/workflows/firmware-static-lab.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tooling:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install hash-pinned static analysis packages
+        run: |
+          python -m pip install --only-binary=:all: --require-hashes -r tools/firmware_lab/requirements.lock
+      - name: Run every lab test without skips
+        working-directory: tools/firmware_lab
+        run: |
+          python -B - <<'PY'
+          import unittest
+          import capstone
+          from elftools.elf.elffile import ELFFile
+          suite = unittest.defaultTestLoader.discover('tests')
+          result = unittest.TextTestRunner(verbosity=2).run(suite)
+          if result.testsRun != 34 or result.skipped or not result.wasSuccessful():
+              raise SystemExit(1)
+          PY
+      - name: Reproduce bounded entry slice from existing reference data
+        run: |
+          python -B tools/firmware_lab/scripts/disassemble_slice.py reference/cgminer.vendor.elf --start 0x1012c --end 0x1016c --mode arm --out "$RUNNER_TEMP/dizzass-entry"
+          cmp "$RUNNER_TEMP/dizzass-entry/slice.asm" research/vnishnet-t21-aml-nand-1.3.5/20-disassembly/entry-arm/slice.asm
+          cmp "$RUNNER_TEMP/dizzass-entry/receipt.json" research/vnishnet-t21-aml-nand-1.3.5/20-disassembly/entry-arm/receipt.json

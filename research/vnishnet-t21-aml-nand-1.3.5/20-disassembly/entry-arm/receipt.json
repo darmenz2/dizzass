@@ -1,0 +1,17 @@
+{
+  "bytes": 64,
+  "caveat": "Linear decoding of a chosen range; boundaries/mode/code-vs-literal-data require independent control-flow proof.",
+  "disassembler": "capstone",
+  "elf_bits": 32,
+  "file_offset": 300,
+  "firmware_executed": false,
+  "mode": "arm",
+  "range_end_exclusive": "0x1016c",
+  "range_start": "0x1012c",
+  "schema": 1,
+  "segment_flags": 5,
+  "slice_sha256": "3aff378a0b7e31057c2700d9a0451a0719118aea61713031b09ce07ab10f4947",
+  "source_name": "cgminer.vendor.elf",
+  "source_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "version": "5.0.6"
+}

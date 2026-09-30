@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "selection_policy": "Explicit allowlist only. No password/key/config stores, their contents, or their individual digests are published. No full extraction manifest is published.",
+  "references": [
+    {
+      "original_path": "etc/init.d/rcS",
+      "publication_path": "research/vnishnet-t21-aml-nand-1.3.5/10-extracted/rootfs/etc/init.d/rcS",
+      "bytes": 420,
+      "sha256": "5a35a9506728a7c10a9185dfe67378916316c123aa2f346860ba573e8a80b66e",
+      "storage": "exact bytes, non-executable Git mode 100644; local lab copy is read-only"
+    },
+    {
+      "original_path": "etc/init.d/S11board",
+      "publication_path": "research/vnishnet-t21-aml-nand-1.3.5/10-extracted/rootfs/etc/init.d/S11board",
+      "bytes": 2928,
+      "sha256": "bbc25a2137fd35ff97d6aa545992d21e4d7d35303fe5650b1b226fdd94b249c4",
+      "storage": "exact bytes, non-executable Git mode 100644; local lab copy is read-only"
+    },
+    {
+      "original_path": "etc/init.d/S12hwscan",
+      "publication_path": "research/vnishnet-t21-aml-nand-1.3.5/10-extracted/rootfs/etc/init.d/S12hwscan",
+      "bytes": 412,
+      "sha256": "1f64fa20ab1c8cc003c5cb9ff361f1eff148974228be5d9b77cedde38468e756",
+      "storage": "exact bytes, non-executable Git mode 100644; local lab copy is read-only"
+    },
+    {
+      "original_path": "etc/init.d/S70miner",
+      "publication_path": "research/vnishnet-t21-aml-nand-1.3.5/10-extracted/rootfs/etc/init.d/S70miner",
+      "bytes": 1083,
+      "sha256": "7f2ea119eaa2c08c9c3a17876a049d739c1d94cc2bb6666bc00940395971f81b",
+      "storage": "exact bytes, non-executable Git mode 100644; local lab copy is read-only"
+    },
+    {
+      "original_path": "etc/fw-info.json",
+      "publication_path": "research/vnishnet-t21-aml-nand-1.3.5/10-extracted/rootfs/etc/fw-info.json",
+      "bytes": 233,
+      "sha256": "98f31e84aa102d6a24dc868a175db96d428edd7a76bcebb94b552a8b0d092be7",
+      "storage": "exact bytes, non-executable Git mode 100644; local lab copy is read-only"
+    },
+    {
+      "original_path": "usr/bin/cgminer",
+      "repository_path": "reference/cgminer.vendor.elf",
+      "repository_blob_sha1": "e285571c1a0c3d7456946a5434a9a5589358a9a2",
+      "bytes": 6228004,
+      "sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+      "storage": "existing repository binary; no duplicate upload"
+    },
+    {
+      "original_path": "usr/bin/hwscan",
+      "bytes": 4883216,
+      "sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+      "storage": "private local extraction only; not included in public subset"
+    }
+  ]
+}

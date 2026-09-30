@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "date": "2026-09-30",
+  "base_commit": "f646f18f304e295134ffd37e007a62bfa1dbfa30",
+  "base_tree": "f5e98d5047e3b3e10d5408d6236a736efb6c7b80",
+  "input_archive": {
+    "name": "vnishnet-t21-aml-nand-v1.3.5.tar.gz",
+    "bytes": 24875237,
+    "sha256": "20fabdd66255889315e61ae2a33ff2e4623566ca430f1cb8c90d9b938dc7b43c"
+  },
+  "source": "Restored saved lab checkpoint; regenerated outputs using byte-identical tools. Prior unpublished later audit/model files were unavailable after environment reset.",
+  "tests": {
+    "command": "python -B -m unittest discover -s tests -v",
+    "passed": 34,
+    "failed": 0,
+    "skipped": 0
+  },
+  "two_extractions_identical_manifest": true,
+  "manifest_sha256": "7f41a311008b1f2e680d8707a6c8132cdb19fdb008179559075e1be3ca61959d",
+  "counts": {
+    "tar_entries": 62,
+    "newc_entries": 466,
+    "regular": 210,
+    "symlink": 198,
+    "directory": 58,
+    "objects_verified_each_run": 218
+  },
+  "firmware_executed": false,
+  "hardware_tested": false,
+  "binary_equivalence_claimed": false,
+  "reconstructed_candidate_included": false,
+  "recovery_bookkeeping_correction": "Initial standalone archive-check helper used a relative-path parent incorrectly; corrected to an absolute path and rerun successfully. Both actual unpacker runs independently checked the pinned archive and ELF hashes. No application test was altered."
+}
