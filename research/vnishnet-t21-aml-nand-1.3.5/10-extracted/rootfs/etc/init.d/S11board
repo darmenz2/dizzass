@@ -1,0 +1,113 @@
+#!/bin/sh
+#
+# Configures GPIOs and other hardware components
+#
+
+config_gpios() {
+	# gpio_recovery 446
+	echo 446 > /sys/class/gpio/export
+	echo in > /sys/class/gpio/gpio446/direction
+	# gpio_ip_get 445
+	echo 445 > /sys/class/gpio/export
+	echo in > /sys/class/gpio/gpio445/direction
+
+	# pwr_en 437
+	echo 437 > /sys/class/gpio/export
+	echo out > /sys/class/gpio/gpio437/direction
+	echo 1 > /sys/class/gpio/gpio437/value
+
+	# ch0_plug 439
+	echo 439 > /sys/class/gpio/export
+	echo in > /sys/class/gpio/gpio439/direction
+	echo down > /sys/class/gpio/gpio439/pull
+	# ch1_plug 440
+	echo 440 > /sys/class/gpio/export
+	echo in > /sys/class/gpio/gpio440/direction
+	echo down > /sys/class/gpio/gpio440/pull
+	# ch2_plug 441
+	echo 441 > /sys/class/gpio/export
+	echo in > /sys/class/gpio/gpio441/direction
+	echo down > /sys/class/gpio/gpio441/pull
+
+	# ch0_rst 454
+	echo 454 > /sys/class/gpio/export
+	echo out > /sys/class/gpio/gpio454/direction
+	# ch1_rst 455
+	echo 455 > /sys/class/gpio/export
+	echo out > /sys/class/gpio/gpio455/direction
+	# ch2_rst 456
+	echo 456 > /sys/class/gpio/export
+	echo out > /sys/class/gpio/gpio456/direction
+
+	# gpio_led_green 453
+	echo 453 > /sys/class/gpio/export
+	echo out > /sys/class/gpio/gpio453/direction
+	# gpio_led_red 438
+	echo 438 > /sys/class/gpio/export
+	echo out > /sys/class/gpio/gpio438/direction
+
+	# fan_front_speed0 447
+	if [ ! -d /sys/class/gpio/gpio447 ]; then
+		echo 447 > /sys/class/gpio/export
+		echo in > /sys/class/gpio/gpio447/direction
+		echo falling > /sys/class/gpio/gpio447/edge
+	fi
+
+	# fan_front_speed1 448
+	if [ ! -d /sys/class/gpio/gpio448 ]; then
+		echo 448 > /sys/class/gpio/export
+		echo in > /sys/class/gpio/gpio448/direction
+		echo falling > /sys/class/gpio/gpio448/edge
+	fi
+
+	# fan_rear_speed0 449
+	if [ ! -d /sys/class/gpio/gpio449 ]; then
+		echo 449 > /sys/class/gpio/export
+		echo in > /sys/class/gpio/gpio449/direction
+		echo falling > /sys/class/gpio/gpio449/edge
+	fi
+
+	# fan_rear_speed1 450
+	if [ ! -d /sys/class/gpio/gpio450 ]; then
+		echo 450 > /sys/class/gpio/export
+		echo in > /sys/class/gpio/gpio450/direction
+		echo falling > /sys/class/gpio/gpio450/edge
+	fi
+
+	# Enable pwm[8] rear fans (FAN2, FAN4)
+	echo 0 > /sys/class/pwm/pwmchip0/export
+	echo 100000 > /sys/class/pwm/pwmchip0/pwm0/period
+	echo 100000 > /sys/class/pwm/pwmchip0/pwm0/duty_cycle
+	echo 1 > /sys/class/pwm/pwmchip0/pwm0/enable
+
+	# Enable pwm[9] front fans (FAN1, FAN3)
+	echo 1 > /sys/class/pwm/pwmchip0/export
+	echo 100000 > /sys/class/pwm/pwmchip0/pwm1/period
+	echo 100000 > /sys/class/pwm/pwmchip0/pwm1/duty_cycle
+	echo 1 > /sys/class/pwm/pwmchip0/pwm1/enable
+}
+
+config_misc() {
+	# Enable cp15_barrier support
+	if [ -f /proc/sys/abi/cp15_barrier ]; then
+		echo 2 > /proc/sys/abi/cp15_barrier
+	fi
+}
+
+config_board() {
+	printf "Configuring ctrl board: "
+	config_gpios
+	config_misc
+	echo "OK"
+}
+
+case "$1" in
+	start)
+		config_board
+		;;
+	stop)
+		;;
+	*)
+		echo "Usage: $0 {start|stop}"
+		exit 1
+esac
