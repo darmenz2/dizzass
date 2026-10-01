@@ -1,0 +1,211 @@
+{
+  "kind": "L12 local host-and-static validation snapshot",
+  "base_commit": "6b6c317cb2d45ce71998d31e78a25bd19fb0c66e",
+  "base_tree": "d85ef2fb4f6c6675a81cda57eecad22321425b52",
+  "compiler": "GCC 14.2.0 (Debian 14.2.0-19)",
+  "python": "3.12.14",
+  "source_files": [
+    {
+      "path": "libbitmain/src/chip/chip1368.c",
+      "bytes": 9245,
+      "git_blob": "f23565c15c9d174e644fc51a401e81dbe072dfd7",
+      "sha256": "e4c05fb8bc541e6e6b2a216cbaecf7ef57cc3d85101d59b81e8ebd3d4e2af7e4"
+    },
+    {
+      "path": "integration/bm1368_sweep_clock_135.h",
+      "bytes": 2583,
+      "git_blob": "5912c86c9cb01283dbab2dc6032b86a10052d139",
+      "sha256": "91c1e0d2abb0d17170f211bb968c35e572d58730666d1643c252769ba0248f16"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-sweep-clock/tests/test_sweep_clock.c",
+      "bytes": 21231,
+      "git_blob": "3ceacd69b43de8ae6bc153416484995a468d4310",
+      "sha256": "fe241869d000cafdabadc494b2022dd119438a1c552dce0d2a21d206fd398420"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-sweep-clock/tests/run_host.py",
+      "bytes": 5568,
+      "git_blob": "3121263c2f66067a22861b4c345c62cbe53d7c29",
+      "sha256": "0beb5b1833c057d82a87a43612ce54d05b43bb6353524db90acc694b11a4644b"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-sweep-clock/tests/negative_controls.py",
+      "bytes": 7316,
+      "git_blob": "3f7183faf5248724733a10404f8e2233a68eb8a1",
+      "sha256": "49fedfe9cead69c5ccef58e06974224fdb2983c54154420dd84f17f6ea9451f0"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-sweep-clock/verify_evidence.py",
+      "bytes": 25873,
+      "git_blob": "9d81ff815ac2ef5abcf9b587e611dfc1b26aff81",
+      "sha256": "ddc269eae67d257fb73c448951f771bdf6faff19e5842ecabb6ff38584d40549"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-sweep-clock/static-witness.json",
+      "bytes": 67674,
+      "git_blob": "3b802a5af54fd047c1007c73ffb0bb4538f7c9af",
+      "sha256": "e872f14dee38ff1f7fc309506c5a67fa4faadaf12c61d79d12fc446cfa7966fd"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-sweep-clock/static-pins.json",
+      "bytes": 5706,
+      "git_blob": "f06ae81a9394b2ffc4dd782c0b4f4412d6fe6dfb",
+      "sha256": "fd0cafe594ccd0d216b9aa26b4cfe7a45a6cf3bb730b7201e096fa7cd84cf12d"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-sweep-clock/tests/test_evidence.py",
+      "bytes": 9590,
+      "git_blob": "37e1e6bb218591181584a95c7274142c5226e249",
+      "sha256": "41eb08dff9aa5001ca58201792975341bf262adeee14f310f64d4ba5c66f42df"
+    }
+  ],
+  "runs": {
+    "public_make_test_sanitize": "passed",
+    "actual_helper_composition": {
+      "cases": 25,
+      "checks": 2418,
+      "new_sweep_calls": 23,
+      "existing_pulse_calls": 1,
+      "existing_ticket_calls": 1,
+      "ordinary": "passed",
+      "all_TU_ASan_UBSan": "passed"
+    },
+    "compiled_semantic_controls": {
+      "count": 17,
+      "required_outcome": "compiled then exit 1 with ORIGINAL_SWEEP_CLOCK_FAIL marker",
+      "passed": true
+    },
+    "static_tamper_controls": {
+      "test_methods": 12,
+      "normal": "passed",
+      "optimized": "passed",
+      "each_method_invokes_both_verifier_modes": true
+    },
+    "source_data_comparison": {
+      "cgminer": "complete size/hash and every local/inherited witnessed range passed",
+      "hwscan": "complete size/hash and every local/inherited witnessed range passed",
+      "normal": "passed",
+      "optimized": "passed",
+      "original_execution": false
+    },
+    "unchanged_regressions": {
+      "original_reset": {
+        "cases": 131110,
+        "checks": 17362511,
+        "ordinary": "passed",
+        "all_TU_ASan_UBSan": "passed",
+        "semantic_controls": 27
+      },
+      "composed_reset": {
+        "cases": 2661,
+        "checks": 592778,
+        "ordinary": "passed",
+        "all_TU_ASan_UBSan": "passed"
+      },
+      "ticket_mask": {
+        "cases": 277,
+        "checks": 22785,
+        "ordinary": "passed",
+        "all_TU_ASan_UBSan": "passed",
+        "semantic_controls": 15
+      },
+      "constructor": {
+        "cases": 277,
+        "checks": 17161,
+        "ordinary": "passed",
+        "ASan_UBSan": "passed",
+        "semantic_controls": 57
+      },
+      "nonce": {
+        "checks": 33047,
+        "ordinary": "passed",
+        "ASan_UBSan": "passed"
+      },
+      "common_read_register": {
+        "cases": 3086,
+        "checks": 45714,
+        "ordinary": "passed",
+        "all_TU_ASan_UBSan": "passed",
+        "semantic_controls": 20
+      }
+    },
+    "source_preservation": {
+      "accepted_dependency_entries": 28,
+      "chip1368_preserved_prefix_bytes": 8350,
+      "passed": true
+    }
+  },
+  "sanitizer_scope": {
+    "every_linked_translation_unit_instrumented": true,
+    "translation_units": 11,
+    "leak_detection": false,
+    "unchanged_crc5_TU_only": "-Wno-sign-conversion during ASan/O1 compilation; prior narrow exception preserved"
+  },
+  "setup_corrections": [
+    "One initial semantic mutant failed strict unused-parameter compilation; an explicit void cast was corrected before all 17 valid compiled detections. The initial failure is not a detection.",
+    "Constructor and READ_REGISTER legacy evidence runs were repeated with the existing required Capstone environment after the default Python lacked that dependency.",
+    "The public Makefile command was repeated from its module directory after an initial workspace-root invocation had no test target."
+  ],
+  "not_run": [
+    "local Clang",
+    "full native cgminer build",
+    "L12 local fail-fast adapter retest",
+    "original firmware process",
+    "original-instruction interpreter or emulator",
+    "model/Jansson/OOM or invalid-pointer probes",
+    "physical hardware or OS UART",
+    "real sleeps",
+    "remote CI before publication"
+  ],
+  "logs": [
+    {
+      "path": "validation-logs/final-public-make.log",
+      "bytes": 4441,
+      "sha256": "9be888084c093d77f958267e112c7295101cc5ff30467b513d2d383bef00557d"
+    },
+    {
+      "path": "validation-logs/full-elf-normal.json",
+      "bytes": 757,
+      "sha256": "e4e5f4ec223b141364e5360ed85be4d0f07de62388591f67dec163f98ead3ce0"
+    },
+    {
+      "path": "validation-logs/full-elf-optimized.json",
+      "bytes": 757,
+      "sha256": "e4e5f4ec223b141364e5360ed85be4d0f07de62388591f67dec163f98ead3ce0"
+    },
+    {
+      "path": "validation-logs/reset.log",
+      "bytes": 8837,
+      "sha256": "0af41a8e9be77135f33274e2611b1d26648199c2879fc5892528868b4156c503"
+    },
+    {
+      "path": "validation-logs/ticket-mask.log",
+      "bytes": 3556,
+      "sha256": "300f987d8010681825f116be9a0e7a3c29adbab31037eacb2edd60733bbe0bfd"
+    },
+    {
+      "path": "validation-logs/constructor-nonce.log",
+      "bytes": 8396,
+      "sha256": "cac5373269fe86bc1e2003c2e7fcc103da075905bac535fb99a8af8e349e2327"
+    },
+    {
+      "path": "validation-logs/common-read.log",
+      "bytes": 21572,
+      "sha256": "c3bda70898ebc7a9356e1fb3bd67ae02126f757488c4c08897c7986333827f5a"
+    },
+    {
+      "path": "validation-logs/negative-controls.json",
+      "bytes": 6098,
+      "sha256": "2e99388c8de57aa23f9c76d0569a089baf8bf31930a895919b2ee5f6b8cce662"
+    }
+  ],
+  "claims": {
+    "runtime_or_hardware_parity": false,
+    "complete_startup_coordinator": false,
+    "hwscan_startup_caller": false,
+    "automatic_formal_lifting_proof": false,
+    "production_linkage_added": false,
+    "original_method_body_identity": false
+  }
+}

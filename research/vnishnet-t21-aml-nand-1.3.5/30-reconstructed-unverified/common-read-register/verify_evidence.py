@@ -35,6 +35,9 @@ BM1368_RESET_SIZE = 7519
 BM1368_RESET_BLOB = 'e024519eda8df9c1c85697548e8e0629f7c0f5cf'
 BM1368_RESET_SHA256 = 'e3c8cecb8869c59847db357d26541e95123fa1cb4cf2ef04642a62c2e1e0738d'
 BM1368_TICKET_SIZE = 8350
+BM1368_SWEEP_BLOB = 'f23565c15c9d174e644fc51a401e81dbe072dfd7'
+BM1368_SWEEP_SHA256 = 'e4c05fb8bc541e6e6b2a216cbaecf7ef57cc3d85101d59b81e8ebd3d4e2af7e4'
+BM1368_SWEEP_SIZE = 9245
 BM1368_TICKET_BLOB = '1cd2c6e7612b494c28f0bbbab0e62434d104881d'
 BM1368_TICKET_SHA256 = 'ed818babcb847fb38094af8f08ae3c0ac6ef690192aa1e6030c3f8326e9968d9'
 TEXT = {
@@ -316,8 +319,30 @@ def verify_elf_metadata(name, row, supplement, pins):
                 'initializer is not a .init_array word')
 
 
+def ticket_source_bytes(data):
+    """Validate the exact sweep layer without changing the L11 witness."""
+    blob=hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
+    require(len(data) == BM1368_SWEEP_SIZE and sha256(data) == BM1368_SWEEP_SHA256
+            and blob == BM1368_SWEEP_BLOB,
+            'active dependency pin differs: '+BM1368_PATH+' (reviewed sweep-clock source)')
+    ticket,added=data[:BM1368_TICKET_SIZE],data[BM1368_TICKET_SIZE:]
+    require(len(ticket) == BM1368_TICKET_SIZE and sha256(ticket) == BM1368_TICKET_SHA256
+            and hashlib.sha1(b'blob '+str(len(ticket)).encode()+b'\0'+ticket).hexdigest()
+                == BM1368_TICKET_BLOB,
+            'BM1368 preserved ticket source prefix differs')
+    require(added.startswith(b'\n#ifdef VN135_BM1368_SWEEP_CLOCK_135\n'
+                             b'#include "integration/bm1368_sweep_clock_135.h"\n')
+            and added.count(b'#if') == 1 and added.count(b'#endif') == 1
+            and added.count(b'#include') == 1
+            and b'#else' not in added and b'#elif' not in added
+            and added.endswith(b'\n#endif\n'),
+            'BM1368 sweep-clock append is not separately gated')
+    return ticket
+
+
 def reset_source_bytes(data):
-    """Validate the exact ticket layer without changing the L10 witness."""
+    """Validate sweep and ticket layers without changing the L10 witness."""
+    data=ticket_source_bytes(data)
     blob=hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
     require(len(data) == BM1368_TICKET_SIZE and sha256(data) == BM1368_TICKET_SHA256
             and blob == BM1368_TICKET_BLOB,
@@ -338,7 +363,7 @@ def reset_source_bytes(data):
 
 
 def constructor_source_bytes(data, entry):
-    """Recover the exact L09 dependency through exact ticket and reset layers."""
+    """Recover the exact L09 dependency through exact sweep, ticket and reset layers."""
     require(entry['path'] == BM1368_PATH
             and entry['bytes'] == BM1368_CONSTRUCTOR_SIZE
             and entry['sha256'] == BM1368_CONSTRUCTOR_SHA256

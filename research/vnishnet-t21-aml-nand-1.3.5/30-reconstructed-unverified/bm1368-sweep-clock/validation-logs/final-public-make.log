@@ -1,0 +1,44 @@
+python3 -B tests/run_host.py --root ../../../.. --build build/ordinary --cc cc
+ORIGINAL_SWEEP_CLOCK_PASS cases=25 checks=2418 hardware=no real_waits=no coordinator=not-implemented
+python3 -B tests/negative_controls.py --root ../../../.. --cc cc
+SWEEP_CLOCK_CONTROLS_PASS controls=17
+python3 -B verify_evidence.py
+{"cgminer_startup_caller_witnessed": true, "firmware_executed": false, "full_coordinator_claimed": false, "hwscan_startup_caller_claimed": false, "instruction_interpreter_used": false, "l11_dependency_files_verified": 3, "limits": "Pinned static review and immutable L11 caller dependency; manual lifetime/parity deductions; no automatic C equivalence, native ABI or hardware acceptance", "local_regions": 24, "local_witness_bytes": 1756, "logger_strings": 4, "method_body_identity_claimed": false, "method_code_bytes": {"cgminer": 264, "hwscan": 144}, "method_pool_bytes": {"cgminer": 24, "hwscan": 16}, "ordinary_writer_calls": 1, "original_files_compared": [], "runtime_source_identities_verified": 2, "static_witness_verified": true}
+python3 -B tests/test_evidence.py
+test_argument_mask_writer_status_and_late_index_bytes (__main__.EvidenceTests.test_argument_mask_writer_status_and_late_index_bytes) ... ok
+test_body_pool_boundary_and_provenance (__main__.EvidenceTests.test_body_pool_boundary_and_provenance) ... ok
+test_bound_l11_dependency_drift (__main__.EvidenceTests.test_bound_l11_dependency_drift) ... ok
+test_caller_gate_arguments_failure_and_ordering (__main__.EvidenceTests.test_caller_gate_arguments_failure_and_ordering) ... ok
+test_changed_metadata_cannot_reauthorize_its_own_pins (__main__.EvidenceTests.test_changed_metadata_cannot_reauthorize_its_own_pins) ... ok
+test_frozen_runtime_source_drift (__main__.EvidenceTests.test_frozen_runtime_source_drift) ... ok
+test_logger_literals_and_direct_initializer_count (__main__.EvidenceTests.test_logger_literals_and_direct_initializer_count) ... ok
+test_optional_original_identity_rejection (__main__.EvidenceTests.test_optional_original_identity_rejection) ... ok
+test_ordinary_parity_and_one_writer_contract (__main__.EvidenceTests.test_ordinary_parity_and_one_writer_contract) ... ok
+test_reviewed_annotations_qualifiers_and_json_schema (__main__.EvidenceTests.test_reviewed_annotations_qualifiers_and_json_schema) ... ok
+test_reviewed_packet_without_original_files (__main__.EvidenceTests.test_reviewed_packet_without_original_files) ... ok
+test_sweep_and_pulse_constructor_associations (__main__.EvidenceTests.test_sweep_and_pulse_constructor_associations) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 10.353s
+
+OK
+python3 -O -B tests/test_evidence.py
+test_argument_mask_writer_status_and_late_index_bytes (__main__.EvidenceTests.test_argument_mask_writer_status_and_late_index_bytes) ... ok
+test_body_pool_boundary_and_provenance (__main__.EvidenceTests.test_body_pool_boundary_and_provenance) ... ok
+test_bound_l11_dependency_drift (__main__.EvidenceTests.test_bound_l11_dependency_drift) ... ok
+test_caller_gate_arguments_failure_and_ordering (__main__.EvidenceTests.test_caller_gate_arguments_failure_and_ordering) ... ok
+test_changed_metadata_cannot_reauthorize_its_own_pins (__main__.EvidenceTests.test_changed_metadata_cannot_reauthorize_its_own_pins) ... ok
+test_frozen_runtime_source_drift (__main__.EvidenceTests.test_frozen_runtime_source_drift) ... ok
+test_logger_literals_and_direct_initializer_count (__main__.EvidenceTests.test_logger_literals_and_direct_initializer_count) ... ok
+test_optional_original_identity_rejection (__main__.EvidenceTests.test_optional_original_identity_rejection) ... ok
+test_ordinary_parity_and_one_writer_contract (__main__.EvidenceTests.test_ordinary_parity_and_one_writer_contract) ... ok
+test_reviewed_annotations_qualifiers_and_json_schema (__main__.EvidenceTests.test_reviewed_annotations_qualifiers_and_json_schema) ... ok
+test_reviewed_packet_without_original_files (__main__.EvidenceTests.test_reviewed_packet_without_original_files) ... ok
+test_sweep_and_pulse_constructor_associations (__main__.EvidenceTests.test_sweep_and_pulse_constructor_associations) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 9.475s
+
+OK
+python3 -B tests/run_host.py --root ../../../.. --build build/sanitized --cc cc --sanitize
+ORIGINAL_SWEEP_CLOCK_PASS cases=25 checks=2418 hardware=no real_waits=no coordinator=not-implemented

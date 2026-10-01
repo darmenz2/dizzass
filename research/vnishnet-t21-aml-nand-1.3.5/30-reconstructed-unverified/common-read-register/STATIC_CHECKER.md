@@ -118,7 +118,7 @@ results. The L10 checker had 58 controls, passed in normal and optimized
 Python modes, including reset-prefix/gate/identity mutations and mutations to
 every other active dependency. Those new results do not relabel the earlier run.
 
-L11 adds an exact outer transition: the 8350-byte ticket-mask source must have
+L11 added an exact outer transition: the 8350-byte ticket-mask source must have
 its independently pinned length, SHA-256 and Git blob, an exact preserved
 7519-byte L10 prefix, and one separately validated ticket gate/header. The
 unchanged reset-to-constructor transition then recovers the original dependency.
@@ -127,7 +127,20 @@ checkouts. Tests reach each inner gate and prefix predicate under matching-hash
 overrides instead of treating an outer hash rejection as sufficient evidence.
 This checker remains self-contained, with no shared-helper import. All immutable
 source receipts, static pins/witnesses and validation logs stay unchanged; new
-control outcomes are recorded in the L11 compatibility packet.
+L11 control outcomes remain recorded in the L11 compatibility packet.
+
+L12 adds one further exact outer transition. The complete 9245-byte source
+must match its fixed SHA-256 and Git blob; its first 8350 bytes must match the
+unchanged L11 source in length and both hashes. The sweep append has its own
+exact gate/header and terminal boundary. The existing ticket, reset and
+constructor predicates then apply to their original byte witnesses. Current
+admission rejects standalone ticket, reset, constructor and nonce sources.
+The independent controls retain the 63 earlier test purposes and add sweep
+identity, preserved-ticket and gate checks, plus semantic source mutations.
+Matching-hash contexts bypass each outer layer explicitly when exercising an
+inner predicate; the new outer hash cannot conceal a lost inner check.
+The checker imports no shared helper, all 17 active dependencies and original
+receipt meanings remain intact, and new outcomes belong to the L12 packet.
 
 ## Assumptions and limits
 
