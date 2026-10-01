@@ -1,0 +1,37 @@
+{
+  "recorded_at": "2026-10-01T11:24:00Z",
+  "status": "local host and static validation complete; exact-head remote CI separate",
+  "compiler": "gcc (Debian 14.2.0-19) 14.2.0",
+  "host": {
+    "cases": 3086,
+    "checks": 45714,
+    "ordinary": true,
+    "asan_ubsan_all_eight_translation_units": true,
+    "leak_detection": false
+  },
+  "compiled_semantic_controls": 20,
+  "required_control_exit": 1,
+  "required_control_marker": "COMMON_READ_FAIL",
+  "initial_sanitizer_compile_failed": true,
+  "final_sanitizer_warning_exception": "-Wno-sign-conversion only for unchanged crc5.c; shifted uint8_t promotion remains0..255",
+  "helper_source_edits": false,
+  "original_instruction_execution": false,
+  "local_clang": false,
+  "full_native_build_local": false,
+  "device_or_network_io": false,
+  "live_transport_io_callbacks": false,
+  "static_checker": {
+    "tests_normal_and_optimized": 50,
+    "active_unchanged_dependencies": 17,
+    "cgminer_selected_regions": 33,
+    "hwscan_selected_regions": 14,
+    "both_full_file_hashes_checked": true,
+    "parity_identities": 7
+  },
+  "independent_functional_review": {
+    "status": "PASS",
+    "additional_cases": 16,
+    "additional_checks": 192,
+    "ordinary_and_sanitized": true
+  }
+}
