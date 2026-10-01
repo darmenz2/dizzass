@@ -74,6 +74,9 @@ jobs:
           fi
           python3 integration/test_native_core.py
           python3 tools/prepare_uart_posix.py --check
-          test -z "$(git diff --name-only --diff-filter=MDR 12446bed78a060a49364a80bcbfb4340b13f4f27 HEAD)"
+          # R-06 deliberately replaces three registry files with exact R-03 blobs.
+          # Retain all A-13 runtime/assertion checks and reject any other old-file edit.
+          python3 -B integration/review/combined_rx/test_scope.py
+          python3 -B integration/review/combined_rx/check_legacy_scope.py
           git diff --exit-code
           echo 'Host PTYs only: no physical UART, ASIC, production driver, pool or merge.'

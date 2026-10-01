@@ -54,4 +54,17 @@ void dizzass_submitter_destroy(struct dizzass_submitter **submitter);
 int dizzass_submitter_run(struct dizzass_submitter *submitter,
     struct dizzass_jobs *jobs, uint64_t received_epoch,
     const struct dizzass_nonce_reply *reply, struct dizzass_submit_result *out);
+/* Deferred-RX admission with the EXACT ticket captured at offer time.
+ * Serial/epoch/chain/slot validation, work-state checks and native copying
+ * share one registry lock. PENDING and stale/replaced tickets never reach
+ * submit_nonce. No output/accounting change on an admission error.
+ * Same gate, native stale/duplicate/queue semantics and lifetime rules as run.
+ * A pause AFTER admission still cannot revoke that owned copy: stop the gate
+ * from the control thread first when dispatch exclusion is required.
+ * Caller keeps ticket/reply/output stable and nonoverlapping and excludes
+ * deferred cancellation until return. No recursive gate calls from hw_error.
+ */
+int dizzass_submitter_run_captured(struct dizzass_submitter *,
+    struct dizzass_jobs *, const struct dizzass_job_ticket *,
+    const struct dizzass_nonce_reply *, struct dizzass_submit_result *out);
 #endif

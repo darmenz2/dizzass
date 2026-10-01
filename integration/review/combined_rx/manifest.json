@@ -1,0 +1,338 @@
+{
+  "parents": [
+    "e820932bd9618acf8fb5b008ef5a8abadd88d572",
+    "66869a587e36acfd6e561f75215c1d4f07f071fa"
+  ],
+  "r05_tree": "4eb16a8a37a18e22a58a16328d530043e29194fa",
+  "r03_tree": "29130af48510b6f53121af92992cd72fbdfa0f7f",
+  "combined_tree": "9c7096b26be29f9b11e8f96bddb82207fd73c884",
+  "overlap_changed": [
+    "integration/native_jobs.c",
+    "integration/native_jobs.h",
+    "integration/native_submit.h"
+  ],
+  "added_from_r03": [
+    ".github/workflows/early-rx.yml",
+    ".github/workflows/rx-submit.yml",
+    "integration/native/early_rx.c",
+    "integration/native/early_rx.h",
+    "integration/review/early_rx/.gitignore",
+    "integration/review/early_rx/README_RU.md",
+    "integration/review/early_rx/host_compat.h",
+    "integration/review/early_rx/manifest.json",
+    "integration/review/early_rx/results.json",
+    "integration/review/early_rx/run.py",
+    "integration/review/early_rx/suite.mk",
+    "integration/review/early_rx/test.c",
+    "integration/review/early_rx/test_runner.py",
+    "integration/review/rx_submit/.gitignore",
+    "integration/review/rx_submit/README_RU.md",
+    "integration/review/rx_submit/results.json",
+    "integration/review/rx_submit/run.py",
+    "integration/review/rx_submit/suite.mk",
+    "integration/review/rx_submit/test.c",
+    "integration/review/rx_submit/test_runner.py"
+  ],
+  "helpers": [
+    "integration/review/native_uart_stack/test_stack.c",
+    "integration/review/native_uart_stack/evidence/cancel_probe.c"
+  ],
+  "inputs": [
+    {
+      "path": "cgminer.c",
+      "blob": "54739e4139294c526af0c73aa9a02ba9762ca4f2",
+      "sha256": "214148c972c380af38cd667c02ccffad5c3a0b2790d5b54eeb0316af455411e4",
+      "origin": "accepted-f646f18f"
+    },
+    {
+      "path": "miner.h",
+      "blob": "6e0ce27844029a28b3dc031fcd0d6c82e9c7d5b5",
+      "sha256": "46975a24967eb0d0d5b0171b210b875b0adc60feba93131e491fc0deeb72745c",
+      "origin": "accepted-f646f18f"
+    },
+    {
+      "path": "Makefile.am",
+      "blob": "17d2fbde26b5e8cb614b61908b84d5937af48325",
+      "sha256": "8601830e23e231cdadd770a9bea4c1216d281ace5aa930010f0e61983daa8995",
+      "origin": "accepted-f646f18f"
+    },
+    {
+      "path": "integration/native_nonce.c",
+      "blob": "4556d1cef380f31c86d2d967e6f6fbaf364b3f58",
+      "sha256": "aecd9f09f6651aa37548c63d80192e366dd3ca3c175c3d1d69f098b1156062c7",
+      "origin": "accepted-f646f18f"
+    },
+    {
+      "path": "integration/native_nonce.h",
+      "blob": "cd5ff0a636d85b5e5dc23bdd66b2e82b9cfc729a",
+      "sha256": "1e120934d31a39851979fb5162f49ec7b3c8eaf3a89c4ea2ca5a5e620e322b0e",
+      "origin": "accepted-f646f18f"
+    },
+    {
+      "path": "integration/native_work_tx88.c",
+      "blob": "ab45a33e10006537dd4b3bccb78299920efd1433",
+      "sha256": "32ee0222b92b9f38f5544cf7a39694f9355068f3e83c7cef159cdafd31857c9a",
+      "origin": "accepted-f646f18f"
+    },
+    {
+      "path": "integration/native_work_tx88.h",
+      "blob": "b29891c7a329345cbb020c6bcba905cc83cfea6b",
+      "sha256": "bb32df7d35e44ac2d96b2ae8a8b3bea172dcb27117eecb845464cbf0b4bf8224",
+      "origin": "accepted-f646f18f"
+    },
+    {
+      "commit": "66869a587e36acfd6e561f75215c1d4f07f071fa",
+      "path": "integration/native_jobs.c",
+      "blob": "566529ae9774174659436b0ae6e3cc713f40f467",
+      "sha256": "c4f00c6a7cf1d1f859bde92b8fd35a638e3e824768d5238d67d083de319eaa8f",
+      "origin": "proposed-or-test-helper"
+    },
+    {
+      "commit": "66869a587e36acfd6e561f75215c1d4f07f071fa",
+      "path": "integration/native_jobs.h",
+      "blob": "cf6f3c5b21d090bb9a94f679c4528fedee2fa4e5",
+      "sha256": "fd57d0a6cfba75f631d878b7d0c602ad48b2ed4e7985cb13195cf5d5cbb330da",
+      "origin": "proposed-or-test-helper"
+    },
+    {
+      "commit": "66869a587e36acfd6e561f75215c1d4f07f071fa",
+      "path": "integration/native_submit.h",
+      "blob": "373dc3c16fb0a80d848e2c823154095c3f319aa6",
+      "sha256": "fedb96d3a42031ebc2a14bf048559112680ebf7778497017151a5ec4817235aa",
+      "origin": "proposed-or-test-helper"
+    },
+    {
+      "path": "src/backend/work-gen/work-gen.c",
+      "blob": "a832fb6759bdf5acc3573645cb427f30d96566ca",
+      "sha256": "d3a848413ac670a62a9fc6818323516f59dfd9057fc605f0c3ef134b4eb3af75",
+      "origin": "accepted-f646f18f"
+    },
+    {
+      "path": "include/xminer/recovery/work_rx.h",
+      "blob": "e9dc7de7f839aaf9a82759badbe890f0210711da",
+      "sha256": "37d50c90b74bad73623100d52a269ab2c22568061e7637d6682e42d66722a60b",
+      "origin": "accepted-f646f18f"
+    },
+    {
+      "path": "reconstruction/support/work_rx_stream.c",
+      "blob": "5825640b8a89b03a8759759595c0ea920ebea65c",
+      "sha256": "c825fa7e559baf15d6f839e20b170a9d19293ad76030fca91cb9fa765762c07d",
+      "origin": "accepted-f646f18f"
+    },
+    {
+      "path": "integration/native/uart_safe.c",
+      "blob": "092e26250da9c3ae01d276d0cf247c76085e709a",
+      "sha256": "a33e6cf131eb8719f961b58ce986662ec4e6b0e52ce7537243c60bd53ffed00b",
+      "origin": "accepted-f646f18f"
+    },
+    {
+      "path": "integration/native/uart_safe.h",
+      "blob": "659faedc44a31e15d21c2b6a9f004417f853cc32",
+      "sha256": "5666f8eb17e3ef43e4cae12399988227b64605ae215f1f71f6c915e3f5e254b9",
+      "origin": "accepted-f646f18f"
+    },
+    {
+      "path": "integration/native/uart_posix.c",
+      "blob": "994c54c1fab4a541bf5e7febe0e91666b15c0358",
+      "sha256": "e29207c757d1f0257e2fdec9a270afadadb43a15280bbd57f1fb22e88daf0642",
+      "origin": "accepted-f646f18f"
+    },
+    {
+      "path": "integration/native/uart_posix.h",
+      "blob": "9d7739d52768ace25b2538b6b690edbb5c11a549",
+      "sha256": "141f5f2f29f95511935d800c91e290b454c2f337a20292be17217750de3bc6e9",
+      "origin": "accepted-f646f18f"
+    },
+    {
+      "path": "integration/native/uart_channel.c",
+      "blob": "ef68d507d0d393b6a5b1fc0cb3eaff349ed3e376",
+      "sha256": "7c46d6e7a7d691fa250e4673c3fb7ca6bb92564197b5d3e9d1a926e09d7f50f2",
+      "origin": "accepted-f646f18f"
+    },
+    {
+      "path": "integration/native/uart_channel.h",
+      "blob": "78963f8b5ab11c9c171f601b138b91c7fc3688aa",
+      "sha256": "e8e42c8d4a05458054a99392c2990b4cdd57705f63de3691e4b03f700ceabb1b",
+      "origin": "accepted-f646f18f"
+    },
+    {
+      "path": "integration/native/protocol_channel_tx.c",
+      "blob": "110a285b60497e22c50e385757746b59fba9e1e0",
+      "sha256": "50aaf9aaa1ae7576dcd1ba614ffdc0af48808aea7baa59deb44597a1b66160fa",
+      "origin": "accepted-f646f18f"
+    },
+    {
+      "path": "integration/native/protocol_channel_tx.h",
+      "blob": "75266b9f768f4f18168b9d7d4fac3bf672b4a7f7",
+      "sha256": "e37fa7e575731d2562913c5471a76782545861c53d5ff081c0c951b5d3cf2990",
+      "origin": "accepted-f646f18f"
+    },
+    {
+      "path": "integration/native/native_job_channel_tx.c",
+      "blob": "ab8eaf9a753fa97665ac5c525ea0438f1cb98e21",
+      "sha256": "f49d11ee2953efa061f6942275a0c38c1dbfc1713feb92d42e7eea17c6163284",
+      "origin": "accepted-f646f18f"
+    },
+    {
+      "path": "integration/native/native_job_channel_tx.h",
+      "blob": "9ab3db1cc11ed2d6515ad37ead4927a2b2f74c9a",
+      "sha256": "0b322e91a3834a330954450f12e755b1e19bd8351206bc560d571f15e723aac3",
+      "origin": "accepted-f646f18f"
+    },
+    {
+      "commit": "66869a587e36acfd6e561f75215c1d4f07f071fa",
+      "path": "integration/native/early_rx.c",
+      "blob": "f62cb13e9a5fabe2a8aa8d07dadd562fa5cf7ada",
+      "sha256": "8d7d45084f71e237823007b7341aad4384137de8122a7e2497abc63cc06b933c",
+      "origin": "proposed-or-test-helper"
+    },
+    {
+      "commit": "66869a587e36acfd6e561f75215c1d4f07f071fa",
+      "path": "integration/native/early_rx.h",
+      "blob": "c1052b51118e6cb0894bbe51ef443a0d447776ee",
+      "sha256": "e2962c2a8ef794ce4bddb0fc35e4a572b1474c8f3b8bd722c7efc60b3138fe48",
+      "origin": "proposed-or-test-helper"
+    },
+    {
+      "commit": "cacbc87e18fab159fa5690e96a491341c5485097",
+      "path": "integration/review/native_uart_stack/test_stack.c",
+      "blob": "a275017067c88e124c11460c76166ef5982a25e6",
+      "sha256": "630c3fc6c62aa29353183408be145b077410521431f1c21e0a754a6fb1d48513",
+      "origin": "proposed-or-test-helper"
+    },
+    {
+      "commit": "cacbc87e18fab159fa5690e96a491341c5485097",
+      "path": "integration/review/native_uart_stack/evidence/cancel_probe.c",
+      "blob": "65234679ed5e25c2098f0a85bed64bd479cb1c90",
+      "sha256": "22a09919126ff0a39322af4ebb5bd8253a5956f28814a18bf0e8de3ee704dc52",
+      "origin": "proposed-or-test-helper"
+    },
+    {
+      "path": "integration/native/rx_owner.c",
+      "blob": "aeb47a73a920179e215ba6db3c618414f3c6131a",
+      "sha256": "ddd142d875878290e90c07d83f3f81ebc488f2dd66eb89777b778d0cc0d14bd4",
+      "origin": "unchanged-proposal-input"
+    },
+    {
+      "path": "integration/native/rx_owner.h",
+      "blob": "0394d3183d7be2b94af173aad01c455fd6331eda",
+      "sha256": "c610c80d9745fa5c25c2b596357946e23cda085c2fe3a1841425412860c0c7dd",
+      "origin": "unchanged-proposal-input"
+    },
+    {
+      "path": "integration/native/io_lifecycle.c",
+      "blob": "05fe30734125ac226e4a5e12c64306f4c529e513",
+      "sha256": "2757ede12eeec6034d9721b9f8eb6e5cc893c3376795d12ad149e8cc9e579d5e",
+      "origin": "unchanged-proposal-input"
+    },
+    {
+      "path": "integration/native/io_lifecycle.h",
+      "blob": "c5d72d8a2ec0156543f1f6877142869fb9887870",
+      "sha256": "78860adac411a07a7cf1c21c3595a82e5b9d3cdb6ea7a397a809fe3755840b70",
+      "origin": "unchanged-proposal-input"
+    },
+    {
+      "path": "integration/review/early_rx/test_runner.py",
+      "blob": "ea0a4ec72a9224b29a79e6e10868751cdea1af3a",
+      "sha256": "aac10ffadcc7cc34e30da317ca195d71a9737e11ff1f54cb8d3033538822de5b",
+      "origin": "unchanged-proposal-input"
+    },
+    {
+      "path": "integration/review/early_rx/test.c",
+      "blob": "ca9421a11a060c12aeeb99dc6fcdd929692068ff",
+      "sha256": "0840593dd84900ab9c7ce1217c30d829b12376fb95b157b94ac1a857eb6243ab",
+      "origin": "unchanged-proposal-input"
+    },
+    {
+      "path": "integration/review/early_rx/suite.mk",
+      "blob": "340708e372984f6cca69278ae366d33a6c7e7905",
+      "sha256": "c986fd6781663ca61bd222f5aaf284614c5aa0301ff1ce4d971a4f0f0967eb9b",
+      "origin": "unchanged-proposal-input"
+    },
+    {
+      "path": "integration/review/early_rx/run.py",
+      "blob": "3fd245c3f6167a3115b1c794b14b66f2cd785474",
+      "sha256": "e98cbb8d2ae335630d44aaaf2d9b105894e2a00eef348e507c9ad1d304c19b70",
+      "origin": "unchanged-proposal-input"
+    },
+    {
+      "path": "integration/review/rx_submit/test_runner.py",
+      "blob": "9e51f31e07298c717e4a76736956174e645e5151",
+      "sha256": "0ac0c6d42051f7ed86602bc875962caca2e32783ffe05e8abd6df00b9222b6c7",
+      "origin": "unchanged-proposal-input"
+    },
+    {
+      "path": "integration/review/rx_submit/test.c",
+      "blob": "bdb3d060d27770ee128d5e9407be870451af786c",
+      "sha256": "38b1bd4c1d2d6e504202b6a3d8b81f0cf99a9fb6c6669424f2395a9085b575ab",
+      "origin": "unchanged-proposal-input"
+    },
+    {
+      "path": "integration/review/rx_submit/suite.mk",
+      "blob": "d20ccf34d886b79a6179c6d5f3429000c4319798",
+      "sha256": "579b96036dcdb51b0b5473b58892c81c6e7674eb820be7ebf07e4992b9a84a6a",
+      "origin": "unchanged-proposal-input"
+    },
+    {
+      "path": "integration/review/rx_submit/run.py",
+      "blob": "0d871305364cd880ade77d9c269b228d29eeeba6",
+      "sha256": "1492e26bd61bfb389b360c30a98d0551f55f3443f0a5611417be42d15eb127c3",
+      "origin": "unchanged-proposal-input"
+    },
+    {
+      "path": "integration/review/rx_owner/regressions.mk",
+      "blob": "dcbc7021cc9cbfc486f205f8e6f533702e8b8e29",
+      "sha256": "9fef32efaad3f09463aa11ba878fc790b5dc606e0a51fc633e4406113680471d",
+      "origin": "unchanged-proposal-input"
+    },
+    {
+      "path": "integration/review/rx_owner/test_runner.py",
+      "blob": "ce905bd9c39ce3fb2fa6cea856f5bf82f9016afc",
+      "sha256": "442967c27db653a72088c9a899802f2ce4bb4bc9e0f2ec508c0c3168b680ff76",
+      "origin": "unchanged-proposal-input"
+    },
+    {
+      "path": "integration/review/rx_owner/test.c",
+      "blob": "cd71c5e79c681a0771d71001b43b310e2df5b3e4",
+      "sha256": "49a8e533efa25973bc7833289869768af7ccfb727cc721bda92b63d3f59d3517",
+      "origin": "unchanged-proposal-input"
+    },
+    {
+      "path": "integration/review/rx_owner/suite.mk",
+      "blob": "67f278ac86780b9845b1b6692f8136ad3c841491",
+      "sha256": "e4a5b85ca071fd99aa6969382d89c7ba54cf175b75159b9f2a9650d9aa0b3a86",
+      "origin": "unchanged-proposal-input"
+    },
+    {
+      "path": "integration/review/rx_owner/run.py",
+      "blob": "b1ae96cadf4eccdd87b9d4c26abca41e74271b6b",
+      "sha256": "99fa97f7dcba549f59037635cb472fb56726d3631332680887fd8c685d71d475",
+      "origin": "unchanged-proposal-input"
+    },
+    {
+      "path": "integration/review/io_lifecycle/test_runner.py",
+      "blob": "14741c009254324fcb0f78d4da93edebf86155ea",
+      "sha256": "a80f98acf0fccb928201768bd167fb112e9a6488d535ff171b229fead9b79156",
+      "origin": "unchanged-proposal-input"
+    },
+    {
+      "path": "integration/review/io_lifecycle/test.c",
+      "blob": "037078608ba407a0cbfb7f622bd64f534eeddbdc",
+      "sha256": "bd4b70fecdb0499591b4c80c83376d96aa8748069fe29d33dc5c98ace3340c8e",
+      "origin": "unchanged-proposal-input"
+    },
+    {
+      "path": "integration/review/io_lifecycle/suite.mk",
+      "blob": "d1eb3e4262e614b653301ed01fa94fa7c0a00e67",
+      "sha256": "570fa5689008187023159ca047f83bcc03dce646ba77d1cce036621dfa2b042f",
+      "origin": "unchanged-proposal-input"
+    },
+    {
+      "path": "integration/review/io_lifecycle/run.py",
+      "blob": "065ab828f83ad8ccaebbb520c4f6a30f8c5a6c6f",
+      "sha256": "2e4f2b1c31881ae06e685836e835c6939633ddf175e779013d6bb0180a6a6bd4",
+      "origin": "unchanged-proposal-input"
+    }
+  ],
+  "accepted_base": "f646f18f304e295134ffd37e007a62bfa1dbfa30"
+}

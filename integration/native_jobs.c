@@ -235,7 +235,7 @@ int dizzass_jobs_begin_drained_epoch(struct dizzass_jobs *jobs,
     return rc;
 }
 
-int dizzass_jobs_check(struct dizzass_jobs *jobs, uint64_t received_epoch,
+static int jobs_check_locked(struct dizzass_jobs *jobs, uint64_t received_epoch,
     const struct dizzass_nonce_reply *reply, struct dizzass_job_result *out)
 {
     struct dizzass_job_result result = {0};
@@ -245,7 +245,6 @@ int dizzass_jobs_check(struct dizzass_jobs *jobs, uint64_t received_epoch,
     if (!jobs || !reply || !out || out->check.work ||
         reply->slot >= DIZZASS_JOB_SLOTS || reply->variant > 2)
         return DIZZASS_JOBS_INVALID;
-    jobs_lock(jobs);
     rc = epoch_status(jobs, received_epoch);
     if (rc) goto done;
     if (reply->chain_id != jobs->chain_id) { rc = DIZZASS_JOBS_WRONG_CHAIN; goto done; }
@@ -266,6 +265,64 @@ int dizzass_jobs_check(struct dizzass_jobs *jobs, uint64_t received_epoch,
     result.ticket.slot = reply->slot;
     *out = result;
 done:
+    return rc;
+}
+
+int dizzass_jobs_check(struct dizzass_jobs *jobs, uint64_t received_epoch,
+    const struct dizzass_nonce_reply *reply, struct dizzass_job_result *out)
+{
+    int rc;
+    if (!jobs || !reply || !out || out->check.work ||
+        reply->slot >= DIZZASS_JOB_SLOTS || reply->variant > 2)
+        return DIZZASS_JOBS_INVALID;
+    jobs_lock(jobs);
+    rc = jobs_check_locked(jobs, received_epoch, reply, out);
+    jobs_unlock(jobs);
+    return rc;
+}
+
+int dizzass_jobs_capture_reply(struct dizzass_jobs *jobs, uint64_t received_epoch,
+    const struct dizzass_nonce_reply *reply, struct dizzass_job_ticket *out)
+{
+    int rc;
+    struct job_slot *slot;
+    struct dizzass_nonce_match match;
+    if (!jobs || !reply || !out || out->epoch || out->serial || out->chain_id ||
+        out->slot || reply->slot >= DIZZASS_JOB_SLOTS || reply->variant > 2)
+        return DIZZASS_JOBS_INVALID;
+    jobs_lock(jobs);
+    rc = epoch_status(jobs, received_epoch);
+    if (rc) goto done;
+    if (reply->chain_id != jobs->chain_id) { rc = DIZZASS_JOBS_WRONG_CHAIN; goto done; }
+    if (jobs->paused) { rc = DIZZASS_JOBS_PAUSED; goto done; }
+    slot = &jobs->slots[reply->slot];
+    rc = slot_status(slot);
+    if (rc != DIZZASS_JOBS_OK && rc != DIZZASS_JOBS_PENDING) goto done;
+    match = (struct dizzass_nonce_match){slot->work, jobs->chain_id, reply->slot,
+        slot->variant, slot->version_base_word};
+    rc = dizzass_nonce_match_status(&match, reply);
+    if (rc) goto done;
+    *out = (struct dizzass_job_ticket){jobs->epoch, slot->serial,
+        jobs->chain_id, reply->slot};
+done:
+    jobs_unlock(jobs);
+    return rc;
+}
+
+int dizzass_jobs_check_captured(struct dizzass_jobs *jobs,
+    const struct dizzass_job_ticket *ticket,
+    const struct dizzass_nonce_reply *reply, struct dizzass_job_result *out)
+{
+    int rc;
+    if (!jobs || !reply || !out || out->check.work ||
+        reply->slot >= DIZZASS_JOB_SLOTS || reply->variant > 2)
+        return DIZZASS_JOBS_INVALID;
+    jobs_lock(jobs);
+    rc = ticket_status(jobs, ticket);
+    if (!rc && reply->chain_id != ticket->chain_id) rc = DIZZASS_JOBS_WRONG_CHAIN;
+    if (!rc && reply->slot != ticket->slot) rc = DIZZASS_NONCE_WRONG_SLOT;
+    /* Serial validation AND matching share this lock. Never rebind by slot. */
+    if (!rc) rc = jobs_check_locked(jobs, ticket->epoch, reply, out);
     jobs_unlock(jobs);
     return rc;
 }
@@ -343,13 +400,21 @@ void dizzass_submitter_destroy(struct dizzass_submitter **pointer)
 static int admit_submission(struct dizzass_submitter *gate,
     struct dizzass_jobs *jobs, uint64_t epoch,
     const struct dizzass_nonce_reply *reply, struct work **copy,
-    struct dizzass_job_ticket *ticket)
+    struct dizzass_job_ticket *ticket,
+    const struct dizzass_job_ticket *captured)
 {
     struct job_slot *slot;
     struct dizzass_nonce_match match;
     const struct work *source;
     int rc;
     jobs_lock(jobs);
+    /* Captured identity and retained-copy admission are one critical section.
+     * Do not validate a serial first and then re-resolve an unrelated slot. */
+    if (captured) {
+        rc = ticket_status(jobs, captured);
+        if (rc) goto done;
+        if (captured->slot != reply->slot) { rc = DIZZASS_NONCE_WRONG_SLOT; goto done; }
+    }
     rc = epoch_status(jobs, epoch);
     if (rc) goto done;
     if (reply->chain_id != jobs->chain_id) { rc = DIZZASS_JOBS_WRONG_CHAIN; goto done; }
@@ -386,9 +451,10 @@ done:
     return rc;
 }
 
-int dizzass_submitter_run(struct dizzass_submitter *gate,
+static int submitter_run(struct dizzass_submitter *gate,
     struct dizzass_jobs *jobs, uint64_t received_epoch,
-    const struct dizzass_nonce_reply *reply, struct dizzass_submit_result *out)
+    const struct dizzass_nonce_reply *reply, struct dizzass_submit_result *out,
+    const struct dizzass_job_ticket *captured)
 {
     struct dizzass_submit_result result = {0};
     struct work *copy = NULL;
@@ -402,7 +468,7 @@ int dizzass_submitter_run(struct dizzass_submitter *gate,
         !gate->cgpu->drv || !gate->cgpu->drv->hw_error || !gate->cgpu->drv->name) {
         rc = DIZZASS_SUBMIT_WRONG_THREAD; goto done;
     }
-    rc = admit_submission(gate, jobs, received_epoch, reply, &copy, &result.ticket);
+    rc = admit_submission(gate, jobs, received_epoch, reply, &copy, &result.ticket, captured);
     if (rc) goto done;
     /* Registry is UNLOCKED. A driver hw_error may pause it without deadlock.
      * The immutable owned copy remains valid even after retire/pause.
@@ -414,4 +480,19 @@ int dizzass_submitter_run(struct dizzass_submitter *gate,
 done:
     if (pthread_mutex_unlock(&gate->lock)) abort();
     return rc;
+}
+
+int dizzass_submitter_run(struct dizzass_submitter *gate,
+    struct dizzass_jobs *jobs, uint64_t received_epoch,
+    const struct dizzass_nonce_reply *reply, struct dizzass_submit_result *out)
+{
+    return submitter_run(gate, jobs, received_epoch, reply, out, NULL);
+}
+
+int dizzass_submitter_run_captured(struct dizzass_submitter *gate,
+    struct dizzass_jobs *jobs, const struct dizzass_job_ticket *captured,
+    const struct dizzass_nonce_reply *reply, struct dizzass_submit_result *out)
+{
+    if (!captured) return DIZZASS_SUBMIT_INVALID;
+    return submitter_run(gate, jobs, captured->epoch, reply, out, captured);
 }

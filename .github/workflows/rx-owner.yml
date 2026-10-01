@@ -1,0 +1,17 @@
+# On the combined candidate, run the SAME stage tests against TRACKED sources.
+# Original feature refs retain their historical standalone workflow unchanged.
+name: Single RX owner integration
+on:
+  pull_request:
+    paths:
+      - 'integration/native/rx_owner.*'
+      - 'integration/review/rx_owner/**'
+      - '.github/workflows/rx-owner.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  current-source:
+    uses: ./.github/workflows/combined-rx.yml
+    with:
+      groups: rx_owner
