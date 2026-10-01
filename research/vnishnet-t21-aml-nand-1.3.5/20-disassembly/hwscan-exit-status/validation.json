@@ -1,0 +1,86 @@
+{
+  "arm_interpreter_used": false,
+  "base_commit": "2857518613e6e0b7b13f69e8bc5e367df386da42",
+  "base_tree": "4b6b3d4db63dd8fb63aaa8433ac2725a1ec744a0",
+  "boot_scripts_executed": false,
+  "data_evidence_tests": {
+    "inconsistent_data_controls": 15,
+    "passed": true,
+    "positive": 1,
+    "run": 16,
+    "skipped": 0
+  },
+  "existing_lab_tests": {
+    "passed": true,
+    "run": 49,
+    "skipped": 0
+  },
+  "firmware_executed": false,
+  "frozen_data_validation": {
+    "arm_interpreter_used": false,
+    "bytes": 3152,
+    "direct_edges": 29,
+    "firmware_executed": false,
+    "pc_relative_targets": 3,
+    "pointer_cells": 1,
+    "proof": "static consistency and arithmetic only",
+    "ranges": 16,
+    "reference_checked": false,
+    "schema": 1,
+    "shell_source_checked": true,
+    "source_sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+    "word_witnesses": 25
+  },
+  "hardware_accessed": false,
+  "log_sha256": {
+    "exit-evidence-tests.log": "3d7dd315322fe590fb8fb7af5415244b4051589b5d83557c2c403d695eaeb366",
+    "lab-tests-final.log": "9321a1f6a4e7a9594e672e69878686df7ab8730a84ab542e2bac8de30ab334ce",
+    "optimized-static-validation.json": "f9ee1d09f729e3d756b6ddf147e0315091eafa576f264027fe64a6029d41cc04",
+    "pr95-regeneration.json": "42977d154a71084c05311a3e54f2fe8b7825122ad20077226b027ed0962d82e4",
+    "reference-validation.json": "f48d289054a6560e144bb83ece743782892c889d585cb1c0347a2617a7df6c8c",
+    "static-validation.json": "f9ee1d09f729e3d756b6ddf147e0315091eafa576f264027fe64a6029d41cc04"
+  },
+  "model_fault_probes_run": false,
+  "new_runtime_code": false,
+  "not_run": [
+    "native POSIX/cgminer host regressions: no runtime code changed and full production tree is not present",
+    "remote CI: payload not published",
+    "vendor differential or hardware tests"
+  ],
+  "optimized_python_verifier": "passed; explicit checks do not rely on assert",
+  "previous_dispatch_reference_regeneration": {
+    "bytes": 7540,
+    "direct_edges": 42,
+    "firmware_executed": false,
+    "indirect_target_witnesses": 4,
+    "proof": "static byte/hash/target checks only",
+    "ranges": 42,
+    "reference_checked": true,
+    "schema": 1,
+    "strings": 32
+  },
+  "previous_entry_and_startup_regeneration": "all artifacts identical",
+  "private_reference_regeneration": {
+    "arm_interpreter_used": false,
+    "bytes": 3152,
+    "direct_edges": 29,
+    "firmware_executed": false,
+    "pc_relative_targets": 3,
+    "pointer_cells": 1,
+    "proof": "static consistency and arithmetic only",
+    "ranges": 16,
+    "reference_checked": true,
+    "schema": 1,
+    "shell_source_checked": true,
+    "source_sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+    "word_witnesses": 25
+  },
+  "schema": 1,
+  "scope": "normal-return status propagation; static proof only",
+  "source_sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+  "workflow_yaml": {
+    "existing_lab_count": 49,
+    "parsed": true,
+    "steps": 8
+  }
+}

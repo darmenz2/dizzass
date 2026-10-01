@@ -1,0 +1,214 @@
+{
+  "ranges": [
+    {
+      "boundary_evidence": "Bounded evidence interval; not an assertion of complete function or whole-program coverage.",
+      "end_exclusive": "0x158d8",
+      "evidence_sources": [
+        "../README.md",
+        "../STATUS_CHAIN.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "A32 instruction witnesses and aligned direct calls; no mapping symbols survive.",
+      "name": "entry-code",
+      "sha256": "c3a341b4f989dde8b0919e8882e74872cf81a28c95e7835b212a6d9b52ff2b89",
+      "start": "0x158b8"
+    },
+    {
+      "boundary_evidence": "Bounded evidence interval; not an assertion of complete function or whole-program coverage.",
+      "end_exclusive": "0x158dc",
+      "evidence_sources": [
+        "../README.md",
+        "../STATUS_CHAIN.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit PC-relative literal or pointer cell, rendered as data.",
+      "name": "entry-literal",
+      "sha256": "bae4a648020085be9997af86a275dfa70067793ef3a98a36278f666fc5d7656c",
+      "start": "0x158d8"
+    },
+    {
+      "boundary_evidence": "Bounded evidence interval; not an assertion of complete function or whole-program coverage.",
+      "end_exclusive": "0x15930",
+      "evidence_sources": [
+        "../README.md",
+        "../STATUS_CHAIN.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "A32 instruction witnesses and aligned direct calls; no mapping symbols survive.",
+      "name": "startup-bridge",
+      "sha256": "aae0525ddc576ee51e10b488e68c531dad1ebb48bb553113079e364a3f2b3d33",
+      "start": "0x158dc"
+    },
+    {
+      "boundary_evidence": "Bounded evidence interval; not an assertion of complete function or whole-program coverage.",
+      "end_exclusive": "0x15940",
+      "evidence_sources": [
+        "../README.md",
+        "../STATUS_CHAIN.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit PC-relative literal or pointer cell, rendered as data.",
+      "name": "bridge-literals",
+      "sha256": "c681a8b94d6f519473d140b8b747a2cb39daeaa7b2b06bd5e0ae184dec3e4a6c",
+      "start": "0x15930"
+    },
+    {
+      "boundary_evidence": "Bounded evidence interval; not an assertion of complete function or whole-program coverage.",
+      "end_exclusive": "0x4afc6c",
+      "evidence_sources": [
+        "../README.md",
+        "../STATUS_CHAIN.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit PC-relative literal or pointer cell, rendered as data.",
+      "name": "main-got",
+      "sha256": "d26e8fff5f9d2ede91daf57fc9f6678c4339ddc96d72c2d9c2cf0337dfab7718",
+      "start": "0x4afc68"
+    },
+    {
+      "boundary_evidence": "Bounded evidence interval; not an assertion of complete function or whole-program coverage.",
+      "end_exclusive": "0x25934",
+      "evidence_sources": [
+        "../README.md",
+        "../STATUS_CHAIN.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "A32 instruction witnesses and aligned direct calls; no mapping symbols survive.",
+      "name": "outer-main",
+      "sha256": "853d9619a216132f4e7e11c4bb5adc3b21b3a2f18fd9960bc7c413b557b8f888",
+      "start": "0x25428"
+    },
+    {
+      "boundary_evidence": "Bounded evidence interval; not an assertion of complete function or whole-program coverage.",
+      "end_exclusive": "0x25970",
+      "evidence_sources": [
+        "../README.md",
+        "../STATUS_CHAIN.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit PC-relative literal or pointer cell, rendered as data.",
+      "name": "main-literals",
+      "sha256": "db26d04e760c59abd030a371ff9ae17dfc63e17500f11d4a566a99fe5078421e",
+      "start": "0x25934"
+    },
+    {
+      "boundary_evidence": "Bounded evidence interval; not an assertion of complete function or whole-program coverage.",
+      "end_exclusive": "0x1c740",
+      "evidence_sources": [
+        "../README.md",
+        "../STATUS_CHAIN.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "A32 instruction witnesses and aligned direct calls; no mapping symbols survive.",
+      "name": "callback-trampoline",
+      "sha256": "ffe81b0551966ba52353cfaac1b722fe4ef81af97f0792454b2ea212a99003e0",
+      "start": "0x1c734"
+    },
+    {
+      "boundary_evidence": "Bounded evidence interval; not an assertion of complete function or whole-program coverage.",
+      "end_exclusive": "0x227f8",
+      "evidence_sources": [
+        "../README.md",
+        "../STATUS_CHAIN.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "A32 instruction witnesses and aligned direct calls; no mapping symbols survive.",
+      "name": "argument-wrapper",
+      "sha256": "da07bcdea0dd7a977b03bdf7d653b8939eb26e2968a7bda280cfe0346d849baa",
+      "start": "0x22424"
+    },
+    {
+      "boundary_evidence": "Bounded evidence interval; not an assertion of complete function or whole-program coverage.",
+      "end_exclusive": "0xe6618",
+      "evidence_sources": [
+        "../README.md",
+        "../STATUS_CHAIN.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "A32 instruction witnesses and aligned direct calls; no mapping symbols survive.",
+      "name": "worker-early-return",
+      "sha256": "1f6d5f11a414b111f59b7569bc14eb111603172601a23fc3c19e374a3f0e1c24",
+      "start": "0xe6524"
+    },
+    {
+      "boundary_evidence": "Bounded evidence interval; not an assertion of complete function or whole-program coverage.",
+      "end_exclusive": "0xe67b4",
+      "evidence_sources": [
+        "../README.md",
+        "../STATUS_CHAIN.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "A32 instruction witnesses and aligned direct calls; no mapping symbols survive.",
+      "name": "worker-cleanup-return",
+      "sha256": "76fa9ffe12179a2147fd3a20f5467fa1a224fd895e68188367900bb29aacf8ac",
+      "start": "0xe66d0"
+    },
+    {
+      "boundary_evidence": "Bounded evidence interval; not an assertion of complete function or whole-program coverage.",
+      "end_exclusive": "0x45238c",
+      "evidence_sources": [
+        "../README.md",
+        "../STATUS_CHAIN.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "A32 instruction witnesses and aligned direct calls; no mapping symbols survive.",
+      "name": "libc-startup-main",
+      "sha256": "f9ef3f21a4d361a2e90709c0ffbc7fa817c14d4dd2b96159baf9e59c8d8d9dff",
+      "start": "0x45231c"
+    },
+    {
+      "boundary_evidence": "Bounded evidence interval; not an assertion of complete function or whole-program coverage.",
+      "end_exclusive": "0x452390",
+      "evidence_sources": [
+        "../README.md",
+        "../STATUS_CHAIN.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Explicit PC-relative literal or pointer cell, rendered as data.",
+      "name": "libc-startup-literal",
+      "sha256": "df6e34d8c4df7407d91f939304009e3987769581b01f63f7ee45df89e7dc6061",
+      "start": "0x45238c"
+    },
+    {
+      "boundary_evidence": "Bounded evidence interval; not an assertion of complete function or whole-program coverage.",
+      "end_exclusive": "0x158b8",
+      "evidence_sources": [
+        "../README.md",
+        "../STATUS_CHAIN.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "A32 instruction witnesses and aligned direct calls; no mapping symbols survive.",
+      "name": "exit-cleanup",
+      "sha256": "5cd7668e2c54246e6fbb88759f9ae2a68ecf7777627d23ee6acfd7bf7575d869",
+      "start": "0x1589c"
+    },
+    {
+      "boundary_evidence": "Bounded evidence interval; not an assertion of complete function or whole-program coverage.",
+      "end_exclusive": "0x4640b8",
+      "evidence_sources": [
+        "../README.md",
+        "../STATUS_CHAIN.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "A32 instruction witnesses and aligned direct calls; no mapping symbols survive.",
+      "name": "exit-syscalls",
+      "sha256": "f0cefb709201bcd51e05aeea20d2875879febd63b24bb4e2cbb4f6934e9a4376",
+      "start": "0x46409c"
+    },
+    {
+      "boundary_evidence": "Bounded evidence interval; not an assertion of complete function or whole-program coverage.",
+      "end_exclusive": "0xe9360",
+      "evidence_sources": [
+        "../README.md",
+        "../STATUS_CHAIN.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "A32 instruction witnesses and aligned direct calls; no mapping symbols survive.",
+      "name": "cli-direct-exits",
+      "sha256": "8673a0392a021a2f581156164827ddfe72fd3f4a64a6c93ad3fa48305eaccf2a",
+      "start": "0xe9348"
+    }
+  ],
+  "schema": 1,
+  "source_sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077"
+}

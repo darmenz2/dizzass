@@ -48,3 +48,7 @@ jobs:
           diff -r "$RUNNER_TEMP/dizzass-cgminer-slices" research/vnishnet-t21-aml-nand-1.3.5/20-disassembly/startup/cgminer-slices
       - name: Verify bounded hwscan dispatch evidence without firmware execution
         run: python -B research/vnishnet-t21-aml-nand-1.3.5/20-disassembly/hwscan-dispatch/verify_evidence.py
+      - name: Verify hwscan normal-return status evidence as data
+        run: |
+          python -B research/vnishnet-t21-aml-nand-1.3.5/20-disassembly/hwscan-exit-status/verify_evidence.py
+          python -B -m unittest discover -s research/vnishnet-t21-aml-nand-1.3.5/20-disassembly/hwscan-exit-status/tests -v
