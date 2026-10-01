@@ -60,3 +60,34 @@ int32_t vn135_aml_uart_send_135(void *opaque,void *device,
     return vn135_aml_send_command(b->uart,&transport,payload,length);
 }
 #endif
+
+/* Original d21dc: transport/chip-method initialization, observable projection.
+ * The eight selected constructor bodies remain explicit required boundaries.
+ * Proof: research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/
+ *        transport-init/STATIC_PROOF.md
+ */
+#ifdef VN135_TRANSPORT_INITIALIZE_135
+#include "integration/transport_initialize_135.h"
+
+int32_t vn135_transport_initialize_135(uint32_t platform, uint32_t chip,
+    uint32_t subtype, const struct vn135_transport_initialize_view_135 *v,
+    const struct vn135_transport_initialize_ops_135 *o, void *context)
+{
+    static const uint32_t send[] = {
+        UINT32_C(0x10fa38), UINT32_C(0x11d0cc), UINT32_C(0x117f7c),
+        UINT32_C(0xf8048), UINT32_C(0x109740)
+    };
+    static const uint32_t initialize[] = {
+        UINT32_C(0xd2db8), UINT32_C(0xd8c78), UINT32_C(0xea7c8),
+        UINT32_C(0xdcbe0), UINT32_C(0xe1450), UINT32_C(0xe60e8),
+        UINT32_C(0xf0560), UINT32_C(0xf4448)
+    };
+    if (platform >= sizeof(send) / sizeof(send[0])) return -1;
+    uint32_t selected = send[platform];
+    if (platform == 0 && subtype != 0) selected = UINT32_C(0x10f938);
+    *v->shared_send_method = selected;
+    *v->common_method = UINT32_C(0xd253c);
+    if (chip >= sizeof(initialize) / sizeof(initialize[0])) return -1;
+    return o->initialize(context, initialize[chip], v->chip_methods);
+}
+#endif

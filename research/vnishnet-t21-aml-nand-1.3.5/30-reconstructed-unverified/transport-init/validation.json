@@ -1,0 +1,85 @@
+{
+  "schema": 1,
+  "base_commit": "d3a93f424467bc9e3f2fcfc03feeadc75848141d",
+  "base_tree": "1161f5393428ab87f7ddc5631579fd7235368250",
+  "scope": "new host C decision tests and static data consistency; not vendor execution parity",
+  "compiler": "cc (Debian 14.2.0-19) 14.2.0",
+  "host": {
+    "cases": 767,
+    "checks": 5507,
+    "result": "pass"
+  },
+  "semantic_controls": {
+    "compiled": 15,
+    "ordinary_exit_1": 15,
+    "compile_failures_counted": 0,
+    "crashes_counted": 0
+  },
+  "static_checker": {
+    "tests": 15,
+    "positive": 1,
+    "inconsistent_data_controls": 14,
+    "result": "pass"
+  },
+  "sanitizers": {
+    "address": true,
+    "undefined": true,
+    "cases": 767,
+    "checks": 5507,
+    "leak_detection": false,
+    "result": "pass"
+  },
+  "both_module_macros_compile": "pass",
+  "private_static_regeneration": {
+    "artifacts": 64,
+    "reference_regenerated": [
+      "cgminer",
+      "hwscan"
+    ],
+    "static_windows": 32,
+    "witness_bytes": 1460
+  },
+  "python_optimized_verifier": "pass",
+  "prior_static_lab": {
+    "tests": 49,
+    "skips": 0,
+    "result": "pass",
+    "note": "unchanged source snapshot; static tooling only"
+  },
+  "prior_exit_evidence": {
+    "tests": 16,
+    "skips": 0,
+    "result": "pass",
+    "note": "unchanged source snapshot; static tooling only"
+  },
+  "clang_local": "unavailable; no local pass claimed",
+  "full_native_runtime_suite": "not run",
+  "original_instruction_execution": false,
+  "firmware_process_execution": false,
+  "hardware_or_device_access": false,
+  "development_corrections": [
+    "Restored connector source snapshots had one additional newline, corrected to exact Git blobs before candidate editing.",
+    "Removed an initially drafted NULL output-identity test/precondition extension before review freeze; original valid-platform output must be writable and non-NULL.",
+    "Strengthened invalid-platform coverage to include valid chip selectors and preserved additional callback-owned output mutations."
+  ],
+  "logs": {
+    "validation-logs/exit-proof-regression.log": "eb4a2ebb3fe4524dda5cbc6c79ef62973b4001c27a127d9fb0829d80d94bbd8a",
+    "validation-logs/host-all.log": "59b12e74b8f69aa8363c5dfaa35c961e3aaced9d77d913791aeb66fbba10854e",
+    "validation-logs/lab-regression.log": "ec5fa7d337d9ca0c548b026aa60c412a6d9cf1e60f0ceba5673ff1253c1ec6db",
+    "validation-logs/private-regeneration.json": "198080dea60c5a77dc5d026824b3edd16b5d6901ea99368e7fd9694255705e49",
+    "validation-logs/python-o.json": "b4a7771987ad93281bab3768230a4c1d7a7ee7838dc6707406c633757347ffc1"
+  },
+  "guard_only_checks": {
+    "cases": 206,
+    "accepted": 15,
+    "rejected": 191,
+    "full_git_tree_cases": 91,
+    "synthetic_shell_cases": 115,
+    "normal_and_optimized": "pass; byte-identical receipts",
+    "workflow_git_blob": "40d996ad4f38272641014a34b7127905f60a4af4",
+    "receipt_sha256": "357d5dd2391a65d212cb04dcc894e00fc8e8a068f88dfddde3027acbf52d8ce6",
+    "thermal_trio_preserved": true,
+    "regression_commands_preserved": true
+  },
+  "final_base_refresh": "all three baseline files and seven unchanged scoped source blobs verified against accepted thermal merge; host and static regeneration rerun"
+}

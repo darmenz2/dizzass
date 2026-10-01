@@ -1,0 +1,21 @@
+test_artifact_hash (test_evidence.EvidenceTests.test_artifact_hash) ... ok
+test_artifact_set (test_evidence.EvidenceTests.test_artifact_set) ... ok
+test_branch_condition (test_evidence.EvidenceTests.test_branch_condition) ... ok
+test_branch_link (test_evidence.EvidenceTests.test_branch_link) ... ok
+test_branch_target (test_evidence.EvidenceTests.test_branch_target) ... ok
+test_execution_flag (test_evidence.EvidenceTests.test_execution_flag) ... ok
+test_frozen_data (test_evidence.EvidenceTests.test_frozen_data) ... ok
+test_got_offset (test_evidence.EvidenceTests.test_got_offset) ... ok
+test_pc_relative_target (test_evidence.EvidenceTests.test_pc_relative_target) ... ok
+test_plan_hash (test_evidence.EvidenceTests.test_plan_hash) ... ok
+test_plan_object_disagreement (test_evidence.EvidenceTests.test_plan_object_disagreement) ... ok
+test_pointer_cell (test_evidence.EvidenceTests.test_pointer_cell) ... ok
+test_shell_identity (test_evidence.EvidenceTests.test_shell_identity) ... ok
+test_shell_scope (test_evidence.EvidenceTests.test_shell_scope) ... ok
+test_word (test_evidence.EvidenceTests.test_word) ... ok
+test_wrong_source (test_evidence.EvidenceTests.test_wrong_source) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.027s
+
+OK

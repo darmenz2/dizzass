@@ -1,0 +1,12 @@
+{
+  "base_commit": "d3a93f424467bc9e3f2fcfc03feeadc75848141d",
+  "base_tree": "1161f5393428ab87f7ddc5631579fd7235368250",
+  "unchanged_prefixes": [
+    {
+      "path": "libbitmain/src/transport-dispatch.c",
+      "bytes": 2305,
+      "sha256": "a367d73a675bc8da68c99923f4f8d500cdec5d19dc8438992e05f8f004636def",
+      "git_blob": "8ceb8405390e3eaf9f7b34480eb3cdd040a3b0ef"
+    }
+  ]
+}

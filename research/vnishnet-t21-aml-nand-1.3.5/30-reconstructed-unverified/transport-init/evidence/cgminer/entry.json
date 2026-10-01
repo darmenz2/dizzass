@@ -1,0 +1,21 @@
+{
+  "boundary_evidence": "Selected bounded static witnesses; callees and whole-program reachability are not implied.",
+  "bytes": 48,
+  "caveat": "Linear static rendering; literal pools may remain in instruction windows. No complete CFG, runtime path, function extent or parity is proved.",
+  "disassembler": "capstone",
+  "disassembler_version": "5.0.6",
+  "end_exclusive": "0x000d220c",
+  "evidence_sources": [
+    "../../STATIC_PROOF.md"
+  ],
+  "file_offset": 795100,
+  "firmware_executed": false,
+  "mode": "arm",
+  "mode_evidence": "Manual A32 block/jump-table/literal/GOT classification; source kept as data.",
+  "name": "entry",
+  "schema": 1,
+  "segment_flags": 5,
+  "sha256": "4ae9693a4957e7c86153fef52b61ccb99c223013c4de1fcb8a206e4777e6e55e",
+  "source_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "start": "0x000d21dc"
+}

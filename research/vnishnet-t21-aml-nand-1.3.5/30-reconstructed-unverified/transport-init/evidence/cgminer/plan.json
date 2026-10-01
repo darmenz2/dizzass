@@ -1,0 +1,186 @@
+{
+  "ranges": [
+    {
+      "boundary_evidence": "Selected bounded static witnesses; callees and whole-program reachability are not implied.",
+      "end_exclusive": "0xd220c",
+      "evidence_sources": [
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Manual A32 block/jump-table/literal/GOT classification; source kept as data.",
+      "name": "entry",
+      "sha256": "4ae9693a4957e7c86153fef52b61ccb99c223013c4de1fcb8a206e4777e6e55e",
+      "start": "0xd21dc"
+    },
+    {
+      "boundary_evidence": "Selected bounded static witnesses; callees and whole-program reachability are not implied.",
+      "end_exclusive": "0xd2220",
+      "evidence_sources": [
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Manual A32 block/jump-table/literal/GOT classification; source kept as data.",
+      "name": "platform-jumps",
+      "sha256": "d862041daeb280ccb9b343b0e128f5c0f5ea62c2d3c36dd8c939afe6b284dc03",
+      "start": "0xd220c"
+    },
+    {
+      "boundary_evidence": "Selected bounded static witnesses; callees and whole-program reachability are not implied.",
+      "end_exclusive": "0xd22f8",
+      "evidence_sources": [
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Manual A32 block/jump-table/literal/GOT classification; source kept as data.",
+      "name": "platform-method-and-stores",
+      "sha256": "609da626622598543374369f15fe30c9463e44a9997db23735183d44b105d02d",
+      "start": "0xd2220"
+    },
+    {
+      "boundary_evidence": "Selected bounded static witnesses; callees and whole-program reachability are not implied.",
+      "end_exclusive": "0xd2318",
+      "evidence_sources": [
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Manual A32 block/jump-table/literal/GOT classification; source kept as data.",
+      "name": "chip-jumps",
+      "sha256": "5e4392f7c4b0df5b98e3bf488ba1eaf2d5dca1e9aa8b07ebfaae4fea4c46ebf3",
+      "start": "0xd22f8"
+    },
+    {
+      "boundary_evidence": "Selected bounded static witnesses; callees and whole-program reachability are not implied.",
+      "end_exclusive": "0xd24ec",
+      "evidence_sources": [
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Manual A32 block/jump-table/literal/GOT classification; source kept as data.",
+      "name": "initializer-branches",
+      "sha256": "1b0510def391f50baa2743c00e97820a9c15a5940f85c794bedcd9051da25486",
+      "start": "0xd2318"
+    },
+    {
+      "boundary_evidence": "Selected bounded static witnesses; callees and whole-program reachability are not implied.",
+      "end_exclusive": "0xd253c",
+      "evidence_sources": [
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Manual A32 block/jump-table/literal/GOT classification; source kept as data.",
+      "name": "literals",
+      "sha256": "e97be238bac5bdc64b9b52d1d72cbf868630da149627e27bfcac51ea3fc99708",
+      "start": "0xd24ec"
+    },
+    {
+      "boundary_evidence": "Selected bounded static witnesses; callees and whole-program reachability are not implied.",
+      "end_exclusive": "0x73e30",
+      "evidence_sources": [
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Manual A32 block/jump-table/literal/GOT classification; source kept as data.",
+      "name": "native-backend-caller",
+      "sha256": "2c9cee36061321824e90e76c879f3206e903e7cd6e9b50e9046f4900e25a34fe",
+      "start": "0x73dd4"
+    },
+    {
+      "boundary_evidence": "Selected bounded static witnesses; callees and whole-program reachability are not implied.",
+      "end_exclusive": "0x5df7c0",
+      "evidence_sources": [
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Manual A32 block/jump-table/literal/GOT classification; source kept as data.",
+      "name": "got-platform1",
+      "sha256": "18fcd07db62a0595b02a93593ae2e5268d8099d43bb05af9ea70617a888fcda6",
+      "start": "0x5df7bc"
+    },
+    {
+      "boundary_evidence": "Selected bounded static witnesses; callees and whole-program reachability are not implied.",
+      "end_exclusive": "0x5dfe34",
+      "evidence_sources": [
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Manual A32 block/jump-table/literal/GOT classification; source kept as data.",
+      "name": "got-platform0-nonzero",
+      "sha256": "5bf325e6d272e44aa9af0ad1af5306ce98edd780454b1e4fb09453ffcd8b4246",
+      "start": "0x5dfe30"
+    },
+    {
+      "boundary_evidence": "Selected bounded static witnesses; callees and whole-program reachability are not implied.",
+      "end_exclusive": "0x5df56c",
+      "evidence_sources": [
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Manual A32 block/jump-table/literal/GOT classification; source kept as data.",
+      "name": "got-platform0-zero",
+      "sha256": "82b4f4ced34fd170a701f354d1d3e8c326eb31af7708d7c9e1a76ce8088a6ae3",
+      "start": "0x5df568"
+    },
+    {
+      "boundary_evidence": "Selected bounded static witnesses; callees and whole-program reachability are not implied.",
+      "end_exclusive": "0x5dfa6c",
+      "evidence_sources": [
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Manual A32 block/jump-table/literal/GOT classification; source kept as data.",
+      "name": "got-platform2",
+      "sha256": "4a4361341b34072a40e7b411a10af4e56040bf19eae93ab67f0fac9189b89ca5",
+      "start": "0x5dfa68"
+    },
+    {
+      "boundary_evidence": "Selected bounded static witnesses; callees and whole-program reachability are not implied.",
+      "end_exclusive": "0x5dfc84",
+      "evidence_sources": [
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Manual A32 block/jump-table/literal/GOT classification; source kept as data.",
+      "name": "got-platform3",
+      "sha256": "a495c14e90c6690ea29ae082f6e277cadf74bfae65e4d1a81abfc2a47fb6f438",
+      "start": "0x5dfc80"
+    },
+    {
+      "boundary_evidence": "Selected bounded static witnesses; callees and whole-program reachability are not implied.",
+      "end_exclusive": "0x5df28c",
+      "evidence_sources": [
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Manual A32 block/jump-table/literal/GOT classification; source kept as data.",
+      "name": "got-platform4",
+      "sha256": "7e44c5fc5454165d8369e39917d79f50182d03b2d07d719ab3b581a238ecc1dd",
+      "start": "0x5df288"
+    },
+    {
+      "boundary_evidence": "Selected bounded static witnesses; callees and whole-program reachability are not implied.",
+      "end_exclusive": "0x5df458",
+      "evidence_sources": [
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Manual A32 block/jump-table/literal/GOT classification; source kept as data.",
+      "name": "got-transport-object",
+      "sha256": "3545bdc02526873ef554410e7d4820a684cf487d2901fcce1e577bb607ca3ebf",
+      "start": "0x5df454"
+    },
+    {
+      "boundary_evidence": "Selected bounded static witnesses; callees and whole-program reachability are not implied.",
+      "end_exclusive": "0x5dead8",
+      "evidence_sources": [
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Manual A32 block/jump-table/literal/GOT classification; source kept as data.",
+      "name": "got-common-callback",
+      "sha256": "d2f06efae3b7b0b06a94261b55d549fd732cd4cf7234abab8454bfd82dafc534",
+      "start": "0x5dead4"
+    }
+  ],
+  "schema": 1,
+  "source_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9"
+}

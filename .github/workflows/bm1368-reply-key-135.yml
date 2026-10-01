@@ -3,6 +3,11 @@ on:
   pull_request:
     branches: [work/reconstruction]
     paths:
+      - integration/tests/current_dependency_pins_135.py
+      - integration/tests/test_current_dependency_pins_135.py
+      - integration/CURRENT_DEPENDENCY_PINS_135.md
+      - integration/thermal-routes-135.mk
+      - include/xminer/recovery/aml_platform.h
       - libbitmain/src/chip/chip1368-reply-key.c
       - src/backend/base.c
       - integration/*135.h
@@ -42,6 +47,11 @@ jobs:
           git checkout -q --detach FETCH_HEAD
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
           printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Current dependency pin compatibility controls
+        run: |
+          cd "$SOURCE_ROOT"
+          python3 integration/tests/test_current_dependency_pins_135.py
+          python3 -O integration/tests/test_current_dependency_pins_135.py
       - name: Original getter table registration and shutdown comparisons
         run: |
           cd "$SOURCE_ROOT"

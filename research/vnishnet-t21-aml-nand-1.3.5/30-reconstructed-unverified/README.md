@@ -9,3 +9,7 @@ The extracted bytes and disassembly remain separate evidence tiers. Do not execu
 ## AML UART pathname result
 
 [AML UART pathname reconstruction](aml-uart-path/README.md) adds the missing pure getter to the existing original-path AML platform module. It preserves the three routes and non-NULL empty-string result for unsigned out-of-range indices, with cross-ELF static evidence and host tests using the existing caller's explicit path seam. It performs no device I/O or production registration.
+
+## Transport/chip initialization
+
+The [bounded initializer](transport-init/README.md) adds the missing original selection and partial-write order, with explicit unresolved constructor callbacks and host/static tests. It does not register a production driver.
