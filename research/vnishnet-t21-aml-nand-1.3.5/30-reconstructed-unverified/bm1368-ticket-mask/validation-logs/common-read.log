@@ -1,0 +1,281 @@
+/workspace/scratch/5d7af20e7f5a/dizzass-startup/.venv/bin/python -B tests/run_host.py --root ../../../.. --test tests/test_common_read_register.c --build build/ordinary --cc cc
+COMMON_READ_PASS cases=3086 checks=45714
+/workspace/scratch/5d7af20e7f5a/dizzass-startup/.venv/bin/python -B tests/negative_controls.py --root ../../../.. --test tests/test_common_read_register.c --cc cc
+{
+  "baseline_pass": true,
+  "compiled_controls": 20,
+  "records": [
+    {
+      "control": "baseline",
+      "returncode": 0,
+      "output": "COMMON_READ_PASS cases=3086 checks=45714"
+    },
+    {
+      "control": "broadcast-nonzero",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=56 memcmp(body,r->expected,5)==0"
+    },
+    {
+      "control": "broadcast-equals-one",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=56 memcmp(body,r->expected,5)==0"
+    },
+    {
+      "control": "ignore-chip-address",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=56 memcmp(body,r->expected,5)==0"
+    },
+    {
+      "control": "cache-index-as-address",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=56 memcmp(body,r->expected,5)==0"
+    },
+    {
+      "control": "ignore-register",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=56 memcmp(body,r->expected,5)==0"
+    },
+    {
+      "control": "reject-high-register",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=103 vn135_common_read_register_135(&device,modes[m],a<7?&chip:NULL,registers[g],&transport,&log)==(r.status==0?0:-1)"
+    },
+    {
+      "control": "duplicate-aml-prefix",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=56 memcmp(body,r->expected,5)==0"
+    },
+    {
+      "control": "short-body",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=55 device==r->identity && n==5"
+    },
+    {
+      "control": "accept-positive",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=103 vn135_common_read_register_135(&device,modes[m],a<7?&chip:NULL,registers[g],&transport,&log)==(r.status==0?0:-1)"
+    },
+    {
+      "control": "accept-negative",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=103 vn135_common_read_register_135(&device,modes[m],a<7?&chip:NULL,registers[g],&transport,&log)==(r.status==0?0:-1)"
+    },
+    {
+      "control": "wrong-line",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=39 d->source_line==103 && d->severity==1"
+    },
+    {
+      "control": "wrong-severity",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=39 d->source_line==103 && d->severity==1"
+    },
+    {
+      "control": "wrong-index-increment",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=40 d->index_bits==index+UINT32_C(1)"
+    },
+    {
+      "control": "wrong-module",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=35 strcmp(d->module,\"driver\")==0"
+    },
+    {
+      "control": "wrong-format",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=38 strcmp(d->format,\"chain#%d - failed to send GET_STATUS command\")==0"
+    },
+    {
+      "control": "missing-log",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=104 r.sends==1 && r.logs==(unsigned)(r.status!=0)"
+    },
+    {
+      "control": "double-log",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=64 r->sends==1 && r->logs==0 && r->status!=0"
+    },
+    {
+      "control": "wrong-error-status",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=103 vn135_common_read_register_135(&device,modes[m],a<7?&chip:NULL,registers[g],&transport,&log)==(r.status==0?0:-1)"
+    },
+    {
+      "control": "double-send",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=54 r->sends==0 && r->logs==0"
+    },
+    {
+      "control": "index-read-before-send",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=40 d->index_bits==index+UINT32_C(1)"
+    }
+  ]
+}
+/workspace/scratch/5d7af20e7f5a/dizzass-startup/.venv/bin/python -B verify_evidence.py --root ../../../..
+{
+  "active_dependencies_checked": 17,
+  "active_dependency_total": 17,
+  "base_commit": "98ad426482947cf29beed1371a63136f8aac2b0c",
+  "base_provenance_files": 18,
+  "base_tree": "70d1e1b0e8e3786db2b843503dabf90ad486c6d1",
+  "decoded_instruction_counts": {
+    "cgminer": {
+      "body": 82,
+      "crc_body": 76,
+      "string_initializer_body": 98
+    },
+    "hwscan": {
+      "body": 48,
+      "crc_body": 61
+    }
+  },
+  "evidence_mode": "static fixed snapshot; no vendor execution",
+  "hardware_or_runtime_parity_proven": false,
+  "instruction_interpreter_used": false,
+  "original_executed": false,
+  "original_image_selections_checked": {},
+  "parity_identities_checked": 7,
+  "research_index_active_pin": false,
+  "status": "PASS"
+}
+/workspace/scratch/5d7af20e7f5a/dizzass-startup/.venv/bin/python -B tests/test_evidence.py --root ../../../..
+test_active_dependency_receipt_hash_cannot_be_replaced (__main__.EvidenceControls.test_active_dependency_receipt_hash_cannot_be_replaced) ... ok
+test_added_raw_metadata_is_rejected (__main__.EvidenceControls.test_added_raw_metadata_is_rejected) ... ok
+test_all_17_actual_dependencies_match (__main__.EvidenceControls.test_all_17_actual_dependencies_match) ... ok
+test_arm_branch_address_arithmetic (__main__.EvidenceControls.test_arm_branch_address_arithmetic) ... ok
+test_assembly_is_re_rendered (__main__.EvidenceControls.test_assembly_is_re_rendered) ... ok
+test_base_provenance_receipt_is_anchored (__main__.EvidenceControls.test_base_provenance_receipt_is_anchored) ... ok
+test_branch_target_metadata_rejected (__main__.EvidenceControls.test_branch_target_metadata_rejected) ... ok
+test_code_data_boundary_is_pinned (__main__.EvidenceControls.test_code_data_boundary_is_pinned) ... ok
+test_complete_self_contained_snapshot (__main__.EvidenceControls.test_complete_self_contained_snapshot) ... ok
+test_crc_bit_count_is_32 (__main__.EvidenceControls.test_crc_bit_count_is_32) ... ok
+test_crc_final_return_is_included (__main__.EvidenceControls.test_crc_final_return_is_included) ... ok
+test_crc_recurrence_word_is_pinned (__main__.EvidenceControls.test_crc_recurrence_word_is_pinned) ... ok
+test_crc_source_same_length_mutation_rejected (__main__.EvidenceControls.test_crc_source_same_length_mutation_rejected) ... ok
+test_current_index_load_offset (__main__.EvidenceControls.test_current_index_load_offset) ... ok
+test_data_is_not_counted_as_code (__main__.EvidenceControls.test_data_is_not_counted_as_code) ... ok
+test_dead_duplicate_is_preserved (__main__.EvidenceControls.test_dead_duplicate_is_preserved) ... ok
+test_encoder_source_modification_rejected (__main__.EvidenceControls.test_encoder_source_modification_rejected) ... ok
+test_every_other_active_dependency_remains_a_full_file_pin (__main__.EvidenceControls.test_every_other_active_dependency_remains_a_full_file_pin) ... ok
+test_exact_reset_transition_retains_constructor_receipt (__main__.EvidenceControls.test_exact_reset_transition_retains_constructor_receipt) ... ok
+test_exact_ticket_transition_retains_reset_witness (__main__.EvidenceControls.test_exact_ticket_transition_retains_reset_witness) ... ok
+test_fixed_pins_cannot_be_replaced_by_consistent_metadata (__main__.EvidenceControls.test_fixed_pins_cannot_be_replaced_by_consistent_metadata) ... ok
+test_get_status_format_must_not_be_renamed (__main__.EvidenceControls.test_get_status_format_must_not_be_renamed) ... ok
+test_got_current_storage_word_rejected (__main__.EvidenceControls.test_got_current_storage_word_rejected) ... ok
+test_initializer_key_instruction_rejected (__main__.EvidenceControls.test_initializer_key_instruction_rejected) ... ok
+test_initializer_length_instruction_rejected (__main__.EvidenceControls.test_initializer_length_instruction_rejected) ... ok
+test_initializer_pointer_rejected (__main__.EvidenceControls.test_initializer_pointer_rejected) ... ok
+test_initializer_registration_slot_rejected (__main__.EvidenceControls.test_initializer_registration_slot_rejected) ... ok
+test_instruction_count_is_pinned (__main__.EvidenceControls.test_instruction_count_is_pinned) ... ok
+test_literal_edge_target_rejected (__main__.EvidenceControls.test_literal_edge_target_rejected) ... ok
+test_literal_pool_is_pinned (__main__.EvidenceControls.test_literal_pool_is_pinned) ... ok
+test_literal_use_register_rejected (__main__.EvidenceControls.test_literal_use_register_rejected) ... ok
+test_logger_line_is_103 (__main__.EvidenceControls.test_logger_line_is_103) ... ok
+test_minus_one_return_cannot_be_changed_to_zero (__main__.EvidenceControls.test_minus_one_return_cannot_be_changed_to_zero) ... ok
+test_missing_branch_metadata_rejected (__main__.EvidenceControls.test_missing_branch_metadata_rejected) ... ok
+test_old_plain_hwscan_literal_rejected (__main__.EvidenceControls.test_old_plain_hwscan_literal_rejected) ... ok
+test_optimized_python_rejects_corruption (__main__.EvidenceControls.test_optimized_python_rejects_corruption) ... ok
+test_optional_address_is_word_load_not_byte_load (__main__.EvidenceControls.test_optional_address_is_word_load_not_byte_load) ... ok
+test_optional_original_mode_rejects_fake_elf (__main__.EvidenceControls.test_optional_original_mode_rejects_fake_elf) ... ok
+test_original_execution_claim_rejected (__main__.EvidenceControls.test_original_execution_claim_rejected) ... ok
+test_packet_broadcast_bit_zero_word (__main__.EvidenceControls.test_packet_broadcast_bit_zero_word) ... ok
+test_parity_guard_bit_is_pinned (__main__.EvidenceControls.test_parity_guard_bit_is_pinned) ... ok
+test_register_store_byte_offset (__main__.EvidenceControls.test_register_store_byte_offset) ... ok
+test_research_index_edit_is_allowed_by_active_pins (__main__.EvidenceControls.test_research_index_edit_is_allowed_by_active_pins) ... ok
+test_reset_full_identity_predicates_are_independent (__main__.EvidenceControls.test_reset_full_identity_predicates_are_independent) ... ok
+test_reset_gate_shape_is_checked_without_full_source_hash (__main__.EvidenceControls.test_reset_gate_shape_is_checked_without_full_source_hash) ... ok
+test_reset_prefix_checked_without_ticket_full_hash (__main__.EvidenceControls.test_reset_prefix_checked_without_ticket_full_hash) ... ok
+test_reset_preserved_prefix_is_checked_without_full_source_hash (__main__.EvidenceControls.test_reset_preserved_prefix_is_checked_without_full_source_hash) ... ok
+test_reset_source_rejects_old_constructor_and_nonce_sources (__main__.EvidenceControls.test_reset_source_rejects_old_constructor_and_nonce_sources) ... ok
+test_reset_source_rejects_prefix_suffix_truncation_and_extra_bytes (__main__.EvidenceControls.test_reset_source_rejects_prefix_suffix_truncation_and_extra_bytes) ... ok
+test_reset_transition_is_bound_to_exact_original_path_and_identity (__main__.EvidenceControls.test_reset_transition_is_bound_to_exact_original_path_and_identity) ... ok
+test_section_name_metadata_rejected (__main__.EvidenceControls.test_section_name_metadata_rejected) ... ok
+test_send_length_is_five (__main__.EvidenceControls.test_send_length_is_five) ... ok
+test_source_image_hash_is_immutable (__main__.EvidenceControls.test_source_image_hash_is_immutable) ... ok
+test_source_image_size_is_immutable (__main__.EvidenceControls.test_source_image_size_is_immutable) ... ok
+test_static_pin_manifest_is_anchored (__main__.EvidenceControls.test_static_pin_manifest_is_anchored) ... ok
+test_string_length_includes_nul (__main__.EvidenceControls.test_string_length_includes_nul) ... ok
+test_ticket_full_identity_predicates_are_independent (__main__.EvidenceControls.test_ticket_full_identity_predicates_are_independent) ... ok
+test_ticket_gate_shape_checked_without_full_hash (__main__.EvidenceControls.test_ticket_gate_shape_checked_without_full_hash) ... ok
+test_ticket_semantics_are_bound_by_current_source_identity (__main__.EvidenceControls.test_ticket_semantics_are_bound_by_current_source_identity) ... ok
+test_transport_source_modification_rejected (__main__.EvidenceControls.test_transport_source_modification_rejected) ... ok
+test_unwind_boundary_rejected (__main__.EvidenceControls.test_unwind_boundary_rejected) ... ok
+test_wrong_diagnostic_path_rejected (__main__.EvidenceControls.test_wrong_diagnostic_path_rejected) ... ok
+test_xor_key_is_immutable (__main__.EvidenceControls.test_xor_key_is_immutable) ... ok
+
+----------------------------------------------------------------------
+Ran 63 tests in 0.822s
+
+OK
+/workspace/scratch/5d7af20e7f5a/dizzass-startup/.venv/bin/python -O -B tests/test_evidence.py --root ../../../..
+test_active_dependency_receipt_hash_cannot_be_replaced (__main__.EvidenceControls.test_active_dependency_receipt_hash_cannot_be_replaced) ... ok
+test_added_raw_metadata_is_rejected (__main__.EvidenceControls.test_added_raw_metadata_is_rejected) ... ok
+test_all_17_actual_dependencies_match (__main__.EvidenceControls.test_all_17_actual_dependencies_match) ... ok
+test_arm_branch_address_arithmetic (__main__.EvidenceControls.test_arm_branch_address_arithmetic) ... ok
+test_assembly_is_re_rendered (__main__.EvidenceControls.test_assembly_is_re_rendered) ... ok
+test_base_provenance_receipt_is_anchored (__main__.EvidenceControls.test_base_provenance_receipt_is_anchored) ... ok
+test_branch_target_metadata_rejected (__main__.EvidenceControls.test_branch_target_metadata_rejected) ... ok
+test_code_data_boundary_is_pinned (__main__.EvidenceControls.test_code_data_boundary_is_pinned) ... ok
+test_complete_self_contained_snapshot (__main__.EvidenceControls.test_complete_self_contained_snapshot) ... ok
+test_crc_bit_count_is_32 (__main__.EvidenceControls.test_crc_bit_count_is_32) ... ok
+test_crc_final_return_is_included (__main__.EvidenceControls.test_crc_final_return_is_included) ... ok
+test_crc_recurrence_word_is_pinned (__main__.EvidenceControls.test_crc_recurrence_word_is_pinned) ... ok
+test_crc_source_same_length_mutation_rejected (__main__.EvidenceControls.test_crc_source_same_length_mutation_rejected) ... ok
+test_current_index_load_offset (__main__.EvidenceControls.test_current_index_load_offset) ... ok
+test_data_is_not_counted_as_code (__main__.EvidenceControls.test_data_is_not_counted_as_code) ... ok
+test_dead_duplicate_is_preserved (__main__.EvidenceControls.test_dead_duplicate_is_preserved) ... ok
+test_encoder_source_modification_rejected (__main__.EvidenceControls.test_encoder_source_modification_rejected) ... ok
+test_every_other_active_dependency_remains_a_full_file_pin (__main__.EvidenceControls.test_every_other_active_dependency_remains_a_full_file_pin) ... ok
+test_exact_reset_transition_retains_constructor_receipt (__main__.EvidenceControls.test_exact_reset_transition_retains_constructor_receipt) ... ok
+test_exact_ticket_transition_retains_reset_witness (__main__.EvidenceControls.test_exact_ticket_transition_retains_reset_witness) ... ok
+test_fixed_pins_cannot_be_replaced_by_consistent_metadata (__main__.EvidenceControls.test_fixed_pins_cannot_be_replaced_by_consistent_metadata) ... ok
+test_get_status_format_must_not_be_renamed (__main__.EvidenceControls.test_get_status_format_must_not_be_renamed) ... ok
+test_got_current_storage_word_rejected (__main__.EvidenceControls.test_got_current_storage_word_rejected) ... ok
+test_initializer_key_instruction_rejected (__main__.EvidenceControls.test_initializer_key_instruction_rejected) ... ok
+test_initializer_length_instruction_rejected (__main__.EvidenceControls.test_initializer_length_instruction_rejected) ... ok
+test_initializer_pointer_rejected (__main__.EvidenceControls.test_initializer_pointer_rejected) ... ok
+test_initializer_registration_slot_rejected (__main__.EvidenceControls.test_initializer_registration_slot_rejected) ... ok
+test_instruction_count_is_pinned (__main__.EvidenceControls.test_instruction_count_is_pinned) ... ok
+test_literal_edge_target_rejected (__main__.EvidenceControls.test_literal_edge_target_rejected) ... ok
+test_literal_pool_is_pinned (__main__.EvidenceControls.test_literal_pool_is_pinned) ... ok
+test_literal_use_register_rejected (__main__.EvidenceControls.test_literal_use_register_rejected) ... ok
+test_logger_line_is_103 (__main__.EvidenceControls.test_logger_line_is_103) ... ok
+test_minus_one_return_cannot_be_changed_to_zero (__main__.EvidenceControls.test_minus_one_return_cannot_be_changed_to_zero) ... ok
+test_missing_branch_metadata_rejected (__main__.EvidenceControls.test_missing_branch_metadata_rejected) ... ok
+test_old_plain_hwscan_literal_rejected (__main__.EvidenceControls.test_old_plain_hwscan_literal_rejected) ... ok
+test_optimized_python_rejects_corruption (__main__.EvidenceControls.test_optimized_python_rejects_corruption) ... ok
+test_optional_address_is_word_load_not_byte_load (__main__.EvidenceControls.test_optional_address_is_word_load_not_byte_load) ... ok
+test_optional_original_mode_rejects_fake_elf (__main__.EvidenceControls.test_optional_original_mode_rejects_fake_elf) ... ok
+test_original_execution_claim_rejected (__main__.EvidenceControls.test_original_execution_claim_rejected) ... ok
+test_packet_broadcast_bit_zero_word (__main__.EvidenceControls.test_packet_broadcast_bit_zero_word) ... ok
+test_parity_guard_bit_is_pinned (__main__.EvidenceControls.test_parity_guard_bit_is_pinned) ... ok
+test_register_store_byte_offset (__main__.EvidenceControls.test_register_store_byte_offset) ... ok
+test_research_index_edit_is_allowed_by_active_pins (__main__.EvidenceControls.test_research_index_edit_is_allowed_by_active_pins) ... ok
+test_reset_full_identity_predicates_are_independent (__main__.EvidenceControls.test_reset_full_identity_predicates_are_independent) ... ok
+test_reset_gate_shape_is_checked_without_full_source_hash (__main__.EvidenceControls.test_reset_gate_shape_is_checked_without_full_source_hash) ... ok
+test_reset_prefix_checked_without_ticket_full_hash (__main__.EvidenceControls.test_reset_prefix_checked_without_ticket_full_hash) ... ok
+test_reset_preserved_prefix_is_checked_without_full_source_hash (__main__.EvidenceControls.test_reset_preserved_prefix_is_checked_without_full_source_hash) ... ok
+test_reset_source_rejects_old_constructor_and_nonce_sources (__main__.EvidenceControls.test_reset_source_rejects_old_constructor_and_nonce_sources) ... ok
+test_reset_source_rejects_prefix_suffix_truncation_and_extra_bytes (__main__.EvidenceControls.test_reset_source_rejects_prefix_suffix_truncation_and_extra_bytes) ... ok
+test_reset_transition_is_bound_to_exact_original_path_and_identity (__main__.EvidenceControls.test_reset_transition_is_bound_to_exact_original_path_and_identity) ... ok
+test_section_name_metadata_rejected (__main__.EvidenceControls.test_section_name_metadata_rejected) ... ok
+test_send_length_is_five (__main__.EvidenceControls.test_send_length_is_five) ... ok
+test_source_image_hash_is_immutable (__main__.EvidenceControls.test_source_image_hash_is_immutable) ... ok
+test_source_image_size_is_immutable (__main__.EvidenceControls.test_source_image_size_is_immutable) ... ok
+test_static_pin_manifest_is_anchored (__main__.EvidenceControls.test_static_pin_manifest_is_anchored) ... ok
+test_string_length_includes_nul (__main__.EvidenceControls.test_string_length_includes_nul) ... ok
+test_ticket_full_identity_predicates_are_independent (__main__.EvidenceControls.test_ticket_full_identity_predicates_are_independent) ... ok
+test_ticket_gate_shape_checked_without_full_hash (__main__.EvidenceControls.test_ticket_gate_shape_checked_without_full_hash) ... ok
+test_ticket_semantics_are_bound_by_current_source_identity (__main__.EvidenceControls.test_ticket_semantics_are_bound_by_current_source_identity) ... ok
+test_transport_source_modification_rejected (__main__.EvidenceControls.test_transport_source_modification_rejected) ... ok
+test_unwind_boundary_rejected (__main__.EvidenceControls.test_unwind_boundary_rejected) ... ok
+test_wrong_diagnostic_path_rejected (__main__.EvidenceControls.test_wrong_diagnostic_path_rejected) ... ok
+test_xor_key_is_immutable (__main__.EvidenceControls.test_xor_key_is_immutable) ... ok
+
+----------------------------------------------------------------------
+Ran 63 tests in 0.776s
+
+OK
+/workspace/scratch/5d7af20e7f5a/dizzass-startup/.venv/bin/python -B tests/run_host.py --root ../../../.. --test tests/test_common_read_register.c --build build/sanitized --cc cc --sanitize
+COMMON_READ_PASS cases=3086 checks=45714

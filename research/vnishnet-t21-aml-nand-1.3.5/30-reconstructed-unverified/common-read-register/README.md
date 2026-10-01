@@ -35,15 +35,18 @@ that remain active under Python -O. All 50 checker tests passed in both modes
 in that snapshot. Optional complete-image verification
 checks 33 selected cgminer regions and 14 hwscan regions against full file hashes.
 
-L10 keeps the original source receipts, static pins and validation logs intact.
-The current checker has 58 controls, passed normally and with Python -O, and
-still checks all 17 active entries. For chip1368.c only, it requires the exact
-7519-byte source containing the reset append, validates its separate gate, and applies the original
-receipt predicates to the unchanged 3803-byte constructor prefix. Every other
-active file remains an exact full-file pin. The research index is still the sole
-inactive provenance entry. This is a narrowly pinned current-source transition;
-the earlier 50-test run and unchanged-source statements describe the L09 snapshot.
-Exact identities are documented in
+L10 kept the original source receipts, static pins and validation logs intact,
+and its 58-control validation remains a historical result. The current L11
+checker still checks all 17 active entries. For chip1368.c only, it requires
+the exact 8350-byte ticket source, recovers the exact 7519-byte L10 prefix,
+validates both separately gated appends, and applies the original receipt
+predicates to the unchanged 3803-byte constructor prefix. Every other active
+file remains an exact full-file pin; the research index is still the sole
+inactive provenance entry. This self-contained transition imports no shared
+checker. Its independent metadata controls cover both outer and inner
+identities and gate predicates, including matching-hash overrides.
+The earlier 50-test and 58-test runs remain L09 and L10 snapshot facts;
+new compatibility results belong to the L11 packet. Exact identities are in
 [current dependency pins](../../../../integration/CURRENT_DEPENDENCY_PINS_135.md).
 
 The original path is `/tmp/build/libbitmain/src/chip/chip.c`, module `driver`,
@@ -128,7 +131,7 @@ found no complete existing wrapper. Build files enumerate sources explicitly;
 the new original-path module is compiled only by this isolated target. At that
 2026-10-01 L09 snapshot, encoder, CRC, dispatcher, AML, UART, selector and
 constructor sources remained unchanged, so their whole-file pins and historical
-compatibility records remained valid. L10's later constructor-prefix transition
-is described above; it does not rewrite those historical validation facts.
+compatibility records remained valid. The later reset and ticket prefix transitions
+are described above; they do not rewrite those historical validation facts.
 The incomplete old vendor/source and Stage14 inventories are historical
 witnesses and are not rewritten. Pending runtime-stack work stays separate.

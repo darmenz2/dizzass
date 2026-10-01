@@ -1,0 +1,40 @@
+python3 -B tests/run_host.py --root ../../../.. --build build/ordinary --cc cc
+ORIGINAL_TICKET_MASK_PASS cases=277 checks=22785 hardware=no real_waits=no coordinator=not-implemented
+python3 -B tests/negative_controls.py --root ../../../.. --cc cc
+TICKET_MASK_CONTROLS_PASS controls=15
+python3 -B verify_evidence.py
+{"cgminer_startup_caller_witnessed": true, "firmware_executed": false, "hwscan_startup_caller_claimed": false, "instruction_interpreter_used": false, "limits": "pinned static review with L07 selector dependency; no complete coordinator, native ABI or hardware acceptance", "logger_strings": 4, "method_code_bytes_per_elf": 208, "method_literal_bytes_per_elf": 16, "normalized_method_instructions": 52, "original_files_compared": [], "static_witness_verified": true}
+python3 -B tests/test_evidence.py
+test_actual_caller_owner_and_read_lifetimes (__main__.EvidenceTests.test_actual_caller_owner_and_read_lifetimes) ... ok
+test_constructor_slot_and_got (__main__.EvidenceTests.test_constructor_slot_and_got) ... ok
+test_exact_body_pool_and_input_boundaries (__main__.EvidenceTests.test_exact_body_pool_and_input_boundaries) ... ok
+test_four_logger_strings_and_direct_initializer (__main__.EvidenceTests.test_four_logger_strings_and_direct_initializer) ... ok
+test_optional_original_identity_refusal (__main__.EvidenceTests.test_optional_original_identity_refusal) ... ok
+test_pins_cannot_reauthorize_changed_metadata (__main__.EvidenceTests.test_pins_cannot_reauthorize_changed_metadata) ... ok
+test_proof_qualifiers_edges_and_operand_metadata (__main__.EvidenceTests.test_proof_qualifiers_edges_and_operand_metadata) ... ok
+test_reviewed_witness_without_originals (__main__.EvidenceTests.test_reviewed_witness_without_originals) ... ok
+test_strict_schema_and_json (__main__.EvidenceTests.test_strict_schema_and_json) ... ok
+test_writer_arguments_branch_and_fresh_index_words (__main__.EvidenceTests.test_writer_arguments_branch_and_fresh_index_words) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 9.142s
+
+OK
+python3 -O -B tests/test_evidence.py
+test_actual_caller_owner_and_read_lifetimes (__main__.EvidenceTests.test_actual_caller_owner_and_read_lifetimes) ... ok
+test_constructor_slot_and_got (__main__.EvidenceTests.test_constructor_slot_and_got) ... ok
+test_exact_body_pool_and_input_boundaries (__main__.EvidenceTests.test_exact_body_pool_and_input_boundaries) ... ok
+test_four_logger_strings_and_direct_initializer (__main__.EvidenceTests.test_four_logger_strings_and_direct_initializer) ... ok
+test_optional_original_identity_refusal (__main__.EvidenceTests.test_optional_original_identity_refusal) ... ok
+test_pins_cannot_reauthorize_changed_metadata (__main__.EvidenceTests.test_pins_cannot_reauthorize_changed_metadata) ... ok
+test_proof_qualifiers_edges_and_operand_metadata (__main__.EvidenceTests.test_proof_qualifiers_edges_and_operand_metadata) ... ok
+test_reviewed_witness_without_originals (__main__.EvidenceTests.test_reviewed_witness_without_originals) ... ok
+test_strict_schema_and_json (__main__.EvidenceTests.test_strict_schema_and_json) ... ok
+test_writer_arguments_branch_and_fresh_index_words (__main__.EvidenceTests.test_writer_arguments_branch_and_fresh_index_words) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 8.564s
+
+OK
+python3 -B tests/run_host.py --root ../../../.. --build build/sanitized --cc cc --sanitize
+ORIGINAL_TICKET_MASK_PASS cases=277 checks=22785 hardware=no real_waits=no coordinator=not-implemented

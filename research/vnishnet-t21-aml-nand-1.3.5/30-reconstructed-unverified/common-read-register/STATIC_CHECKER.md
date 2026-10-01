@@ -103,7 +103,7 @@ full-file pins because integration updates that index. The new wrapper C/header,
 host tests, build files, and research prose are outside the unchanged dependency
 set and require their own code review and runtime tests.
 
-L10 preserves this receipt and all 17 active entries. It adds one exact current
+L10 preserved this receipt and all 17 active entries. It added one exact
 transition for `libbitmain/src/chip/chip1368.c`: require the fixed 7519-byte reset
 source, validate its separate `VN135_BM1368_RESET_135` gate, recover the unchanged
 3803-byte constructor prefix, then apply the original receipt's length, SHA-256
@@ -114,9 +114,20 @@ See [current dependency pins](../../../../integration/CURRENT_DEPENDENCY_PINS_13
 for the exact identities and layered nonce/constructor/reset witnesses.
 
 The original L09 50-test validation and its receipts/logs remain historical
-results. The L10 current checker has 58 controls, passed in normal and optimized
+results. The L10 checker had 58 controls, passed in normal and optimized
 Python modes, including reset-prefix/gate/identity mutations and mutations to
 every other active dependency. Those new results do not relabel the earlier run.
+
+L11 adds an exact outer transition: the 8350-byte ticket-mask source must have
+its independently pinned length, SHA-256 and Git blob, an exact preserved
+7519-byte L10 prefix, and one separately validated ticket gate/header. The
+unchanged reset-to-constructor transition then recovers the original dependency.
+Prior source versions are reconstruction witnesses, never accepted current
+checkouts. Tests reach each inner gate and prefix predicate under matching-hash
+overrides instead of treating an outer hash rejection as sufficient evidence.
+This checker remains self-contained, with no shared-helper import. All immutable
+source receipts, static pins/witnesses and validation logs stay unchanged; new
+control outcomes are recorded in the L11 compatibility packet.
 
 ## Assumptions and limits
 

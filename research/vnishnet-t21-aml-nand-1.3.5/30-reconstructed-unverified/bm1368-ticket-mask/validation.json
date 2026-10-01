@@ -1,0 +1,183 @@
+{
+  "kind": "L11 local host-and-static validation snapshot",
+  "base_commit": "122acc51cae844be81eb314f1d777cd7299e8713",
+  "base_tree": "5f418b1a0945acd519592e9ea325b0531113f058",
+  "compiler": "GCC 14.2.0 (Debian 14.2.0-19)",
+  "python": "3.12.14",
+  "source_files": [
+    {
+      "path": "libbitmain/src/chip/chip1368.c",
+      "bytes": 8350,
+      "git_blob": "1cd2c6e7612b494c28f0bbbab0e62434d104881d",
+      "sha256": "ed818babcb847fb38094af8f08ae3c0ac6ef690192aa1e6030c3f8326e9968d9"
+    },
+    {
+      "path": "integration/bm1368_ticket_mask_135.h",
+      "bytes": 2457,
+      "git_blob": "48f00020eb3d84ad961d75031532ffef208f1f38",
+      "sha256": "40c8d8960700dab9ac96b5c33ac55256f85536276be136d59be3bf3a5d2d584b"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-ticket-mask/tests/test_ticket_mask.c",
+      "bytes": 18752,
+      "git_blob": "14f0a6e2a87fba1cbafb9b420ac9d4c1ed5803b9",
+      "sha256": "6651ac45d38db9d8f273ddb37b486712310ed9caa3290b4e3f405b55bafb4051"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-ticket-mask/tests/run_host.py",
+      "bytes": 4258,
+      "git_blob": "99ce94b92bcca18b15a5dfea15740cc1c0794a48",
+      "sha256": "4b3cd9de584762779f4f9722fd9f5965efbcc3661a39daa2416c39cd6a47b240"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-ticket-mask/tests/negative_controls.py",
+      "bytes": 6968,
+      "git_blob": "fff4e791e029b1b7ff7bbbe1811dd909c8427373",
+      "sha256": "1f432c582b803448785a10f2b5a0696c36f838a02073979d726f768cc5434de5"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-ticket-mask/verify_evidence.py",
+      "bytes": 22685,
+      "git_blob": "5deccb4bf64f49ece92f310766028486363e4af7",
+      "sha256": "96782445fba9faca08e41ae53c5165fab8b6db851650f5dd27185deb508a2f59"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-ticket-mask/static-witness.json",
+      "bytes": 105160,
+      "git_blob": "d79dd41d59e1463a0acda8c52f1050667fe3040e",
+      "sha256": "206a3cbf5e6b450c6cc10817b41150d5794403b1065a784d7e1c30a659b5656f"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-ticket-mask/static-pins.json",
+      "bytes": 15379,
+      "git_blob": "13a658ffb163ad66b85408a807125279cebda890",
+      "sha256": "b4688abf6a15ced3ac8b455fdac4ed64783ada36dd24adca7734db0b1585f2bd"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-ticket-mask/tests/test_evidence.py",
+      "bytes": 7959,
+      "git_blob": "b06122af4261f44a4669c8d76bedd7efe56a48fc",
+      "sha256": "416ab257a9d59539ffaa8675baca5905528e8458abf41c09d0dc81c64fe7e60b"
+    }
+  ],
+  "runs": {
+    "public_make_test_sanitize": "passed",
+    "actual_helper_composition": {
+      "cases": 277,
+      "checks": 22785,
+      "ordinary": "passed",
+      "all_TU_ASan_UBSan": "passed"
+    },
+    "compiled_semantic_controls": {
+      "count": 15,
+      "required_outcome": "compiled then exit 1 with ORIGINAL_TICKET_MASK_FAIL marker",
+      "passed": true
+    },
+    "static_tamper_controls": {
+      "test_methods": 10,
+      "normal": "passed",
+      "optimized": "passed",
+      "each_method_invokes_both_verifier_modes": true
+    },
+    "source_data_comparison": {
+      "cgminer": "complete size/hash and every witnessed range passed",
+      "hwscan": "complete size/hash and every witnessed range passed",
+      "original_execution": false
+    },
+    "unchanged_regressions": {
+      "original_reset": {
+        "cases": 131110,
+        "checks": 17362511,
+        "ordinary": "passed",
+        "all_TU_ASan_UBSan": "passed",
+        "semantic_controls": 27
+      },
+      "composed_reset": {
+        "cases": 2661,
+        "checks": 592778,
+        "ordinary": "passed",
+        "all_TU_ASan_UBSan": "passed"
+      },
+      "constructor": {
+        "cases": 277,
+        "checks": 17161,
+        "ordinary": "passed",
+        "ASan_UBSan": "passed",
+        "semantic_controls": 57
+      },
+      "nonce": {
+        "checks": 33047,
+        "ordinary": "passed",
+        "ASan_UBSan": "passed"
+      },
+      "common_read_register": {
+        "cases": 3086,
+        "checks": 45714,
+        "ordinary": "passed",
+        "all_TU_ASan_UBSan": "passed",
+        "semantic_controls": 20
+      }
+    },
+    "source_preservation": {
+      "accepted_dependency_entries": 22,
+      "chip1368_preserved_prefix_bytes": 7519,
+      "passed": true
+    }
+  },
+  "sanitizer_scope": {
+    "every_linked_translation_unit_instrumented": true,
+    "translation_units": 10,
+    "leak_detection": false,
+    "unchanged_crc5_TU_only": "-Wno-sign-conversion during ASan/O1 compilation; prior narrow exception preserved"
+  },
+  "not_run": [
+    "local Clang",
+    "full native cgminer build",
+    "L11 local fail-fast adapter retest",
+    "original firmware process",
+    "original-instruction interpreter or emulator",
+    "model/Jansson/OOM or invalid-pointer probes",
+    "physical hardware or OS UART",
+    "real sleeps",
+    "remote CI before publication"
+  ],
+  "logs": [
+    {
+      "path": "validation-logs/final-public-make.log",
+      "bytes": 3556,
+      "sha256": "4e0784b1ab153c7260c397abed6d669cf6c3f924ec2243a1d4cb1468473ee989"
+    },
+    {
+      "path": "validation-logs/final-both-elf.log",
+      "bytes": 485,
+      "sha256": "cc609adfbe0f881b81bc45196519de4dff550cf1947d9c41f350ad5b50e05dba"
+    },
+    {
+      "path": "validation-logs/reset.log",
+      "bytes": 9292,
+      "sha256": "a664c5464484eebd7225444de4ef5d7f7c0fc7f47b5d1d55c5a17196319d79ed"
+    },
+    {
+      "path": "validation-logs/constructor-nonce.log",
+      "bytes": 8767,
+      "sha256": "269240114420016ff1fe7969f5f95db37669fc873d2cb037a062949de913c868"
+    },
+    {
+      "path": "validation-logs/common-read.log",
+      "bytes": 20284,
+      "sha256": "8d305959668d6841a0160a136738e81832641f7c1f53d052288a8a45845b80e6"
+    },
+    {
+      "path": "validation-logs/negative-controls.json",
+      "bytes": 5306,
+      "sha256": "2dc96aff1204d1cb8889e386d700625e26c80386b1e978a6bc54cfcf35feac22"
+    }
+  ],
+  "claims": {
+    "runtime_or_hardware_parity": false,
+    "complete_startup_coordinator": false,
+    "hwscan_startup_caller": false,
+    "automatic_formal_lifting_proof": false,
+    "production_linkage_added": false
+  }
+}

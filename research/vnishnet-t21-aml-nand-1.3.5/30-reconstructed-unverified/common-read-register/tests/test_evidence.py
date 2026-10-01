@@ -288,6 +288,11 @@ class EvidenceControls(unittest.TestCase):
         root=self.dependency_copy()
         return (root/verifier.BM1368_PATH).read_bytes()
 
+    def matching_ticket_identity(self,data):
+        blob=verifier.hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
+        return patch.multiple(verifier,BM1368_TICKET_SIZE=len(data),
+                              BM1368_TICKET_SHA256=verifier.sha256(data),BM1368_TICKET_BLOB=blob)
+
     def matching_reset_identity(self,data):
         blob=verifier.hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
         return patch.multiple(verifier,BM1368_RESET_SIZE=len(data),
@@ -303,7 +308,7 @@ class EvidenceControls(unittest.TestCase):
 
     def test_reset_source_rejects_old_constructor_and_nonce_sources(self):
         root=self.dependency_copy();path=root/verifier.BM1368_PATH;data=path.read_bytes()
-        for size in (920,3803):
+        for size in (920,3803,7519):
             with self.subTest(size=size):
                 path.write_bytes(data[:size])
                 with self.assertRaisesRegex(verifier.EvidenceError,'active dependency pin differs: '+verifier.BM1368_PATH):
@@ -334,7 +339,7 @@ class EvidenceControls(unittest.TestCase):
         for constant,value in (('BM1368_RESET_SIZE',len(data)-1),
                                ('BM1368_RESET_SHA256','0'*64),('BM1368_RESET_BLOB','0'*40)):
             with patch.object(verifier,constant,value):
-                with self.assertRaisesRegex(verifier.EvidenceError,'active dependency pin differs: '+verifier.BM1368_PATH):
+                with self.assertRaisesRegex(verifier.EvidenceError,'preserved reset source prefix differs'):
                     verifier.constructor_source_bytes(data,entry)
 
     def test_reset_preserved_prefix_is_checked_without_full_source_hash(self):
@@ -342,13 +347,15 @@ class EvidenceControls(unittest.TestCase):
         for offset in (0,920,3802):
             mutant=bytearray(data);mutant[offset]^=1;mutant=bytes(mutant)
             with self.subTest(offset=offset):
-                with self.matching_reset_identity(mutant):
+                with self.matching_ticket_identity(mutant), \
+                        self.matching_reset_identity(mutant[:verifier.BM1368_RESET_SIZE]):
                     with self.assertRaisesRegex(verifier.EvidenceError,'preserved constructor prefix differs'):
                         verifier.constructor_source_bytes(mutant,entry)
 
     def test_reset_gate_shape_is_checked_without_full_source_hash(self):
         data=self.current_bm1368_bytes();entry=self.bm1368_entry()
-        constructor,added=data[:3803],data[3803:]
+        constructor,added=data[:3803],data[3803:7519]
+        ticket=data[7519:]
         suffixes=[b'',added.replace(b'VN135_BM1368_RESET_135',b'OTHER_GATE'),
                   added.replace(b'"integration/bm1368_reset_135.h"',b'"wrong.h"'),
                   b'int outside;\n'+added,added+added,added[:-8]]
@@ -358,11 +365,63 @@ class EvidenceControls(unittest.TestCase):
                             b'\n#include "extra.h"\n#endif\n'):
             suffixes.append(added.replace(b'\n#endif\n',replacement))
         for index,suffix in enumerate(suffixes):
-            mutant=constructor+suffix
+            reset=constructor+suffix
+            mutant=reset+ticket
             with self.subTest(mutation=index):
-                with self.matching_reset_identity(mutant):
+                with self.matching_ticket_identity(mutant), self.matching_reset_identity(reset):
                     with self.assertRaisesRegex(verifier.EvidenceError,'reset append is not separately gated'):
                         verifier.constructor_source_bytes(mutant,entry)
+
+    def test_exact_ticket_transition_retains_reset_witness(self):
+        data=self.current_bm1368_bytes()
+        reset=verifier.reset_source_bytes(data)
+        self.assertEqual(reset,data[:7519])
+        self.assertEqual(len(reset),7519)
+        self.assertEqual(verifier.sha256(reset),
+                         'e3c8cecb8869c59847db357d26541e95123fa1cb4cf2ef04642a62c2e1e0738d')
+        self.assertEqual(verifier.hashlib.sha1(b'blob 7519\0'+reset).hexdigest(),
+                         'e024519eda8df9c1c85697548e8e0629f7c0f5cf')
+
+    def test_ticket_full_identity_predicates_are_independent(self):
+        data=self.current_bm1368_bytes();entry=self.bm1368_entry()
+        for constant,value in (('BM1368_TICKET_SIZE',len(data)-1),
+                               ('BM1368_TICKET_SHA256','0'*64),('BM1368_TICKET_BLOB','0'*40)):
+            with self.subTest(constant=constant), patch.object(verifier,constant,value):
+                with self.assertRaisesRegex(verifier.EvidenceError,'reviewed ticket-mask source'):
+                    verifier.constructor_source_bytes(data,entry)
+
+    def test_reset_prefix_checked_without_ticket_full_hash(self):
+        data=self.current_bm1368_bytes()
+        for offset in (0,920,3802,3803,7518):
+            mutant=bytearray(data);mutant[offset]^=1;mutant=bytes(mutant)
+            with self.subTest(offset=offset), self.matching_ticket_identity(mutant):
+                with self.assertRaisesRegex(verifier.EvidenceError,'preserved reset source prefix differs'):
+                    verifier.reset_source_bytes(mutant)
+
+    def test_ticket_gate_shape_checked_without_full_hash(self):
+        data=self.current_bm1368_bytes();reset,added=data[:7519],data[7519:]
+        suffixes=[b'',added.replace(b'VN135_BM1368_TICKET_MASK_135',b'OTHER_GATE'),
+                  added.replace(b'"integration/bm1368_ticket_mask_135.h"',b'"wrong.h"'),
+                  b'int outside;\n'+added,added+added,added[:-8]]
+        for replacement in (b'\n#endif\nint outside;\n\n',
+                            b'\n#if OTHER\n#endif\n#endif\n',
+                            b'\n#else\n#endif\n',b'\n#elif OTHER\n#endif\n',
+                            b'\n#include "extra.h"\n#endif\n'):
+            suffixes.append(added.replace(b'\n#endif\n',replacement))
+        for index,suffix in enumerate(suffixes):
+            mutant=reset+suffix
+            with self.subTest(mutation=index), self.matching_ticket_identity(mutant):
+                with self.assertRaisesRegex(verifier.EvidenceError,'ticket-mask append is not separately gated'):
+                    verifier.reset_source_bytes(mutant)
+
+    def test_ticket_semantics_are_bound_by_current_source_identity(self):
+        root=self.dependency_copy();path=root/verifier.BM1368_PATH;data=path.read_bytes()
+        for mutant in (data.replace(b'0x14, value,',b'0x15, value,'),
+                       data.replace(b'TICKET_MASK", 507,',b'TICKET_MASK", 508,'),
+                       data+data[7519:]):
+            path.write_bytes(mutant)
+            with self.assertRaisesRegex(verifier.EvidenceError,'active dependency pin differs: '+verifier.BM1368_PATH):
+                verifier.verify(self.folder,root)
 
     def test_every_other_active_dependency_remains_a_full_file_pin(self):
         root=self.dependency_copy()
