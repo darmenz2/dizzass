@@ -1,0 +1,22 @@
+{
+  "boundary_evidence": "Bounded witness interval, not a complete-function or whole-program claim.",
+  "bytes": 4,
+  "caveat": "Linear static rendering; literal pools may remain in instruction windows. No complete CFG, runtime path, function extent or parity is proved.",
+  "disassembler": "little-endian word rendering",
+  "disassembler_version": "1",
+  "end_exclusive": "0x0048e010",
+  "evidence_sources": [
+    "../../README.md",
+    "../../STATIC_PROOF.md"
+  ],
+  "file_offset": 4710412,
+  "firmware_executed": false,
+  "mode": "data",
+  "mode_evidence": "Known pointer cell, string bytes, or PC-relative literal, rendered as data.",
+  "name": "empty-bytes",
+  "schema": 1,
+  "segment_flags": 5,
+  "sha256": "686a120739b55fd7c4908e62338bcd3185cab769d6cfa6c242dc1c4281eb63cb",
+  "source_sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+  "start": "0x0048e00c"
+}

@@ -1,0 +1,22 @@
+{
+  "boundary_evidence": "Bounded witness interval, not a complete-function or whole-program claim.",
+  "bytes": 44,
+  "caveat": "Linear static rendering; literal pools may remain in instruction windows. No complete CFG, runtime path, function extent or parity is proved.",
+  "disassembler": "capstone",
+  "disassembler_version": "5.0.6",
+  "end_exclusive": "0x000e94c8",
+  "evidence_sources": [
+    "../../README.md",
+    "../../STATIC_PROOF.md"
+  ],
+  "file_offset": 890012,
+  "firmware_executed": false,
+  "mode": "arm",
+  "mode_evidence": "Selected aligned A32 instructions and direct return/call witnesses.",
+  "name": "generic-caller-seam",
+  "schema": 1,
+  "segment_flags": 5,
+  "sha256": "2f1bc024d69db9894a3173efc5024b203eb4cd2a1c6666893fa9cbed9a7c3248",
+  "source_sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+  "start": "0x000e949c"
+}

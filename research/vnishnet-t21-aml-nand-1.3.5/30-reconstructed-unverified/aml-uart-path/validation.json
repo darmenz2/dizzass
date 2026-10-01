@@ -1,0 +1,63 @@
+{
+  "address_sanitizer": "passed",
+  "all_attempted_opens": "recorded and refused with -55",
+  "arm_interpreter_used": false,
+  "base_commit": "9f1560bebd95194944167d80c53138d5387d5382",
+  "base_tree": "dece04648824b0dced82d906fe8ba04e5c578999",
+  "boot_script_executed": false,
+  "compiler": "GCC 14.2.0 (Debian 14.2.0-19)",
+  "control_failure_mode": "test exit 1; compile failures/crashes do not count",
+  "development_corrections": [
+    "Private-reference generator relative path corrected before generation",
+    "Initial expected length-comparison opcode corrected from r0 to observed r2 by failing static check",
+    "Initial workflow pip command made block scalar before publication"
+  ],
+  "direct_result_checks": 393231,
+  "existing_caller_cases": 11,
+  "existing_lab_tests": 49,
+  "firmware_executed": false,
+  "hardware_accessed": false,
+  "leak_detection": false,
+  "log_sha256": {
+    "final-exit-tests.log": "35e8abfc22ac435d981c5cb2a53a427161d54df6611563d37528011313e37a8c",
+    "final-host-tests.log": "79a2f0b6ac1e5da4f5ae198704a04885a6e6516abfd2d29e9a6a9b6c71e2754b",
+    "final-lab-tests.log": "03b4d62281e380bcce4136d1c0befa40a466d3c97d9f90a8588ba007214aeb71",
+    "final-optimized-validation.json": "be395a754d8defda69da614a5fb39ee11933f32b5d6fc33c286de5009dd66dbf",
+    "final-reference-validation.json": "78036b4483c516082222702c8fc48d4ba47b050400323a20063234aacd243c52"
+  },
+  "model_fault_probes_run": false,
+  "not_run": [
+    "Clang locally: compiler unavailable; new CI matrix scheduled after publication",
+    "Full native cgminer core/regression suite: scope contains isolated recovered helper, not production registration",
+    "Vendor differential execution, any physical I/O or hardware tests"
+  ],
+  "optimized_python": "passed; explicit checks do not rely on assert",
+  "ordinary_host": "passed",
+  "previous_exit_evidence_tests": 16,
+  "private_reference_regeneration": {
+    "arm_interpreter_used": false,
+    "firmware_executed": false,
+    "proof": "static bytes, arithmetic and fixed data XOR only",
+    "sources": {
+      "cgminer": {
+        "bytes": 1080,
+        "ranges": 19,
+        "reference_checked": true
+      },
+      "hwscan": {
+        "bytes": 228,
+        "ranges": 14,
+        "reference_checked": true
+      }
+    }
+  },
+  "production_driver_registered": false,
+  "remote_writes": false,
+  "review_status": "final independent review pending",
+  "schema": 1,
+  "semantic_controls": 8,
+  "skipped": 0,
+  "static_evidence_tests": 12,
+  "undefined_behavior_sanitizer": "passed",
+  "workflow_yaml": "parsed after correcting initial scalar-colon syntax"
+}
