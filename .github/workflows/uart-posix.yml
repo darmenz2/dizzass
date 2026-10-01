@@ -77,6 +77,7 @@ jobs:
           # Preserve historical files except the exact reviewed PR #99 platform
           # addition and its thermal build/PR coverage compatibility repair as a
           # complete group, plus the independent exact transport-initializer addition.
+          # The exact pulse checker/workflow repair is atomic and requires transport.
           historical_changes=$(git diff --raw --no-abbrev --no-renames \
             --no-ext-diff --no-textconv --ignore-submodules=none \
             --diff-filter=DMRT \
@@ -91,9 +92,17 @@ jobs:
           approved_transport_change=$(printf '%s\t%s' \
             ':100644 100644 8ceb8405390e3eaf9f7b34480eb3cdd040a3b0ef d030308564c47bf409a3d381f16ddf262e6acf26 M' \
             'libbitmain/src/transport-dispatch.c')
+          approved_pulse_workflow_change=$(printf '%s\t%s' \
+            ':100644 100644 9c839aca1ebf0a1347fded59b631a30d960940a5 4ebf163af82be3cde11d5c7b3b65fce61d3409db M' \
+            '.github/workflows/bm1368-pulse-width-135.yml')
+          approved_pulse_checker_change=$(printf '%s\t%s' \
+            ':100644 100644 21c016abf12cd427c53704f52f213572f3178438 cce7d0abfa75e7343158f1dbd4dbc30b93cf8c64 M' \
+            'integration/tests/check_bm1368_pulse_width_evidence_135.py')
           case "$historical_changes" in
             ''|"$approved_historical_changes"|"$approved_transport_change"|\
-            "$approved_historical_changes"$'\n'"$approved_transport_change")
+            "$approved_historical_changes"$'\n'"$approved_transport_change"|\
+            "$approved_pulse_workflow_change"$'\n'"$approved_pulse_checker_change"$'\n'"$approved_transport_change"|\
+            "$approved_pulse_workflow_change"$'\n'"${approved_historical_changes%%$'\n'*}"$'\n'"$approved_pulse_checker_change"$'\n'"${approved_historical_changes#*$'\n'}"$'\n'"$approved_transport_change")
               ;;
             *)
               printf 'Unexpected historical source changes:\n%s\n' \

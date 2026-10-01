@@ -3,6 +3,11 @@ on:
   pull_request:
     branches: [work/reconstruction]
     paths:
+      - integration/tests/current_dependency_pins_135.py
+      - integration/tests/test_current_dependency_pins_135.py
+      - integration/CURRENT_DEPENDENCY_PINS_135.md
+      - integration/thermal-routes-135.mk
+      - include/xminer/recovery/aml_platform.h
       - src/backend/chain-reset-cleanup.c
       - src/backend/chain.c
       - integration/chain_reset_cleanup_135.h
@@ -29,6 +34,10 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
+      - name: Current dependency pin compatibility controls
+        run: |
+          python3 integration/tests/test_current_dependency_pins_135.py
+          python3 -O integration/tests/test_current_dependency_pins_135.py
       - name: Original composition, native byte checks and semantic mutants
         shell: bash
         run: |

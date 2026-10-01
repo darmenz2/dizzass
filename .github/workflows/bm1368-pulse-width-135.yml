@@ -2,7 +2,10 @@ name: Check original 1.3.5 BM1368 pulse width
 on:
   push:
     branches: [work/reconstruction]
-    paths:
+    paths: &pulse_width_paths
+      - integration/tests/current_dependency_pins_135.py
+      - integration/tests/test_current_dependency_pins_135.py
+      - integration/CURRENT_DEPENDENCY_PINS_135.md
       - libbitmain/src/chip/chip1368-pulse-width.c
       - libbitmain/src/chip/chip1368-register-write.c
       - libbitmain/src/transport-dispatch.c
@@ -22,6 +25,9 @@ on:
       - tools/elf32.py
       - reference/cgminer.vendor.elf
       - .github/workflows/bm1368-pulse-width-135.yml
+  pull_request:
+    branches: [work/reconstruction]
+    paths: *pulse_width_paths
   workflow_dispatch:
 permissions:
   contents: read
@@ -54,6 +60,11 @@ jobs:
           git checkout -q --detach FETCH_HEAD
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
           printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Current dependency pin compatibility controls
+        run: |
+          cd "$SOURCE_ROOT"
+          python3 integration/tests/test_current_dependency_pins_135.py
+          python3 -O integration/tests/test_current_dependency_pins_135.py
       - name: Original pulse and nested register AML UART cache comparisons
         run: |
           cd "$SOURCE_ROOT"
