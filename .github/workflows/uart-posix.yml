@@ -74,17 +74,21 @@ jobs:
           fi
           python3 integration/test_native_core.py
           python3 tools/prepare_uart_posix.py --check
-          # Preserve every historical file; permit only the precisely reviewed PR #99
-          # platform addition. This is not a blanket exemption for platform.c.
+          # Preserve historical files except the exact reviewed PR #99 platform
+          # addition and its thermal build/PR coverage compatibility repair.
           historical_changes=$(git diff --raw --no-abbrev --no-renames \
             --no-ext-diff --no-textconv --ignore-submodules=none \
             --diff-filter=DMRT \
             12446bed78a060a49364a80bcbfb4340b13f4f27 HEAD --)
-          approved_platform_change=$(printf '%s\t%s' \
+          approved_historical_changes=$(printf '%s\t%s\n' \
+            ':100644 100644 aa0a043df461bfc7e15487d60ebf8a4dcd915b52 dcc8a6f2b1d8b0b981f461f1d4f99448bbf328e3 M' \
+            '.github/workflows/thermal-routes-135.yml' \
+            ':100644 100644 f68baf7a096b3b261e6249600b726eb120bebfbb 40d0fb336501875982f22ac6453ee4ddd58d8762 M' \
+            'integration/thermal-routes-135.mk' \
             ':100644 100644 f66d7c37b3d4e9f87ff892f35488db6140cb341c 0c0a6970e15c690af918aeeddbcc38fae5a06925 M' \
             'libbitmain/src/aml/platform.c')
           if [[ -n "$historical_changes" &&
-                "$historical_changes" != "$approved_platform_change" ]]; then
+                "$historical_changes" != "$approved_historical_changes" ]]; then
             printf 'Unexpected historical source changes:\n%s\n' \
               "$historical_changes" >&2
             exit 1

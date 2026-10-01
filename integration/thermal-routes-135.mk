@@ -1,7 +1,7 @@
 # Explicit isolated source selection. No production driver or core changes.
 CC ?= cc
 ROUTES135_DIR ?= build/thermal-routes-135$(if $(SANITIZE),-san,)
-ROUTES135_FLAGS = -I. -std=c11 -O1 -g -Wall -Wextra -Wpedantic -Werror -fno-fast-math -ffp-contract=off -DVN135_THERMAL_ROUTES_135
+ROUTES135_FLAGS = -I. -Iinclude -std=c11 -O1 -g -Wall -Wextra -Wpedantic -Werror -fno-fast-math -ffp-contract=off -DVN135_THERMAL_ROUTES_135
 ROUTES135_SAN = $(if $(SANITIZE),-fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer,)
 ROUTES135_SOURCES = src/backend/base.c src/backend/temp.c src/backend/chain.c libbitmain/src/aml/platform.c reconstruction/support/thermal_routes_135.c
 ROUTES135_COMPOSE = reconstruction/support/thermal_trip_135.c libbitmain/src/gpio.c libbitmain/src/fan_ctrl.c libbitmain/src/aml/fan_ctrl.c reconstruction/support/pid_135.c

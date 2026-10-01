@@ -2,11 +2,12 @@ name: Check original 1.3.5 chip temperature routes and chain stop
 on:
   push:
     branches: [work/reconstruction]
-    paths:
+    paths: &thermal_routes_paths
       - src/backend/base.c
       - src/backend/temp.c
       - src/backend/chain.c
       - libbitmain/src/aml/platform.c
+      - include/xminer/recovery/aml_platform.h
       - libbitmain/src/gpio.c
       - libbitmain/src/fan_ctrl.c
       - libbitmain/src/aml/fan_ctrl.c
@@ -18,6 +19,9 @@ on:
       - integration/tests/test_aml_fans_135.py
       - integration/evidence/thermal_routes_135.json
       - .github/workflows/thermal-routes-135.yml
+  pull_request:
+    branches: [work/reconstruction]
+    paths: *thermal_routes_paths
   workflow_dispatch:
 permissions:
   contents: read
@@ -65,7 +69,7 @@ jobs:
       - name: Static analysis and unchanged production boundary
         run: |
           cd "$SOURCE_ROOT"
-          clang --analyze -I. -std=c11 -DVN135_THERMAL_ROUTES_135 -Xanalyzer -analyzer-output=text src/backend/base.c src/backend/temp.c src/backend/chain.c libbitmain/src/aml/platform.c reconstruction/support/thermal_routes_135.c
+          clang --analyze -I. -Iinclude -std=c11 -DVN135_THERMAL_ROUTES_135 -Xanalyzer -analyzer-output=text src/backend/base.c src/backend/temp.c src/backend/chain.c libbitmain/src/aml/platform.c reconstruction/support/thermal_routes_135.c
           test "$(git hash-object Makefile.am)" = 17d2fbde26b5e8cb614b61908b84d5937af48325
           test "$(git hash-object cgminer.c)" = 54739e4139294c526af0c73aa9a02ba9762ca4f2
           printf '%s\n' 'b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9  reference/cgminer.vendor.elf' | sha256sum -c -
