@@ -74,8 +74,8 @@ jobs:
           fi
           python3 integration/test_native_core.py
           python3 tools/prepare_uart_posix.py --check
-          # Preserve the six prior exact historical combinations and allow only
-          # the complete exact BM1368 constructor compatibility group in addition.
+          # Preserve the seven prior exact historical states and allow only
+          # the complete exact BM1368 reset compatibility group in addition.
           python3 integration/tests/test_uart_posix_historical_135.py
           python3 -O integration/tests/test_uart_posix_historical_135.py
           historical_changes=$(git diff --raw --no-abbrev --no-renames \
@@ -85,4 +85,3 @@ jobs:
           python3 integration/tests/check_uart_posix_historical_135.py "$historical_changes"
           git diff --exit-code
           echo 'Host PTYs only: no physical UART, ASIC, production driver, pool or merge.'
-

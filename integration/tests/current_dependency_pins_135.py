@@ -18,8 +18,13 @@ DISPATCH_CURRENT_BLOB = 'd030308564c47bf409a3d381f16ddf262e6acf26'
 DISPATCH_OLD_SIZE = 2305
 BM1368_PATH = 'libbitmain/src/chip/chip1368.c'
 BM1368_OLD_BLOB = 'c64374454e6e458ec1a175f21f03af141e29a3aa'
-BM1368_CURRENT_BLOB = '0de837d281e81eb4503b4193b45ef076ec600b6e'
 BM1368_OLD_SIZE = 920
+BM1368_CONSTRUCTOR_BLOB = '0de837d281e81eb4503b4193b45ef076ec600b6e'
+BM1368_CONSTRUCTOR_SHA256 = 'b0d68763aa141ffa25e4df3b70e6e55a444cd59f44db405f51b9a80aea6a7a2a'
+BM1368_CONSTRUCTOR_SIZE = 3803
+BM1368_CURRENT_BLOB = 'e024519eda8df9c1c85697548e8e0629f7c0f5cf'
+BM1368_CURRENT_SHA256 = 'e3c8cecb8869c59847db357d26541e95123fa1cb4cf2ef04642a62c2e1e0738d'
+BM1368_CURRENT_SIZE = 7519
 
 
 def require(ok, message):
@@ -62,11 +67,31 @@ def historical_dispatch_bytes(current):
     return old
 
 
+def constructor_bm1368_bytes(current):
+    """Validate only the exact reset append and recover the constructor witness."""
+    require(len(current) == BM1368_CURRENT_SIZE
+            and hashlib.sha256(current).hexdigest() == BM1368_CURRENT_SHA256
+            and git_blob(current) == BM1368_CURRENT_BLOB,
+            'BM1368 chip source is not the reviewed reset blob')
+    constructor, added = (current[:BM1368_CONSTRUCTOR_SIZE],
+                          current[BM1368_CONSTRUCTOR_SIZE:])
+    require(git_blob(constructor) == BM1368_CONSTRUCTOR_BLOB
+            and hashlib.sha256(constructor).hexdigest() == BM1368_CONSTRUCTOR_SHA256,
+            'BM1368 constructor source prefix changed')
+    require(added.startswith(b'\n#ifdef VN135_BM1368_RESET_135\n'
+                             b'#include "integration/bm1368_reset_135.h"\n')
+            and added.count(b'#if') == 1 and added.count(b'#endif') == 1
+            and added.count(b'#include') == 1
+            and b'#else' not in added and b'#elif' not in added
+            and added.endswith(b'\n#endif\n'),
+            'BM1368 reset append is not separately gated')
+    return constructor
+
+
 def historical_bm1368_bytes(current):
-    """Validate the exact constructor append and unchanged nonce source prefix."""
-    require(git_blob(current) == BM1368_CURRENT_BLOB,
-            'BM1368 chip source is not the reviewed constructor blob')
-    old, added = current[:BM1368_OLD_SIZE], current[BM1368_OLD_SIZE:]
+    """Validate both exact appends and recover the unchanged nonce witness."""
+    constructor = constructor_bm1368_bytes(current)
+    old, added = constructor[:BM1368_OLD_SIZE], constructor[BM1368_OLD_SIZE:]
     require(git_blob(old) == BM1368_OLD_BLOB,
             'BM1368 chip historical prefix changed')
     require(added.startswith(b'\n#ifdef VN135_BM1368_INITIALIZE_135\n')

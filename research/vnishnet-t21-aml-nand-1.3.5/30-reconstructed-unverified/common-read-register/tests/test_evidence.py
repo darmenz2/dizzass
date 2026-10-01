@@ -11,6 +11,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 HERE=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(HERE))
@@ -278,6 +279,108 @@ class EvidenceControls(unittest.TestCase):
         root=self.dependency_copy()
         result=verifier.verify(self.folder,root)
         self.assertEqual(result['active_dependencies_checked'],17)
+
+    def bm1368_entry(self):
+        receipt=json.loads((HERE/'source-baseline.json').read_text())
+        return next(entry for entry in receipt['files'] if entry['path']==verifier.BM1368_PATH)
+
+    def current_bm1368_bytes(self):
+        root=self.dependency_copy()
+        return (root/verifier.BM1368_PATH).read_bytes()
+
+    def matching_reset_identity(self,data):
+        blob=verifier.hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
+        return patch.multiple(verifier,BM1368_RESET_SIZE=len(data),
+                              BM1368_RESET_SHA256=verifier.sha256(data),BM1368_RESET_BLOB=blob)
+
+    def test_exact_reset_transition_retains_constructor_receipt(self):
+        data=self.current_bm1368_bytes();entry=self.bm1368_entry()
+        constructor=verifier.constructor_source_bytes(data,entry)
+        self.assertEqual(len(constructor),3803)
+        self.assertEqual(constructor,data[:3803])
+        self.assertEqual(verifier.sha256(constructor),entry['sha256'])
+        self.assertEqual(verifier.hashlib.sha1(b'blob 3803\0'+constructor).hexdigest(),entry['git_blob'])
+
+    def test_reset_source_rejects_old_constructor_and_nonce_sources(self):
+        root=self.dependency_copy();path=root/verifier.BM1368_PATH;data=path.read_bytes()
+        for size in (920,3803):
+            with self.subTest(size=size):
+                path.write_bytes(data[:size])
+                with self.assertRaisesRegex(verifier.EvidenceError,'active dependency pin differs: '+verifier.BM1368_PATH):
+                    verifier.verify(self.folder,root)
+
+    def test_reset_source_rejects_prefix_suffix_truncation_and_extra_bytes(self):
+        root=self.dependency_copy();path=root/verifier.BM1368_PATH;data=path.read_bytes()
+        mutations=[b'X'+data[1:],data[:1000]+b'X'+data[1001:],data[:-1],data+b'\n',
+                   data.replace(b'VN135_BM1368_RESET_135',b'UNREVIEWED_RESET'),
+                   data.replace(b'UINT32_C(0x800082aa)',b'UINT32_C(0x800082ab)')]
+        for index,mutant in enumerate(mutations):
+            with self.subTest(mutation=index):
+                path.write_bytes(mutant)
+                with self.assertRaisesRegex(verifier.EvidenceError,'active dependency pin differs: '+verifier.BM1368_PATH):
+                    verifier.verify(self.folder,root)
+
+    def test_reset_transition_is_bound_to_exact_original_path_and_identity(self):
+        data=self.current_bm1368_bytes();entry=self.bm1368_entry()
+        for field,value in (('path',verifier.BM1368_PATH+'.copy'),('bytes',920),
+                            ('sha256','0'*64),('git_blob','0'*40)):
+            with self.subTest(field=field):
+                changed=dict(entry);changed[field]=value
+                with self.assertRaisesRegex(verifier.EvidenceError,'historical dependency identity differs'):
+                    verifier.constructor_source_bytes(data,changed)
+
+    def test_reset_full_identity_predicates_are_independent(self):
+        data=self.current_bm1368_bytes();entry=self.bm1368_entry()
+        for constant,value in (('BM1368_RESET_SIZE',len(data)-1),
+                               ('BM1368_RESET_SHA256','0'*64),('BM1368_RESET_BLOB','0'*40)):
+            with patch.object(verifier,constant,value):
+                with self.assertRaisesRegex(verifier.EvidenceError,'active dependency pin differs: '+verifier.BM1368_PATH):
+                    verifier.constructor_source_bytes(data,entry)
+
+    def test_reset_preserved_prefix_is_checked_without_full_source_hash(self):
+        data=self.current_bm1368_bytes();entry=self.bm1368_entry()
+        for offset in (0,920,3802):
+            mutant=bytearray(data);mutant[offset]^=1;mutant=bytes(mutant)
+            with self.subTest(offset=offset):
+                with self.matching_reset_identity(mutant):
+                    with self.assertRaisesRegex(verifier.EvidenceError,'preserved constructor prefix differs'):
+                        verifier.constructor_source_bytes(mutant,entry)
+
+    def test_reset_gate_shape_is_checked_without_full_source_hash(self):
+        data=self.current_bm1368_bytes();entry=self.bm1368_entry()
+        constructor,added=data[:3803],data[3803:]
+        suffixes=[b'',added.replace(b'VN135_BM1368_RESET_135',b'OTHER_GATE'),
+                  added.replace(b'"integration/bm1368_reset_135.h"',b'"wrong.h"'),
+                  b'int outside;\n'+added,added+added,added[:-8]]
+        for replacement in (b'\n#endif\nint outside;\n\n',
+                            b'\n#if OTHER\n#endif\n#endif\n',
+                            b'\n#else\n#endif\n',b'\n#elif OTHER\n#endif\n',
+                            b'\n#include "extra.h"\n#endif\n'):
+            suffixes.append(added.replace(b'\n#endif\n',replacement))
+        for index,suffix in enumerate(suffixes):
+            mutant=constructor+suffix
+            with self.subTest(mutation=index):
+                with self.matching_reset_identity(mutant):
+                    with self.assertRaisesRegex(verifier.EvidenceError,'reset append is not separately gated'):
+                        verifier.constructor_source_bytes(mutant,entry)
+
+    def test_every_other_active_dependency_remains_a_full_file_pin(self):
+        root=self.dependency_copy()
+        entries=json.loads((HERE/'source-baseline.json').read_text())['files']
+        checked=0
+        for entry in entries:
+            if entry['path'] in (verifier.INDEX_PATH,verifier.BM1368_PATH):
+                continue
+            path=root/entry['path'];original=path.read_bytes()
+            with self.subTest(path=entry['path']):
+                path.write_bytes(original+b'\n')
+                try:
+                    with self.assertRaisesRegex(verifier.EvidenceError,'active dependency pin differs: '+entry['path']):
+                        verifier.verify(self.folder,root)
+                finally:
+                    path.write_bytes(original)
+            checked+=1
+        self.assertEqual(checked,16)
 
     def test_encoder_source_modification_rejected(self):
         root=self.dependency_copy()

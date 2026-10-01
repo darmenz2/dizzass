@@ -26,8 +26,10 @@ python -O "$EVIDENCE/tests/test_evidence.py" --root .
 the command also discovers the repository root automatically. A standalone copy
 works without a source tree, reporting zero active dependency files checked.
 Tests run directly from the repository root discover it too; `--root` makes the
-target explicit. Without a repository, the five tests that need actual source
-files report skips. This does not prevent the other snapshot and negative tests.
+target explicit. Without a repository, tests that need actual source files
+report skips: five in the original L09 validation snapshot accepted on
+2026-10-01, and thirteen after the L10 transition controls below. This does not
+prevent the other snapshot and negative tests.
 
 Add either or both original images to verify provenance directly:
 
@@ -92,13 +94,29 @@ entry point is `verify_evidence.py`; no private extractor is needed to run it.
 the verifier does not pretend that a local working tree still has that commit
 or independently authenticate Git history without its repository.
 
-With `--root`, 17 unchanged dependency files must retain their recorded byte
-length, SHA-256 and Git blob hash. The research index
+In the L09 snapshot accepted on 2026-10-01, `--root` required all 17 unchanged
+dependency files to retain their recorded byte length, SHA-256 and Git blob hash.
+The research index
 `research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/README.md` remains
 in the base provenance receipt but is deliberately excluded from active
 full-file pins because integration updates that index. The new wrapper C/header,
 host tests, build files, and research prose are outside the unchanged dependency
 set and require their own code review and runtime tests.
+
+L10 preserves this receipt and all 17 active entries. It adds one exact current
+transition for `libbitmain/src/chip/chip1368.c`: require the fixed 7519-byte reset
+source, validate its separate `VN135_BM1368_RESET_135` gate, recover the unchanged
+3803-byte constructor prefix, then apply the original receipt's length, SHA-256
+and Git-blob predicates to that prefix. The other 16 dependencies remain exact
+full-file checks. The research index remains the only inactive provenance entry;
+no arbitrary suffix or prior constructor-only source is accepted as current.
+See [current dependency pins](../../../../integration/CURRENT_DEPENDENCY_PINS_135.md)
+for the exact identities and layered nonce/constructor/reset witnesses.
+
+The original L09 50-test validation and its receipts/logs remain historical
+results. The L10 current checker has 58 controls, passed in normal and optimized
+Python modes, including reset-prefix/gate/identity mutations and mutations to
+every other active dependency. Those new results do not relabel the earlier run.
 
 ## Assumptions and limits
 

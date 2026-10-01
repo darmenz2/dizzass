@@ -1,0 +1,183 @@
+{
+  "kind": "L10 local host-and-static validation snapshot",
+  "base_commit": "d717c9f67cf5ff3c8f09a0ba7f7f939a51fc92f8",
+  "base_tree": "3668e9a4de9b797fdfbd7cb99b3c21c64209b6d8",
+  "compiler": "GCC 14.2.0 (Debian 14.2.0-19)",
+  "python": "3.12.14",
+  "source_files": [
+    {
+      "path": "libbitmain/src/chip/chip1368.c",
+      "bytes": 7519,
+      "git_blob": "e024519eda8df9c1c85697548e8e0629f7c0f5cf",
+      "sha256": "e3c8cecb8869c59847db357d26541e95123fa1cb4cf2ef04642a62c2e1e0738d"
+    },
+    {
+      "path": "integration/bm1368_reset_135.h",
+      "bytes": 3153,
+      "git_blob": "9767a50ad79279d877e6758382aa2964a6c28056",
+      "sha256": "0ee6ad706a58cf969475df7684c42f86f5a77f5599730e9d7374066de2eede6c"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-reset/tests/test_original_reset.c",
+      "bytes": 9153,
+      "git_blob": "ab4baf6038659c4b60737b04fd6efec5b91a2779",
+      "sha256": "31c198dde23f2bb2bc85ca56aeb382cb4770afe8c560e6d28233c9505c41ef1e"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-reset/tests/test_composed_reset.c",
+      "bytes": 20529,
+      "git_blob": "900bf67c1900ccaa652a424cb7d8dad177ef3273",
+      "sha256": "f15af6ce6ff43d2f89328f8eb79d9731905608d77d2c93c2aea4ab07de3dd143"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-reset/tests/run_host.py",
+      "bytes": 4440,
+      "git_blob": "d49471e8be49f22822f22b9b843837813b6200b0",
+      "sha256": "8ad3f024f991392695cca1e9463a921d791db2a583aa17741e0dda2512eab96c"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-reset/tests/negative_controls.py",
+      "bytes": 6875,
+      "git_blob": "8da8b3fc8848507b990129c6a24aa6b793640520",
+      "sha256": "9beb314641de894e7b6621e83c67a4d951f5e9cc786028fcf6df3cb09002c145"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-reset/verify_evidence.py",
+      "bytes": 22005,
+      "git_blob": "c5ab8fdf742f71e769f5b6294baa745a8b7d7561",
+      "sha256": "f6f13d9f68e58562da88cd4697294e7a8278defe70ff67e164e83459d964162c"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-reset/static-witness.json",
+      "bytes": 148316,
+      "git_blob": "227dbd7e2b0a6df889e21f8a50ab18f0e23aba3d",
+      "sha256": "44f126a4e966fd1b22c99131b83bb532115da69349f66ad253852dd78d50e40f"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-reset/static-pins.json",
+      "bytes": 10212,
+      "git_blob": "dc45fe0709cc415c868e93f8905f2f2648df95b1",
+      "sha256": "d7dcc0e050e650f6aa371c2ce44589988940db9997ab7fcf378e98b6c586229d"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-reset/tests/test_evidence.py",
+      "bytes": 9202,
+      "git_blob": "71ffe4e9bc6ccfe1b048369161d246a219b8bef4",
+      "sha256": "0cfcaaf59188c95dc2add76a6505d8585f224356088f90ce89efac695a6cd876"
+    }
+  ],
+  "runs": {
+    "public_make_test_sanitize": "passed",
+    "original_callback_suite": {
+      "cases": 131110,
+      "checks": 17362511,
+      "reachable_status_tuples": 6075,
+      "ordinary": "passed",
+      "all_TU_ASan_UBSan": "passed"
+    },
+    "actual_helper_composition": {
+      "cases": 2661,
+      "checks": 592778,
+      "ordinary": "passed",
+      "all_TU_ASan_UBSan": "passed"
+    },
+    "compiled_semantic_controls": {
+      "count": 27,
+      "required_outcome": "compiled then exit 1 with ORIGINAL_RESET_FAIL marker",
+      "passed": true
+    },
+    "static_tamper_controls": {
+      "test_methods": 20,
+      "normal": "passed",
+      "optimized": "passed",
+      "each_method_invokes_both_verifier_modes": true
+    },
+    "source_data_comparison": {
+      "cgminer": "complete size/hash and every witnessed range passed",
+      "hwscan": "complete size/hash and every witnessed range passed",
+      "original_execution": false
+    },
+    "unchanged_regressions": {
+      "constructor": {
+        "cases": 277,
+        "checks": 17161,
+        "ordinary": "passed",
+        "ASan_UBSan": "passed"
+      },
+      "nonce": {
+        "checks": 33047,
+        "ordinary": "passed",
+        "ASan_UBSan": "passed"
+      },
+      "fail_fast_control": {
+        "checks": 6455,
+        "reset_cases": 1088,
+        "ordinary": "passed",
+        "ASan_UBSan": "passed"
+      },
+      "common_read_register": {
+        "cases": 3086,
+        "checks": 45714,
+        "ordinary": "passed",
+        "all_TU_ASan_UBSan": "passed"
+      }
+    }
+  },
+  "sanitizer_scope": {
+    "every_linked_translation_unit_instrumented": true,
+    "leak_detection": false,
+    "unchanged_crc5_TU_only": "-Wno-sign-conversion during ASan/O1 compilation: promoted uint8 shift is nonnegative; prior L09 exception preserved"
+  },
+  "not_run": [
+    "local Clang",
+    "full native cgminer build",
+    "original firmware process",
+    "original-instruction interpreter or emulator",
+    "model/Jansson/OOM or invalid-pointer probes",
+    "physical hardware or OS UART",
+    "real sleeps",
+    "remote CI before publication"
+  ],
+  "logs": [
+    {
+      "path": "validation-logs/final-public-make.log",
+      "bytes": 5066,
+      "sha256": "67a195f8e6b0a8b2a069e4ad00b00e46abb88e2eaaee1ea6ef3fd495dfc2d30d"
+    },
+    {
+      "path": "validation-logs/final-both-elf.log",
+      "bytes": 342,
+      "sha256": "65b5e116a3f8a076f8ee011480377d382871336f0229dc7f8b22696c41270d7a"
+    },
+    {
+      "path": "validation-logs/constructor-nonce.log",
+      "bytes": 8908,
+      "sha256": "0b70dc2cdb9b01738154f359810d2d3b94137b9caabc1e303d393a8038d06af3"
+    },
+    {
+      "path": "validation-logs/common-read-host.log",
+      "bytes": 581,
+      "sha256": "007f5a47b083e11f58b5b6d4cb3c8c0c78dddea44532ba66851911e5af208cd5"
+    },
+    {
+      "path": "validation-logs/fail-fast.log",
+      "bytes": 401,
+      "sha256": "6123cc5c3e457df2fa5acb4137ca46b43a172e8537c0936707a82dd8eaf25c5a"
+    },
+    {
+      "path": "validation-logs/fail-fast-sanitized.log",
+      "bytes": 68,
+      "sha256": "33440d1bcf7002d87d2126be2b8c95cf1e342cf8fa517666c19584f5375aed4e"
+    },
+    {
+      "path": "validation-logs/negative-controls.json",
+      "bytes": 5118,
+      "sha256": "a9c7e3a06fbdb78e98d11741f612e5178c1c4051d5bf7a9d4017eeffd1ea593b"
+    }
+  ],
+  "claims": {
+    "runtime_or_hardware_parity": false,
+    "automatic_formal_lifting_proof": false,
+    "production_linkage_added": false
+  }
+}

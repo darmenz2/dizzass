@@ -1,0 +1,6 @@
+make: Entering directory 'REPOSITORY/research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/common-read-register'
+python3 -B tests/run_host.py --root ../../../.. --test tests/test_common_read_register.c --build build/ordinary --cc cc
+COMMON_READ_PASS cases=3086 checks=45714
+python3 -B tests/run_host.py --root ../../../.. --test tests/test_common_read_register.c --build build/sanitized --cc cc --sanitize
+COMMON_READ_PASS cases=3086 checks=45714
+make: Leaving directory 'REPOSITORY/research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/common-read-register'

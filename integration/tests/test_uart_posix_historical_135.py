@@ -27,12 +27,13 @@ class HistoricalChanges(unittest.TestCase):
             return False
         return True
 
-    def test_exact_seven_states_only(self):
+    def test_exact_eight_states_only(self):
         self.assertEqual(guard.PRIOR_MASKS, (0, 32, 26, 58, 37, 63))
         self.assertEqual(len(guard.PRIOR_RECORDS), 6)
         self.assertEqual(len(guard.CONSTRUCTOR_RECORDS), 11)
+        self.assertEqual(len(guard.RESET_RECORDS), 11)
         approved = guard.approved_changes()
-        self.assertEqual(len(set(approved)), 7)
+        self.assertEqual(len(set(approved)), 8)
         for raw in approved:
             self.assertTrue(self.accepts(raw))
 
@@ -49,8 +50,15 @@ class HistoricalChanges(unittest.TestCase):
         self.assertEqual(tuple(hashlib.sha256(raw.encode()).hexdigest()
                                for raw in guard.approved_changes()[:6]), expected)
 
-    def test_current_constructor_group_matches_files_and_modes(self):
-        for record in guard.CONSTRUCTOR_RECORDS:
+    def test_prior_constructor_state_remains_an_exact_historical_witness(self):
+        raw='\n'.join(guard.CONSTRUCTOR_RECORDS)
+        self.assertEqual(hashlib.sha256(raw.encode()).hexdigest(),
+                         '1b632991d57a24f16ad5a1e5e67c018b4cd2f058f60df1dd9ddc08f5f133ee89')
+        self.assertEqual(guard.approved_changes()[6],raw)
+        self.assertTrue(self.accepts(raw))
+
+    def test_current_reset_group_matches_files_and_modes(self):
+        for record in guard.RESET_RECORDS:
             fields, path = record.split('\t')
             old_mode, new_mode, old, current, status = fields.split()
             self.assertEqual((old_mode, new_mode, status), (':100644', '100644', 'M'))
@@ -74,9 +82,9 @@ class HistoricalChanges(unittest.TestCase):
                 count += 1
         self.assertEqual(count, 1957)
 
-    def test_all_mixed_old_and_constructor_subsets(self):
-        records = sorted(set(guard.PRIOR_RECORDS + guard.CONSTRUCTOR_RECORDS))
-        self.assertEqual(len(records), 12)
+    def test_all_mixed_old_constructor_and_reset_subsets(self):
+        records = sorted(set(guard.PRIOR_RECORDS + guard.CONSTRUCTOR_RECORDS + guard.RESET_RECORDS))
+        self.assertEqual(len(records), 13)
         approved = set(guard.approved_changes())
         accepted = set()
         for mask in range(1 << len(records)):
@@ -92,6 +100,21 @@ class HistoricalChanges(unittest.TestCase):
             records = list(guard.CONSTRUCTOR_RECORDS)
             records[first], records[second] = records[second], records[first]
             self.assertFalse(self.accepts('\n'.join(records)), (first, second))
+
+    def test_every_reset_pair_reordering_fails(self):
+        for first, second in itertools.combinations(range(11), 2):
+            records = list(guard.RESET_RECORDS)
+            records[first], records[second] = records[second], records[first]
+            self.assertFalse(self.accepts('\n'.join(records)), (first, second))
+
+    def test_only_complete_reset_group_is_added(self):
+        old_states=set(guard.approved_changes()[:7])
+        self.assertEqual(set(guard.approved_changes())-old_states,
+                         {'\n'.join(guard.RESET_RECORDS)})
+        for index in range(len(guard.RESET_RECORDS)):
+            records=list(guard.RESET_RECORDS)
+            del records[index]
+            self.assertFalse(self.accepts('\n'.join(records)),index)
 
     def test_every_record_field_is_bound(self):
         for raw in guard.approved_changes()[1:]:

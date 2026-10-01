@@ -1,0 +1,4 @@
+mkdir -p build/bm1368-control
+cc -I. -Iinclude -O1 -g -std=c11 -Wall -Wextra -Werror  integration/tests/test_bm1368_control_bounds.c integration/bm1368_control.c integration/rx_crc5.c reconstruction/support/crc5.c -o build/bm1368-control/bounds
+ASAN_OPTIONS=detect_leaks=1 UBSAN_OPTIONS=halt_on_error=1 ./build/bm1368-control/bounds
+BM1368_CONTROL_BOUNDS_PASS checks=6455 reset_cases=1088 hardware=no

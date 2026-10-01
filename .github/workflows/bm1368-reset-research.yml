@@ -1,0 +1,55 @@
+name: Original BM1368 reset research
+on:
+  pull_request:
+    branches: [work/reconstruction]
+    paths:
+      - 'AGENTS.md'
+      - 'Makefile.am'
+      - 'libbitmain/src/chip/chip1368.c'
+      - 'libbitmain/src/chip/chip1368-register-write.c'
+      - 'libbitmain/src/reg_cache.c'
+      - 'reconstruction/data/reg_cache_defaults.inc'
+      - 'integration/bm1368_control.c'
+      - 'integration/bm1368_control.h'
+      - 'reconstruction/support/crc5.c'
+      - 'libbitmain/src/transport-dispatch.c'
+      - 'libbitmain/src/aml/chip.c'
+      - 'libbitmain/src/uart.c'
+      - 'include/xminer/recovery/reg_cache.h'
+      - 'include/xminer/recovery/chip1398.h'
+      - 'include/xminer/recovery/pll.h'
+      - 'include/xminer/recovery/aml_chip.h'
+      - 'include/xminer/recovery/uart.h'
+      - 'integration/bm1368_frequency_135.h'
+      - 'integration/bm1368_register_write_135.h'
+      - 'integration/transport_dispatch_135.h'
+      - 'integration/bm1368_initialize_135.h'
+      - 'integration/bm1368_nonce.h'
+      - 'integration/tests/test_bm1368_control_bounds.c'
+      - 'integration/tests/test_bm1368_bounds.c'
+      - 'integration/bm1368_reset_135.h'
+      - 'reference/cgminer.vendor.elf'
+      - 'research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-reset/**'
+      - '.github/workflows/bm1368-reset-research.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  original-reset-host:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Original reset callback graph and actual helper composition
+        run: make -C research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-reset CC=${{ matrix.cc }} test sanitize
+      - name: Check original cgminer bytes as data only
+        run: |
+          python -B research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-reset/verify_evidence.py --cgminer reference/cgminer.vendor.elf
+          python -O -B research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-reset/verify_evidence.py

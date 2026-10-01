@@ -1,0 +1,1 @@
+{"firmware_executed": false, "instruction_interpreter_used": false, "limits": "ordinary callback contract; semantic inference is static review, not hardware acceptance or automatic C equivalence", "ordinary_sites_per_elf": 24, "original_files_compared": ["cgminer", "hwscan"], "static_witness_verified": true, "unreachable_cgminer_sites": 4}

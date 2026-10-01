@@ -1,0 +1,175 @@
+{
+  "kind": "accepted-source-provenance-not-a-current-checkout-waiver",
+  "base_commit": "d717c9f67cf5ff3c8f09a0ba7f7f939a51fc92f8",
+  "base_tree": "3668e9a4de9b797fdfbd7cb99b3c21c64209b6d8",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 4121,
+      "git_blob": "c9d99ca8e95e34f3644fb37e2fdeea359e61ec3d",
+      "sha256": "e829c42302bd775cfb9b705dc653429973888535b849d9a4965e9e6461bf746b",
+      "scope": "unchanged dependency"
+    },
+    {
+      "path": "Makefile.am",
+      "bytes": 5171,
+      "git_blob": "17d2fbde26b5e8cb614b61908b84d5937af48325",
+      "sha256": "8601830e23e231cdadd770a9bea4c1216d281ace5aa930010f0e61983daa8995",
+      "scope": "unchanged dependency"
+    },
+    {
+      "path": "libbitmain/src/chip/chip1368.c",
+      "bytes": 3803,
+      "git_blob": "0de837d281e81eb4503b4193b45ef076ec600b6e",
+      "sha256": "b0d68763aa141ffa25e4df3b70e6e55a444cd59f44db405f51b9a80aea6a7a2a",
+      "scope": "preserved first 3803 bytes of chip source"
+    },
+    {
+      "path": "libbitmain/src/chip/chip1368-register-write.c",
+      "bytes": 1861,
+      "git_blob": "5979c0c7efdbd575b8820674c9099e3aff4721c1",
+      "sha256": "8e9d40fc87c102fc0342d64c93027f00b50c3b2c7abe590606300d9e8913629b",
+      "scope": "unchanged dependency"
+    },
+    {
+      "path": "libbitmain/src/reg_cache.c",
+      "bytes": 6752,
+      "git_blob": "6a89d72ae27505f64dc804b5b3b72c455865406e",
+      "sha256": "e504e6e2bd0f568761567551586aa57db174cd3849ca11c22c9c0753ca28d339",
+      "scope": "unchanged dependency"
+    },
+    {
+      "path": "reconstruction/data/reg_cache_defaults.inc",
+      "bytes": 31417,
+      "git_blob": "be581d79cd7cef4dd079c0115689c571951fc3a4",
+      "sha256": "9ef43ac8ee0900bfd06319f8973cb11389103e1fdbe031aa21ba91889980ef84",
+      "scope": "unchanged dependency"
+    },
+    {
+      "path": "integration/bm1368_control.c",
+      "bytes": 3234,
+      "git_blob": "20b4b0476beb3968be590373f884e91b7d6fe46f",
+      "sha256": "6311c43f27b482114b7e18826727e2cd024b2bea4a74b911b5d73887757808f3",
+      "scope": "unchanged dependency"
+    },
+    {
+      "path": "integration/bm1368_control.h",
+      "bytes": 2559,
+      "git_blob": "87433ca81112f6c0f15d88a2cb87a102f5c13ed1",
+      "sha256": "11ddb580caab82219f4df5d480ac17d74386a55ba798aaa47e54390c02aa351a",
+      "scope": "unchanged dependency"
+    },
+    {
+      "path": "reconstruction/support/crc5.c",
+      "bytes": 896,
+      "git_blob": "1912ec8906fb520f7d7c5196ea5a7ec122aaeda8",
+      "sha256": "d03fe3a245dffeddb2d644d91671b44430ca81a007ad15b49db294c1a700e1a2",
+      "scope": "unchanged dependency"
+    },
+    {
+      "path": "libbitmain/src/transport-dispatch.c",
+      "bytes": 3683,
+      "git_blob": "d030308564c47bf409a3d381f16ddf262e6acf26",
+      "sha256": "5cd3632bf3610c8ec3a7d2ea9b3f9da7fc91bd26676598e41448d6376b531fd9",
+      "scope": "unchanged dependency"
+    },
+    {
+      "path": "libbitmain/src/aml/chip.c",
+      "bytes": 1969,
+      "git_blob": "8a8614a9d356c6279b2e3d8e98aa61753b02b5e6",
+      "sha256": "06bc61d93243a33c9230cbeeb2e8a97524cf7e3a6d01679c9aa01a96d0234953",
+      "scope": "unchanged dependency"
+    },
+    {
+      "path": "libbitmain/src/uart.c",
+      "bytes": 4089,
+      "git_blob": "7fdec4cf83867bbbbc69a1b2b8731663d85eb318",
+      "sha256": "fcdebe3884ae27027b630fcbd4e3b50898e575f679976cad72f140d9946033e0",
+      "scope": "unchanged dependency"
+    },
+    {
+      "path": "include/xminer/recovery/reg_cache.h",
+      "bytes": 3577,
+      "git_blob": "96af5995ab727f830219fa96f4e77e652161a458",
+      "sha256": "37aae34cab018e6c6f2282a8083aa01d6fd04da10e37f46d39b6162766a37ba6",
+      "scope": "unchanged dependency"
+    },
+    {
+      "path": "include/xminer/recovery/chip1398.h",
+      "bytes": 2898,
+      "git_blob": "185b8fddfa06b40630158aefc1dd3ab2d3bc3439",
+      "sha256": "57c25fb7b8e234f1b3fc0eef972338398f4e6027dcee0e38f6c1eb6c5eadef14",
+      "scope": "unchanged dependency"
+    },
+    {
+      "path": "include/xminer/recovery/pll.h",
+      "bytes": 2012,
+      "git_blob": "de45948ffdca5c6b479ce843324413b7ac35c6fd",
+      "sha256": "96cb204b3a846ad82c09c8be5e480e0069751d1a79b191e53fa3dc2618a5602d",
+      "scope": "unchanged dependency"
+    },
+    {
+      "path": "include/xminer/recovery/aml_chip.h",
+      "bytes": 2126,
+      "git_blob": "9800cdd205e155441c307f90db7dc6df06ec4ca4",
+      "sha256": "490a1cdf5b1d0062fd43234bccd69e7efe05f2bbf878abef2d4f090a3637e725",
+      "scope": "unchanged dependency"
+    },
+    {
+      "path": "include/xminer/recovery/uart.h",
+      "bytes": 3345,
+      "git_blob": "23838f3ac88d67f1c57c67914119f2d0a5059a54",
+      "sha256": "3ab7808d8cb55ebd817495fd95f36fcd27f71f3add4cd2edfcebc870b4ec3bbd",
+      "scope": "unchanged dependency"
+    },
+    {
+      "path": "integration/bm1368_frequency_135.h",
+      "bytes": 2131,
+      "git_blob": "71319f387fa9a8753afffd9ded86f7ed7210454f",
+      "sha256": "2a5457d7600f67a793c5cfe380b82537eddee9af9bd163395aec0b14d496c7da",
+      "scope": "unchanged dependency"
+    },
+    {
+      "path": "integration/bm1368_register_write_135.h",
+      "bytes": 2354,
+      "git_blob": "02742822a62453ad87c23d25d4f95b74a4762b42",
+      "sha256": "c1fbb74d18db5263c7585aea293f8eda51220ade4dba8f07da8adb8060e52a6a",
+      "scope": "unchanged dependency"
+    },
+    {
+      "path": "integration/transport_dispatch_135.h",
+      "bytes": 2481,
+      "git_blob": "18c8a723f4e56a7c5a9c082b2c07db0090c8089c",
+      "sha256": "7ca6a41c3fa943e068fb458c198164b2525aa04db43e9b0dc0e6cacda0855b36",
+      "scope": "unchanged dependency"
+    },
+    {
+      "path": "integration/bm1368_initialize_135.h",
+      "bytes": 1628,
+      "git_blob": "23a4b101c2f9b7f4fcccb6337ba010402dfa71a1",
+      "sha256": "9f15d1fe3bdeaa311a7b15b94a8cab7b83ca1e54ba9e68c62e3b1fd3db009c8b",
+      "scope": "unchanged dependency"
+    },
+    {
+      "path": "integration/bm1368_nonce.h",
+      "bytes": 1141,
+      "git_blob": "d52253c292a1fb205800adf66b6a8bdeb79575c2",
+      "sha256": "46b3a1c6db6ec8dae2c86c45bf7baff6a79e612b6d03399fcecde3de8536209e",
+      "scope": "unchanged dependency"
+    },
+    {
+      "path": "integration/tests/test_bm1368_control_bounds.c",
+      "bytes": 4346,
+      "git_blob": "ad4da04a54ba55f4e8e83bece3c6ccdd4fae5df3",
+      "sha256": "cd17ed8be7ec5c2d800df6f2ac9d4217ae4331406b3fb45a38ab2e0ac666d930",
+      "scope": "unchanged dependency"
+    },
+    {
+      "path": "integration/tests/test_bm1368_bounds.c",
+      "bytes": 2003,
+      "git_blob": "5f0926772e251a088a2b54d35beea2a4c249d49d",
+      "sha256": "796db2fdecea8abaab89d52b662ace7405f8997eb9cefa6f1143325fe2448fcc",
+      "scope": "unchanged dependency"
+    }
+  ]
+}
