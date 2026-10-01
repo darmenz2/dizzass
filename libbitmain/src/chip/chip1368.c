@@ -173,3 +173,25 @@ int32_t vn135_bm1368_reset_cores_135(
     return 0;
 }
 #endif
+
+#ifdef VN135_BM1368_TICKET_MASK_135
+#include "integration/bm1368_ticket_mask_135.h"
+
+int32_t vn135_bm1368_set_ticket_mask_135(
+    struct vn135_bm1368_frequency_device *device, uint32_t mask,
+    const struct vn135_bm1368_register_ops *writer, void *write_context,
+    const struct vn135_bm1368_ticket_mask_log_135 *log)
+{
+    const uint32_t value = vn135_bm1398_ticket_mask_word(mask);
+    if (vn135_bm1368_write_register_135(device, 1, NULL, 0x14, value,
+            writer, write_context) == 0)
+        return 0;
+    const struct vn135_bm1368_ticket_mask_diagnostic_135 diagnostic = {
+        "driver", "/tmp/build/libbitmain/src/chip/chip1368.c", "[redacted]",
+        "chain#%d - failed to set TICKET_MASK", 507, 1,
+        device->index + UINT32_C(1)
+    };
+    log->emit(log->context, &diagnostic);
+    return -1;
+}
+#endif

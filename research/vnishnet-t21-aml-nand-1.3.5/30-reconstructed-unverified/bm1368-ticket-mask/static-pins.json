@@ -1,0 +1,495 @@
+{
+  "schema": 1,
+  "kind": "bm1368-ticket-mask-static-pins",
+  "metadata_sha256": "8470e31190c36f7b673a71523eb971002328b19cdffc118b9d4ec2e457930bfb",
+  "sources": {
+    "cgminer": {
+      "elf_size": 6228004,
+      "elf_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+      "regions": [
+        {
+          "id": "coordinator-entry-and-flags",
+          "kind": "code",
+          "va": 350068,
+          "size": 168,
+          "sha256": "6119655db5058e9a90183e353f0ac31863f1d1860219ea7f74845f67e42e0aeb"
+        },
+        {
+          "id": "coordinator-backend-load",
+          "kind": "code",
+          "va": 350236,
+          "size": 16,
+          "sha256": "e4f6ccae8f616df84bfa2756b5ceb094ad73d0f81c75d15f713ce0a0518f5de4"
+        },
+        {
+          "id": "coordinator-backend-save",
+          "kind": "code",
+          "va": 350508,
+          "size": 24,
+          "sha256": "68017b62235f64bde0c114b0d790c74ac1d044e1cc322071e10f6bc05ee7d616"
+        },
+        {
+          "id": "coordinator-device",
+          "kind": "code",
+          "va": 350936,
+          "size": 52,
+          "sha256": "e856f68db0f630994db9e45eb1862d1c43416927f0eecbdff9d665a621ebbcf1"
+        },
+        {
+          "id": "coordinator-model-restore",
+          "kind": "code",
+          "va": 351112,
+          "size": 104,
+          "sha256": "05d68b999cccfe585ffc83b3910b55af096b6a53dec7fe370f58aaa3abc1ccde"
+        },
+        {
+          "id": "coordinator-reset-flag",
+          "kind": "code",
+          "va": 351264,
+          "size": 48,
+          "sha256": "767195fe7ed466dd5ec6f7295ea32f687b95ae1289eb411f15ef71892030c0cf"
+        },
+        {
+          "id": "coordinator-reset-flag-branch",
+          "kind": "code",
+          "va": 351384,
+          "size": 36,
+          "sha256": "b5b3a38148ee75598a157fc31354d1cb57eea123bec450d57a3bafb5d178d270"
+        },
+        {
+          "id": "coordinator-three-masks",
+          "kind": "code",
+          "va": 351716,
+          "size": 204,
+          "sha256": "112d3f39a2a2d63c42d942dce938487955d2ea88feb04c65e422a9e36ddc2718"
+        },
+        {
+          "id": "coordinator-reset-failure-return",
+          "kind": "code",
+          "va": 351988,
+          "size": 24,
+          "sha256": "074fa4b76542c33732788b29009e1e2369222683ddcd9f662415feb146cdb6b7"
+        },
+        {
+          "id": "coordinator-after-masks",
+          "kind": "code",
+          "va": 352012,
+          "size": 84,
+          "sha256": "271b91cc5f0e9716b692ea1ad5110ab79862efb0164be0d1b26885b7475782d7"
+        },
+        {
+          "id": "coordinator-final-mask",
+          "kind": "code",
+          "va": 352928,
+          "size": 128,
+          "sha256": "663a55914dbd86c2ed139bca98e08236a3645552db81cbc1454b073b1127a41a"
+        },
+        {
+          "id": "chain-predicate",
+          "kind": "code",
+          "va": 356300,
+          "size": 92,
+          "sha256": "589d7c137856a63dbe03f5d9dc466784169c0129476cf80e0b6f274c11455d99"
+        },
+        {
+          "id": "startup-backend-argument",
+          "kind": "code",
+          "va": 425976,
+          "size": 64,
+          "sha256": "47d20cb1c7b22507cc114b9d2c42c154df7d56fe48b98e4b0e2d0b57838e1274"
+        },
+        {
+          "id": "startup-backend-save",
+          "kind": "code",
+          "va": 428064,
+          "size": 52,
+          "sha256": "1ac20c15a73d4aca029d775aa08b62a59fd8c39e08662f1f124335323e8b3a83"
+        },
+        {
+          "id": "startup-launcher-call",
+          "kind": "code",
+          "va": 433556,
+          "size": 16,
+          "sha256": "4d96503b779b05310bc7cfcbe29c231c2a8d2dfbdac3d28452f3d1dccf9e56d6"
+        },
+        {
+          "id": "launcher-entry",
+          "kind": "code",
+          "va": 444572,
+          "size": 24,
+          "sha256": "f3b6f018919f3ee12c9580b90f2ca38a71afed37eb4f1235d59389f718d6d92c"
+        },
+        {
+          "id": "launcher-args-save",
+          "kind": "code",
+          "va": 445632,
+          "size": 72,
+          "sha256": "b5c54aeb1659713ad1d88225bdd4ce5e90a1c2ff5209c060c24269f11e08fefc"
+        },
+        {
+          "id": "launcher-extra-argument",
+          "kind": "code",
+          "va": 446184,
+          "size": 12,
+          "sha256": "7ecf4169537fa21f4f671f956a7951d858d6b00ea13131e93af112b4ea6bb27b"
+        },
+        {
+          "id": "launcher-worker-address",
+          "kind": "code",
+          "va": 449524,
+          "size": 28,
+          "sha256": "386971778425a4676751fe09372c469b68c661e3e860b0e971b6b195506ea624"
+        },
+        {
+          "id": "launcher-worker-args-and-call",
+          "kind": "code",
+          "va": 449572,
+          "size": 140,
+          "sha256": "16492c1b8b0d5dcdc5ba1d7c79dafec7db7749f047a5eda86ca067792865e8fa"
+        },
+        {
+          "id": "thread-literal-1",
+          "kind": "data",
+          "va": 451296,
+          "size": 4,
+          "sha256": "c574153e011cf52ae37b5377d284ab6f9eb8d14f788941f4922a348520e2a482"
+        },
+        {
+          "id": "resume-backend-argument",
+          "kind": "code",
+          "va": 462384,
+          "size": 16,
+          "sha256": "ad2b4745a8499b9c9c7a4f6fc440af40f2d86174cbb2eac1b38808df5a08bf19"
+        },
+        {
+          "id": "resume-launcher-call",
+          "kind": "code",
+          "va": 464456,
+          "size": 16,
+          "sha256": "7a2406b19ad288f3776a1c488e624116cf54ea899d65721cbd05744fcb4ff95b"
+        },
+        {
+          "id": "cold-model-and-array",
+          "kind": "code",
+          "va": 472092,
+          "size": 56,
+          "sha256": "18ee8000cee0c1e6071e1579c344914633a91c4b21b9515981213b424a14e4dd"
+        },
+        {
+          "id": "cold-chain-owner",
+          "kind": "code",
+          "va": 472552,
+          "size": 36,
+          "sha256": "4a60209df37c8d474498b1b742191c789aef8eff436defb9b7aac66c9e3fe8cc"
+        },
+        {
+          "id": "cold-dispatch-call",
+          "kind": "code",
+          "va": 474580,
+          "size": 24,
+          "sha256": "4299d1ee2f3d5a16a774b7ecac324807a8db994007f430a7c65aec1fe27f2df1"
+        },
+        {
+          "id": "cold-dispatch-result",
+          "kind": "code",
+          "va": 474664,
+          "size": 8,
+          "sha256": "92f2b98d862a27274175c7d71d3d4d2347c9b8709311aec8785d979f35e38e91"
+        },
+        {
+          "id": "cold-registration",
+          "kind": "code",
+          "va": 474784,
+          "size": 36,
+          "sha256": "a9293831d31891e7ee90d9c884bda507cf7205af908df65695e6d4f832c93187"
+        },
+        {
+          "id": "prepare-backend",
+          "kind": "code",
+          "va": 475372,
+          "size": 12,
+          "sha256": "4349fe078a2ab92a09bd39f529b9648f8cd57fb27b802ed31b26cfcef6fc023e"
+        },
+        {
+          "id": "prepare-thread",
+          "kind": "code",
+          "va": 477432,
+          "size": 40,
+          "sha256": "7e3b263ad1929dd4f7af5520f85b97ee9f2949246cd1e94b9aa390687029cb97"
+        },
+        {
+          "id": "thread-literal-0",
+          "kind": "data",
+          "va": 478200,
+          "size": 4,
+          "sha256": "ebf465cf131a6443610e0297ebc89b759a3a4501fa59903171f09f680c0ee323"
+        },
+        {
+          "id": "worker-entry-and-call",
+          "kind": "code",
+          "va": 493116,
+          "size": 120,
+          "sha256": "d949e96a268390ee6e6fa1e98b8a022ed93cf9ca5e82224ed0141daedb9a751b"
+        },
+        {
+          "id": "startup-worker-entry",
+          "kind": "code",
+          "va": 507840,
+          "size": 20,
+          "sha256": "3c1f4e89b31e2169ad7617ff5fc75419ded307e363e02e4dc4f33cda9731e845"
+        },
+        {
+          "id": "startup-worker-call",
+          "kind": "code",
+          "va": 507988,
+          "size": 20,
+          "sha256": "26c3d3965ca4d5ca524f65f32582043750163974660d262a4f9ee740cdcc699f"
+        },
+        {
+          "id": "third-argument-zero",
+          "kind": "code",
+          "va": 535904,
+          "size": 8,
+          "sha256": "6dcd5e75586fe6683156c0d559d4827b73bd48d501fa5781a1c6099aacd7c877"
+        },
+        {
+          "id": "model-chip-accessor",
+          "kind": "code",
+          "va": 684532,
+          "size": 12,
+          "sha256": "de3d424c551c4c4861ce65090e1a8190a2088616dd98d1f2b68013b02aeb8b53"
+        },
+        {
+          "id": "model-board-accessor",
+          "kind": "code",
+          "va": 684556,
+          "size": 12,
+          "sha256": "75cf4ac24b47097c94faca34d348431b77cdb0c00154c46e861f1b6fba5d93f4"
+        },
+        {
+          "id": "dispatch-bm1368-tail",
+          "kind": "code",
+          "va": 861120,
+          "size": 12,
+          "sha256": "b884558fa5a95eaa927ff40c8949b5c567eda59d66ebdbaba6fc1728e622fff7"
+        },
+        {
+          "id": "constructor-slot28",
+          "kind": "code",
+          "va": 923200,
+          "size": 44,
+          "sha256": "686b5e536b1938042ef1e5c80aa148dba837fc73c7e232ecfa27cbab6655e10c"
+        },
+        {
+          "id": "slot-literal",
+          "kind": "data",
+          "va": 923500,
+          "size": 4,
+          "sha256": "e8716bc5aa3f6b583276472f848b3fa2d1b36d4b719d6d250fdc512057f594e2"
+        },
+        {
+          "id": "ticket-mask-code",
+          "kind": "code",
+          "va": 926000,
+          "size": 208,
+          "sha256": "c0d1904a5e2e0988d16affcf79f93d91903b1b3ecbb594f5b9552b6c2b3a3a1d"
+        },
+        {
+          "id": "ticket-mask-pool",
+          "kind": "data",
+          "va": 926208,
+          "size": 16,
+          "sha256": "f63a18be11f763c089c695cf83d30f5ca94d86a52fc21c90e9b7f7c8154a1d88"
+        },
+        {
+          "id": "init-module-bounds",
+          "kind": "code",
+          "va": 938896,
+          "size": 16,
+          "sha256": "e4e48d68db42afabfbb2b7a9ffec225cabe67c1bebc91d7234c0fa2f9f05b4a5"
+        },
+        {
+          "id": "init-module-xor",
+          "kind": "code",
+          "va": 938956,
+          "size": 4,
+          "sha256": "bef35e359956b309217aa18f83b77673a82197c8f23fe0078c66b1fb8ef1682e"
+        },
+        {
+          "id": "init-source-bounds",
+          "kind": "code",
+          "va": 939092,
+          "size": 16,
+          "sha256": "1e6614419fabfad498d3dbb5cd08df926199c844f3ad2a327a4c7c5083263280"
+        },
+        {
+          "id": "init-source-xor",
+          "kind": "code",
+          "va": 939152,
+          "size": 4,
+          "sha256": "93501b4424fea2f622dbe09219dbb8214b8362459ed6d077e2148598140fb70e"
+        },
+        {
+          "id": "init-function-bounds",
+          "kind": "code",
+          "va": 939272,
+          "size": 16,
+          "sha256": "c5d3a385e39ef70ca7c8a84f71815bb97dd86fbe42648c2d9c0f862a4ca09c11"
+        },
+        {
+          "id": "init-function-xor",
+          "kind": "code",
+          "va": 939332,
+          "size": 4,
+          "sha256": "c2862e2d15a068f1a4c2b248f53d1f2da53cd42e7335841f49438b392669616f"
+        },
+        {
+          "id": "string-initializer-part1",
+          "kind": "code",
+          "va": 939672,
+          "size": 24,
+          "sha256": "43e6a3691da0aba4108bc15827e375ab220de816e5dbf53efb45e82daa7b2177"
+        },
+        {
+          "id": "string-initializer-xor",
+          "kind": "code",
+          "va": 939728,
+          "size": 12,
+          "sha256": "f9feef0108cace42f1f683e3b2c04d426e02ce86d733f90908ca473b6f5b54e0"
+        },
+        {
+          "id": "init-module-literal",
+          "kind": "data",
+          "va": 942176,
+          "size": 4,
+          "sha256": "69d1950d65221d7381c3a9d12d73ba49ecff982ce5d51853be44902cf04b4b6f"
+        },
+        {
+          "id": "init-source-literal",
+          "kind": "data",
+          "va": 942188,
+          "size": 4,
+          "sha256": "cb2a8eb06e68c5b606f3871347666003a94a3d1da34f2b7d0f01bba6b5033ff8"
+        },
+        {
+          "id": "init-function-literal",
+          "kind": "data",
+          "va": 942192,
+          "size": 4,
+          "sha256": "ef7807d205e2d19863b2a4d86bf980a66fb3904756716af483cba6bff581dbd6"
+        },
+        {
+          "id": "init-ticket-mask-literal",
+          "kind": "data",
+          "va": 942208,
+          "size": 4,
+          "sha256": "6143da417f1de6e3ed01894399aed8b36c0e96705a1e0ceb2717c07cf1b7cedd"
+        },
+        {
+          "id": "slot-got",
+          "kind": "data",
+          "va": 6158568,
+          "size": 4,
+          "sha256": "eb31103ba517d141ad0b65e14444edcdf3176e0fccb3d0837ae54bc0e493f482"
+        },
+        {
+          "id": "string-module",
+          "kind": "data",
+          "va": 6206432,
+          "size": 7,
+          "sha256": "64a55a211d01dc292292fa14f929c00b510dd0da70734ea797b1636e001b3e93"
+        },
+        {
+          "id": "string-source",
+          "kind": "data",
+          "va": 6206439,
+          "size": 42,
+          "sha256": "21e3cb1265c67df3e206ffcdcc8af58222b08f0252d352b2b1dd982f9300a406"
+        },
+        {
+          "id": "string-function",
+          "kind": "data",
+          "va": 6206481,
+          "size": 11,
+          "sha256": "b4f867e0249b5f517303e494ce0950cb19c433503f70c9dec350e9e770e0126a"
+        },
+        {
+          "id": "string-ticket-mask",
+          "kind": "data",
+          "va": 6206613,
+          "size": 37,
+          "sha256": "8bdcbe477d787d4229537a52d2e8cf944e8690819fe8a1580c6e99c8101b2df3"
+        }
+      ]
+    },
+    "hwscan": {
+      "elf_size": 4883216,
+      "elf_sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+      "regions": [
+        {
+          "id": "constructor-slot28",
+          "kind": "code",
+          "va": 991000,
+          "size": 44,
+          "sha256": "686b5e536b1938042ef1e5c80aa148dba837fc73c7e232ecfa27cbab6655e10c"
+        },
+        {
+          "id": "slot-literal",
+          "kind": "data",
+          "va": 991300,
+          "size": 4,
+          "sha256": "325e2f785235f14b782958405dccb0770f6357b4a15867870fa8bc3cd619af6c"
+        },
+        {
+          "id": "ticket-mask-code",
+          "kind": "code",
+          "va": 992844,
+          "size": 208,
+          "sha256": "761ca01152d6839fee0e38c14ffe99ae849add49ad5927316cdfd6dcd4ec1ce1"
+        },
+        {
+          "id": "ticket-mask-pool",
+          "kind": "data",
+          "va": 993052,
+          "size": 16,
+          "sha256": "50e54e7e6b26885b464627ea08b6cdfbc8b86e97561798e167545ddae8f2b9e0"
+        },
+        {
+          "id": "string-function",
+          "kind": "data",
+          "va": 4707161,
+          "size": 11,
+          "sha256": "4b5ff616946aa201289595f21b4e085135f43222d5e6f2b8ba2f9bc82241d3a7"
+        },
+        {
+          "id": "string-module",
+          "kind": "data",
+          "va": 4708628,
+          "size": 7,
+          "sha256": "6b2223c6c75d72fe4bd43ffc5a5aa427f68822c5b228e99d1e29e8fd088bb8b8"
+        },
+        {
+          "id": "string-ticket-mask",
+          "kind": "data",
+          "va": 4711100,
+          "size": 37,
+          "sha256": "8ffbeddf27676b28cb3b767d83979a644774d53158665f556176321520eabb86"
+        },
+        {
+          "id": "string-source",
+          "kind": "data",
+          "va": 4712431,
+          "size": 42,
+          "sha256": "a22fe6f4f8a0d5f29b251276a4647b1a807f19bb2985aa4301f986468589f931"
+        },
+        {
+          "id": "slot-got",
+          "kind": "data",
+          "va": 4914428,
+          "size": 4,
+          "sha256": "7e4a0555345ac605d2a12d426ea86fb622dd75b79c15a6d2127603143181cb87"
+        }
+      ]
+    }
+  }
+}

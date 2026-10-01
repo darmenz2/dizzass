@@ -1,0 +1,142 @@
+{
+  "kind": "authored-host-semantic-controls",
+  "controls": 15,
+  "source_sha256": "ed818babcb847fb38094af8f08ae3c0ac6ef690192aa1e6030c3f8326e9968d9",
+  "preserved_prefix_bytes": 7519,
+  "ticket_span_bytes": 831,
+  "untouched_suffix_bytes": 0,
+  "compiler": "cc",
+  "compile_flags": [
+    "-IREPOSITORY",
+    "-IREPOSITORY/include",
+    "-std=c11",
+    "-O2",
+    "-g",
+    "-Wall",
+    "-Wextra",
+    "-Wpedantic",
+    "-Werror",
+    "-Wconversion",
+    "-Wshadow",
+    "-DVN135_BM1368_TICKET_MASK_135",
+    "-DVN135_BM1368_REGISTER_WRITE_135",
+    "-DVN135_TRANSPORT_DISPATCH_135"
+  ],
+  "unchanged_inputs": [
+    {
+      "path": "REPOSITORY/libbitmain/src/chip/chip1398.c",
+      "sha256": "378ce7ebfde45b71b50622c11fbac392a75a987eccfd7965c2caa2d57f076967"
+    },
+    {
+      "path": "REPOSITORY/libbitmain/src/chip/chip1368-register-write.c",
+      "sha256": "8e9d40fc87c102fc0342d64c93027f00b50c3b2c7abe590606300d9e8913629b"
+    },
+    {
+      "path": "REPOSITORY/libbitmain/src/reg_cache.c",
+      "sha256": "e504e6e2bd0f568761567551586aa57db174cd3849ca11c22c9c0753ca28d339"
+    },
+    {
+      "path": "REPOSITORY/integration/bm1368_control.c",
+      "sha256": "6311c43f27b482114b7e18826727e2cd024b2bea4a74b911b5d73887757808f3"
+    },
+    {
+      "path": "REPOSITORY/reconstruction/support/crc5.c",
+      "sha256": "d03fe3a245dffeddb2d644d91671b44430ca81a007ad15b49db294c1a700e1a2"
+    },
+    {
+      "path": "REPOSITORY/libbitmain/src/transport-dispatch.c",
+      "sha256": "5cd3632bf3610c8ec3a7d2ea9b3f9da7fc91bd26676598e41448d6376b531fd9"
+    },
+    {
+      "path": "REPOSITORY/libbitmain/src/aml/chip.c",
+      "sha256": "06bc61d93243a33c9230cbeeb2e8a97524cf7e3a6d01679c9aa01a96d0234953"
+    },
+    {
+      "path": "REPOSITORY/libbitmain/src/uart.c",
+      "sha256": "fcdebe3884ae27027b630fcbd4e3b50898e575f679976cad72f140d9946033e0"
+    },
+    {
+      "path": "REPOSITORY/research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-ticket-mask/tests/test_ticket_mask.c",
+      "sha256": "6651ac45d38db9d8f273ddb37b486712310ed9caa3290b4e3f405b55bafb4051"
+    }
+  ],
+  "results": [
+    {
+      "name": "reverse-low-byte",
+      "returncode": 1,
+      "failure": "ORIGINAL_TICKET_MASK_FAIL case=2 name=exhaustive-low-byte line=275 mode == 1 && chip == NULL && reg == 0x14 && value == f->expected_word"
+    },
+    {
+      "name": "correct-input-word",
+      "returncode": 1,
+      "failure": "ORIGINAL_TICKET_MASK_FAIL case=2 name=exhaustive-low-byte line=275 mode == 1 && chip == NULL && reg == 0x14 && value == f->expected_word"
+    },
+    {
+      "name": "broadcast-mode-one",
+      "returncode": 1,
+      "failure": "ORIGINAL_TICKET_MASK_FAIL case=1 name=exhaustive-low-byte line=275 mode == 1 && chip == NULL && reg == 0x14 && value == f->expected_word"
+    },
+    {
+      "name": "ticket-register",
+      "returncode": 1,
+      "failure": "ORIGINAL_TICKET_MASK_FAIL case=1 name=exhaustive-low-byte line=275 mode == 1 && chip == NULL && reg == 0x14 && value == f->expected_word"
+    },
+    {
+      "name": "nonzero-writer-status-fails",
+      "returncode": 1,
+      "failure": "ORIGINAL_TICKET_MASK_FAIL case=263 name=terminal-refusal line=356 result == f->expected_status"
+    },
+    {
+      "name": "zero-status-succeeds",
+      "returncode": 1,
+      "failure": "ORIGINAL_TICKET_MASK_FAIL case=1 name=exhaustive-low-byte line=356 result == f->expected_status"
+    },
+    {
+      "name": "failure-status-minus-one",
+      "returncode": 1,
+      "failure": "ORIGINAL_TICKET_MASK_FAIL case=263 name=terminal-refusal line=356 result == f->expected_status"
+    },
+    {
+      "name": "one-based-index-bits",
+      "returncode": 1,
+      "failure": "ORIGINAL_TICKET_MASK_FAIL case=263 name=terminal-refusal line=258 diagnostic->index_bits == f->expected_outer_index"
+    },
+    {
+      "name": "source-line-507",
+      "returncode": 1,
+      "failure": "ORIGINAL_TICKET_MASK_FAIL case=263 name=terminal-refusal line=253 diagnostic->line == 507 && diagnostic->severity == 1"
+    },
+    {
+      "name": "severity-one",
+      "returncode": 1,
+      "failure": "ORIGINAL_TICKET_MASK_FAIL case=263 name=terminal-refusal line=253 diagnostic->line == 507 && diagnostic->severity == 1"
+    },
+    {
+      "name": "ticket-format",
+      "returncode": 1,
+      "failure": "ORIGINAL_TICKET_MASK_FAIL case=263 name=terminal-refusal line=257 strcmp(diagnostic->format, \"chain#%d - failed to set TICKET_MASK\") == 0"
+    },
+    {
+      "name": "diagnostic-is-emitted",
+      "returncode": 1,
+      "failure": "ORIGINAL_TICKET_MASK_FAIL case=263 name=terminal-refusal line=362 f->outer_logs == (unsigned)(f->expected_status != 0)"
+    },
+    {
+      "name": "high-bits-are-accepted",
+      "returncode": 1,
+      "failure": "ORIGINAL_TICKET_MASK_FAIL case=257 name=selected-high-word line=356 result == f->expected_status"
+    },
+    {
+      "name": "post-writer-index",
+      "returncode": 1,
+      "failure": "ORIGINAL_TICKET_MASK_FAIL case=267 name=fresh-index-after-send-refusal line=258 diagnostic->index_bits == f->expected_outer_index"
+    },
+    {
+      "name": "one-writer-call",
+      "returncode": 1,
+      "failure": "ORIGINAL_TICKET_MASK_FAIL case=1 name=exhaustive-low-byte line=217 f->releases == 1 && f->attempts >= 1"
+    }
+  ],
+  "firmware_executed": false,
+  "hardware": false
+}

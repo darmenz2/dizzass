@@ -1,7 +1,7 @@
 ROOT := ../../../..
 CC ?= cc
 PYTHON ?= python3
-.PHONY: test host controls sanitize evidence partition
+.PHONY: test host controls sanitize evidence
 host:
 	$(PYTHON) -B tests/run_host.py --root $(ROOT) --build build/ordinary --cc $(CC)
 controls:
@@ -12,7 +12,4 @@ evidence:
 	$(PYTHON) -B verify_evidence.py
 	$(PYTHON) -B tests/test_evidence.py
 	$(PYTHON) -O -B tests/test_evidence.py
-partition:
-	$(PYTHON) -B tests/test_partition.py
-	$(PYTHON) -O -B tests/test_partition.py
-test: host controls evidence partition
+test: host controls evidence

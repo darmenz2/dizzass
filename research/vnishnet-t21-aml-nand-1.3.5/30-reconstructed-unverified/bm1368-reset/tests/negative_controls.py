@@ -12,6 +12,66 @@ from pathlib import Path
 import subprocess
 import sys
 import tempfile
+from typing import NamedTuple
+
+
+CONSTRUCTOR_SIZE = 3803
+CONSTRUCTOR_SHA256 = 'b0d68763aa141ffa25e4df3b70e6e55a444cd59f44db405f51b9a80aea6a7a2a'
+CONSTRUCTOR_BLOB = '0de837d281e81eb4503b4193b45ef076ec600b6e'
+RESET_END = 7519
+RESET_SPAN_SHA256 = '736aabec3f8a22a367ff32c4010f076b3c28bd899743e5fdc21f91f5e6f87b95'
+RESET_SPAN_BLOB = 'ea2ed94d4e27cc1930947ce89b85e5293b48c6bc'
+RESET_GATE = b'\n#ifdef VN135_BM1368_RESET_135\n'
+RESET_HEADER = b'#include "integration/bm1368_reset_135.h"\n'
+
+
+class ResetParts(NamedTuple):
+    prefix: bytes
+    body: str
+    suffix: bytes
+
+
+def git_blob(data):
+    return hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest()
+
+
+def partition_source(raw):
+    """Extract only the independently pinned L10 span at fixed byte offsets.
+
+    Later bytes are opaque and retained exactly, including duplicate anchors.
+    This scopes a mutation tool; it does not approve the later source or replace
+    the separate current-checkout dependency pins. L10 flags leave ticket-mask
+    code disabled.
+    """
+    if len(raw) < RESET_END:
+        raise ValueError('source is shorter than the accepted reset boundary')
+    prefix, reset, suffix = (raw[:CONSTRUCTOR_SIZE],
+                             raw[CONSTRUCTOR_SIZE:RESET_END], raw[RESET_END:])
+    if (not reset.startswith(RESET_GATE + RESET_HEADER)
+            or reset.count(RESET_GATE) != 1
+            or reset.count(b'#if') != 1 or reset.count(b'#endif') != 1
+            or reset.count(b'#include') != 1
+            or b'#else' in reset or b'#elif' in reset
+            or not reset.endswith(b'\n#endif\n')):
+        raise ValueError('accepted reset span is not separately gated at its boundaries')
+    if (hashlib.sha256(prefix).hexdigest() != CONSTRUCTOR_SHA256
+            or git_blob(prefix) != CONSTRUCTOR_BLOB):
+        raise ValueError('accepted constructor source prefix changed')
+    if (hashlib.sha256(reset).hexdigest() != RESET_SPAN_SHA256
+            or git_blob(reset) != RESET_SPAN_BLOB):
+        raise ValueError('accepted reset source span changed')
+    return ResetParts(prefix, reset[len(RESET_GATE):].decode('ascii'), suffix)
+
+
+def assemble_mutant(parts, changed):
+    """Replace the reset body while retaining both other byte spans exactly."""
+    body = changed.encode('ascii')
+    mutated = parts.prefix + RESET_GATE + body + parts.suffix
+    suffix_start = len(parts.prefix) + len(RESET_GATE) + len(body)
+    if (mutated[:CONSTRUCTOR_SIZE] != parts.prefix
+            or mutated[suffix_start:] != parts.suffix):
+        raise ValueError('semantic control changed bytes outside the reset span')
+    return mutated
 
 
 def replace_exact(text, old, new, occurrences=1, replacements=1):
@@ -86,12 +146,9 @@ def main():
     args = parser.parse_args()
     root = args.root.resolve()
     folder = Path(__file__).resolve().parent.parent
-    raw = (root / 'libbitmain/src/chip/chip1368.c').read_text()
-    gate = '\n#ifdef VN135_BM1368_RESET_135\n'
-    if raw.count(gate) != 1:
-        raise ValueError('expected one separately gated reset append')
-    prefix, body = raw.split(gate)
-    variants = list(controls(body))
+    raw = (root / 'libbitmain/src/chip/chip1368.c').read_bytes()
+    parts = partition_source(raw)
+    variants = list(controls(parts.body))
     flags = ['-I' + str(root), '-I' + str(root / 'include'), '-std=c11', '-O2',
              '-Wall', '-Wextra', '-Wpedantic', '-Werror', '-Wconversion', '-Wshadow',
              '-DVN135_BM1368_RESET_135']
@@ -102,7 +159,7 @@ def main():
         checked([args.cc, *flags, '-c', str(folder/'tests/test_original_reset.c'), '-o', str(fixture)])
         for number, (name, changed) in enumerate(variants):
             source, obj, exe = temp/f'mutant-{number}.c', temp/f'mutant-{number}.o', temp/f'mutant-{number}'
-            source.write_text(prefix + gate + changed)
+            source.write_bytes(assemble_mutant(parts, changed))
             checked([args.cc, *flags, '-c', str(source), '-o', str(obj)])
             checked([args.cc, str(obj), str(fixture), '-o', str(exe)])
             result = subprocess.run([str(exe)], capture_output=True, text=True, timeout=30)
@@ -112,7 +169,7 @@ def main():
             results.append({'name': name, 'returncode': result.returncode,
                             'failure': result.stderr.strip().splitlines()[0]})
     receipt = {'kind': 'authored-host-semantic-controls', 'controls': len(results),
-               'source_sha256': hashlib.sha256(raw.encode()).hexdigest(),
+               'source_sha256': hashlib.sha256(raw).hexdigest(),
                'fixture_sha256': hashlib.sha256((folder/'tests/test_original_reset.c').read_bytes()).hexdigest(),
                'compiler': args.cc, 'compile_flags': flags, 'results': results,
                'firmware_executed': False, 'instruction_interpreter_used': False, 'hardware': False}

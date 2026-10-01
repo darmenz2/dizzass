@@ -29,3 +29,12 @@ cache/write/error graph and all five delay requests through explicit host
 callbacks, reusing the existing cache and command/transport stack in its tests.
 It preserves the original final zero even after errors; this is not a hardware
 readiness signal. The existing fail-fast adapter remains separate and unchanged.
+
+## BM1368 ticket-mask configuration
+
+The [TICKET_MASK method](bm1368-ticket-mask/README.md) reuses the existing bit
+permutation and actual register/cache/transport stack. Static owner and thread
+evidence places the method on cgminer's startup and resume paths, including a
+later model-mask application after temporary all-ones masks. Focused host tests
+check exact broadcast arguments, fanout and post-writer error-index behavior;
+the whole coordinator and production binding remain separate work.

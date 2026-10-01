@@ -84,6 +84,14 @@ checkout. Existing current-source gates retain their immutable old manifests
 and enforce the exact reviewed reset append through explicit compatibility
 transitions. New source changes must be audited again.
 
+The L11 compatibility repair bounds the 27 unchanged semantic mutations to the
+independently pinned reset bytes [3803,7519), preserving the constructor prefix
+and every later source byte. `make partition` runs Python-only partition tests
+normally and with `-O`; it neither compiles nor executes the C controls. The
+validation results above and their original receipts remain historical L10
+results. This scoped mutation tool does not validate arbitrary later appends;
+the separate current-checkout pins enforce the reviewed complete source.
+
 No production source selection, board admission, protection, live transport,
 queue draining, ACK handling or device binding is added. The delay boundary
 means requested milliseconds; real scheduling and reset completion remain
