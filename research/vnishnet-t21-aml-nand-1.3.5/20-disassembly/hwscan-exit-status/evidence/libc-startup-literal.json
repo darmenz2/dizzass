@@ -1,0 +1,22 @@
+{
+  "boundary_evidence": "Bounded evidence interval; not an assertion of complete function or whole-program coverage.",
+  "bytes": 4,
+  "caveat": "Linear static rendering; literal pools may remain in instruction windows. No complete CFG, runtime path, function extent or parity is proved.",
+  "disassembler": "little-endian word rendering",
+  "disassembler_version": "1",
+  "end_exclusive": "0x00452390",
+  "evidence_sources": [
+    "../README.md",
+    "../STATUS_CHAIN.md"
+  ],
+  "file_offset": 4465548,
+  "firmware_executed": false,
+  "mode": "data",
+  "mode_evidence": "Explicit PC-relative literal or pointer cell, rendered as data.",
+  "name": "libc-startup-literal",
+  "schema": 1,
+  "segment_flags": 5,
+  "sha256": "df6e34d8c4df7407d91f939304009e3987769581b01f63f7ee45df89e7dc6061",
+  "source_sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+  "start": "0x0045238c"
+}

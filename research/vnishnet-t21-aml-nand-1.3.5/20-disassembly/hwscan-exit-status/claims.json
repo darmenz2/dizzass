@@ -1,0 +1,403 @@
+{
+  "direct_edges": [
+    {
+      "at": "0x158d4",
+      "condition": 14,
+      "instruction_word": "0xeb000000",
+      "kind": "BL",
+      "label": "entry bridge",
+      "target": "0x158dc"
+    },
+    {
+      "at": "0x15924",
+      "condition": 14,
+      "instruction_word": "0xeb10f289",
+      "kind": "BL",
+      "label": "startup bridge to libc",
+      "target": "0x452350"
+    },
+    {
+      "at": "0x225c4",
+      "condition": 14,
+      "instruction_word": "0xea030fd6",
+      "kind": "B",
+      "label": "empty-wrapper tail call",
+      "target": "0xe6524"
+    },
+    {
+      "at": "0x22630",
+      "condition": 14,
+      "instruction_word": "0xeb030fbb",
+      "kind": "BL",
+      "label": "argument-wrapper C-worker call",
+      "target": "0xe6524"
+    },
+    {
+      "at": "0x22648",
+      "condition": 14,
+      "instruction_word": "0xea10c208",
+      "kind": "B",
+      "label": "argument-storage cleanup tail call",
+      "target": "0x452e70"
+    },
+    {
+      "at": "0x256d0",
+      "condition": 14,
+      "instruction_word": "0xebffdc17",
+      "kind": "BL",
+      "label": "main callback trampoline",
+      "target": "0x1c734"
+    },
+    {
+      "at": "0x256e8",
+      "condition": 1,
+      "instruction_word": "0x1a00005a",
+      "kind": "B",
+      "label": "runtime cleanup branch",
+      "target": "0x25858"
+    },
+    {
+      "at": "0x256ec",
+      "condition": 14,
+      "instruction_word": "0xeb10b362",
+      "kind": "BL",
+      "label": "runtime exit-owner identifier dependency",
+      "target": "0x45247c"
+    },
+    {
+      "at": "0x256fc",
+      "condition": 1,
+      "instruction_word": "0x1a000066",
+      "kind": "B",
+      "label": "exit-owner already-present branch",
+      "target": "0x2589c"
+    },
+    {
+      "at": "0x25708",
+      "condition": 1,
+      "instruction_word": "0x1afffff9",
+      "kind": "B",
+      "label": "exclusive-store retry",
+      "target": "0x256f4"
+    },
+    {
+      "at": "0x25718",
+      "condition": 0,
+      "instruction_word": "0xa000063",
+      "kind": "B",
+      "label": "exit-owner comparison",
+      "target": "0x258ac"
+    },
+    {
+      "at": "0x25890",
+      "condition": 14,
+      "instruction_word": "0xeaffff95",
+      "kind": "B",
+      "label": "cleanup normal return",
+      "target": "0x256ec"
+    },
+    {
+      "at": "0x258a8",
+      "condition": 1,
+      "instruction_word": "0x1affff9b",
+      "kind": "B",
+      "label": "conditional epilogue branch",
+      "target": "0x2571c"
+    },
+    {
+      "at": "0x258b0",
+      "condition": 0,
+      "instruction_word": "0xa000001",
+      "kind": "B",
+      "label": "recursive-exit dependency branch",
+      "target": "0x258bc"
+    },
+    {
+      "at": "0x258b4",
+      "condition": 14,
+      "instruction_word": "0xeb10f851",
+      "kind": "BL",
+      "label": "other exit-owner wait dependency",
+      "target": "0x463a00"
+    },
+    {
+      "at": "0x258b8",
+      "condition": 14,
+      "instruction_word": "0xeafffffd",
+      "kind": "B",
+      "label": "other exit-owner wait loop",
+      "target": "0x258b4"
+    },
+    {
+      "at": "0x258c4",
+      "condition": 14,
+      "instruction_word": "0xebffab44",
+      "kind": "BL",
+      "label": "recursive-exit error dependency",
+      "target": "0x105dc"
+    },
+    {
+      "at": "0x258f4",
+      "condition": 0,
+      "instruction_word": "0xaffff76",
+      "kind": "B",
+      "label": "101-status path joins cleanup",
+      "target": "0x256d4"
+    },
+    {
+      "at": "0x25900",
+      "condition": 14,
+      "instruction_word": "0xeaffff73",
+      "kind": "B",
+      "label": "101-status path joins after drop",
+      "target": "0x256d4"
+    },
+    {
+      "at": "0x452338",
+      "condition": 14,
+      "instruction_word": "0xebffffe7",
+      "kind": "BL",
+      "label": "initialization-array dependency",
+      "target": "0x4522dc"
+    },
+    {
+      "at": "0x45234c",
+      "condition": 14,
+      "instruction_word": "0xebef0d52",
+      "kind": "BL",
+      "label": "main result to exit",
+      "target": "0x1589c"
+    },
+    {
+      "at": "0x45236c",
+      "condition": 14,
+      "instruction_word": "0xebffff59",
+      "kind": "BL",
+      "label": "libc initial setup dependency",
+      "target": "0x4520d8"
+    },
+    {
+      "at": "0x158a4",
+      "condition": 14,
+      "instruction_word": "0xeb10f345",
+      "kind": "BL",
+      "label": "exit cleanup dependency 1",
+      "target": "0x4525c0"
+    },
+    {
+      "at": "0x158a8",
+      "condition": 14,
+      "instruction_word": "0xeb10f3af",
+      "kind": "BL",
+      "label": "exit cleanup dependency 2",
+      "target": "0x45276c"
+    },
+    {
+      "at": "0x158ac",
+      "condition": 14,
+      "instruction_word": "0xeb115ad5",
+      "kind": "BL",
+      "label": "exit cleanup dependency 3",
+      "target": "0x46c408"
+    },
+    {
+      "at": "0x158b4",
+      "condition": 14,
+      "instruction_word": "0xeb1139f8",
+      "kind": "BL",
+      "label": "saved status to syscall wrapper",
+      "target": "0x46409c"
+    },
+    {
+      "at": "0x4640b4",
+      "condition": 14,
+      "instruction_word": "0xeafffffb",
+      "kind": "B",
+      "label": "fallback exit syscall loop",
+      "target": "0x4640a8"
+    },
+    {
+      "at": "0xe9350",
+      "condition": 14,
+      "instruction_word": "0xebfcb151",
+      "kind": "BL",
+      "label": "CLI direct zero-status exit A",
+      "target": "0x1589c"
+    },
+    {
+      "at": "0xe935c",
+      "condition": 14,
+      "instruction_word": "0xebfcb14e",
+      "kind": "BL",
+      "label": "CLI direct zero-status exit B",
+      "target": "0x1589c"
+    }
+  ],
+  "firmware_executed": false,
+  "pc_relative": [
+    {
+      "at": "0x158e8",
+      "label": "startup GOT base",
+      "literal": "0x15930",
+      "result": "0x4af56c"
+    },
+    {
+      "at": "0x256c8",
+      "label": "argument callback target",
+      "literal": "0x25958",
+      "result": "0x22424"
+    },
+    {
+      "at": "0x452380",
+      "label": "libc startup stage target",
+      "literal": "0x45238c",
+      "result": "0x45231c"
+    }
+  ],
+  "pointer_cells": [
+    {
+      "at": "0x4afc68",
+      "label": "outer-main GOT cell",
+      "target": "0x25428"
+    }
+  ],
+  "proof_kind": "static byte and arithmetic witnesses, not runtime equivalence",
+  "schema": 1,
+  "shell_source": {
+    "path": "../../10-extracted/rootfs/etc/init.d/S12hwscan",
+    "sha256": "1f64fa20ab1c8cc003c5cb9ff361f1eff148974228be5d9b77cedde38468e756"
+  },
+  "source_sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+  "startup_main_got_offset": {
+    "got_base": "0x4af56c",
+    "literal": "0x15938",
+    "slot": "0x4afc68"
+  },
+  "words": [
+    {
+      "at": "0x25664",
+      "label": "normal status initialized to zero in r6",
+      "word": "0xe3a06000"
+    },
+    {
+      "at": "0x256d4",
+      "label": "callback r0 discarded by unconditional literal load",
+      "word": "0xe59f0280"
+    },
+    {
+      "at": "0x2571c",
+      "label": "outer-main result copied from r6",
+      "word": "0xe1a00006"
+    },
+    {
+      "at": "0x25724",
+      "label": "outer-main epilogue",
+      "word": "0xe8bd8ff0"
+    },
+    {
+      "at": "0x258ec",
+      "label": "separate landing-pad status 101",
+      "word": "0xe3a06065"
+    },
+    {
+      "at": "0x1c738",
+      "label": "trampoline indirect call through r0",
+      "word": "0xe12fff30"
+    },
+    {
+      "at": "0x22634",
+      "label": "post-worker comparison does not save r0",
+      "word": "0xe3560000"
+    },
+    {
+      "at": "0x2263c",
+      "label": "argument cleanup overwrites r0",
+      "word": "0xe1a00005"
+    },
+    {
+      "at": "0x2268c",
+      "label": "wrapper alternative return",
+      "word": "0xe8bd8ff0"
+    },
+    {
+      "at": "0xe660c",
+      "label": "worker early result minus one",
+      "word": "0xe3e00000"
+    },
+    {
+      "at": "0xe6614",
+      "label": "worker early callee-saved restoration",
+      "word": "0xe8bd8df0"
+    },
+    {
+      "at": "0xe67a8",
+      "label": "worker cleanup result zero",
+      "word": "0xe3a00000"
+    },
+    {
+      "at": "0xe67b0",
+      "label": "worker cleanup callee-saved restoration",
+      "word": "0xe8bd8df0"
+    },
+    {
+      "at": "0x452330",
+      "label": "save outer-main pointer in r6",
+      "word": "0xe1a06000"
+    },
+    {
+      "at": "0x452348",
+      "label": "indirect outer-main call through r6",
+      "word": "0xe12fff36"
+    },
+    {
+      "at": "0x452388",
+      "label": "libc tail transfer through r3",
+      "word": "0xe12fff13"
+    },
+    {
+      "at": "0x158a0",
+      "label": "save exit status before cleanup calls",
+      "word": "0xe58d0004"
+    },
+    {
+      "at": "0x158b0",
+      "label": "restore saved exit status",
+      "word": "0xe59d0004"
+    },
+    {
+      "at": "0x4640a0",
+      "label": "backup status in r3",
+      "word": "0xe1a03000"
+    },
+    {
+      "at": "0x4640a4",
+      "label": "ARM syscall number 248",
+      "word": "0xe3a070f8"
+    },
+    {
+      "at": "0x4640a8",
+      "label": "SVC zero",
+      "word": "0xef000000"
+    },
+    {
+      "at": "0x4640ac",
+      "label": "fallback syscall number 1",
+      "word": "0xe3a07001"
+    },
+    {
+      "at": "0x4640b0",
+      "label": "restore status before fallback",
+      "word": "0xe1a00003"
+    },
+    {
+      "at": "0xe934c",
+      "label": "direct CLI exit argument zero A",
+      "word": "0xe3a00000"
+    },
+    {
+      "at": "0xe9358",
+      "label": "direct CLI exit argument zero B",
+      "word": "0xe3a00000"
+    }
+  ]
+}

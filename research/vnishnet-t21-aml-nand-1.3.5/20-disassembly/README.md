@@ -19,3 +19,7 @@ The [startup index and bounded slices](startup/README.md) add symbol/EHABI/initi
 ## Scanner dispatch and first I/O
 
 The [hwscan dispatch checkpoint](hwscan-dispatch/README.md) connects the bounded platform selector to AML GPIO/I2C/PSU initialization, pins the first closed syscall witnesses and distinguishes worker error returns from unproved process/hardware outcomes. Its call graph and slices remain static evidence, with the next missing chain/transport dependency identified explicitly.
+
+## Normal-return process status
+
+The [hwscan status checkpoint](hwscan-exit-status/README.md) traces the C-worker return through the argument wrapper and outer main to the Linux termination call. The outer main discards the callback result and uses zero on its ordinary return route; explicit assumptions and exceptional/cleanup boundaries are retained. Stock startup's printed `OK` is therefore insufficient evidence of scanner success. No target code or boot script was executed.
