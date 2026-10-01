@@ -44,7 +44,9 @@ class EvidenceControls(unittest.TestCase):
             shutil.copytree(HERE/name,self.folder/name)
         self.proof=json.loads((self.folder/'static-witnesses.json').read_text())
         if SOURCE_ROOT is not None:
-            self.sweep_append=(SOURCE_ROOT/verifier.BM1368_PATH).read_bytes()[8350:]
+            raw=(SOURCE_ROOT/verifier.BM1368_PATH).read_bytes()
+            self.sweep_append=raw[8350:9245]
+            self.address_append=raw[9245:]
 
     def write_proof(self):
         (self.folder/'static-witnesses.json').write_text(json.dumps(self.proof))
@@ -296,16 +298,28 @@ class EvidenceControls(unittest.TestCase):
         return patch.multiple(verifier,BM1368_TICKET_SIZE=len(data),
                               BM1368_TICKET_SHA256=verifier.sha256(data),BM1368_TICKET_BLOB=blob)
 
-    def matching_sweep_identity(self,data):
+    def matching_frozen_sweep_identity(self,data):
         blob=verifier.hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
         return patch.multiple(verifier,BM1368_SWEEP_SIZE=len(data),
                               BM1368_SWEEP_SHA256=verifier.sha256(data),BM1368_SWEEP_BLOB=blob)
+
+    def matching_address_identity(self,data):
+        blob=verifier.hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
+        return patch.multiple(verifier,BM1368_ADDRESS_SIZE=len(data),
+                              BM1368_ADDRESS_SHA256=verifier.sha256(data),BM1368_ADDRESS_BLOB=blob)
+
+    @contextmanager
+    def matching_sweep_identity(self,data):
+        # Match both outer identities so existing sweep/inner controls stay live.
+        sweep=data[:-len(self.address_append)]
+        with self.matching_address_identity(data), self.matching_frozen_sweep_identity(sweep):
+            yield
 
     @contextmanager
     def matching_current_and_ticket_identity(self,data):
         # Old inner controls keep the exact sweep suffix, then bypass both
         # current and ticket identities to expose the original predicates.
-        ticket=data[:-len(self.sweep_append)]
+        ticket=data[:-len(self.sweep_append)-len(self.address_append)]
         with self.matching_sweep_identity(data), self.matching_ticket_identity(ticket):
             yield
 
@@ -324,7 +338,7 @@ class EvidenceControls(unittest.TestCase):
 
     def test_reset_source_rejects_old_constructor_and_nonce_sources(self):
         root=self.dependency_copy();path=root/verifier.BM1368_PATH;data=path.read_bytes()
-        for size in (920,3803,7519,8350):
+        for size in (920,3803,7519,8350,9245):
             with self.subTest(size=size):
                 path.write_bytes(data[:size])
                 with self.assertRaisesRegex(verifier.EvidenceError,'active dependency pin differs: '+verifier.BM1368_PATH):
@@ -371,7 +385,7 @@ class EvidenceControls(unittest.TestCase):
     def test_reset_gate_shape_is_checked_without_full_source_hash(self):
         data=self.current_bm1368_bytes();entry=self.bm1368_entry()
         constructor,added=data[:3803],data[3803:7519]
-        ticket,sweep=data[7519:8350],data[8350:]
+        ticket,sweep=data[7519:8350],data[8350:9245]
         suffixes=[b'',added.replace(b'VN135_BM1368_RESET_135',b'OTHER_GATE'),
                   added.replace(b'"integration/bm1368_reset_135.h"',b'"wrong.h"'),
                   b'int outside;\n'+added,added+added,added[:-8]]
@@ -382,7 +396,7 @@ class EvidenceControls(unittest.TestCase):
             suffixes.append(added.replace(b'\n#endif\n',replacement))
         for index,suffix in enumerate(suffixes):
             reset=constructor+suffix
-            mutant=reset+ticket+sweep
+            mutant=reset+ticket+sweep+self.address_append
             with self.subTest(mutation=index):
                 with self.matching_current_and_ticket_identity(mutant), self.matching_reset_identity(reset):
                     with self.assertRaisesRegex(verifier.EvidenceError,'reset append is not separately gated'):
@@ -415,7 +429,7 @@ class EvidenceControls(unittest.TestCase):
                     verifier.reset_source_bytes(mutant)
 
     def test_ticket_gate_shape_checked_without_full_hash(self):
-        data=self.current_bm1368_bytes();reset,added,sweep=data[:7519],data[7519:8350],data[8350:]
+        data=self.current_bm1368_bytes();reset,added,sweep=data[:7519],data[7519:8350],data[8350:9245]
         suffixes=[b'',added.replace(b'VN135_BM1368_TICKET_MASK_135',b'OTHER_GATE'),
                   added.replace(b'"integration/bm1368_ticket_mask_135.h"',b'"wrong.h"'),
                   b'int outside;\n'+added,added+added,added[:-8]]
@@ -425,7 +439,7 @@ class EvidenceControls(unittest.TestCase):
                             b'\n#include "extra.h"\n#endif\n'):
             suffixes.append(added.replace(b'\n#endif\n',replacement))
         for index,suffix in enumerate(suffixes):
-            mutant=reset+suffix+sweep
+            mutant=reset+suffix+sweep+self.address_append
             with self.subTest(mutation=index), self.matching_current_and_ticket_identity(mutant):
                 with self.assertRaisesRegex(verifier.EvidenceError,'ticket-mask append is not separately gated'):
                     verifier.reset_source_bytes(mutant)
@@ -451,10 +465,10 @@ class EvidenceControls(unittest.TestCase):
 
     def test_sweep_full_identity_predicates_are_independent(self):
         data=self.current_bm1368_bytes();entry=self.bm1368_entry()
-        for constant,value in (('BM1368_SWEEP_SIZE',len(data)-1),
+        for constant,value in (('BM1368_SWEEP_SIZE',9244),
                                ('BM1368_SWEEP_SHA256','0'*64),('BM1368_SWEEP_BLOB','0'*40)):
             with self.subTest(constant=constant), patch.object(verifier,constant,value):
-                with self.assertRaisesRegex(verifier.EvidenceError,'reviewed sweep-clock source'):
+                with self.assertRaisesRegex(verifier.EvidenceError,'preserved sweep source prefix differs'):
                     verifier.constructor_source_bytes(data,entry)
 
     def test_ticket_prefix_checked_without_sweep_full_hash(self):
@@ -466,7 +480,7 @@ class EvidenceControls(unittest.TestCase):
                     verifier.ticket_source_bytes(mutant)
 
     def test_sweep_gate_shape_checked_without_full_hash(self):
-        data=self.current_bm1368_bytes();ticket,added=data[:8350],data[8350:]
+        data=self.current_bm1368_bytes();ticket,added=data[:8350],data[8350:9245]
         suffixes=[b'',added.replace(b'VN135_BM1368_SWEEP_CLOCK_135',b'OTHER_GATE'),
                   added.replace(b'"integration/bm1368_sweep_clock_135.h"',b'"wrong.h"'),
                   b'int outside;\n'+added,added+added,added[:-8]]
@@ -476,19 +490,73 @@ class EvidenceControls(unittest.TestCase):
                             b'\n#include "extra.h"\n#endif\n'):
             suffixes.append(added.replace(b'\n#endif\n',replacement))
         for index,suffix in enumerate(suffixes):
-            mutant=ticket+suffix
+            mutant=ticket+suffix+self.address_append
             with self.subTest(mutation=index), self.matching_sweep_identity(mutant):
                 with self.assertRaisesRegex(verifier.EvidenceError,'sweep-clock append is not separately gated'):
                     verifier.ticket_source_bytes(mutant)
 
     def test_sweep_semantics_are_bound_by_current_source_identity(self):
         root=self.dependency_copy();path=root/verifier.BM1368_PATH;data=path.read_bytes()
-        ticket,added=data[:8350],data[8350:]
+        ticket,added=data[:8350],data[8350:9245]
         for suffix in (added.replace(b'field1_2 & 3u',b'field1_2 & 7u'),
                        added.replace(b'<< 1',b'<< 2'),
                        added.replace(b'463, 1,',b'464, 1,'),added+b'\n',added[:-1]):
-            path.write_bytes(ticket+suffix)
-            with self.assertRaisesRegex(verifier.EvidenceError,'reviewed sweep-clock source'):
+            path.write_bytes(ticket+suffix+self.address_append)
+            with self.assertRaisesRegex(verifier.EvidenceError,'reviewed address-commands source'):
+                verifier.verify(self.folder,root)
+
+    def test_exact_address_transition_retains_sweep_witness(self):
+        data=self.current_bm1368_bytes()
+        sweep=verifier.sweep_source_bytes(data)
+        self.assertEqual(sweep,data[:9245])
+        self.assertEqual(len(data),11280)
+        self.assertEqual(verifier.sha256(sweep),
+                         'e4c05fb8bc541e6e6b2a216cbaecf7ef57cc3d85101d59b81e8ebd3d4e2af7e4')
+        self.assertEqual(verifier.hashlib.sha1(b'blob 9245\0'+sweep).hexdigest(),
+                         'f23565c15c9d174e644fc51a401e81dbe072dfd7')
+
+    def test_address_full_identity_predicates_are_independent(self):
+        data=self.current_bm1368_bytes()
+        for constant,value in (('BM1368_ADDRESS_SIZE',11279),
+                               ('BM1368_ADDRESS_SHA256','0'*64),('BM1368_ADDRESS_BLOB','0'*40)):
+            with self.subTest(constant=constant), patch.object(verifier,constant,value):
+                with self.assertRaisesRegex(verifier.EvidenceError,'reviewed address-commands source'):
+                    verifier.sweep_source_bytes(data)
+
+    def test_sweep_prefix_checked_without_address_full_hash(self):
+        data=self.current_bm1368_bytes()
+        for offset in (0,920,3802,3803,7518,7519,8349,8350,9244):
+            mutant=bytearray(data);mutant[offset]^=1;mutant=bytes(mutant)
+            with self.subTest(offset=offset), self.matching_address_identity(mutant):
+                with self.assertRaisesRegex(verifier.EvidenceError,'preserved sweep source prefix differs'):
+                    verifier.sweep_source_bytes(mutant)
+
+    def test_address_gate_shape_checked_without_full_hash(self):
+        data=self.current_bm1368_bytes();sweep,added=data[:9245],data[9245:]
+        suffixes=[b'',added.replace(b'VN135_BM1368_ADDRESS_COMMANDS_135',b'OTHER_GATE'),
+                  added.replace(b'"integration/bm1368_address_commands_135.h"',b'"wrong.h"'),
+                  added.replace(b'#include "integration/bm1368_control.h"\n',b''),
+                  added.replace(b'"integration/bm1368_control.h"',b'"wrong-helper.h"'),
+                  b'int outside;\n'+added,added+added,added[:-8]]
+        for replacement in (b'\n#endif\nint outside;\n\n',
+                            b'\n#if OTHER\n#endif\n#endif\n',
+                            b'\n#else\n#endif\n',b'\n#elif OTHER\n#endif\n',
+                            b'\n#include "extra.h"\n#endif\n'):
+            suffixes.append(added.replace(b'\n#endif\n',replacement))
+        for index,suffix in enumerate(suffixes):
+            mutant=sweep+suffix
+            with self.subTest(mutation=index), self.matching_address_identity(mutant):
+                with self.assertRaisesRegex(verifier.EvidenceError,'address-commands append is not separately gated'):
+                    verifier.sweep_source_bytes(mutant)
+
+    def test_address_semantics_are_bound_by_current_source_identity(self):
+        root=self.dependency_copy();path=root/verifier.BM1368_PATH;data=path.read_bytes()
+        sweep,added=data[:9245],data[9245:]
+        for suffix in (added.replace(b'669, 1,',b'670, 1,'),
+                       added.replace(b'699, 1,',b'700, 1,'),
+                       added.replace(b'frame + 2, 5',b'frame + 2, 4'),added+b'\n',added[:-1]):
+            path.write_bytes(sweep+suffix)
+            with self.assertRaisesRegex(verifier.EvidenceError,'reviewed address-commands source'):
                 verifier.verify(self.folder,root)
 
     def test_every_other_active_dependency_remains_a_full_file_pin(self):

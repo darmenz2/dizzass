@@ -1,0 +1,8009 @@
+{
+  "dependencies": [
+    {
+      "bytes": 12209,
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-ticket-mask/STATIC_CONTRACT.md",
+      "sha256": "8dba4e02de91e7406e9de4cb86dd171120a4d0db67a95fb5ae97ecf083367a60"
+    },
+    {
+      "bytes": 105160,
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-ticket-mask/static-witness.json",
+      "sha256": "206a3cbf5e6b450c6cc10817b41150d5794403b1065a784d7e1c30a659b5656f"
+    },
+    {
+      "bytes": 57477,
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-init/evidence/constructor-proof.json",
+      "sha256": "10ef45e2a3a641ed8d9aded2e9d59c0fa1d0ae6df8a72500f876a5b27ad8c613"
+    },
+    {
+      "bytes": 3234,
+      "path": "integration/bm1368_control.c",
+      "sha256": "6311c43f27b482114b7e18826727e2cd024b2bea4a74b911b5d73887757808f3"
+    },
+    {
+      "bytes": 896,
+      "path": "reconstruction/support/crc5.c",
+      "sha256": "d03fe3a245dffeddb2d644d91671b44430ca81a007ad15b49db294c1a700e1a2"
+    },
+    {
+      "bytes": 3683,
+      "path": "libbitmain/src/transport-dispatch.c",
+      "sha256": "5cd3632bf3610c8ec3a7d2ea9b3f9da7fc91bd26676598e41448d6376b531fd9"
+    },
+    {
+      "bytes": 2481,
+      "path": "integration/transport_dispatch_135.h",
+      "sha256": "7ca6a41c3fa943e068fb458c198164b2525aa04db43e9b0dc0e6cacda0855b36"
+    },
+    {
+      "bytes": 3413,
+      "path": "integration/common_read_register_135.h",
+      "sha256": "12c317b0c79d00a50b8a22af60bfbb5669761c37d9c1a21afaa1c3be49f6ea3b"
+    }
+  ],
+  "kind": "bm1368-address-commands-static-witness",
+  "proof": {
+    "basis": "reviewed static ARM control-flow/ABI reasoning; byte checks do not automatically prove C/original equivalence",
+    "caller": {
+      "address_backend_slot": 456,
+      "address_call": 351024,
+      "address_status_ignored": true,
+      "backend_constructor_base": 272,
+      "byte_stride": 96,
+      "cold_address_formula": "low32(chip_index * board_word0)",
+      "first_count_after_delay": true,
+      "inactive_backend_slot": 452,
+      "inactive_call": 350976,
+      "inactive_status_ignored": true,
+      "no_standalone_return": true,
+      "reload_address_slot_each_iteration": true,
+      "reload_chip_array_each_iteration": true,
+      "reload_count_after_delay": true,
+      "retained_board_view_identity": true,
+      "retained_owner_identity": true,
+      "scope": "cgminer selected inline address stage only; no hwscan startup caller established",
+      "signed_count_comparison": true,
+      "stage": [
+        350936,
+        351056
+      ]
+    },
+    "domain": [
+      "Returning synchronous ARM-conforming callees, stable callback/context/identity associations, live reached objects and borrowed temporaries",
+      "Device/chip fields may change during callbacks; failure logs must observe the specified late reads",
+      "One normal string initializer pass and unchanged decoded strings; ordinary readable opaque globals",
+      "Caller facts assume live retained owner/board view, valid per-iteration chip array, no pointer/offset wrap, and finite loop progress"
+    ],
+    "initializer_registration": 6139876,
+    "logs": {
+      "address": "late full chip word at +4, independently reloaded after send",
+      "address_format": "chain#%d - failed to assign chip address to 0x%02x",
+      "address_line": 699,
+      "function": "[redacted]",
+      "inactive_format": "chain#%d - failed to inactivate the chain",
+      "inactive_line": 669,
+      "index": "late full device word at +0x18 plus one modulo 2^32",
+      "module": "driver",
+      "severity": 1,
+      "source": "/tmp/build/libbitmain/src/chip/chip1368.c"
+    },
+    "nonclaims": [
+      "No original execution, instruction interpreter, emulator, hardware or model/OOM probes",
+      "No automatic C equivalence, full startup implementation, callable numeric method table or hwscan caller proof",
+      "No fault/MMIO/unaligned-access traces, raw stack equivalence, races, nonlocal returns, physical ACK or queue/power barrier",
+      "Runtime prefix is historical evidence; later gated append outside it is allowed, and current whole-file admission remains separate shared/L09/L12/A13 exact gates"
+    ],
+    "opaque_conditions": [
+      {
+        "branch": 935980,
+        "mul": 935960,
+        "sub": 935956,
+        "target": 935996,
+        "test": 935976
+      },
+      {
+        "branch": 936068,
+        "mul": 936060,
+        "sub": 936056,
+        "target": 936140,
+        "test": 936064
+      }
+    ],
+    "ordinary_contract": {
+      "address_body_prefix": "4005",
+      "address_mask": 255,
+      "cache_effect": false,
+      "crc_bits": 32,
+      "inactive_body_prefix": "53050000",
+      "nonzero_status_return": 4294967295,
+      "reserved_byte": 0,
+      "retry": false,
+      "send_length": 5,
+      "zero_status_return": 0
+    },
+    "read_sites": {
+      "cgminer": {
+        "address_index": 936296,
+        "address_post": 936304,
+        "address_pre": 936224,
+        "inactive_index": 936016
+      },
+      "hwscan": {
+        "address_index": 998624,
+        "address_post": 998632,
+        "address_pre": 998552,
+        "inactive_index": 998444
+      }
+    },
+    "unreachable_cgminer_log": 936132
+  },
+  "runtime": [
+    {
+      "bytes": 11280,
+      "git_blob": "890e2bfc9ead81a9cafe5b34c917b37133ea0d5e",
+      "mode": "prefix",
+      "path": "libbitmain/src/chip/chip1368.c",
+      "sha256": "91cfb6f3bb640bcf3519027243970bcb37aeeb0275f96b931dd17cab940540d2"
+    },
+    {
+      "bytes": 3621,
+      "git_blob": "23026eb1987b912797d77d94e75a8acf91002731",
+      "mode": "exact",
+      "path": "integration/bm1368_address_commands_135.h",
+      "sha256": "f06b44fb4c4bd0bac18102be55db8b2ac13ee7c7e4ee60ce74508edc9fb8e00f"
+    }
+  ],
+  "schema": 1,
+  "sources": {
+    "cgminer": {
+      "call_targets": {
+        "crc5": 1015568,
+        "log": 1024196,
+        "transport": 861868
+      },
+      "elf_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+      "elf_size": 6228004,
+      "literal_references": [
+        {
+          "add": 935972,
+          "literal": 936160,
+          "literal_word": 5270897,
+          "load": 935968,
+          "register": 6,
+          "target": 6206877
+        },
+        {
+          "add": 936012,
+          "literal": 936164,
+          "literal_word": 5270412,
+          "load": 935996,
+          "register": 0,
+          "target": 6206432
+        },
+        {
+          "add": 936020,
+          "literal": 936168,
+          "literal_word": 5270411,
+          "load": 936004,
+          "register": 1,
+          "target": 6206439
+        },
+        {
+          "add": 936024,
+          "literal": 936172,
+          "literal_word": 5270449,
+          "load": 936008,
+          "register": 2,
+          "target": 6206481
+        },
+        {
+          "add": 936100,
+          "literal": 936176,
+          "literal_word": 5270324,
+          "load": 936084,
+          "register": 0,
+          "target": 6206432
+        },
+        {
+          "add": 936108,
+          "literal": 936180,
+          "literal_word": 5270323,
+          "load": 936092,
+          "register": 1,
+          "target": 6206439
+        },
+        {
+          "add": 936112,
+          "literal": 936184,
+          "literal_word": 5270361,
+          "load": 936096,
+          "register": 2,
+          "target": 6206481
+        },
+        {
+          "add": 936292,
+          "literal": 936364,
+          "literal_word": 5270132,
+          "load": 936280,
+          "register": 0,
+          "target": 6206432
+        },
+        {
+          "add": 936300,
+          "literal": 936368,
+          "literal_word": 5270131,
+          "load": 936284,
+          "register": 1,
+          "target": 6206439
+        },
+        {
+          "add": 936308,
+          "literal": 936372,
+          "literal_word": 5270165,
+          "load": 936288,
+          "register": 2,
+          "target": 6206481
+        },
+        {
+          "add": 936324,
+          "literal": 936376,
+          "literal_word": 5270587,
+          "load": 936312,
+          "register": 6,
+          "target": 6206919
+        }
+      ],
+      "methods": {
+        "address": {
+          "branches": [
+            {
+              "condition": 0,
+              "target": 936352,
+              "va": 936276
+            }
+          ],
+          "calls": [
+            {
+              "kind": "crc5",
+              "target": 1015568,
+              "va": 936248
+            },
+            {
+              "kind": "transport",
+              "target": 861868,
+              "va": 936268
+            },
+            {
+              "kind": "log",
+              "target": 1024196,
+              "va": 936344
+            }
+          ],
+          "code_end_exclusive": 936364,
+          "code_start": 936188,
+          "literal_loads": [
+            {
+              "literal": 936364,
+              "load": 936280
+            },
+            {
+              "literal": 936368,
+              "load": 936284
+            },
+            {
+              "literal": 936372,
+              "load": 936288
+            },
+            {
+              "literal": 936376,
+              "load": 936312
+            }
+          ],
+          "pool_end_exclusive": 936380
+        },
+        "inactive": {
+          "branches": [
+            {
+              "condition": 0,
+              "target": 936140,
+              "va": 935936
+            },
+            {
+              "condition": 0,
+              "target": 935996,
+              "va": 935980
+            },
+            {
+              "condition": 12,
+              "target": 936084,
+              "va": 935992
+            },
+            {
+              "condition": 0,
+              "target": 936140,
+              "va": 936068
+            },
+            {
+              "condition": 13,
+              "target": 936140,
+              "va": 936080
+            },
+            {
+              "condition": 14,
+              "target": 935996,
+              "va": 936136
+            }
+          ],
+          "calls": [
+            {
+              "kind": "crc5",
+              "target": 1015568,
+              "va": 935908
+            },
+            {
+              "kind": "transport",
+              "target": 861868,
+              "va": 935928
+            },
+            {
+              "kind": "log",
+              "target": 1024196,
+              "va": 936044
+            },
+            {
+              "kind": "log",
+              "target": 1024196,
+              "va": 936132
+            }
+          ],
+          "code_end_exclusive": 936152,
+          "code_start": 935864,
+          "literal_loads": [
+            {
+              "literal": 936152,
+              "load": 935940
+            },
+            {
+              "literal": 936156,
+              "load": 935952
+            },
+            {
+              "literal": 936160,
+              "load": 935968
+            },
+            {
+              "literal": 936164,
+              "load": 935996
+            },
+            {
+              "literal": 936168,
+              "load": 936004
+            },
+            {
+              "literal": 936172,
+              "load": 936008
+            },
+            {
+              "literal": 936176,
+              "load": 936084
+            },
+            {
+              "literal": 936180,
+              "load": 936092
+            },
+            {
+              "literal": 936184,
+              "load": 936096
+            }
+          ],
+          "pool_end_exclusive": 936188
+        }
+      },
+      "operands": [
+        [
+          343448,
+          "910000e0",
+          "mul",
+          "r0, r1, r0"
+        ],
+        [
+          343452,
+          "1eff2fe1",
+          "bx",
+          "lr"
+        ],
+        [
+          350936,
+          "0a00a0e3",
+          "mov",
+          "r0, #0xa"
+        ],
+        [
+          350940,
+          "16e502eb",
+          "bl",
+          "#0x10ef3c"
+        ],
+        [
+          350944,
+          "1c0099e5",
+          "ldr",
+          "r0, [sb, #0x1c]"
+        ],
+        [
+          350948,
+          "180090e5",
+          "ldr",
+          "r0, [r0, #0x18]"
+        ],
+        [
+          350952,
+          "c74501eb",
+          "bl",
+          "#0xa720c"
+        ],
+        [
+          350956,
+          "1c6099e5",
+          "ldr",
+          "r6, [sb, #0x1c]"
+        ],
+        [
+          350960,
+          "aeaf89e2",
+          "add",
+          "sl, sb, #0x2b8"
+        ],
+        [
+          350964,
+          "0070a0e1",
+          "mov",
+          "r7, r0"
+        ],
+        [
+          350968,
+          "0a00a0e1",
+          "mov",
+          "r0, sl"
+        ],
+        [
+          350972,
+          "c41196e5",
+          "ldr",
+          "r1, [r6, #0x1c4]"
+        ],
+        [
+          350976,
+          "31ff2fe1",
+          "blx",
+          "r1"
+        ],
+        [
+          350980,
+          "1e00a0e3",
+          "mov",
+          "r0, #0x1e"
+        ],
+        [
+          350984,
+          "87e402eb",
+          "bl",
+          "#0x10ed2c"
+        ],
+        [
+          350988,
+          "100097e5",
+          "ldr",
+          "r0, [r7, #0x10]"
+        ],
+        [
+          350992,
+          "010050e3",
+          "cmp",
+          "r0, #1"
+        ],
+        [
+          350996,
+          "0d0000ba",
+          "blt",
+          "#0x55b50"
+        ],
+        [
+          351000,
+          "0040a0e3",
+          "mov",
+          "r4, #0"
+        ],
+        [
+          351004,
+          "0050a0e3",
+          "mov",
+          "r5, #0"
+        ],
+        [
+          351008,
+          "880099e5",
+          "ldr",
+          "r0, [sb, #0x88]"
+        ],
+        [
+          351012,
+          "c82196e5",
+          "ldr",
+          "r2, [r6, #0x1c8]"
+        ],
+        [
+          351016,
+          "041080e0",
+          "add",
+          "r1, r0, r4"
+        ],
+        [
+          351020,
+          "0a00a0e1",
+          "mov",
+          "r0, sl"
+        ],
+        [
+          351024,
+          "32ff2fe1",
+          "blx",
+          "r2"
+        ],
+        [
+          351028,
+          "0a00a0e3",
+          "mov",
+          "r0, #0xa"
+        ],
+        [
+          351032,
+          "7be402eb",
+          "bl",
+          "#0x10ed2c"
+        ],
+        [
+          351036,
+          "100097e5",
+          "ldr",
+          "r0, [r7, #0x10]"
+        ],
+        [
+          351040,
+          "015085e2",
+          "add",
+          "r5, r5, #1"
+        ],
+        [
+          351044,
+          "604084e2",
+          "add",
+          "r4, r4, #0x60"
+        ],
+        [
+          351048,
+          "000055e1",
+          "cmp",
+          "r5, r0"
+        ],
+        [
+          351052,
+          "f3ffffba",
+          "blt",
+          "#0x55b20"
+        ],
+        [
+          472712,
+          "100095e5",
+          "ldr",
+          "r0, [r5, #0x10]"
+        ],
+        [
+          472716,
+          "010050e3",
+          "cmp",
+          "r0, #1"
+        ],
+        [
+          472720,
+          "c3ffffba",
+          "blt",
+          "#0x735a4"
+        ],
+        [
+          472724,
+          "0040a0e3",
+          "mov",
+          "r4, #0"
+        ],
+        [
+          472728,
+          "0080a0e3",
+          "mov",
+          "r8, #0"
+        ],
+        [
+          472732,
+          "000097e5",
+          "ldr",
+          "r0, [r7]"
+        ],
+        [
+          472736,
+          "048080e7",
+          "str",
+          "r8, [r0, r4]"
+        ],
+        [
+          472740,
+          "0800a0e1",
+          "mov",
+          "r0, r8"
+        ],
+        [
+          472744,
+          "001095e5",
+          "ldr",
+          "r1, [r5]"
+        ],
+        [
+          472748,
+          "b981ffeb",
+          "bl",
+          "#0x53d98"
+        ],
+        [
+          472752,
+          "001097e5",
+          "ldr",
+          "r1, [r7]"
+        ],
+        [
+          472756,
+          "018088e2",
+          "add",
+          "r8, r8, #1"
+        ],
+        [
+          472760,
+          "041081e0",
+          "add",
+          "r1, r1, r4"
+        ],
+        [
+          472764,
+          "604084e2",
+          "add",
+          "r4, r4, #0x60"
+        ],
+        [
+          472768,
+          "040081e5",
+          "str",
+          "r0, [r1, #4]"
+        ],
+        [
+          472772,
+          "100095e5",
+          "ldr",
+          "r0, [r5, #0x10]"
+        ],
+        [
+          472776,
+          "000058e1",
+          "cmp",
+          "r8, r0"
+        ],
+        [
+          472780,
+          "f2ffffba",
+          "blt",
+          "#0x7369c"
+        ],
+        [
+          684556,
+          "000050e3",
+          "cmp",
+          "r0, #0"
+        ],
+        [
+          684560,
+          "38008012",
+          "addne",
+          "r0, r0, #0x38"
+        ],
+        [
+          684564,
+          "1eff2fe1",
+          "bx",
+          "lr"
+        ],
+        [
+          922816,
+          "14c29fe5",
+          "ldr",
+          "ip, [pc, #0x214]"
+        ],
+        [
+          922820,
+          "0cc09fe7",
+          "ldr",
+          "ip, [pc, ip]"
+        ],
+        [
+          922824,
+          "10e29fe5",
+          "ldr",
+          "lr, [pc, #0x210]"
+        ],
+        [
+          922828,
+          "0ee09fe7",
+          "ldr",
+          "lr, [pc, lr]"
+        ],
+        [
+          922832,
+          "0c329fe5",
+          "ldr",
+          "r3, [pc, #0x20c]"
+        ],
+        [
+          922836,
+          "03309fe7",
+          "ldr",
+          "r3, [pc, r3]"
+        ],
+        [
+          922840,
+          "08629fe5",
+          "ldr",
+          "r6, [pc, #0x208]"
+        ],
+        [
+          922844,
+          "06609fe7",
+          "ldr",
+          "r6, [pc, r6]"
+        ],
+        [
+          922848,
+          "04529fe5",
+          "ldr",
+          "r5, [pc, #0x204]"
+        ],
+        [
+          922852,
+          "05509fe7",
+          "ldr",
+          "r5, [pc, r5]"
+        ],
+        [
+          922856,
+          "00429fe5",
+          "ldr",
+          "r4, [pc, #0x200]"
+        ],
+        [
+          922860,
+          "04409fe7",
+          "ldr",
+          "r4, [pc, r4]"
+        ],
+        [
+          922864,
+          "fc119fe5",
+          "ldr",
+          "r1, [pc, #0x1fc]"
+        ],
+        [
+          922868,
+          "01109fe7",
+          "ldr",
+          "r1, [pc, r1]"
+        ],
+        [
+          922872,
+          "f8219fe5",
+          "ldr",
+          "r2, [pc, #0x1f8]"
+        ],
+        [
+          922876,
+          "02209fe7",
+          "ldr",
+          "r2, [pc, r2]"
+        ],
+        [
+          922880,
+          "9c2080e5",
+          "str",
+          "r2, [r0, #0x9c]"
+        ],
+        [
+          922884,
+          "a02080e2",
+          "add",
+          "r2, r0, #0xa0"
+        ],
+        [
+          922888,
+          "720082e8",
+          "stm",
+          "r2, {r1, r4, r5, r6}"
+        ],
+        [
+          922892,
+          "b03080e5",
+          "str",
+          "r3, [r0, #0xb0]"
+        ],
+        [
+          922896,
+          "b4e080e5",
+          "str",
+          "lr, [r0, #0xb4]"
+        ],
+        [
+          922900,
+          "b8c080e5",
+          "str",
+          "ip, [r0, #0xb8]"
+        ],
+        [
+          935828,
+          "0700a0e1",
+          "mov",
+          "r0, r7"
+        ],
+        [
+          935832,
+          "18d04be2",
+          "sub",
+          "sp, fp, #0x18"
+        ],
+        [
+          935836,
+          "f08bbde8",
+          "pop",
+          "{r4, r5, r6, r7, r8, sb, fp, pc}"
+        ],
+        [
+          935864,
+          "f04d2de9",
+          "push",
+          "{r4, r5, r6, r7, r8, sl, fp, lr}"
+        ],
+        [
+          935868,
+          "18b08de2",
+          "add",
+          "fp, sp, #0x18"
+        ],
+        [
+          935872,
+          "18d04de2",
+          "sub",
+          "sp, sp, #0x18"
+        ],
+        [
+          935876,
+          "13608de2",
+          "add",
+          "r6, sp, #0x13"
+        ],
+        [
+          935880,
+          "0040a0e1",
+          "mov",
+          "r4, r0"
+        ],
+        [
+          935884,
+          "530500e3",
+          "movw",
+          "r0, #0x553"
+        ],
+        [
+          935888,
+          "0050a0e3",
+          "mov",
+          "r5, #0"
+        ],
+        [
+          935892,
+          "13008de5",
+          "str",
+          "r0, [sp, #0x13]"
+        ],
+        [
+          935896,
+          "0600a0e1",
+          "mov",
+          "r0, r6"
+        ],
+        [
+          935900,
+          "2010a0e3",
+          "mov",
+          "r1, #0x20"
+        ],
+        [
+          935904,
+          "1750cde5",
+          "strb",
+          "r5, [sp, #0x17]"
+        ],
+        [
+          935908,
+          "c94d00eb",
+          "bl",
+          "#0xf7f10"
+        ],
+        [
+          935912,
+          "1700cde5",
+          "strb",
+          "r0, [sp, #0x17]"
+        ],
+        [
+          935916,
+          "0400a0e1",
+          "mov",
+          "r0, r4"
+        ],
+        [
+          935920,
+          "0610a0e1",
+          "mov",
+          "r1, r6"
+        ],
+        [
+          935924,
+          "0520a0e3",
+          "mov",
+          "r2, #5"
+        ],
+        [
+          935928,
+          "abb7ffeb",
+          "bl",
+          "#0xd26ac"
+        ],
+        [
+          935932,
+          "000050e3",
+          "cmp",
+          "r0, #0"
+        ],
+        [
+          935936,
+          "3100000a",
+          "beq",
+          "#0xe48cc"
+        ],
+        [
+          935940,
+          "cc809fe5",
+          "ldr",
+          "r8, [pc, #0xcc]"
+        ],
+        [
+          935944,
+          "08809fe7",
+          "ldr",
+          "r8, [pc, r8]"
+        ],
+        [
+          935948,
+          "000098e5",
+          "ldr",
+          "r0, [r8]"
+        ],
+        [
+          935952,
+          "c4709fe5",
+          "ldr",
+          "r7, [pc, #0xc4]"
+        ],
+        [
+          935956,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          935960,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          935964,
+          "07709fe7",
+          "ldr",
+          "r7, [pc, r7]"
+        ],
+        [
+          935968,
+          "b8609fe5",
+          "ldr",
+          "r6, [pc, #0xb8]"
+        ],
+        [
+          935972,
+          "06608fe0",
+          "add",
+          "r6, pc, r6"
+        ],
+        [
+          935976,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          935980,
+          "0200000a",
+          "beq",
+          "#0xe483c"
+        ],
+        [
+          935984,
+          "000097e5",
+          "ldr",
+          "r0, [r7]"
+        ],
+        [
+          935988,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          935992,
+          "150000ca",
+          "bgt",
+          "#0xe4894"
+        ],
+        [
+          935996,
+          "a0009fe5",
+          "ldr",
+          "r0, [pc, #0xa0]"
+        ],
+        [
+          936000,
+          "0150a0e3",
+          "mov",
+          "r5, #1"
+        ],
+        [
+          936004,
+          "9c109fe5",
+          "ldr",
+          "r1, [pc, #0x9c]"
+        ],
+        [
+          936008,
+          "9c209fe5",
+          "ldr",
+          "r2, [pc, #0x9c]"
+        ],
+        [
+          936012,
+          "00008fe0",
+          "add",
+          "r0, pc, r0"
+        ],
+        [
+          936016,
+          "183094e5",
+          "ldr",
+          "r3, [r4, #0x18]"
+        ],
+        [
+          936020,
+          "01108fe0",
+          "add",
+          "r1, pc, r1"
+        ],
+        [
+          936024,
+          "02208fe0",
+          "add",
+          "r2, pc, r2"
+        ],
+        [
+          936028,
+          "60008de8",
+          "stm",
+          "sp, {r5, r6}"
+        ],
+        [
+          936032,
+          "013083e2",
+          "add",
+          "r3, r3, #1"
+        ],
+        [
+          936036,
+          "08308de5",
+          "str",
+          "r3, [sp, #8]"
+        ],
+        [
+          936040,
+          "9d3200e3",
+          "movw",
+          "r3, #0x29d"
+        ],
+        [
+          936044,
+          "145600eb",
+          "bl",
+          "#0xfa0c4"
+        ],
+        [
+          936048,
+          "000098e5",
+          "ldr",
+          "r0, [r8]"
+        ],
+        [
+          936052,
+          "0050e0e3",
+          "mvn",
+          "r5, #0"
+        ],
+        [
+          936056,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          936060,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          936064,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          936068,
+          "1000000a",
+          "beq",
+          "#0xe48cc"
+        ],
+        [
+          936072,
+          "000097e5",
+          "ldr",
+          "r0, [r7]"
+        ],
+        [
+          936076,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          936080,
+          "0d0000da",
+          "ble",
+          "#0xe48cc"
+        ],
+        [
+          936084,
+          "54009fe5",
+          "ldr",
+          "r0, [pc, #0x54]"
+        ],
+        [
+          936088,
+          "0150a0e3",
+          "mov",
+          "r5, #1"
+        ],
+        [
+          936092,
+          "50109fe5",
+          "ldr",
+          "r1, [pc, #0x50]"
+        ],
+        [
+          936096,
+          "50209fe5",
+          "ldr",
+          "r2, [pc, #0x50]"
+        ],
+        [
+          936100,
+          "00008fe0",
+          "add",
+          "r0, pc, r0"
+        ],
+        [
+          936104,
+          "183094e5",
+          "ldr",
+          "r3, [r4, #0x18]"
+        ],
+        [
+          936108,
+          "01108fe0",
+          "add",
+          "r1, pc, r1"
+        ],
+        [
+          936112,
+          "02208fe0",
+          "add",
+          "r2, pc, r2"
+        ],
+        [
+          936116,
+          "60008de8",
+          "stm",
+          "sp, {r5, r6}"
+        ],
+        [
+          936120,
+          "013083e2",
+          "add",
+          "r3, r3, #1"
+        ],
+        [
+          936124,
+          "08308de5",
+          "str",
+          "r3, [sp, #8]"
+        ],
+        [
+          936128,
+          "9d3200e3",
+          "movw",
+          "r3, #0x29d"
+        ],
+        [
+          936132,
+          "fe5500eb",
+          "bl",
+          "#0xfa0c4"
+        ],
+        [
+          936136,
+          "dbffffea",
+          "b",
+          "#0xe483c"
+        ],
+        [
+          936140,
+          "0500a0e1",
+          "mov",
+          "r0, r5"
+        ],
+        [
+          936144,
+          "18d04be2",
+          "sub",
+          "sp, fp, #0x18"
+        ],
+        [
+          936148,
+          "f08dbde8",
+          "pop",
+          "{r4, r5, r6, r7, r8, sl, fp, pc}"
+        ],
+        [
+          936188,
+          "f0482de9",
+          "push",
+          "{r4, r5, r6, r7, fp, lr}"
+        ],
+        [
+          936192,
+          "10b08de2",
+          "add",
+          "fp, sp, #0x10"
+        ],
+        [
+          936196,
+          "18d04de2",
+          "sub",
+          "sp, sp, #0x18"
+        ],
+        [
+          936200,
+          "0050a0e1",
+          "mov",
+          "r5, r0"
+        ],
+        [
+          936204,
+          "150da0e3",
+          "mov",
+          "r0, #0x540"
+        ],
+        [
+          936208,
+          "0060a0e3",
+          "mov",
+          "r6, #0"
+        ],
+        [
+          936212,
+          "b301cde1",
+          "strh",
+          "r0, [sp, #0x13]"
+        ],
+        [
+          936216,
+          "1760cde5",
+          "strb",
+          "r6, [sp, #0x17]"
+        ],
+        [
+          936220,
+          "13708de2",
+          "add",
+          "r7, sp, #0x13"
+        ],
+        [
+          936224,
+          "040091e5",
+          "ldr",
+          "r0, [r1, #4]"
+        ],
+        [
+          936228,
+          "0140a0e1",
+          "mov",
+          "r4, r1"
+        ],
+        [
+          936232,
+          "1660cde5",
+          "strb",
+          "r6, [sp, #0x16]"
+        ],
+        [
+          936236,
+          "2010a0e3",
+          "mov",
+          "r1, #0x20"
+        ],
+        [
+          936240,
+          "1500cde5",
+          "strb",
+          "r0, [sp, #0x15]"
+        ],
+        [
+          936244,
+          "0700a0e1",
+          "mov",
+          "r0, r7"
+        ],
+        [
+          936248,
+          "744d00eb",
+          "bl",
+          "#0xf7f10"
+        ],
+        [
+          936252,
+          "1700cde5",
+          "strb",
+          "r0, [sp, #0x17]"
+        ],
+        [
+          936256,
+          "0500a0e1",
+          "mov",
+          "r0, r5"
+        ],
+        [
+          936260,
+          "0710a0e1",
+          "mov",
+          "r1, r7"
+        ],
+        [
+          936264,
+          "0520a0e3",
+          "mov",
+          "r2, #5"
+        ],
+        [
+          936268,
+          "56b7ffeb",
+          "bl",
+          "#0xd26ac"
+        ],
+        [
+          936272,
+          "000050e3",
+          "cmp",
+          "r0, #0"
+        ],
+        [
+          936276,
+          "1100000a",
+          "beq",
+          "#0xe49a0"
+        ],
+        [
+          936280,
+          "4c009fe5",
+          "ldr",
+          "r0, [pc, #0x4c]"
+        ],
+        [
+          936284,
+          "4c109fe5",
+          "ldr",
+          "r1, [pc, #0x4c]"
+        ],
+        [
+          936288,
+          "4c209fe5",
+          "ldr",
+          "r2, [pc, #0x4c]"
+        ],
+        [
+          936292,
+          "00008fe0",
+          "add",
+          "r0, pc, r0"
+        ],
+        [
+          936296,
+          "183095e5",
+          "ldr",
+          "r3, [r5, #0x18]"
+        ],
+        [
+          936300,
+          "01108fe0",
+          "add",
+          "r1, pc, r1"
+        ],
+        [
+          936304,
+          "047094e5",
+          "ldr",
+          "r7, [r4, #4]"
+        ],
+        [
+          936308,
+          "02208fe0",
+          "add",
+          "r2, pc, r2"
+        ],
+        [
+          936312,
+          "38609fe5",
+          "ldr",
+          "r6, [pc, #0x38]"
+        ],
+        [
+          936316,
+          "013083e2",
+          "add",
+          "r3, r3, #1"
+        ],
+        [
+          936320,
+          "0150a0e3",
+          "mov",
+          "r5, #1"
+        ],
+        [
+          936324,
+          "06608fe0",
+          "add",
+          "r6, pc, r6"
+        ],
+        [
+          936328,
+          "60008de8",
+          "stm",
+          "sp, {r5, r6}"
+        ],
+        [
+          936332,
+          "08308de5",
+          "str",
+          "r3, [sp, #8]"
+        ],
+        [
+          936336,
+          "bb3200e3",
+          "movw",
+          "r3, #0x2bb"
+        ],
+        [
+          936340,
+          "0c708de5",
+          "str",
+          "r7, [sp, #0xc]"
+        ],
+        [
+          936344,
+          "c95500eb",
+          "bl",
+          "#0xfa0c4"
+        ],
+        [
+          936348,
+          "0060e0e3",
+          "mvn",
+          "r6, #0"
+        ],
+        [
+          936352,
+          "0600a0e1",
+          "mov",
+          "r0, r6"
+        ],
+        [
+          936356,
+          "10d04be2",
+          "sub",
+          "sp, fp, #0x10"
+        ],
+        [
+          936360,
+          "f088bde8",
+          "pop",
+          "{r4, r5, r6, r7, fp, pc}"
+        ],
+        [
+          936380,
+          "0000a0e3",
+          "mov",
+          "r0, #0"
+        ],
+        [
+          936384,
+          "1eff2fe1",
+          "bx",
+          "lr"
+        ],
+        [
+          938864,
+          "00482de9",
+          "push",
+          "{fp, lr}"
+        ],
+        [
+          938868,
+          "0000a0e3",
+          "mov",
+          "r0, #0"
+        ],
+        [
+          938872,
+          "000050e3",
+          "cmp",
+          "r0, #0"
+        ],
+        [
+          938876,
+          "2100001a",
+          "bne",
+          "#0xe5408"
+        ],
+        [
+          938880,
+          "d0ec9fe5",
+          "ldr",
+          "lr, [pc, #0xcd0]"
+        ],
+        [
+          938884,
+          "0ee09fe7",
+          "ldr",
+          "lr, [pc, lr]"
+        ],
+        [
+          938888,
+          "cccc9fe5",
+          "ldr",
+          "ip, [pc, #0xccc]"
+        ],
+        [
+          938892,
+          "0cc09fe7",
+          "ldr",
+          "ip, [pc, ip]"
+        ],
+        [
+          938896,
+          "c83c9fe5",
+          "ldr",
+          "r3, [pc, #0xcc8]"
+        ],
+        [
+          938900,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          938904,
+          "020000ea",
+          "b",
+          "#0xe53a8"
+        ],
+        [
+          938908,
+          "070052e3",
+          "cmp",
+          "r2, #7"
+        ],
+        [
+          938912,
+          "0200a0e1",
+          "mov",
+          "r0, r2"
+        ],
+        [
+          938916,
+          "1700000a",
+          "beq",
+          "#0xe5408"
+        ],
+        [
+          938920,
+          "00209ee5",
+          "ldr",
+          "r2, [lr]"
+        ],
+        [
+          938924,
+          "011042e2",
+          "sub",
+          "r1, r2, #1"
+        ],
+        [
+          938928,
+          "920101e0",
+          "mul",
+          "r1, r2, r1"
+        ],
+        [
+          938932,
+          "010011e3",
+          "tst",
+          "r1, #1"
+        ],
+        [
+          938936,
+          "0200000a",
+          "beq",
+          "#0xe53c8"
+        ],
+        [
+          938940,
+          "00109ce5",
+          "ldr",
+          "r1, [ip]"
+        ],
+        [
+          938944,
+          "090051e3",
+          "cmp",
+          "r1, #9"
+        ],
+        [
+          938948,
+          "0b0000ca",
+          "bgt",
+          "#0xe53f8"
+        ],
+        [
+          938952,
+          "0010d3e7",
+          "ldrb",
+          "r1, [r3, r0]"
+        ],
+        [
+          938956,
+          "1e1021e2",
+          "eor",
+          "r1, r1, #0x1e"
+        ],
+        [
+          938960,
+          "0010c3e7",
+          "strb",
+          "r1, [r3, r0]"
+        ],
+        [
+          938964,
+          "00109ee5",
+          "ldr",
+          "r1, [lr]"
+        ],
+        [
+          938968,
+          "012041e2",
+          "sub",
+          "r2, r1, #1"
+        ],
+        [
+          938972,
+          "910201e0",
+          "mul",
+          "r1, r1, r2"
+        ],
+        [
+          938976,
+          "012080e2",
+          "add",
+          "r2, r0, #1"
+        ],
+        [
+          938980,
+          "010011e3",
+          "tst",
+          "r1, #1"
+        ],
+        [
+          938984,
+          "ebffff0a",
+          "beq",
+          "#0xe539c"
+        ],
+        [
+          938988,
+          "00109ce5",
+          "ldr",
+          "r1, [ip]"
+        ],
+        [
+          938992,
+          "090051e3",
+          "cmp",
+          "r1, #9"
+        ],
+        [
+          938996,
+          "e8ffffda",
+          "ble",
+          "#0xe539c"
+        ],
+        [
+          939000,
+          "0010d3e7",
+          "ldrb",
+          "r1, [r3, r0]"
+        ],
+        [
+          939004,
+          "1e1021e2",
+          "eor",
+          "r1, r1, #0x1e"
+        ],
+        [
+          939008,
+          "0010c3e7",
+          "strb",
+          "r1, [r3, r0]"
+        ],
+        [
+          939012,
+          "efffffea",
+          "b",
+          "#0xe53c8"
+        ],
+        [
+          939016,
+          "54ec9fe5",
+          "ldr",
+          "lr, [pc, #0xc54]"
+        ],
+        [
+          939020,
+          "0ee09fe7",
+          "ldr",
+          "lr, [pc, lr]"
+        ],
+        [
+          939024,
+          "00109ee5",
+          "ldr",
+          "r1, [lr]"
+        ],
+        [
+          939028,
+          "012041e2",
+          "sub",
+          "r2, r1, #1"
+        ],
+        [
+          939032,
+          "910201e0",
+          "mul",
+          "r1, r1, r2"
+        ],
+        [
+          939036,
+          "010011e3",
+          "tst",
+          "r1, #1"
+        ],
+        [
+          939040,
+          "00109ee5",
+          "ldr",
+          "r1, [lr]"
+        ],
+        [
+          939044,
+          "3ccc9fe5",
+          "ldr",
+          "ip, [pc, #0xc3c]"
+        ],
+        [
+          939048,
+          "012041e2",
+          "sub",
+          "r2, r1, #1"
+        ],
+        [
+          939052,
+          "910201e0",
+          "mul",
+          "r1, r1, r2"
+        ],
+        [
+          939056,
+          "0cc09fe7",
+          "ldr",
+          "ip, [pc, ip]"
+        ],
+        [
+          939060,
+          "010011e3",
+          "tst",
+          "r1, #1"
+        ],
+        [
+          939064,
+          "0200000a",
+          "beq",
+          "#0xe5448"
+        ],
+        [
+          939068,
+          "00109ce5",
+          "ldr",
+          "r1, [ip]"
+        ],
+        [
+          939072,
+          "090051e3",
+          "cmp",
+          "r1, #9"
+        ],
+        [
+          939076,
+          "f5ffffca",
+          "bgt",
+          "#0xe5420"
+        ],
+        [
+          939080,
+          "0020a0e3",
+          "mov",
+          "r2, #0"
+        ],
+        [
+          939084,
+          "000052e3",
+          "cmp",
+          "r2, #0"
+        ],
+        [
+          939088,
+          "1d00001a",
+          "bne",
+          "#0xe54cc"
+        ],
+        [
+          939092,
+          "103c9fe5",
+          "ldr",
+          "r3, [pc, #0xc10]"
+        ],
+        [
+          939096,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          939100,
+          "020000ea",
+          "b",
+          "#0xe546c"
+        ],
+        [
+          939104,
+          "2a0051e3",
+          "cmp",
+          "r1, #0x2a"
+        ],
+        [
+          939108,
+          "0120a0e1",
+          "mov",
+          "r2, r1"
+        ],
+        [
+          939112,
+          "1700000a",
+          "beq",
+          "#0xe54cc"
+        ],
+        [
+          939116,
+          "00109ee5",
+          "ldr",
+          "r1, [lr]"
+        ],
+        [
+          939120,
+          "010041e2",
+          "sub",
+          "r0, r1, #1"
+        ],
+        [
+          939124,
+          "910000e0",
+          "mul",
+          "r0, r1, r0"
+        ],
+        [
+          939128,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          939132,
+          "0200000a",
+          "beq",
+          "#0xe548c"
+        ],
+        [
+          939136,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          939140,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          939144,
+          "0b0000ca",
+          "bgt",
+          "#0xe54bc"
+        ],
+        [
+          939148,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          939152,
+          "d80020e2",
+          "eor",
+          "r0, r0, #0xd8"
+        ],
+        [
+          939156,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          939160,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          939164,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          939168,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          939172,
+          "011082e2",
+          "add",
+          "r1, r2, #1"
+        ],
+        [
+          939176,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          939180,
+          "ebffff0a",
+          "beq",
+          "#0xe5460"
+        ],
+        [
+          939184,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          939188,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          939192,
+          "e8ffffda",
+          "ble",
+          "#0xe5460"
+        ],
+        [
+          939196,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          939200,
+          "d80020e2",
+          "eor",
+          "r0, r0, #0xd8"
+        ],
+        [
+          939204,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          939208,
+          "efffffea",
+          "b",
+          "#0xe548c"
+        ],
+        [
+          939212,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          939216,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          939220,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          939224,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          939228,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          939232,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          939236,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          939240,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          939244,
+          "0200000a",
+          "beq",
+          "#0xe54fc"
+        ],
+        [
+          939248,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          939252,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          939256,
+          "f7ffffca",
+          "bgt",
+          "#0xe54dc"
+        ],
+        [
+          939260,
+          "0020a0e3",
+          "mov",
+          "r2, #0"
+        ],
+        [
+          939264,
+          "000052e3",
+          "cmp",
+          "r2, #0"
+        ],
+        [
+          939268,
+          "1d00001a",
+          "bne",
+          "#0xe5580"
+        ],
+        [
+          939272,
+          "603b9fe5",
+          "ldr",
+          "r3, [pc, #0xb60]"
+        ],
+        [
+          939276,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          939280,
+          "020000ea",
+          "b",
+          "#0xe5520"
+        ],
+        [
+          939284,
+          "0b0051e3",
+          "cmp",
+          "r1, #0xb"
+        ],
+        [
+          939288,
+          "0120a0e1",
+          "mov",
+          "r2, r1"
+        ],
+        [
+          939292,
+          "1700000a",
+          "beq",
+          "#0xe5580"
+        ],
+        [
+          939296,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          939300,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          939304,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          939308,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          939312,
+          "0200000a",
+          "beq",
+          "#0xe5540"
+        ],
+        [
+          939316,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          939320,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          939324,
+          "0b0000ca",
+          "bgt",
+          "#0xe5570"
+        ],
+        [
+          939328,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          939332,
+          "d10020e2",
+          "eor",
+          "r0, r0, #0xd1"
+        ],
+        [
+          939336,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          939340,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          939344,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          939348,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          939352,
+          "011082e2",
+          "add",
+          "r1, r2, #1"
+        ],
+        [
+          939356,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          939360,
+          "ebffff0a",
+          "beq",
+          "#0xe5514"
+        ],
+        [
+          939364,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          939368,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          939372,
+          "e8ffffda",
+          "ble",
+          "#0xe5514"
+        ],
+        [
+          939376,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          939380,
+          "d10020e2",
+          "eor",
+          "r0, r0, #0xd1"
+        ],
+        [
+          939384,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          939388,
+          "efffffea",
+          "b",
+          "#0xe5540"
+        ],
+        [
+          939392,
+          "0020a0e3",
+          "mov",
+          "r2, #0"
+        ],
+        [
+          939396,
+          "000052e3",
+          "cmp",
+          "r2, #0"
+        ],
+        [
+          939400,
+          "0700001a",
+          "bne",
+          "#0xe55ac"
+        ],
+        [
+          939404,
+          "e03a9fe5",
+          "ldr",
+          "r3, [pc, #0xae0]"
+        ],
+        [
+          939408,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          939412,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          939416,
+          "b30020e2",
+          "eor",
+          "r0, r0, #0xb3"
+        ],
+        [
+          939420,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          939424,
+          "012082e2",
+          "add",
+          "r2, r2, #1"
+        ],
+        [
+          939428,
+          "260052e3",
+          "cmp",
+          "r2, #0x26"
+        ],
+        [
+          939432,
+          "f9ffff1a",
+          "bne",
+          "#0xe5594"
+        ],
+        [
+          939436,
+          "0020a0e3",
+          "mov",
+          "r2, #0"
+        ],
+        [
+          939440,
+          "000052e3",
+          "cmp",
+          "r2, #0"
+        ],
+        [
+          939444,
+          "1d00001a",
+          "bne",
+          "#0xe5630"
+        ],
+        [
+          939448,
+          "b83a9fe5",
+          "ldr",
+          "r3, [pc, #0xab8]"
+        ],
+        [
+          939452,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          939456,
+          "020000ea",
+          "b",
+          "#0xe55d0"
+        ],
+        [
+          939460,
+          "290051e3",
+          "cmp",
+          "r1, #0x29"
+        ],
+        [
+          939464,
+          "0120a0e1",
+          "mov",
+          "r2, r1"
+        ],
+        [
+          939468,
+          "1700000a",
+          "beq",
+          "#0xe5630"
+        ],
+        [
+          939472,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          939476,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          939480,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          939484,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          939488,
+          "0200000a",
+          "beq",
+          "#0xe55f0"
+        ],
+        [
+          939492,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          939496,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          939500,
+          "0b0000ca",
+          "bgt",
+          "#0xe5620"
+        ],
+        [
+          939504,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          939508,
+          "1e0020e2",
+          "eor",
+          "r0, r0, #0x1e"
+        ],
+        [
+          939512,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          939516,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          939520,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          939524,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          939528,
+          "011082e2",
+          "add",
+          "r1, r2, #1"
+        ],
+        [
+          939532,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          939536,
+          "ebffff0a",
+          "beq",
+          "#0xe55c4"
+        ],
+        [
+          939540,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          939544,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          939548,
+          "e8ffffda",
+          "ble",
+          "#0xe55c4"
+        ],
+        [
+          939552,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          939556,
+          "1e0020e2",
+          "eor",
+          "r0, r0, #0x1e"
+        ],
+        [
+          939560,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          939564,
+          "efffffea",
+          "b",
+          "#0xe55f0"
+        ],
+        [
+          939568,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          939572,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          939576,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          939580,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          939584,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          939588,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          939592,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          939596,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          939600,
+          "0200000a",
+          "beq",
+          "#0xe5660"
+        ],
+        [
+          939604,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          939608,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          939612,
+          "f7ffffca",
+          "bgt",
+          "#0xe5640"
+        ],
+        [
+          939616,
+          "0020a0e3",
+          "mov",
+          "r2, #0"
+        ],
+        [
+          939620,
+          "000052e3",
+          "cmp",
+          "r2, #0"
+        ],
+        [
+          939624,
+          "0700001a",
+          "bne",
+          "#0xe568c"
+        ],
+        [
+          939628,
+          "083a9fe5",
+          "ldr",
+          "r3, [pc, #0xa08]"
+        ],
+        [
+          939632,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          939636,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          939640,
+          "eb0020e2",
+          "eor",
+          "r0, r0, #0xeb"
+        ],
+        [
+          939644,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          939648,
+          "012082e2",
+          "add",
+          "r2, r2, #1"
+        ],
+        [
+          939652,
+          "2a0052e3",
+          "cmp",
+          "r2, #0x2a"
+        ],
+        [
+          939656,
+          "f9ffff1a",
+          "bne",
+          "#0xe5674"
+        ],
+        [
+          939660,
+          "0020a0e3",
+          "mov",
+          "r2, #0"
+        ],
+        [
+          939664,
+          "000052e3",
+          "cmp",
+          "r2, #0"
+        ],
+        [
+          939668,
+          "1d00001a",
+          "bne",
+          "#0xe5710"
+        ],
+        [
+          939672,
+          "e0399fe5",
+          "ldr",
+          "r3, [pc, #0x9e0]"
+        ],
+        [
+          939676,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          939680,
+          "020000ea",
+          "b",
+          "#0xe56b0"
+        ],
+        [
+          939684,
+          "250051e3",
+          "cmp",
+          "r1, #0x25"
+        ],
+        [
+          939688,
+          "0120a0e1",
+          "mov",
+          "r2, r1"
+        ],
+        [
+          939692,
+          "1700000a",
+          "beq",
+          "#0xe5710"
+        ],
+        [
+          939696,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          939700,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          939704,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          939708,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          939712,
+          "0200000a",
+          "beq",
+          "#0xe56d0"
+        ],
+        [
+          939716,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          939720,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          939724,
+          "0b0000ca",
+          "bgt",
+          "#0xe5700"
+        ],
+        [
+          939728,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          939732,
+          "800020e2",
+          "eor",
+          "r0, r0, #0x80"
+        ],
+        [
+          939736,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          939740,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          939744,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          939748,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          939752,
+          "011082e2",
+          "add",
+          "r1, r2, #1"
+        ],
+        [
+          939756,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          939760,
+          "ebffff0a",
+          "beq",
+          "#0xe56a4"
+        ],
+        [
+          939764,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          939768,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          939772,
+          "e8ffffda",
+          "ble",
+          "#0xe56a4"
+        ],
+        [
+          939776,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          939780,
+          "800020e2",
+          "eor",
+          "r0, r0, #0x80"
+        ],
+        [
+          939784,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          939788,
+          "efffffea",
+          "b",
+          "#0xe56d0"
+        ],
+        [
+          939792,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          939796,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          939800,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          939804,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          939808,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          939812,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          939816,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          939820,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          939824,
+          "0200000a",
+          "beq",
+          "#0xe5740"
+        ],
+        [
+          939828,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          939832,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          939836,
+          "f7ffffca",
+          "bgt",
+          "#0xe5720"
+        ],
+        [
+          939840,
+          "0020a0e3",
+          "mov",
+          "r2, #0"
+        ],
+        [
+          939844,
+          "000052e3",
+          "cmp",
+          "r2, #0"
+        ],
+        [
+          939848,
+          "0700001a",
+          "bne",
+          "#0xe576c"
+        ],
+        [
+          939852,
+          "30399fe5",
+          "ldr",
+          "r3, [pc, #0x930]"
+        ],
+        [
+          939856,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          939860,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          939864,
+          "d80020e2",
+          "eor",
+          "r0, r0, #0xd8"
+        ],
+        [
+          939868,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          939872,
+          "012082e2",
+          "add",
+          "r2, r2, #1"
+        ],
+        [
+          939876,
+          "2a0052e3",
+          "cmp",
+          "r2, #0x2a"
+        ],
+        [
+          939880,
+          "f9ffff1a",
+          "bne",
+          "#0xe5754"
+        ],
+        [
+          939884,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          939888,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          939892,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          939896,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          939900,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          939904,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          939908,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          939912,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          939916,
+          "0200000a",
+          "beq",
+          "#0xe579c"
+        ],
+        [
+          939920,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          939924,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          939928,
+          "f7ffffca",
+          "bgt",
+          "#0xe577c"
+        ],
+        [
+          939932,
+          "0020a0e3",
+          "mov",
+          "r2, #0"
+        ],
+        [
+          939936,
+          "000052e3",
+          "cmp",
+          "r2, #0"
+        ],
+        [
+          939940,
+          "0700001a",
+          "bne",
+          "#0xe57c8"
+        ],
+        [
+          939944,
+          "d8389fe5",
+          "ldr",
+          "r3, [pc, #0x8d8]"
+        ],
+        [
+          939948,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          939952,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          939956,
+          "120020e2",
+          "eor",
+          "r0, r0, #0x12"
+        ],
+        [
+          939960,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          939964,
+          "012082e2",
+          "add",
+          "r2, r2, #1"
+        ],
+        [
+          939968,
+          "310052e3",
+          "cmp",
+          "r2, #0x31"
+        ],
+        [
+          939972,
+          "f9ffff1a",
+          "bne",
+          "#0xe57b0"
+        ],
+        [
+          939976,
+          "0020a0e3",
+          "mov",
+          "r2, #0"
+        ],
+        [
+          939980,
+          "000052e3",
+          "cmp",
+          "r2, #0"
+        ],
+        [
+          939984,
+          "1d00001a",
+          "bne",
+          "#0xe584c"
+        ],
+        [
+          939988,
+          "b0389fe5",
+          "ldr",
+          "r3, [pc, #0x8b0]"
+        ],
+        [
+          939992,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          939996,
+          "020000ea",
+          "b",
+          "#0xe57ec"
+        ],
+        [
+          940000,
+          "2e0051e3",
+          "cmp",
+          "r1, #0x2e"
+        ],
+        [
+          940004,
+          "0120a0e1",
+          "mov",
+          "r2, r1"
+        ],
+        [
+          940008,
+          "1700000a",
+          "beq",
+          "#0xe584c"
+        ],
+        [
+          940012,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          940016,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          940020,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          940024,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          940028,
+          "0200000a",
+          "beq",
+          "#0xe580c"
+        ],
+        [
+          940032,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          940036,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          940040,
+          "0b0000ca",
+          "bgt",
+          "#0xe583c"
+        ],
+        [
+          940044,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          940048,
+          "f70020e2",
+          "eor",
+          "r0, r0, #0xf7"
+        ],
+        [
+          940052,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          940056,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          940060,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          940064,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          940068,
+          "011082e2",
+          "add",
+          "r1, r2, #1"
+        ],
+        [
+          940072,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          940076,
+          "ebffff0a",
+          "beq",
+          "#0xe57e0"
+        ],
+        [
+          940080,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          940084,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          940088,
+          "e8ffffda",
+          "ble",
+          "#0xe57e0"
+        ],
+        [
+          940092,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          940096,
+          "f70020e2",
+          "eor",
+          "r0, r0, #0xf7"
+        ],
+        [
+          940100,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          940104,
+          "efffffea",
+          "b",
+          "#0xe580c"
+        ],
+        [
+          940108,
+          "0020a0e3",
+          "mov",
+          "r2, #0"
+        ],
+        [
+          940112,
+          "000052e3",
+          "cmp",
+          "r2, #0"
+        ],
+        [
+          940116,
+          "1d00001a",
+          "bne",
+          "#0xe58d0"
+        ],
+        [
+          940120,
+          "30389fe5",
+          "ldr",
+          "r3, [pc, #0x830]"
+        ],
+        [
+          940124,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          940128,
+          "020000ea",
+          "b",
+          "#0xe5870"
+        ],
+        [
+          940132,
+          "2b0051e3",
+          "cmp",
+          "r1, #0x2b"
+        ],
+        [
+          940136,
+          "0120a0e1",
+          "mov",
+          "r2, r1"
+        ],
+        [
+          940140,
+          "1700000a",
+          "beq",
+          "#0xe58d0"
+        ],
+        [
+          940144,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          940148,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          940152,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          940156,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          940160,
+          "0200000a",
+          "beq",
+          "#0xe5890"
+        ],
+        [
+          940164,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          940168,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          940172,
+          "0b0000ca",
+          "bgt",
+          "#0xe58c0"
+        ],
+        [
+          940176,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          940180,
+          "cc0020e2",
+          "eor",
+          "r0, r0, #0xcc"
+        ],
+        [
+          940184,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          940188,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          940192,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          940196,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          940200,
+          "011082e2",
+          "add",
+          "r1, r2, #1"
+        ],
+        [
+          940204,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          940208,
+          "ebffff0a",
+          "beq",
+          "#0xe5864"
+        ],
+        [
+          940212,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          940216,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          940220,
+          "e8ffffda",
+          "ble",
+          "#0xe5864"
+        ],
+        [
+          940224,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          940228,
+          "cc0020e2",
+          "eor",
+          "r0, r0, #0xcc"
+        ],
+        [
+          940232,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          940236,
+          "efffffea",
+          "b",
+          "#0xe5890"
+        ],
+        [
+          940240,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          940244,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          940248,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          940252,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          940256,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          940260,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          940264,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          940268,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          940272,
+          "0200000a",
+          "beq",
+          "#0xe5900"
+        ],
+        [
+          940276,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          940280,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          940284,
+          "f7ffffca",
+          "bgt",
+          "#0xe58e0"
+        ],
+        [
+          940288,
+          "0020a0e3",
+          "mov",
+          "r2, #0"
+        ],
+        [
+          940292,
+          "000052e3",
+          "cmp",
+          "r2, #0"
+        ],
+        [
+          940296,
+          "0700001a",
+          "bne",
+          "#0xe592c"
+        ],
+        [
+          940300,
+          "80379fe5",
+          "ldr",
+          "r3, [pc, #0x780]"
+        ],
+        [
+          940304,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          940308,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          940312,
+          "a50020e2",
+          "eor",
+          "r0, r0, #0xa5"
+        ],
+        [
+          940316,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          940320,
+          "012082e2",
+          "add",
+          "r2, r2, #1"
+        ],
+        [
+          940324,
+          "2f0052e3",
+          "cmp",
+          "r2, #0x2f"
+        ],
+        [
+          940328,
+          "f9ffff1a",
+          "bne",
+          "#0xe5914"
+        ],
+        [
+          940332,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          940336,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          940340,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          940344,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          940348,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          940352,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          940356,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          940360,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          940364,
+          "0200000a",
+          "beq",
+          "#0xe595c"
+        ],
+        [
+          940368,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          940372,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          940376,
+          "f7ffffca",
+          "bgt",
+          "#0xe593c"
+        ],
+        [
+          940380,
+          "0020a0e3",
+          "mov",
+          "r2, #0"
+        ],
+        [
+          940384,
+          "000052e3",
+          "cmp",
+          "r2, #0"
+        ],
+        [
+          940388,
+          "0700001a",
+          "bne",
+          "#0xe5988"
+        ],
+        [
+          940392,
+          "28379fe5",
+          "ldr",
+          "r3, [pc, #0x728]"
+        ],
+        [
+          940396,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          940400,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          940404,
+          "db0020e2",
+          "eor",
+          "r0, r0, #0xdb"
+        ],
+        [
+          940408,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          940412,
+          "012082e2",
+          "add",
+          "r2, r2, #1"
+        ],
+        [
+          940416,
+          "2a0052e3",
+          "cmp",
+          "r2, #0x2a"
+        ],
+        [
+          940420,
+          "f9ffff1a",
+          "bne",
+          "#0xe5970"
+        ],
+        [
+          940424,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          940428,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          940432,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          940436,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          940440,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          940444,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          940448,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          940452,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          940456,
+          "0200000a",
+          "beq",
+          "#0xe59b8"
+        ],
+        [
+          940460,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          940464,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          940468,
+          "f7ffffca",
+          "bgt",
+          "#0xe5998"
+        ],
+        [
+          940472,
+          "0020a0e3",
+          "mov",
+          "r2, #0"
+        ],
+        [
+          940476,
+          "000052e3",
+          "cmp",
+          "r2, #0"
+        ],
+        [
+          940480,
+          "1d00001a",
+          "bne",
+          "#0xe5a3c"
+        ],
+        [
+          940484,
+          "d0369fe5",
+          "ldr",
+          "r3, [pc, #0x6d0]"
+        ],
+        [
+          940488,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          940492,
+          "020000ea",
+          "b",
+          "#0xe59dc"
+        ],
+        [
+          940496,
+          "330051e3",
+          "cmp",
+          "r1, #0x33"
+        ],
+        [
+          940500,
+          "0120a0e1",
+          "mov",
+          "r2, r1"
+        ],
+        [
+          940504,
+          "1700000a",
+          "beq",
+          "#0xe5a3c"
+        ],
+        [
+          940508,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          940512,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          940516,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          940520,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          940524,
+          "0200000a",
+          "beq",
+          "#0xe59fc"
+        ],
+        [
+          940528,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          940532,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          940536,
+          "0b0000ca",
+          "bgt",
+          "#0xe5a2c"
+        ],
+        [
+          940540,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          940544,
+          "d30020e2",
+          "eor",
+          "r0, r0, #0xd3"
+        ],
+        [
+          940548,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          940552,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          940556,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          940560,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          940564,
+          "011082e2",
+          "add",
+          "r1, r2, #1"
+        ],
+        [
+          940568,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          940572,
+          "ebffff0a",
+          "beq",
+          "#0xe59d0"
+        ],
+        [
+          940576,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          940580,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          940584,
+          "e8ffffda",
+          "ble",
+          "#0xe59d0"
+        ],
+        [
+          940588,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          940592,
+          "d30020e2",
+          "eor",
+          "r0, r0, #0xd3"
+        ],
+        [
+          940596,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          940600,
+          "efffffea",
+          "b",
+          "#0xe59fc"
+        ],
+        [
+          940604,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          940608,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          940612,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          940616,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          940620,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          940624,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          940628,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          940632,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          940636,
+          "0200000a",
+          "beq",
+          "#0xe5a6c"
+        ],
+        [
+          940640,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          940644,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          940648,
+          "f7ffffca",
+          "bgt",
+          "#0xe5a4c"
+        ],
+        [
+          940652,
+          "0020a0e3",
+          "mov",
+          "r2, #0"
+        ],
+        [
+          940656,
+          "000052e3",
+          "cmp",
+          "r2, #0"
+        ],
+        [
+          940660,
+          "0700001a",
+          "bne",
+          "#0xe5a98"
+        ],
+        [
+          940664,
+          "20369fe5",
+          "ldr",
+          "r3, [pc, #0x620]"
+        ],
+        [
+          940668,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          940672,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          940676,
+          "910020e2",
+          "eor",
+          "r0, r0, #0x91"
+        ],
+        [
+          940680,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          940684,
+          "012082e2",
+          "add",
+          "r2, r2, #1"
+        ],
+        [
+          940688,
+          "2f0052e3",
+          "cmp",
+          "r2, #0x2f"
+        ],
+        [
+          940692,
+          "f9ffff1a",
+          "bne",
+          "#0xe5a80"
+        ],
+        [
+          940696,
+          "0020a0e3",
+          "mov",
+          "r2, #0"
+        ],
+        [
+          940700,
+          "000052e3",
+          "cmp",
+          "r2, #0"
+        ],
+        [
+          940704,
+          "0700001a",
+          "bne",
+          "#0xe5ac4"
+        ],
+        [
+          940708,
+          "f8359fe5",
+          "ldr",
+          "r3, [pc, #0x5f8]"
+        ],
+        [
+          940712,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          940716,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          940720,
+          "bd0020e2",
+          "eor",
+          "r0, r0, #0xbd"
+        ],
+        [
+          940724,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          940728,
+          "012082e2",
+          "add",
+          "r2, r2, #1"
+        ],
+        [
+          940732,
+          "2c0052e3",
+          "cmp",
+          "r2, #0x2c"
+        ],
+        [
+          940736,
+          "f9ffff1a",
+          "bne",
+          "#0xe5aac"
+        ],
+        [
+          940740,
+          "0020a0e3",
+          "mov",
+          "r2, #0"
+        ],
+        [
+          940744,
+          "000052e3",
+          "cmp",
+          "r2, #0"
+        ],
+        [
+          940748,
+          "0700001a",
+          "bne",
+          "#0xe5af0"
+        ],
+        [
+          940752,
+          "d0359fe5",
+          "ldr",
+          "r3, [pc, #0x5d0]"
+        ],
+        [
+          940756,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          940760,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          940764,
+          "540020e2",
+          "eor",
+          "r0, r0, #0x54"
+        ],
+        [
+          940768,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          940772,
+          "012082e2",
+          "add",
+          "r2, r2, #1"
+        ],
+        [
+          940776,
+          "1d0052e3",
+          "cmp",
+          "r2, #0x1d"
+        ],
+        [
+          940780,
+          "f9ffff1a",
+          "bne",
+          "#0xe5ad8"
+        ],
+        [
+          940784,
+          "0020a0e3",
+          "mov",
+          "r2, #0"
+        ],
+        [
+          940788,
+          "000052e3",
+          "cmp",
+          "r2, #0"
+        ],
+        [
+          940792,
+          "0700001a",
+          "bne",
+          "#0xe5b1c"
+        ],
+        [
+          940796,
+          "a8359fe5",
+          "ldr",
+          "r3, [pc, #0x5a8]"
+        ],
+        [
+          940800,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          940804,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          940808,
+          "f80020e2",
+          "eor",
+          "r0, r0, #0xf8"
+        ],
+        [
+          940812,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          940816,
+          "012082e2",
+          "add",
+          "r2, r2, #1"
+        ],
+        [
+          940820,
+          "270052e3",
+          "cmp",
+          "r2, #0x27"
+        ],
+        [
+          940824,
+          "f9ffff1a",
+          "bne",
+          "#0xe5b04"
+        ],
+        [
+          940828,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          940832,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          940836,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          940840,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          940844,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          940848,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          940852,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          940856,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          940860,
+          "0200000a",
+          "beq",
+          "#0xe5b4c"
+        ],
+        [
+          940864,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          940868,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          940872,
+          "f7ffffca",
+          "bgt",
+          "#0xe5b2c"
+        ],
+        [
+          940876,
+          "0020a0e3",
+          "mov",
+          "r2, #0"
+        ],
+        [
+          940880,
+          "000052e3",
+          "cmp",
+          "r2, #0"
+        ],
+        [
+          940884,
+          "1d00001a",
+          "bne",
+          "#0xe5bd0"
+        ],
+        [
+          940888,
+          "50359fe5",
+          "ldr",
+          "r3, [pc, #0x550]"
+        ],
+        [
+          940892,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          940896,
+          "020000ea",
+          "b",
+          "#0xe5b70"
+        ],
+        [
+          940900,
+          "250051e3",
+          "cmp",
+          "r1, #0x25"
+        ],
+        [
+          940904,
+          "0120a0e1",
+          "mov",
+          "r2, r1"
+        ],
+        [
+          940908,
+          "1700000a",
+          "beq",
+          "#0xe5bd0"
+        ],
+        [
+          940912,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          940916,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          940920,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          940924,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          940928,
+          "0200000a",
+          "beq",
+          "#0xe5b90"
+        ],
+        [
+          940932,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          940936,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          940940,
+          "0b0000ca",
+          "bgt",
+          "#0xe5bc0"
+        ],
+        [
+          940944,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          940948,
+          "d40020e2",
+          "eor",
+          "r0, r0, #0xd4"
+        ],
+        [
+          940952,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          940956,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          940960,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          940964,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          940968,
+          "011082e2",
+          "add",
+          "r1, r2, #1"
+        ],
+        [
+          940972,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          940976,
+          "ebffff0a",
+          "beq",
+          "#0xe5b64"
+        ],
+        [
+          940980,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          940984,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          940988,
+          "e8ffffda",
+          "ble",
+          "#0xe5b64"
+        ],
+        [
+          940992,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          940996,
+          "d40020e2",
+          "eor",
+          "r0, r0, #0xd4"
+        ],
+        [
+          941000,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          941004,
+          "efffffea",
+          "b",
+          "#0xe5b90"
+        ],
+        [
+          941008,
+          "0020a0e3",
+          "mov",
+          "r2, #0"
+        ],
+        [
+          941012,
+          "000052e3",
+          "cmp",
+          "r2, #0"
+        ],
+        [
+          941016,
+          "1d00001a",
+          "bne",
+          "#0xe5c54"
+        ],
+        [
+          941020,
+          "d0349fe5",
+          "ldr",
+          "r3, [pc, #0x4d0]"
+        ],
+        [
+          941024,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          941028,
+          "020000ea",
+          "b",
+          "#0xe5bf4"
+        ],
+        [
+          941032,
+          "310051e3",
+          "cmp",
+          "r1, #0x31"
+        ],
+        [
+          941036,
+          "0120a0e1",
+          "mov",
+          "r2, r1"
+        ],
+        [
+          941040,
+          "1700000a",
+          "beq",
+          "#0xe5c54"
+        ],
+        [
+          941044,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          941048,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          941052,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          941056,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          941060,
+          "0200000a",
+          "beq",
+          "#0xe5c14"
+        ],
+        [
+          941064,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          941068,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          941072,
+          "0b0000ca",
+          "bgt",
+          "#0xe5c44"
+        ],
+        [
+          941076,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          941080,
+          "8e0020e2",
+          "eor",
+          "r0, r0, #0x8e"
+        ],
+        [
+          941084,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          941088,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          941092,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          941096,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          941100,
+          "011082e2",
+          "add",
+          "r1, r2, #1"
+        ],
+        [
+          941104,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          941108,
+          "ebffff0a",
+          "beq",
+          "#0xe5be8"
+        ],
+        [
+          941112,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          941116,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          941120,
+          "e8ffffda",
+          "ble",
+          "#0xe5be8"
+        ],
+        [
+          941124,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          941128,
+          "8e0020e2",
+          "eor",
+          "r0, r0, #0x8e"
+        ],
+        [
+          941132,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          941136,
+          "efffffea",
+          "b",
+          "#0xe5c14"
+        ],
+        [
+          941140,
+          "0020a0e3",
+          "mov",
+          "r2, #0"
+        ],
+        [
+          941144,
+          "000052e3",
+          "cmp",
+          "r2, #0"
+        ],
+        [
+          941148,
+          "0700001a",
+          "bne",
+          "#0xe5c80"
+        ],
+        [
+          941152,
+          "50349fe5",
+          "ldr",
+          "r3, [pc, #0x450]"
+        ],
+        [
+          941156,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          941160,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          941164,
+          "b90020e2",
+          "eor",
+          "r0, r0, #0xb9"
+        ],
+        [
+          941168,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          941172,
+          "012082e2",
+          "add",
+          "r2, r2, #1"
+        ],
+        [
+          941176,
+          "320052e3",
+          "cmp",
+          "r2, #0x32"
+        ],
+        [
+          941180,
+          "f9ffff1a",
+          "bne",
+          "#0xe5c68"
+        ],
+        [
+          941184,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          941188,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          941192,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          941196,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          941200,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          941204,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          941208,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          941212,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          941216,
+          "0200000a",
+          "beq",
+          "#0xe5cb0"
+        ],
+        [
+          941220,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          941224,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          941228,
+          "f7ffffca",
+          "bgt",
+          "#0xe5c90"
+        ],
+        [
+          941232,
+          "04349fe5",
+          "ldr",
+          "r3, [pc, #0x404]"
+        ],
+        [
+          941236,
+          "0020a0e3",
+          "mov",
+          "r2, #0"
+        ],
+        [
+          941240,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          941244,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          941248,
+          "ee0020e2",
+          "eor",
+          "r0, r0, #0xee"
+        ],
+        [
+          941252,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          941256,
+          "012082e2",
+          "add",
+          "r2, r2, #1"
+        ],
+        [
+          941260,
+          "360052e3",
+          "cmp",
+          "r2, #0x36"
+        ],
+        [
+          941264,
+          "f9ffff1a",
+          "bne",
+          "#0xe5cbc"
+        ],
+        [
+          941268,
+          "0020a0e3",
+          "mov",
+          "r2, #0"
+        ],
+        [
+          941272,
+          "000052e3",
+          "cmp",
+          "r2, #0"
+        ],
+        [
+          941276,
+          "0700001a",
+          "bne",
+          "#0xe5d00"
+        ],
+        [
+          941280,
+          "d8339fe5",
+          "ldr",
+          "r3, [pc, #0x3d8]"
+        ],
+        [
+          941284,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          941288,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          941292,
+          "b30020e2",
+          "eor",
+          "r0, r0, #0xb3"
+        ],
+        [
+          941296,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          941300,
+          "012082e2",
+          "add",
+          "r2, r2, #1"
+        ],
+        [
+          941304,
+          "360052e3",
+          "cmp",
+          "r2, #0x36"
+        ],
+        [
+          941308,
+          "f9ffff1a",
+          "bne",
+          "#0xe5ce8"
+        ],
+        [
+          941312,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          941316,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          941320,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          941324,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          941328,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          941332,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          941336,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          941340,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          941344,
+          "0200000a",
+          "beq",
+          "#0xe5d30"
+        ],
+        [
+          941348,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          941352,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          941356,
+          "f7ffffca",
+          "bgt",
+          "#0xe5d10"
+        ],
+        [
+          941360,
+          "0020a0e3",
+          "mov",
+          "r2, #0"
+        ],
+        [
+          941364,
+          "000052e3",
+          "cmp",
+          "r2, #0"
+        ],
+        [
+          941368,
+          "0700001a",
+          "bne",
+          "#0xe5d5c"
+        ],
+        [
+          941372,
+          "80339fe5",
+          "ldr",
+          "r3, [pc, #0x380]"
+        ],
+        [
+          941376,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          941380,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          941384,
+          "6b0020e2",
+          "eor",
+          "r0, r0, #0x6b"
+        ],
+        [
+          941388,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          941392,
+          "012082e2",
+          "add",
+          "r2, r2, #1"
+        ],
+        [
+          941396,
+          "2c0052e3",
+          "cmp",
+          "r2, #0x2c"
+        ],
+        [
+          941400,
+          "f9ffff1a",
+          "bne",
+          "#0xe5d44"
+        ],
+        [
+          941404,
+          "0020a0e3",
+          "mov",
+          "r2, #0"
+        ],
+        [
+          941408,
+          "000052e3",
+          "cmp",
+          "r2, #0"
+        ],
+        [
+          941412,
+          "0700001a",
+          "bne",
+          "#0xe5d88"
+        ],
+        [
+          941416,
+          "58339fe5",
+          "ldr",
+          "r3, [pc, #0x358]"
+        ],
+        [
+          941420,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          941424,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          941428,
+          "540020e2",
+          "eor",
+          "r0, r0, #0x54"
+        ],
+        [
+          941432,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          941436,
+          "012082e2",
+          "add",
+          "r2, r2, #1"
+        ],
+        [
+          941440,
+          "430052e3",
+          "cmp",
+          "r2, #0x43"
+        ],
+        [
+          941444,
+          "f9ffff1a",
+          "bne",
+          "#0xe5d70"
+        ],
+        [
+          941448,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          941452,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          941456,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          941460,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          941464,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          941468,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          941472,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          941476,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          941480,
+          "0200000a",
+          "beq",
+          "#0xe5db8"
+        ],
+        [
+          941484,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          941488,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          941492,
+          "f7ffffca",
+          "bgt",
+          "#0xe5d98"
+        ],
+        [
+          941496,
+          "0020a0e3",
+          "mov",
+          "r2, #0"
+        ],
+        [
+          941500,
+          "000052e3",
+          "cmp",
+          "r2, #0"
+        ],
+        [
+          941504,
+          "1d00001a",
+          "bne",
+          "#0xe5e3c"
+        ],
+        [
+          941508,
+          "00339fe5",
+          "ldr",
+          "r3, [pc, #0x300]"
+        ],
+        [
+          941512,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          941516,
+          "020000ea",
+          "b",
+          "#0xe5ddc"
+        ],
+        [
+          941520,
+          "2a0051e3",
+          "cmp",
+          "r1, #0x2a"
+        ],
+        [
+          941524,
+          "0120a0e1",
+          "mov",
+          "r2, r1"
+        ],
+        [
+          941528,
+          "1700000a",
+          "beq",
+          "#0xe5e3c"
+        ],
+        [
+          941532,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          941536,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          941540,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          941544,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          941548,
+          "0200000a",
+          "beq",
+          "#0xe5dfc"
+        ],
+        [
+          941552,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          941556,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          941560,
+          "0b0000ca",
+          "bgt",
+          "#0xe5e2c"
+        ],
+        [
+          941564,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          941568,
+          "8b0020e2",
+          "eor",
+          "r0, r0, #0x8b"
+        ],
+        [
+          941572,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          941576,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          941580,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          941584,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          941588,
+          "011082e2",
+          "add",
+          "r1, r2, #1"
+        ],
+        [
+          941592,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          941596,
+          "ebffff0a",
+          "beq",
+          "#0xe5dd0"
+        ],
+        [
+          941600,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          941604,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          941608,
+          "e8ffffda",
+          "ble",
+          "#0xe5dd0"
+        ],
+        [
+          941612,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          941616,
+          "8b0020e2",
+          "eor",
+          "r0, r0, #0x8b"
+        ],
+        [
+          941620,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          941624,
+          "efffffea",
+          "b",
+          "#0xe5dfc"
+        ],
+        [
+          941628,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          941632,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          941636,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          941640,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          941644,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          941648,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          941652,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          941656,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          941660,
+          "0200000a",
+          "beq",
+          "#0xe5e6c"
+        ],
+        [
+          941664,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          941668,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          941672,
+          "f7ffffca",
+          "bgt",
+          "#0xe5e4c"
+        ],
+        [
+          941676,
+          "0020a0e3",
+          "mov",
+          "r2, #0"
+        ],
+        [
+          941680,
+          "000052e3",
+          "cmp",
+          "r2, #0"
+        ],
+        [
+          941684,
+          "0700001a",
+          "bne",
+          "#0xe5e98"
+        ],
+        [
+          941688,
+          "50329fe5",
+          "ldr",
+          "r3, [pc, #0x250]"
+        ],
+        [
+          941692,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          941696,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          941700,
+          "3a0020e2",
+          "eor",
+          "r0, r0, #0x3a"
+        ],
+        [
+          941704,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          941708,
+          "012082e2",
+          "add",
+          "r2, r2, #1"
+        ],
+        [
+          941712,
+          "060052e3",
+          "cmp",
+          "r2, #6"
+        ],
+        [
+          941716,
+          "f9ffff1a",
+          "bne",
+          "#0xe5e80"
+        ],
+        [
+          941720,
+          "0020a0e3",
+          "mov",
+          "r2, #0"
+        ],
+        [
+          941724,
+          "000052e3",
+          "cmp",
+          "r2, #0"
+        ],
+        [
+          941728,
+          "1d00001a",
+          "bne",
+          "#0xe5f1c"
+        ],
+        [
+          941732,
+          "28329fe5",
+          "ldr",
+          "r3, [pc, #0x228]"
+        ],
+        [
+          941736,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          941740,
+          "020000ea",
+          "b",
+          "#0xe5ebc"
+        ],
+        [
+          941744,
+          "1d0051e3",
+          "cmp",
+          "r1, #0x1d"
+        ],
+        [
+          941748,
+          "0120a0e1",
+          "mov",
+          "r2, r1"
+        ],
+        [
+          941752,
+          "1700000a",
+          "beq",
+          "#0xe5f1c"
+        ],
+        [
+          941756,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          941760,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          941764,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          941768,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          941772,
+          "0200000a",
+          "beq",
+          "#0xe5edc"
+        ],
+        [
+          941776,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          941780,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          941784,
+          "0b0000ca",
+          "bgt",
+          "#0xe5f0c"
+        ],
+        [
+          941788,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          941792,
+          "b40020e2",
+          "eor",
+          "r0, r0, #0xb4"
+        ],
+        [
+          941796,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          941800,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          941804,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          941808,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          941812,
+          "011082e2",
+          "add",
+          "r1, r2, #1"
+        ],
+        [
+          941816,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          941820,
+          "ebffff0a",
+          "beq",
+          "#0xe5eb0"
+        ],
+        [
+          941824,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          941828,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          941832,
+          "e8ffffda",
+          "ble",
+          "#0xe5eb0"
+        ],
+        [
+          941836,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          941840,
+          "b40020e2",
+          "eor",
+          "r0, r0, #0xb4"
+        ],
+        [
+          941844,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          941848,
+          "efffffea",
+          "b",
+          "#0xe5edc"
+        ],
+        [
+          941852,
+          "0020a0e3",
+          "mov",
+          "r2, #0"
+        ],
+        [
+          941856,
+          "000052e3",
+          "cmp",
+          "r2, #0"
+        ],
+        [
+          941860,
+          "0700001a",
+          "bne",
+          "#0xe5f48"
+        ],
+        [
+          941864,
+          "a8319fe5",
+          "ldr",
+          "r3, [pc, #0x1a8]"
+        ],
+        [
+          941868,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          941872,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          941876,
+          "c70020e2",
+          "eor",
+          "r0, r0, #0xc7"
+        ],
+        [
+          941880,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          941884,
+          "012082e2",
+          "add",
+          "r2, r2, #1"
+        ],
+        [
+          941888,
+          "2d0052e3",
+          "cmp",
+          "r2, #0x2d"
+        ],
+        [
+          941892,
+          "f9ffff1a",
+          "bne",
+          "#0xe5f30"
+        ],
+        [
+          941896,
+          "0020a0e3",
+          "mov",
+          "r2, #0"
+        ],
+        [
+          941900,
+          "000052e3",
+          "cmp",
+          "r2, #0"
+        ],
+        [
+          941904,
+          "0700001a",
+          "bne",
+          "#0xe5f74"
+        ],
+        [
+          941908,
+          "80319fe5",
+          "ldr",
+          "r3, [pc, #0x180]"
+        ],
+        [
+          941912,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          941916,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          941920,
+          "670020e2",
+          "eor",
+          "r0, r0, #0x67"
+        ],
+        [
+          941924,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          941928,
+          "012082e2",
+          "add",
+          "r2, r2, #1"
+        ],
+        [
+          941932,
+          "270052e3",
+          "cmp",
+          "r2, #0x27"
+        ],
+        [
+          941936,
+          "f9ffff1a",
+          "bne",
+          "#0xe5f5c"
+        ],
+        [
+          941940,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          941944,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          941948,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          941952,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          941956,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          941960,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          941964,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          941968,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          941972,
+          "0200000a",
+          "beq",
+          "#0xe5fa4"
+        ],
+        [
+          941976,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          941980,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          941984,
+          "f7ffffca",
+          "bgt",
+          "#0xe5f84"
+        ],
+        [
+          941988,
+          "0020a0e3",
+          "mov",
+          "r2, #0"
+        ],
+        [
+          941992,
+          "000052e3",
+          "cmp",
+          "r2, #0"
+        ],
+        [
+          941996,
+          "0700001a",
+          "bne",
+          "#0xe5fd0"
+        ],
+        [
+          942000,
+          "28319fe5",
+          "ldr",
+          "r3, [pc, #0x128]"
+        ],
+        [
+          942004,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          942008,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          942012,
+          "7a0020e2",
+          "eor",
+          "r0, r0, #0x7a"
+        ],
+        [
+          942016,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          942020,
+          "012082e2",
+          "add",
+          "r2, r2, #1"
+        ],
+        [
+          942024,
+          "2b0052e3",
+          "cmp",
+          "r2, #0x2b"
+        ],
+        [
+          942028,
+          "f9ffff1a",
+          "bne",
+          "#0xe5fb8"
+        ],
+        [
+          942032,
+          "0020a0e3",
+          "mov",
+          "r2, #0"
+        ],
+        [
+          942036,
+          "000052e3",
+          "cmp",
+          "r2, #0"
+        ],
+        [
+          942040,
+          "0088bd18",
+          "popne",
+          "{fp, pc}"
+        ],
+        [
+          942044,
+          "00319fe5",
+          "ldr",
+          "r3, [pc, #0x100]"
+        ],
+        [
+          942048,
+          "03308fe0",
+          "add",
+          "r3, pc, r3"
+        ],
+        [
+          942052,
+          "020000ea",
+          "b",
+          "#0xe5ff4"
+        ],
+        [
+          942056,
+          "2a0051e3",
+          "cmp",
+          "r1, #0x2a"
+        ],
+        [
+          942060,
+          "0120a0e1",
+          "mov",
+          "r2, r1"
+        ],
+        [
+          942064,
+          "1700000a",
+          "beq",
+          "#0xe6054"
+        ],
+        [
+          942068,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          942072,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          942076,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          942080,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          942084,
+          "0200000a",
+          "beq",
+          "#0xe6014"
+        ],
+        [
+          942088,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          942092,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          942096,
+          "0b0000ca",
+          "bgt",
+          "#0xe6044"
+        ],
+        [
+          942100,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          942104,
+          "fa0020e2",
+          "eor",
+          "r0, r0, #0xfa"
+        ],
+        [
+          942108,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          942112,
+          "00009ee5",
+          "ldr",
+          "r0, [lr]"
+        ],
+        [
+          942116,
+          "011040e2",
+          "sub",
+          "r1, r0, #1"
+        ],
+        [
+          942120,
+          "900100e0",
+          "mul",
+          "r0, r0, r1"
+        ],
+        [
+          942124,
+          "011082e2",
+          "add",
+          "r1, r2, #1"
+        ],
+        [
+          942128,
+          "010010e3",
+          "tst",
+          "r0, #1"
+        ],
+        [
+          942132,
+          "ebffff0a",
+          "beq",
+          "#0xe5fe8"
+        ],
+        [
+          942136,
+          "00009ce5",
+          "ldr",
+          "r0, [ip]"
+        ],
+        [
+          942140,
+          "090050e3",
+          "cmp",
+          "r0, #9"
+        ],
+        [
+          942144,
+          "e8ffffda",
+          "ble",
+          "#0xe5fe8"
+        ],
+        [
+          942148,
+          "0200d3e7",
+          "ldrb",
+          "r0, [r3, r2]"
+        ],
+        [
+          942152,
+          "fa0020e2",
+          "eor",
+          "r0, r0, #0xfa"
+        ],
+        [
+          942156,
+          "0200c3e7",
+          "strb",
+          "r0, [r3, r2]"
+        ],
+        [
+          942160,
+          "efffffea",
+          "b",
+          "#0xe6014"
+        ],
+        [
+          942164,
+          "0088bde8",
+          "pop",
+          "{fp, pc}"
+        ],
+        [
+          942312,
+          "704c2de9",
+          "push",
+          "{r4, r5, r6, sl, fp, lr}"
+        ],
+        [
+          942316,
+          "10b08de2",
+          "add",
+          "fp, sp, #0x10"
+        ],
+        [
+          1109340,
+          "401204e3",
+          "movw",
+          "r1, #0x4240"
+        ],
+        [
+          1109344,
+          "0f1040e3",
+          "movt",
+          "r1, #0xf"
+        ],
+        [
+          1109348,
+          "010012e3",
+          "tst",
+          "r2, #1"
+        ],
+        [
+          1109352,
+          "d32d04e3",
+          "movw",
+          "r2, #0x4dd3"
+        ],
+        [
+          1109356,
+          "622041e3",
+          "movt",
+          "r2, #0x1062"
+        ],
+        [
+          1109400,
+          "903285e0",
+          "umull",
+          "r3, r5, r0, r2"
+        ],
+        [
+          1109404,
+          "fa4fa0e3",
+          "mov",
+          "r4, #0x3e8"
+        ],
+        [
+          1109408,
+          "003099e5",
+          "ldr",
+          "r3, [sb]"
+        ],
+        [
+          1109412,
+          "0060a0e3",
+          "mov",
+          "r6, #0"
+        ],
+        [
+          1109416,
+          "017043e2",
+          "sub",
+          "r7, r3, #1"
+        ],
+        [
+          1109420,
+          "930707e0",
+          "mul",
+          "r7, r3, r7"
+        ],
+        [
+          1109424,
+          "003098e5",
+          "ldr",
+          "r3, [r8]"
+        ],
+        [
+          1109428,
+          "2553a0e1",
+          "lsr",
+          "r5, r5, #6"
+        ],
+        [
+          1109432,
+          "950464e0",
+          "mls",
+          "r4, r5, r4, r0"
+        ],
+        [
+          1109436,
+          "60008de8",
+          "stm",
+          "sp, {r5, r6}"
+        ],
+        [
+          1109440,
+          "010017e3",
+          "tst",
+          "r7, #1"
+        ],
+        [
+          1109444,
+          "940104e0",
+          "mul",
+          "r4, r4, r1"
+        ],
+        [
+          1109448,
+          "08408de5",
+          "str",
+          "r4, [sp, #8]"
+        ],
+        [
+          1109452,
+          "0900000a",
+          "beq",
+          "#0x10edf8"
+        ]
+      ],
+      "regions": [
+        {
+          "bytes_hex": "910000e01eff2fe1",
+          "id": "caller-chip-address-multiply",
+          "kind": "code",
+          "sha256": "f3242611f2edc75bed097e419f3977e0a9323c3f5751698547c6e4b1ec10ddf5",
+          "size": 8,
+          "va": 343448
+        },
+        {
+          "bytes_hex": "0a00a0e316e502eb1c0099e5180090e5c74501eb1c6099e5aeaf89e20070a0e10a00a0e1c41196e531ff2fe11e00a0e387e402eb100097e5010050e30d0000ba0040a0e30050a0e3880099e5c82196e5041080e00a00a0e132ff2fe10a00a0e37be402eb100097e5015085e2604084e2000055e1f3ffffba",
+          "id": "caller-coordinator-address-stage",
+          "kind": "code",
+          "sha256": "b28201cb7dfb72780471323b50429e1883a0d60d1b137f36f25d97c022c402b0",
+          "size": 120,
+          "va": 350936
+        },
+        {
+          "bytes_hex": "100095e5010050e3c3ffffba0040a0e30080a0e3000097e5048080e70800a0e1001095e5b981ffeb001097e5018088e2041081e0604084e2040081e5100095e5000058e1f2ffffba",
+          "id": "caller-cold-chip-field-stores",
+          "kind": "code",
+          "sha256": "c45b1b62a59770ad579b9d858de54cc21b7da0f6ca4f5d198111e35088c5dcf9",
+          "size": 72,
+          "va": 472712
+        },
+        {
+          "bytes_hex": "000050e3380080121eff2fe1",
+          "id": "caller-board-view-accessor",
+          "kind": "code",
+          "sha256": "75cf4ac24b47097c94faca34d348431b77cdb0c00154c46e861f1b6fba5d93f4",
+          "size": 12,
+          "va": 684556
+        },
+        {
+          "bytes_hex": "14c29fe50cc09fe710e29fe50ee09fe70c329fe503309fe708629fe506609fe704529fe505509fe700429fe504409fe7fc119fe501109fe7f8219fe502209fe79c2080e5a02080e2720082e8b03080e5b4e080e5b8c080e5",
+          "id": "constructor-selected-block",
+          "kind": "code",
+          "sha256": "be81be0574071e93e098850b25a0535415602592363241c47f8d0dc30c8cb0bb",
+          "size": 88,
+          "va": 922816
+        },
+        {
+          "bytes_hex": "74d74f00",
+          "id": "slot-0xb8-literal",
+          "kind": "data",
+          "sha256": "2dad5f890f37b89733b8625fbf4aa92c3faa630cff88c2678f623c326b34065b",
+          "size": 4,
+          "va": 923356
+        },
+        {
+          "bytes_hex": "fcd44f00",
+          "id": "slot-0xb4-literal",
+          "kind": "data",
+          "sha256": "444fb68bd930c3b59d2b12393520f3fe6491ed6961fffa4bdbcd2e220107c9aa",
+          "size": 4,
+          "va": 923360
+        },
+        {
+          "bytes_hex": "0700a0e118d04be2f08bbde8",
+          "id": "preceding-return",
+          "kind": "code",
+          "sha256": "297f331f29d06493a35f941f9a29fa769c44e26102745fdcb60ccf94dc9e9a3a",
+          "size": 12,
+          "va": 935828
+        },
+        {
+          "bytes_hex": "f04d2de918b08de218d04de213608de20040a0e1530500e30050a0e313008de50600a0e12010a0e31750cde5c94d00eb1700cde50400a0e10610a0e10520a0e3abb7ffeb000050e33100000acc809fe508809fe7000098e5c4709fe5011040e2900100e007709fe7b8609fe506608fe0010010e30200000a000097e5090050e3150000caa0009fe50150a0e39c109fe59c209fe500008fe0183094e501108fe002208fe060008de8013083e208308de59d3200e3145600eb000098e50050e0e3011040e2900100e0010010e31000000a000097e5090050e30d0000da54009fe50150a0e350109fe550209fe500008fe0183094e501108fe002208fe060008de8013083e208308de59d3200e3fe5500ebdbffffea0500a0e118d04be2f08dbde8",
+          "id": "inactive-code",
+          "kind": "code",
+          "sha256": "94551474c9c8ebeb6dd8aa5d2b0e65e7bcd6e858e94da38833d3b508f8aa0b8b",
+          "size": 288,
+          "va": 935864
+        },
+        {
+          "bytes_hex": "e0b24f00f4a84f00716d50008c6b50008b6b5000b16b5000346b5000336b5000596b5000",
+          "id": "inactive-pool",
+          "kind": "data",
+          "sha256": "98f2f326123298edf2d81a0cf5c303199e5a153040121bd39208dfcc6b26de5e",
+          "size": 36,
+          "va": 936152
+        },
+        {
+          "bytes_hex": "f0482de910b08de218d04de20050a0e1150da0e30060a0e3b301cde11760cde513708de2040091e50140a0e11660cde52010a0e31500cde50700a0e1744d00eb1700cde50500a0e10710a0e10520a0e356b7ffeb000050e31100000a4c009fe54c109fe54c209fe500008fe0183095e501108fe0047094e502208fe038609fe5013083e20150a0e306608fe060008de808308de5bb3200e30c708de5c95500eb0060e0e30600a0e110d04be2f088bde8",
+          "id": "address-code",
+          "kind": "code",
+          "sha256": "99c4084fce9271ef1ecfa3deb4d4cab9dc2d8bd7dc81d9e04279f60c55a5e27a",
+          "size": 176,
+          "va": 936188
+        },
+        {
+          "bytes_hex": "746a5000736a5000956a50003b6c5000",
+          "id": "address-pool",
+          "kind": "data",
+          "sha256": "f63e1b101ee9e3a4225bd5470c2f4d2329aa5938f3fe51308d8e24818169be7f",
+          "size": 16,
+          "va": 936364
+        },
+        {
+          "bytes_hex": "0000a0e31eff2fe1",
+          "id": "following-leaf",
+          "kind": "code",
+          "sha256": "6dcd5e75586fe6683156c0d559d4827b73bd48d501fa5781a1c6099aacd7c877",
+          "size": 8,
+          "va": 936380
+        },
+        {
+          "bytes_hex": "00482de90000a0e3000050e32100001ad0ec9fe50ee09fe7cccc9fe50cc09fe7c83c9fe503308fe0020000ea070052e30200a0e11700000a00209ee5011042e2920101e0010011e30200000a00109ce5090051e30b0000ca0010d3e71e1021e20010c3e700109ee5012041e2910201e0012080e2010011e3ebffff0a00109ce5090051e3e8ffffda0010d3e71e1021e20010c3e7efffffea54ec9fe50ee09fe700109ee5012041e2910201e0010011e300109ee53ccc9fe5012041e2910201e00cc09fe7010011e30200000a00109ce5090051e3f5ffffca0020a0e3000052e31d00001a103c9fe503308fe0020000ea2a0051e30120a0e11700000a00109ee5010041e2910000e0010010e30200000a00009ce5090050e30b0000ca0200d3e7d80020e20200c3e700009ee5011040e2900100e0011082e2010010e3ebffff0a00009ce5090050e3e8ffffda0200d3e7d80020e20200c3e7efffffea00009ee5011040e2900100e0010010e300009ee5011040e2900100e0010010e30200000a00009ce5090050e3f7ffffca0020a0e3000052e31d00001a603b9fe503308fe0020000ea0b0051e30120a0e11700000a00009ee5011040e2900100e0010010e30200000a00009ce5090050e30b0000ca0200d3e7d10020e20200c3e700009ee5011040e2900100e0011082e2010010e3ebffff0a00009ce5090050e3e8ffffda0200d3e7d10020e20200c3e7efffffea0020a0e3000052e30700001ae03a9fe503308fe00200d3e7b30020e20200c3e7012082e2260052e3f9ffff1a0020a0e3000052e31d00001ab83a9fe503308fe0020000ea290051e30120a0e11700000a00009ee5011040e2900100e0010010e30200000a00009ce5090050e30b0000ca0200d3e71e0020e20200c3e700009ee5011040e2900100e0011082e2010010e3ebffff0a00009ce5090050e3e8ffffda0200d3e71e0020e20200c3e7efffffea00009ee5011040e2900100e0010010e300009ee5011040e2900100e0010010e30200000a00009ce5090050e3f7ffffca0020a0e3000052e30700001a083a9fe503308fe00200d3e7eb0020e20200c3e7012082e22a0052e3f9ffff1a0020a0e3000052e31d00001ae0399fe503308fe0020000ea250051e30120a0e11700000a00009ee5011040e2900100e0010010e30200000a00009ce5090050e30b0000ca0200d3e7800020e20200c3e700009ee5011040e2900100e0011082e2010010e3ebffff0a00009ce5090050e3e8ffffda0200d3e7800020e20200c3e7efffffea00009ee5011040e2900100e0010010e300009ee5011040e2900100e0010010e30200000a00009ce5090050e3f7ffffca0020a0e3000052e30700001a30399fe503308fe00200d3e7d80020e20200c3e7012082e22a0052e3f9ffff1a00009ee5011040e2900100e0010010e300009ee5011040e2900100e0010010e30200000a00009ce5090050e3f7ffffca0020a0e3000052e30700001ad8389fe503308fe00200d3e7120020e20200c3e7012082e2310052e3f9ffff1a0020a0e3000052e31d00001ab0389fe503308fe0020000ea2e0051e30120a0e11700000a00009ee5011040e2900100e0010010e30200000a00009ce5090050e30b0000ca0200d3e7f70020e20200c3e700009ee5011040e2900100e0011082e2010010e3ebffff0a00009ce5090050e3e8ffffda0200d3e7f70020e20200c3e7efffffea0020a0e3000052e31d00001a30389fe503308fe0020000ea2b0051e30120a0e11700000a00009ee5011040e2900100e0010010e30200000a00009ce5090050e30b0000ca0200d3e7cc0020e20200c3e700009ee5011040e2900100e0011082e2010010e3ebffff0a00009ce5090050e3e8ffffda0200d3e7cc0020e20200c3e7efffffea00009ee5011040e2900100e0010010e300009ee5011040e2900100e0010010e30200000a00009ce5090050e3f7ffffca0020a0e3000052e30700001a80379fe503308fe00200d3e7a50020e20200c3e7012082e22f0052e3f9ffff1a00009ee5011040e2900100e0010010e300009ee5011040e2900100e0010010e30200000a00009ce5090050e3f7ffffca0020a0e3000052e30700001a28379fe503308fe00200d3e7db0020e20200c3e7012082e22a0052e3f9ffff1a00009ee5011040e2900100e0010010e300009ee5011040e2900100e0010010e30200000a00009ce5090050e3f7ffffca0020a0e3000052e31d00001ad0369fe503308fe0020000ea330051e30120a0e11700000a00009ee5011040e2900100e0010010e30200000a00009ce5090050e30b0000ca0200d3e7d30020e20200c3e700009ee5011040e2900100e0011082e2010010e3ebffff0a00009ce5090050e3e8ffffda0200d3e7d30020e20200c3e7efffffea00009ee5011040e2900100e0010010e300009ee5011040e2900100e0010010e30200000a00009ce5090050e3f7ffffca0020a0e3000052e30700001a20369fe503308fe00200d3e7910020e20200c3e7012082e22f0052e3f9ffff1a0020a0e3000052e30700001af8359fe503308fe00200d3e7bd0020e20200c3e7012082e22c0052e3f9ffff1a0020a0e3000052e30700001ad0359fe503308fe00200d3e7540020e20200c3e7012082e21d0052e3f9ffff1a0020a0e3000052e30700001aa8359fe503308fe00200d3e7f80020e20200c3e7012082e2270052e3f9ffff1a00009ee5011040e2900100e0010010e300009ee5011040e2900100e0010010e30200000a00009ce5090050e3f7ffffca0020a0e3000052e31d00001a50359fe503308fe0020000ea250051e30120a0e11700000a00009ee5011040e2900100e0010010e30200000a00009ce5090050e30b0000ca0200d3e7d40020e20200c3e700009ee5011040e2900100e0011082e2010010e3ebffff0a00009ce5090050e3e8ffffda0200d3e7d40020e20200c3e7efffffea0020a0e3000052e31d00001ad0349fe503308fe0020000ea310051e30120a0e11700000a00009ee5011040e2900100e0010010e30200000a00009ce5090050e30b0000ca0200d3e78e0020e20200c3e700009ee5011040e2900100e0011082e2010010e3ebffff0a00009ce5090050e3e8ffffda0200d3e78e0020e20200c3e7efffffea0020a0e3000052e30700001a50349fe503308fe00200d3e7b90020e20200c3e7012082e2320052e3f9ffff1a00009ee5011040e2900100e0010010e300009ee5011040e2900100e0010010e30200000a00009ce5090050e3f7ffffca04349fe50020a0e303308fe00200d3e7ee0020e20200c3e7012082e2360052e3f9ffff1a0020a0e3000052e30700001ad8339fe503308fe00200d3e7b30020e20200c3e7012082e2360052e3f9ffff1a00009ee5011040e2900100e0010010e300009ee5011040e2900100e0010010e30200000a00009ce5090050e3f7ffffca0020a0e3000052e30700001a80339fe503308fe00200d3e76b0020e20200c3e7012082e22c0052e3f9ffff1a0020a0e3000052e30700001a58339fe503308fe00200d3e7540020e20200c3e7012082e2430052e3f9ffff1a00009ee5011040e2900100e0010010e300009ee5011040e2900100e0010010e30200000a00009ce5090050e3f7ffffca0020a0e3000052e31d00001a00339fe503308fe0020000ea2a0051e30120a0e11700000a00009ee5011040e2900100e0010010e30200000a00009ce5090050e30b0000ca0200d3e78b0020e20200c3e700009ee5011040e2900100e0011082e2010010e3ebffff0a00009ce5090050e3e8ffffda0200d3e78b0020e20200c3e7efffffea00009ee5011040e2900100e0010010e300009ee5011040e2900100e0010010e30200000a00009ce5090050e3f7ffffca0020a0e3000052e30700001a50329fe503308fe00200d3e73a0020e20200c3e7012082e2060052e3f9ffff1a0020a0e3000052e31d00001a28329fe503308fe0020000ea1d0051e30120a0e11700000a00009ee5011040e2900100e0010010e30200000a00009ce5090050e30b0000ca0200d3e7b40020e20200c3e700009ee5011040e2900100e0011082e2010010e3ebffff0a00009ce5090050e3e8ffffda0200d3e7b40020e20200c3e7efffffea0020a0e3000052e30700001aa8319fe503308fe00200d3e7c70020e20200c3e7012082e22d0052e3f9ffff1a0020a0e3000052e30700001a80319fe503308fe00200d3e7670020e20200c3e7012082e2270052e3f9ffff1a00009ee5011040e2900100e0010010e300009ee5011040e2900100e0010010e30200000a00009ce5090050e3f7ffffca0020a0e3000052e30700001a28319fe503308fe00200d3e77a0020e20200c3e7012082e22b0052e3f9ffff1a0020a0e3000052e30088bd1800319fe503308fe0020000ea2a0051e30120a0e11700000a00009ee5011040e2900100e0010010e30200000a00009ce5090050e30b0000ca0200d3e7fa0020e20200c3e700009ee5011040e2900100e0011082e2010010e3ebffff0a00009ce5090050e3e8ffffda0200d3e7fa0020e20200c3e7efffffea0088bde8",
+          "id": "initializer-code",
+          "kind": "code",
+          "sha256": "818c84fbf1c84dfab1aa8f852a2cf68cdea95de726fc8f1734ba244d72352201",
+          "size": 3304,
+          "va": 938864
+        },
+        {
+          "bytes_hex": "d4a14f001c994f00446050004ca14f0078984f00875f5000fd5e5000845e50007e5e5000f35d5000f15d5000625d5000305d5000355d5000df5c5000565c5000295c5000f75b5000765b5000795b5000795b50006a5b5000355b5000105b5000bd5a50009b5a5000a55a50007f5a50007f5a5000665a5000dc595000b65950004f595000505950001b5950001a595000",
+          "id": "initializer-pool",
+          "kind": "data",
+          "sha256": "218d1258317bbbcbec9acd68e70c7c6f4b89d9bda7b53491bdad52b8caff9148",
+          "size": 144,
+          "va": 942168
+        },
+        {
+          "bytes_hex": "704c2de910b08de2",
+          "id": "after-initializer-prologue",
+          "kind": "code",
+          "sha256": "56933b4e90f032e9030f4b53042b540f632696ddcb220173fc5bf97543a20e2b",
+          "size": 8,
+          "va": 942312
+        },
+        {
+          "bytes_hex": "401204e30f1040e3010012e3d32d04e3622041e3",
+          "id": "caller-delay-ms-constants",
+          "kind": "code",
+          "sha256": "8f31139857b1136cb156e14a6d24d2a7b0fc1271154cdc79b2e27ad74daeedae",
+          "size": 20,
+          "va": 1109340
+        },
+        {
+          "bytes_hex": "903285e0fa4fa0e3003099e50060a0e3017043e2930707e0003098e52553a0e1950464e060008de8010017e3940104e008408de50900000a",
+          "id": "caller-delay-ms-arithmetic",
+          "kind": "code",
+          "sha256": "b4595c4d5035307c1cef63b55d0dd54f81bd61879dc03caa47c6ba52ee5a2986",
+          "size": 56,
+          "va": 1109400
+        },
+        {
+          "bytes_hex": "70530e00",
+          "id": "initializer-registration",
+          "kind": "data",
+          "sha256": "bde77998d34438e46530ea4f32972bb50ccfc36504c8fad84a328d8b2e2da63a",
+          "size": 4,
+          "va": 6139876
+        },
+        {
+          "bytes_hex": "b8470e00",
+          "id": "slot-0xb4-got",
+          "kind": "data",
+          "sha256": "99c1ef4514161056c0e421b1e1d129c4ec89be56d7a2b1dd039b5e988decffd9",
+          "size": 4,
+          "va": 6154704
+        },
+        {
+          "bytes_hex": "fc480e00",
+          "id": "slot-0xb8-got",
+          "kind": "data",
+          "sha256": "68743340a38cff2e48f27d4ab59fb6b88ca2e6d907df1d50356e541a2f8ecdfc",
+          "size": 4,
+          "va": 6155328
+        },
+        {
+          "bytes_hex": "10ae6800",
+          "id": "opaque-got-0xe538c",
+          "kind": "data",
+          "sha256": "7e7bcfdad7e741ae27d0a4858b29dd01afea5a6be7fce05f3e3a82740db7dda3",
+          "size": 4,
+          "va": 6155440
+        },
+        {
+          "bytes_hex": "18b86800",
+          "id": "opaque-got-0xe481c",
+          "kind": "data",
+          "sha256": "5578bc5ca1ddc552898276b17fda89ec195af70775791d17c0b0cb3a357e5e3c",
+          "size": 4,
+          "va": 6156568
+        },
+        {
+          "bytes_hex": "54af6800",
+          "id": "opaque-got-0xe5384",
+          "kind": "data",
+          "sha256": "eb66d60f168c192c323cabf4936c70d0d2cda46ef3894723674ce6e454f62b6c",
+          "size": 4,
+          "va": 6157664
+        },
+        {
+          "bytes_hex": "b8b86800",
+          "id": "opaque-got-0xe4808",
+          "kind": "data",
+          "sha256": "3e07e80c9fb6308c81c5204f853df90d1c3b49479d52d73ba9db11f261de15ca",
+          "size": 4,
+          "va": 6159088
+        },
+        {
+          "bytes_hex": "7a6c77687b6c1e",
+          "id": "string-module",
+          "kind": "data",
+          "sha256": "64a55a211d01dc292292fa14f929c00b510dd0da70734ea797b1636e001b3e93",
+          "size": 7,
+          "va": 6206432
+        },
+        {
+          "bytes_hex": "f7acb5a8f7baadb1b4bcf7b4b1babab1acb5b9b1b6f7abaabbf7bbb0b1a8f7bbb0b1a8e9ebeee0f6bbd8",
+          "id": "string-source",
+          "kind": "data",
+          "sha256": "21e3cb1265c67df3e206ffcdcc8af58222b08f0252d352b2b1dd982f9300a406",
+          "size": 42,
+          "va": 6206439
+        },
+        {
+          "bytes_hex": "8aa3b4b5b0b2a5b4b58cd1",
+          "id": "string-function",
+          "kind": "data",
+          "sha256": "b4f867e0249b5f517303e494ce0950cb19c433503f70c9dec350e9e770e0126a",
+          "size": 11,
+          "va": 6206481
+        },
+        {
+          "bytes_hex": "b8b3bab2b5f8febffbf6fbbdbab2b7bebffbafb4fbb2b5bab8afb2adbaafbefbafb3befbb8b3bab2b5db",
+          "id": "string-inactive_format",
+          "kind": "data",
+          "sha256": "6cc520050a18d8a8caaa4589d1fadf9b9a0894a18572ce4659178639007cc728",
+          "size": 42,
+          "va": 6206877
+        },
+        {
+          "bytes_hex": "b0bbb2babdf0f6b7f3fef3b5b2babfb6b7f3a7bcf3b2a0a0bab4bdf3b0bbbaa3f3b2b7b7a1b6a0a0f3a7bcf3e3abf6e3e1abd3",
+          "id": "string-address_format",
+          "kind": "data",
+          "sha256": "1e2ad68e82214bd33c8ca3480de60e4c48252f9cf97e57481fcd5bef2e79fd78",
+          "size": 51,
+          "va": 6206919
+        }
+      ],
+      "slots": [
+        {
+          "got": 6154704,
+          "got_load": 922828,
+          "literal": 923360,
+          "load": 922824,
+          "method": 935864,
+          "offset": 180,
+          "register": 14,
+          "store": 922896
+        },
+        {
+          "got": 6155328,
+          "got_load": 922820,
+          "literal": 923356,
+          "load": 922816,
+          "method": 936188,
+          "offset": 184,
+          "register": 12,
+          "store": 922900
+        }
+      ]
+    },
+    "hwscan": {
+      "call_targets": {
+        "crc5": 1035288,
+        "log": 1044144,
+        "transport": 960696
+      },
+      "elf_sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+      "elf_size": 4883216,
+      "literal_references": [
+        {
+          "add": 998440,
+          "literal": 998500,
+          "literal_word": 3710180,
+          "load": 998424,
+          "register": 0,
+          "target": 4708628
+        },
+        {
+          "add": 998448,
+          "literal": 998504,
+          "literal_word": 3713975,
+          "load": 998432,
+          "register": 1,
+          "target": 4712431
+        },
+        {
+          "add": 998456,
+          "literal": 998508,
+          "literal_word": 3708697,
+          "load": 998436,
+          "register": 2,
+          "target": 4707161
+        },
+        {
+          "add": 998464,
+          "literal": 998512,
+          "literal_word": 3711973,
+          "load": 998452,
+          "register": 6,
+          "target": 4710445
+        },
+        {
+          "add": 998620,
+          "literal": 998692,
+          "literal_word": 3710000,
+          "load": 998608,
+          "register": 0,
+          "target": 4708628
+        },
+        {
+          "add": 998628,
+          "literal": 998696,
+          "literal_word": 3713795,
+          "load": 998612,
+          "register": 1,
+          "target": 4712431
+        },
+        {
+          "add": 998636,
+          "literal": 998700,
+          "literal_word": 3708517,
+          "load": 998616,
+          "register": 2,
+          "target": 4707161
+        },
+        {
+          "add": 998652,
+          "literal": 998704,
+          "literal_word": 3711827,
+          "load": 998640,
+          "register": 6,
+          "target": 4710487
+        }
+      ],
+      "methods": {
+        "address": {
+          "branches": [
+            {
+              "condition": 0,
+              "target": 998680,
+              "va": 998604
+            }
+          ],
+          "calls": [
+            {
+              "kind": "crc5",
+              "target": 1035288,
+              "va": 998576
+            },
+            {
+              "kind": "transport",
+              "target": 960696,
+              "va": 998596
+            },
+            {
+              "kind": "log",
+              "target": 1044144,
+              "va": 998672
+            }
+          ],
+          "code_end_exclusive": 998692,
+          "code_start": 998516,
+          "literal_loads": [
+            {
+              "literal": 998692,
+              "load": 998608
+            },
+            {
+              "literal": 998696,
+              "load": 998612
+            },
+            {
+              "literal": 998700,
+              "load": 998616
+            },
+            {
+              "literal": 998704,
+              "load": 998640
+            }
+          ],
+          "pool_end_exclusive": 998708
+        },
+        "inactive": {
+          "branches": [
+            {
+              "condition": 0,
+              "target": 998488,
+              "va": 998420
+            }
+          ],
+          "calls": [
+            {
+              "kind": "crc5",
+              "target": 1035288,
+              "va": 998392
+            },
+            {
+              "kind": "transport",
+              "target": 960696,
+              "va": 998412
+            },
+            {
+              "kind": "log",
+              "target": 1044144,
+              "va": 998480
+            }
+          ],
+          "code_end_exclusive": 998500,
+          "code_start": 998348,
+          "literal_loads": [
+            {
+              "literal": 998500,
+              "load": 998424
+            },
+            {
+              "literal": 998504,
+              "load": 998432
+            },
+            {
+              "literal": 998508,
+              "load": 998436
+            },
+            {
+              "literal": 998512,
+              "load": 998452
+            }
+          ],
+          "pool_end_exclusive": 998516
+        }
+      },
+      "operands": [
+        [
+          990616,
+          "14c29fe5",
+          "ldr",
+          "ip, [pc, #0x214]"
+        ],
+        [
+          990620,
+          "0cc09fe7",
+          "ldr",
+          "ip, [pc, ip]"
+        ],
+        [
+          990624,
+          "10e29fe5",
+          "ldr",
+          "lr, [pc, #0x210]"
+        ],
+        [
+          990628,
+          "0ee09fe7",
+          "ldr",
+          "lr, [pc, lr]"
+        ],
+        [
+          990632,
+          "0c329fe5",
+          "ldr",
+          "r3, [pc, #0x20c]"
+        ],
+        [
+          990636,
+          "03309fe7",
+          "ldr",
+          "r3, [pc, r3]"
+        ],
+        [
+          990640,
+          "08629fe5",
+          "ldr",
+          "r6, [pc, #0x208]"
+        ],
+        [
+          990644,
+          "06609fe7",
+          "ldr",
+          "r6, [pc, r6]"
+        ],
+        [
+          990648,
+          "04529fe5",
+          "ldr",
+          "r5, [pc, #0x204]"
+        ],
+        [
+          990652,
+          "05509fe7",
+          "ldr",
+          "r5, [pc, r5]"
+        ],
+        [
+          990656,
+          "00429fe5",
+          "ldr",
+          "r4, [pc, #0x200]"
+        ],
+        [
+          990660,
+          "04409fe7",
+          "ldr",
+          "r4, [pc, r4]"
+        ],
+        [
+          990664,
+          "fc119fe5",
+          "ldr",
+          "r1, [pc, #0x1fc]"
+        ],
+        [
+          990668,
+          "01109fe7",
+          "ldr",
+          "r1, [pc, r1]"
+        ],
+        [
+          990672,
+          "f8219fe5",
+          "ldr",
+          "r2, [pc, #0x1f8]"
+        ],
+        [
+          990676,
+          "02209fe7",
+          "ldr",
+          "r2, [pc, r2]"
+        ],
+        [
+          990680,
+          "9c2080e5",
+          "str",
+          "r2, [r0, #0x9c]"
+        ],
+        [
+          990684,
+          "a02080e2",
+          "add",
+          "r2, r0, #0xa0"
+        ],
+        [
+          990688,
+          "720082e8",
+          "stm",
+          "r2, {r1, r4, r5, r6}"
+        ],
+        [
+          990692,
+          "b03080e5",
+          "str",
+          "r3, [r0, #0xb0]"
+        ],
+        [
+          990696,
+          "b4e080e5",
+          "str",
+          "lr, [r0, #0xb4]"
+        ],
+        [
+          990700,
+          "b8c080e5",
+          "str",
+          "ip, [r0, #0xb8]"
+        ],
+        [
+          998320,
+          "0600a0e1",
+          "mov",
+          "r0, r6"
+        ],
+        [
+          998324,
+          "10d04be2",
+          "sub",
+          "sp, fp, #0x10"
+        ],
+        [
+          998328,
+          "708cbde8",
+          "pop",
+          "{r4, r5, r6, sl, fp, pc}"
+        ],
+        [
+          998348,
+          "704c2de9",
+          "push",
+          "{r4, r5, r6, sl, fp, lr}"
+        ],
+        [
+          998352,
+          "10b08de2",
+          "add",
+          "fp, sp, #0x10"
+        ],
+        [
+          998356,
+          "18d04de2",
+          "sub",
+          "sp, sp, #0x18"
+        ],
+        [
+          998360,
+          "13608de2",
+          "add",
+          "r6, sp, #0x13"
+        ],
+        [
+          998364,
+          "0040a0e1",
+          "mov",
+          "r4, r0"
+        ],
+        [
+          998368,
+          "530500e3",
+          "movw",
+          "r0, #0x553"
+        ],
+        [
+          998372,
+          "0050a0e3",
+          "mov",
+          "r5, #0"
+        ],
+        [
+          998376,
+          "13008de5",
+          "str",
+          "r0, [sp, #0x13]"
+        ],
+        [
+          998380,
+          "0600a0e1",
+          "mov",
+          "r0, r6"
+        ],
+        [
+          998384,
+          "2010a0e3",
+          "mov",
+          "r1, #0x20"
+        ],
+        [
+          998388,
+          "1750cde5",
+          "strb",
+          "r5, [sp, #0x17]"
+        ],
+        [
+          998392,
+          "062400eb",
+          "bl",
+          "#0xfcc18"
+        ],
+        [
+          998396,
+          "1700cde5",
+          "strb",
+          "r0, [sp, #0x17]"
+        ],
+        [
+          998400,
+          "0400a0e1",
+          "mov",
+          "r0, r4"
+        ],
+        [
+          998404,
+          "0610a0e1",
+          "mov",
+          "r1, r6"
+        ],
+        [
+          998408,
+          "0520a0e3",
+          "mov",
+          "r2, #5"
+        ],
+        [
+          998412,
+          "29dbffeb",
+          "bl",
+          "#0xea8b8"
+        ],
+        [
+          998416,
+          "000050e3",
+          "cmp",
+          "r0, #0"
+        ],
+        [
+          998420,
+          "0f00000a",
+          "beq",
+          "#0xf3c58"
+        ],
+        [
+          998424,
+          "44009fe5",
+          "ldr",
+          "r0, [pc, #0x44]"
+        ],
+        [
+          998428,
+          "0150a0e3",
+          "mov",
+          "r5, #1"
+        ],
+        [
+          998432,
+          "40109fe5",
+          "ldr",
+          "r1, [pc, #0x40]"
+        ],
+        [
+          998436,
+          "40209fe5",
+          "ldr",
+          "r2, [pc, #0x40]"
+        ],
+        [
+          998440,
+          "00008fe0",
+          "add",
+          "r0, pc, r0"
+        ],
+        [
+          998444,
+          "183094e5",
+          "ldr",
+          "r3, [r4, #0x18]"
+        ],
+        [
+          998448,
+          "01108fe0",
+          "add",
+          "r1, pc, r1"
+        ],
+        [
+          998452,
+          "34609fe5",
+          "ldr",
+          "r6, [pc, #0x34]"
+        ],
+        [
+          998456,
+          "02208fe0",
+          "add",
+          "r2, pc, r2"
+        ],
+        [
+          998460,
+          "013083e2",
+          "add",
+          "r3, r3, #1"
+        ],
+        [
+          998464,
+          "06608fe0",
+          "add",
+          "r6, pc, r6"
+        ],
+        [
+          998468,
+          "60008de8",
+          "stm",
+          "sp, {r5, r6}"
+        ],
+        [
+          998472,
+          "08308de5",
+          "str",
+          "r3, [sp, #8]"
+        ],
+        [
+          998476,
+          "9d3200e3",
+          "movw",
+          "r3, #0x29d"
+        ],
+        [
+          998480,
+          "962c00eb",
+          "bl",
+          "#0xfeeb0"
+        ],
+        [
+          998484,
+          "0050e0e3",
+          "mvn",
+          "r5, #0"
+        ],
+        [
+          998488,
+          "0500a0e1",
+          "mov",
+          "r0, r5"
+        ],
+        [
+          998492,
+          "10d04be2",
+          "sub",
+          "sp, fp, #0x10"
+        ],
+        [
+          998496,
+          "708cbde8",
+          "pop",
+          "{r4, r5, r6, sl, fp, pc}"
+        ],
+        [
+          998516,
+          "f0482de9",
+          "push",
+          "{r4, r5, r6, r7, fp, lr}"
+        ],
+        [
+          998520,
+          "10b08de2",
+          "add",
+          "fp, sp, #0x10"
+        ],
+        [
+          998524,
+          "18d04de2",
+          "sub",
+          "sp, sp, #0x18"
+        ],
+        [
+          998528,
+          "0050a0e1",
+          "mov",
+          "r5, r0"
+        ],
+        [
+          998532,
+          "150da0e3",
+          "mov",
+          "r0, #0x540"
+        ],
+        [
+          998536,
+          "0060a0e3",
+          "mov",
+          "r6, #0"
+        ],
+        [
+          998540,
+          "b301cde1",
+          "strh",
+          "r0, [sp, #0x13]"
+        ],
+        [
+          998544,
+          "1760cde5",
+          "strb",
+          "r6, [sp, #0x17]"
+        ],
+        [
+          998548,
+          "13708de2",
+          "add",
+          "r7, sp, #0x13"
+        ],
+        [
+          998552,
+          "040091e5",
+          "ldr",
+          "r0, [r1, #4]"
+        ],
+        [
+          998556,
+          "0140a0e1",
+          "mov",
+          "r4, r1"
+        ],
+        [
+          998560,
+          "1660cde5",
+          "strb",
+          "r6, [sp, #0x16]"
+        ],
+        [
+          998564,
+          "2010a0e3",
+          "mov",
+          "r1, #0x20"
+        ],
+        [
+          998568,
+          "1500cde5",
+          "strb",
+          "r0, [sp, #0x15]"
+        ],
+        [
+          998572,
+          "0700a0e1",
+          "mov",
+          "r0, r7"
+        ],
+        [
+          998576,
+          "d82300eb",
+          "bl",
+          "#0xfcc18"
+        ],
+        [
+          998580,
+          "1700cde5",
+          "strb",
+          "r0, [sp, #0x17]"
+        ],
+        [
+          998584,
+          "0500a0e1",
+          "mov",
+          "r0, r5"
+        ],
+        [
+          998588,
+          "0710a0e1",
+          "mov",
+          "r1, r7"
+        ],
+        [
+          998592,
+          "0520a0e3",
+          "mov",
+          "r2, #5"
+        ],
+        [
+          998596,
+          "fbdaffeb",
+          "bl",
+          "#0xea8b8"
+        ],
+        [
+          998600,
+          "000050e3",
+          "cmp",
+          "r0, #0"
+        ],
+        [
+          998604,
+          "1100000a",
+          "beq",
+          "#0xf3d18"
+        ],
+        [
+          998608,
+          "4c009fe5",
+          "ldr",
+          "r0, [pc, #0x4c]"
+        ],
+        [
+          998612,
+          "4c109fe5",
+          "ldr",
+          "r1, [pc, #0x4c]"
+        ],
+        [
+          998616,
+          "4c209fe5",
+          "ldr",
+          "r2, [pc, #0x4c]"
+        ],
+        [
+          998620,
+          "00008fe0",
+          "add",
+          "r0, pc, r0"
+        ],
+        [
+          998624,
+          "183095e5",
+          "ldr",
+          "r3, [r5, #0x18]"
+        ],
+        [
+          998628,
+          "01108fe0",
+          "add",
+          "r1, pc, r1"
+        ],
+        [
+          998632,
+          "047094e5",
+          "ldr",
+          "r7, [r4, #4]"
+        ],
+        [
+          998636,
+          "02208fe0",
+          "add",
+          "r2, pc, r2"
+        ],
+        [
+          998640,
+          "38609fe5",
+          "ldr",
+          "r6, [pc, #0x38]"
+        ],
+        [
+          998644,
+          "013083e2",
+          "add",
+          "r3, r3, #1"
+        ],
+        [
+          998648,
+          "0150a0e3",
+          "mov",
+          "r5, #1"
+        ],
+        [
+          998652,
+          "06608fe0",
+          "add",
+          "r6, pc, r6"
+        ],
+        [
+          998656,
+          "60008de8",
+          "stm",
+          "sp, {r5, r6}"
+        ],
+        [
+          998660,
+          "08308de5",
+          "str",
+          "r3, [sp, #8]"
+        ],
+        [
+          998664,
+          "bb3200e3",
+          "movw",
+          "r3, #0x2bb"
+        ],
+        [
+          998668,
+          "0c708de5",
+          "str",
+          "r7, [sp, #0xc]"
+        ],
+        [
+          998672,
+          "662c00eb",
+          "bl",
+          "#0xfeeb0"
+        ],
+        [
+          998676,
+          "0060e0e3",
+          "mvn",
+          "r6, #0"
+        ],
+        [
+          998680,
+          "0600a0e1",
+          "mov",
+          "r0, r6"
+        ],
+        [
+          998684,
+          "10d04be2",
+          "sub",
+          "sp, fp, #0x10"
+        ],
+        [
+          998688,
+          "f088bde8",
+          "pop",
+          "{r4, r5, r6, r7, fp, pc}"
+        ],
+        [
+          998708,
+          "0000a0e3",
+          "mov",
+          "r0, #0"
+        ],
+        [
+          998712,
+          "1eff2fe1",
+          "bx",
+          "lr"
+        ]
+      ],
+      "regions": [
+        {
+          "bytes_hex": "14c29fe50cc09fe710e29fe50ee09fe70c329fe503309fe708629fe506609fe704529fe505509fe700429fe504409fe7fc119fe501109fe7f8219fe502209fe79c2080e5a02080e2720082e8b03080e5b4e080e5b8c080e5",
+          "id": "constructor-selected-block",
+          "kind": "code",
+          "sha256": "be81be0574071e93e098850b25a0535415602592363241c47f8d0dc30c8cb0bb",
+          "size": 88,
+          "va": 990616
+        },
+        {
+          "bytes_hex": "e0d73b00",
+          "id": "slot-0xb8-literal",
+          "kind": "data",
+          "sha256": "ffdbf9a1bbcabef4c5677a4040cd750890179d99e58f67409693a91ccdd3c946",
+          "size": 4,
+          "va": 991156
+        },
+        {
+          "bytes_hex": "f4dc3b00",
+          "id": "slot-0xb4-literal",
+          "kind": "data",
+          "sha256": "411b7c9530ee4f679d02faf661a2280d5827f1f2a57c888b25b0a973f8808954",
+          "size": 4,
+          "va": 991160
+        },
+        {
+          "bytes_hex": "0600a0e110d04be2708cbde8",
+          "id": "preceding-return",
+          "kind": "code",
+          "sha256": "4dd8302084c19071ecd58dddc513642306c7155aadea8660a979a7573b056b7f",
+          "size": 12,
+          "va": 998320
+        },
+        {
+          "bytes_hex": "704c2de910b08de218d04de213608de20040a0e1530500e30050a0e313008de50600a0e12010a0e31750cde5062400eb1700cde50400a0e10610a0e10520a0e329dbffeb000050e30f00000a44009fe50150a0e340109fe540209fe500008fe0183094e501108fe034609fe502208fe0013083e206608fe060008de808308de59d3200e3962c00eb0050e0e30500a0e110d04be2708cbde8",
+          "id": "inactive-code",
+          "kind": "code",
+          "sha256": "b55ce65c9961089462eb9cf20cb736ec1a8fcf68ee2c73b16590fdc8df6221bb",
+          "size": 152,
+          "va": 998348
+        },
+        {
+          "bytes_hex": "e49c3800b7ab380019973800e5a33800",
+          "id": "inactive-pool",
+          "kind": "data",
+          "sha256": "fd356ef98af595eb2b7ca21ebb3f8d1e0ae57a196386066f043514abe9cbe72f",
+          "size": 16,
+          "va": 998500
+        },
+        {
+          "bytes_hex": "f0482de910b08de218d04de20050a0e1150da0e30060a0e3b301cde11760cde513708de2040091e50140a0e11660cde52010a0e31500cde50700a0e1d82300eb1700cde50500a0e10710a0e10520a0e3fbdaffeb000050e31100000a4c009fe54c109fe54c209fe500008fe0183095e501108fe0047094e502208fe038609fe5013083e20150a0e306608fe060008de808308de5bb3200e30c708de5662c00eb0060e0e30600a0e110d04be2f088bde8",
+          "id": "address-code",
+          "kind": "code",
+          "sha256": "a12ac06d3a3442fc0e504e109274ef9fca959ae20dc71226479055db141277a8",
+          "size": 176,
+          "va": 998516
+        },
+        {
+          "bytes_hex": "309c380003ab38006596380053a33800",
+          "id": "address-pool",
+          "kind": "data",
+          "sha256": "cc0a0a69576467249c20d7b4320676dcef92354d9826bee573c6e769f38599e1",
+          "size": 16,
+          "va": 998692
+        },
+        {
+          "bytes_hex": "0000a0e31eff2fe1",
+          "id": "following-leaf",
+          "kind": "code",
+          "sha256": "6dcd5e75586fe6683156c0d559d4827b73bd48d501fa5781a1c6099aacd7c877",
+          "size": 8,
+          "va": 998708
+        },
+        {
+          "bytes_hex": "5b72656461637465645d00",
+          "id": "string-function",
+          "kind": "data",
+          "sha256": "4b5ff616946aa201289595f21b4e085135f43222d5e6f2b8ba2f9bc82241d3a7",
+          "size": 11,
+          "va": 4707161
+        },
+        {
+          "bytes_hex": "64726976657200",
+          "id": "string-module",
+          "kind": "data",
+          "sha256": "6b2223c6c75d72fe4bd43ffc5a5aa427f68822c5b228e99d1e29e8fd088bb8b8",
+          "size": 7,
+          "va": 4708628
+        },
+        {
+          "bytes_hex": "636861696e232564202d206661696c656420746f20696e61637469766174652074686520636861696e00",
+          "id": "string-inactive_format",
+          "kind": "data",
+          "sha256": "a8b0321631ab18125eecb341f18af6fc57547b4c082fbf131d47c5473431dc00",
+          "size": 42,
+          "va": 4710445
+        },
+        {
+          "bytes_hex": "636861696e232564202d206661696c656420746f2061737369676e2063686970206164647265737320746f2030782530327800",
+          "id": "string-address_format",
+          "kind": "data",
+          "sha256": "b382a71dfad0a36d709be1c854f17e738402d3307e8f895cc8a935acaf86c700",
+          "size": 51,
+          "va": 4710487
+        },
+        {
+          "bytes_hex": "2f746d702f6275696c642f6c69626269746d61696e2f7372632f636869702f63686970313336382e6300",
+          "id": "string-source",
+          "kind": "data",
+          "sha256": "a22fe6f4f8a0d5f29b251276a4647b1a807f19bb2985aa4301f986468589f931",
+          "size": 42,
+          "va": 4712431
+        },
+        {
+          "bytes_hex": "743c0f00",
+          "id": "slot-0xb8-got",
+          "kind": "data",
+          "sha256": "4f43b9742db7ab46834216d8c7b06be7346cb88c85494c73562ab6ded874af8d",
+          "size": 4,
+          "va": 4912516
+        },
+        {
+          "bytes_hex": "cc3b0f00",
+          "id": "slot-0xb4-got",
+          "kind": "data",
+          "sha256": "2406f2b1b019bca5ee4613edb7732a0648e5ede08d7fb32bf26bdd2b171079a9",
+          "size": 4,
+          "va": 4913824
+        }
+      ],
+      "slots": [
+        {
+          "got": 4913824,
+          "got_load": 990628,
+          "literal": 991160,
+          "load": 990624,
+          "method": 998348,
+          "offset": 180,
+          "register": 14,
+          "store": 990696
+        },
+        {
+          "got": 4912516,
+          "got_load": 990620,
+          "literal": 991156,
+          "load": 990616,
+          "method": 998516,
+          "offset": 184,
+          "register": 12,
+          "store": 990700
+        }
+      ]
+    }
+  },
+  "strings": [
+    {
+      "add": 938900,
+      "backedge": 938984,
+      "byte_count": 7,
+      "compare": 938908,
+      "encoded_end_exclusive": 6206439,
+      "encoded_start": 6206432,
+      "increment": 938976,
+      "literal": 942176,
+      "load": 938896,
+      "local_loop_end_exclusive": 939016,
+      "local_loop_start": 938864,
+      "name": "module",
+      "plain_end_exclusive": 4708635,
+      "plain_start": 4708628,
+      "text": "driver",
+      "xor": 938956,
+      "xor_key": 30,
+      "zero": 938868
+    },
+    {
+      "add": 939096,
+      "backedge": 939180,
+      "byte_count": 42,
+      "compare": 939104,
+      "encoded_end_exclusive": 6206481,
+      "encoded_start": 6206439,
+      "increment": 939172,
+      "literal": 942188,
+      "load": 939092,
+      "local_loop_end_exclusive": 939212,
+      "local_loop_start": 939080,
+      "name": "source",
+      "plain_end_exclusive": 4712473,
+      "plain_start": 4712431,
+      "text": "/tmp/build/libbitmain/src/chip/chip1368.c",
+      "xor": 939152,
+      "xor_key": 216,
+      "zero": 939080
+    },
+    {
+      "add": 939276,
+      "backedge": 939360,
+      "byte_count": 11,
+      "compare": 939284,
+      "encoded_end_exclusive": 6206492,
+      "encoded_start": 6206481,
+      "increment": 939352,
+      "literal": 942192,
+      "load": 939272,
+      "local_loop_end_exclusive": 939392,
+      "local_loop_start": 939260,
+      "name": "function",
+      "plain_end_exclusive": 4707172,
+      "plain_start": 4707161,
+      "text": "[redacted]",
+      "xor": 939332,
+      "xor_key": 209,
+      "zero": 939260
+    },
+    {
+      "add": 940396,
+      "backedge": 940420,
+      "byte_count": 42,
+      "compare": 940416,
+      "encoded_end_exclusive": 6206919,
+      "encoded_start": 6206877,
+      "increment": 940412,
+      "literal": 942232,
+      "load": 940392,
+      "local_loop_end_exclusive": 940424,
+      "local_loop_start": 940380,
+      "name": "inactive_format",
+      "plain_end_exclusive": 4710487,
+      "plain_start": 4710445,
+      "text": "chain#%d - failed to inactivate the chain",
+      "xor": 940404,
+      "xor_key": 219,
+      "zero": 940380
+    },
+    {
+      "add": 940488,
+      "backedge": 940572,
+      "byte_count": 51,
+      "compare": 940496,
+      "encoded_end_exclusive": 6206970,
+      "encoded_start": 6206919,
+      "increment": 940564,
+      "literal": 942236,
+      "load": 940484,
+      "local_loop_end_exclusive": 940604,
+      "local_loop_start": 940472,
+      "name": "address_format",
+      "plain_end_exclusive": 4710538,
+      "plain_start": 4710487,
+      "text": "chain#%d - failed to assign chip address to 0x%02x",
+      "xor": 940544,
+      "xor_key": 211,
+      "zero": 940472
+    }
+  ]
+}

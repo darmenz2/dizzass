@@ -3,7 +3,7 @@
 
 The workflow obtains the complete D/M/R/T raw diff from the unchanged historical
 baseline. Keep the six prior accepted combinations and exact constructor group;
-retain reset and ticket groups and add only the complete sweep compatibility group. No subset or path-only waiver.
+retain reset, ticket and sweep groups and add only the complete address group. No subset or path-only waiver.
 """
 import sys
 
@@ -83,11 +83,28 @@ SWEEP_RECORDS = (
 )
 
 
+# One complete address state; all ten earlier states stay exact witnesses.
+ADDRESS_RECORDS = (
+    ':100644 100644 faba7b3e4ef7527f0b939c886897fcf8b5a7e334 d2c804b019f5ad0f69d223be613cd437f6d42623 M\t.github/workflows/bm1368-frequency-135.yml',
+    ':100644 100644 9c839aca1ebf0a1347fded59b631a30d960940a5 ccc44d8e4ed85662b2df08c2a08f563e1802dbae M\t.github/workflows/bm1368-pulse-width-135.yml',
+    ':100644 100644 2812317d6f54f5810c535d57a6c6fb15baed82cb facb570f83aea59e705b1fa3fd85c7b6c6e84f06 M\t.github/workflows/bm1368-register-write-135.yml',
+    ':100644 100644 aa0a043df461bfc7e15487d60ebf8a4dcd915b52 dcc8a6f2b1d8b0b981f461f1d4f99448bbf328e3 M\t.github/workflows/thermal-routes-135.yml',
+    ':100644 100644 b65756c6b4323f227e4b500c2d2db34500ff68bc eab6ba22853558d3d847eb1a27b3ee981aeeec99 M\tintegration/tests/check_bm1368_frequency_evidence_135.py',
+    ':100644 100644 21c016abf12cd427c53704f52f213572f3178438 cce7d0abfa75e7343158f1dbd4dbc30b93cf8c64 M\tintegration/tests/check_bm1368_pulse_width_evidence_135.py',
+    ':100644 100644 8b704f2ab26e23314f1bd66970d517095556a8e7 75a8088363e37cfff1d8ae47b7c1bdf1a0aaccae M\tintegration/tests/check_bm1368_register_write_evidence_135.py',
+    ':100644 100644 f68baf7a096b3b261e6249600b726eb120bebfbb 40d0fb336501875982f22ac6453ee4ddd58d8762 M\tintegration/thermal-routes-135.mk',
+    ':100644 100644 f66d7c37b3d4e9f87ff892f35488db6140cb341c 0c0a6970e15c690af918aeeddbcc38fae5a06925 M\tlibbitmain/src/aml/platform.c',
+    ':100644 100644 c64374454e6e458ec1a175f21f03af141e29a3aa 890e2bfc9ead81a9cafe5b34c917b37133ea0d5e M\tlibbitmain/src/chip/chip1368.c',
+    ':100644 100644 8ceb8405390e3eaf9f7b34480eb3cdd040a3b0ef d030308564c47bf409a3d381f16ddf262e6acf26 M\tlibbitmain/src/transport-dispatch.c',
+)
+
+
 def approved_changes():
     prior = tuple('\n'.join(record for index, record in enumerate(PRIOR_RECORDS)
                            if mask & (1 << index)) for mask in PRIOR_MASKS)
     return prior + ('\n'.join(CONSTRUCTOR_RECORDS), '\n'.join(RESET_RECORDS),
-                    '\n'.join(TICKET_RECORDS), '\n'.join(SWEEP_RECORDS))
+                    '\n'.join(TICKET_RECORDS), '\n'.join(SWEEP_RECORDS),
+                    '\n'.join(ADDRESS_RECORDS))
 
 
 def check_historical_changes(raw):

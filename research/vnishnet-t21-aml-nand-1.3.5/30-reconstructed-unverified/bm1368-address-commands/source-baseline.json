@@ -1,0 +1,168 @@
+{
+  "kind": "accepted-source-provenance-not-a-current-checkout-waiver",
+  "base_commit": "5b7ee62ef22b6eaa9adf8c7b86e99273dc917f76",
+  "base_tree": "da72d5da5a659a2376012ce4cce2f6c3dbdaa100",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 4121,
+      "git_blob": "c9d99ca8e95e34f3644fb37e2fdeea359e61ec3d",
+      "sha256": "e829c42302bd775cfb9b705dc653429973888535b849d9a4965e9e6461bf746b",
+      "scope": "unchanged accepted dependency"
+    },
+    {
+      "path": "Makefile.am",
+      "bytes": 5171,
+      "git_blob": "17d2fbde26b5e8cb614b61908b84d5937af48325",
+      "sha256": "8601830e23e231cdadd770a9bea4c1216d281ace5aa930010f0e61983daa8995",
+      "scope": "unchanged accepted dependency"
+    },
+    {
+      "path": "libbitmain/src/chip/chip1368.c",
+      "bytes": 9245,
+      "git_blob": "f23565c15c9d174e644fc51a401e81dbe072dfd7",
+      "sha256": "e4c05fb8bc541e6e6b2a216cbaecf7ef57cc3d85101d59b81e8ebd3d4e2af7e4",
+      "scope": "preserved first 9245 source bytes"
+    },
+    {
+      "path": "libbitmain/src/chip/chip.c",
+      "bytes": 1354,
+      "git_blob": "4175056cad4bc9acda8ebcc39fc2f8bbc4d47814",
+      "sha256": "b9e6f4c431d99cd718fb4a41267c41efe99693216eb2d46591356d8f6de308d4",
+      "scope": "unchanged accepted dependency"
+    },
+    {
+      "path": "integration/bm1368_control.c",
+      "bytes": 3234,
+      "git_blob": "20b4b0476beb3968be590373f884e91b7d6fe46f",
+      "sha256": "6311c43f27b482114b7e18826727e2cd024b2bea4a74b911b5d73887757808f3",
+      "scope": "unchanged accepted dependency"
+    },
+    {
+      "path": "reconstruction/support/crc5.c",
+      "bytes": 896,
+      "git_blob": "1912ec8906fb520f7d7c5196ea5a7ec122aaeda8",
+      "sha256": "d03fe3a245dffeddb2d644d91671b44430ca81a007ad15b49db294c1a700e1a2",
+      "scope": "unchanged accepted dependency"
+    },
+    {
+      "path": "libbitmain/src/transport-dispatch.c",
+      "bytes": 3683,
+      "git_blob": "d030308564c47bf409a3d381f16ddf262e6acf26",
+      "sha256": "5cd3632bf3610c8ec3a7d2ea9b3f9da7fc91bd26676598e41448d6376b531fd9",
+      "scope": "unchanged accepted dependency"
+    },
+    {
+      "path": "libbitmain/src/aml/chip.c",
+      "bytes": 1969,
+      "git_blob": "8a8614a9d356c6279b2e3d8e98aa61753b02b5e6",
+      "sha256": "06bc61d93243a33c9230cbeeb2e8a97524cf7e3a6d01679c9aa01a96d0234953",
+      "scope": "unchanged accepted dependency"
+    },
+    {
+      "path": "libbitmain/src/uart.c",
+      "bytes": 4089,
+      "git_blob": "7fdec4cf83867bbbbc69a1b2b8731663d85eb318",
+      "sha256": "fcdebe3884ae27027b630fcbd4e3b50898e575f679976cad72f140d9946033e0",
+      "scope": "unchanged accepted dependency"
+    },
+    {
+      "path": "integration/bm1368_nonce.h",
+      "bytes": 1141,
+      "git_blob": "d52253c292a1fb205800adf66b6a8bdeb79575c2",
+      "sha256": "46b3a1c6db6ec8dae2c86c45bf7baff6a79e612b6d03399fcecde3de8536209e",
+      "scope": "unchanged accepted dependency"
+    },
+    {
+      "path": "integration/common_read_register_135.h",
+      "bytes": 3413,
+      "git_blob": "630f4b86b473276713d9965b46d20a1b588b4929",
+      "sha256": "12c317b0c79d00a50b8a22af60bfbb5669761c37d9c1a21afaa1c3be49f6ea3b",
+      "scope": "unchanged accepted dependency"
+    },
+    {
+      "path": "integration/transport_dispatch_135.h",
+      "bytes": 2481,
+      "git_blob": "18c8a723f4e56a7c5a9c082b2c07db0090c8089c",
+      "sha256": "7ca6a41c3fa943e068fb458c198164b2525aa04db43e9b0dc0e6cacda0855b36",
+      "scope": "unchanged accepted dependency"
+    },
+    {
+      "path": "integration/bm1368_control.h",
+      "bytes": 2559,
+      "git_blob": "87433ca81112f6c0f15d88a2cb87a102f5c13ed1",
+      "sha256": "11ddb580caab82219f4df5d480ac17d74386a55ba798aaa47e54390c02aa351a",
+      "scope": "unchanged accepted dependency"
+    },
+    {
+      "path": "include/xminer/recovery/chip1398.h",
+      "bytes": 2898,
+      "git_blob": "185b8fddfa06b40630158aefc1dd3ab2d3bc3439",
+      "sha256": "57c25fb7b8e234f1b3fc0eef972338398f4e6027dcee0e38f6c1eb6c5eadef14",
+      "scope": "unchanged accepted dependency"
+    },
+    {
+      "path": "include/xminer/recovery/aml_chip.h",
+      "bytes": 2126,
+      "git_blob": "9800cdd205e155441c307f90db7dc6df06ec4ca4",
+      "sha256": "490a1cdf5b1d0062fd43234bccd69e7efe05f2bbf878abef2d4f090a3637e725",
+      "scope": "unchanged accepted dependency"
+    },
+    {
+      "path": "include/xminer/recovery/uart.h",
+      "bytes": 3345,
+      "git_blob": "23838f3ac88d67f1c57c67914119f2d0a5059a54",
+      "sha256": "3ab7808d8cb55ebd817495fd95f36fcd27f71f3add4cd2edfcebc870b4ec3bbd",
+      "scope": "unchanged accepted dependency"
+    },
+    {
+      "path": "include/xminer/recovery/pll.h",
+      "bytes": 2012,
+      "git_blob": "de45948ffdca5c6b479ce843324413b7ac35c6fd",
+      "sha256": "96cb204b3a846ad82c09c8be5e480e0069751d1a79b191e53fa3dc2618a5602d",
+      "scope": "unchanged accepted dependency"
+    },
+    {
+      "path": "include/xminer/recovery/reg_cache.h",
+      "bytes": 3577,
+      "git_blob": "96af5995ab727f830219fa96f4e77e652161a458",
+      "sha256": "37aae34cab018e6c6f2282a8083aa01d6fd04da10e37f46d39b6162766a37ba6",
+      "scope": "unchanged accepted dependency"
+    },
+    {
+      "path": "src/backend/base.c",
+      "bytes": 55186,
+      "git_blob": "9dd2d25122e3cd7a35f3ab4f0f709ce07422d1a7",
+      "sha256": "d936fe0a4ab0fa8b8593b914025fa79886c21563ca78202a95a8f8528ce81a5d",
+      "scope": "unchanged cold-setup provenance; not compiled by this host fixture"
+    },
+    {
+      "path": "integration/backend_cold_135.h",
+      "bytes": 3406,
+      "git_blob": "ff6a884bc56a19de8b924e162cf26265ca54526b",
+      "sha256": "8b8b0acfd9e4fc44a12f513e506a7795e109de1de1ad65eb26d84a2832b628dc",
+      "scope": "unchanged cold-setup provenance; not compiled by this host fixture"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-ticket-mask/STATIC_CONTRACT.md",
+      "bytes": 12209,
+      "git_blob": "819d2d0117aeb048688452ce852cda24d97b724d",
+      "sha256": "8dba4e02de91e7406e9de4cb86dd171120a4d0db67a95fb5ae97ecf083367a60",
+      "scope": "unchanged accepted dependency"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-ticket-mask/static-witness.json",
+      "bytes": 105160,
+      "git_blob": "d79dd41d59e1463a0acda8c52f1050667fe3040e",
+      "sha256": "206a3cbf5e6b450c6cc10817b41150d5794403b1065a784d7e1c30a659b5656f",
+      "scope": "unchanged accepted dependency"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-init/evidence/constructor-proof.json",
+      "bytes": 57477,
+      "git_blob": "4b648f1147cbcaf155761eb71871a56b765a4826",
+      "sha256": "10ef45e2a3a641ed8d9aded2e9d59c0fa1d0ae6df8a72500f876a5b27ad8c613",
+      "scope": "unchanged accepted dependency"
+    }
+  ]
+}

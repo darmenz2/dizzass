@@ -1,0 +1,8 @@
+make: Entering directory '<repo>/research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-sweep-clock'
+<python-with-capstone> -B tests/run_host.py --root ../../../.. --build build/ordinary --cc cc
+ORIGINAL_SWEEP_CLOCK_PASS cases=25 checks=2418 hardware=no real_waits=no coordinator=not-implemented
+<python-with-capstone> -B tests/negative_controls.py --root ../../../.. --cc cc
+SWEEP_CLOCK_CONTROLS_PASS controls=17
+<python-with-capstone> -B tests/run_host.py --root ../../../.. --build build/sanitized --cc cc --sanitize
+ORIGINAL_SWEEP_CLOCK_PASS cases=25 checks=2418 hardware=no real_waits=no coordinator=not-implemented
+make: Leaving directory '<repo>/research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-sweep-clock'

@@ -38,6 +38,9 @@ BM1368_TICKET_SIZE = 8350
 BM1368_SWEEP_BLOB = 'f23565c15c9d174e644fc51a401e81dbe072dfd7'
 BM1368_SWEEP_SHA256 = 'e4c05fb8bc541e6e6b2a216cbaecf7ef57cc3d85101d59b81e8ebd3d4e2af7e4'
 BM1368_SWEEP_SIZE = 9245
+BM1368_ADDRESS_BLOB = '890e2bfc9ead81a9cafe5b34c917b37133ea0d5e'
+BM1368_ADDRESS_SHA256 = '91cfb6f3bb640bcf3519027243970bcb37aeeb0275f96b931dd17cab940540d2'
+BM1368_ADDRESS_SIZE = 11280
 BM1368_TICKET_BLOB = '1cd2c6e7612b494c28f0bbbab0e62434d104881d'
 BM1368_TICKET_SHA256 = 'ed818babcb847fb38094af8f08ae3c0ac6ef690192aa1e6030c3f8326e9968d9'
 TEXT = {
@@ -319,8 +322,31 @@ def verify_elf_metadata(name, row, supplement, pins):
                 'initializer is not a .init_array word')
 
 
+def sweep_source_bytes(data):
+    """Validate the exact address layer without changing the L12 witness."""
+    blob=hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
+    require(len(data) == BM1368_ADDRESS_SIZE and sha256(data) == BM1368_ADDRESS_SHA256
+            and blob == BM1368_ADDRESS_BLOB,
+            'active dependency pin differs: '+BM1368_PATH+' (reviewed address-commands source)')
+    sweep,added=data[:BM1368_SWEEP_SIZE],data[BM1368_SWEEP_SIZE:]
+    require(len(sweep) == BM1368_SWEEP_SIZE and sha256(sweep) == BM1368_SWEEP_SHA256
+            and hashlib.sha1(b'blob '+str(len(sweep)).encode()+b'\0'+sweep).hexdigest()
+                == BM1368_SWEEP_BLOB,
+            'BM1368 preserved sweep source prefix differs')
+    require(added.startswith(b'\n#ifdef VN135_BM1368_ADDRESS_COMMANDS_135\n'
+                             b'#include "integration/bm1368_address_commands_135.h"\n'
+                             b'#include "integration/bm1368_control.h"\n')
+            and added.count(b'#if') == 1 and added.count(b'#endif') == 1
+            and added.count(b'#include') == 2
+            and b'#else' not in added and b'#elif' not in added
+            and added.endswith(b'\n#endif\n'),
+            'BM1368 address-commands append is not separately gated')
+    return sweep
+
+
 def ticket_source_bytes(data):
     """Validate the exact sweep layer without changing the L11 witness."""
+    data=sweep_source_bytes(data)
     blob=hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
     require(len(data) == BM1368_SWEEP_SIZE and sha256(data) == BM1368_SWEEP_SHA256
             and blob == BM1368_SWEEP_BLOB,

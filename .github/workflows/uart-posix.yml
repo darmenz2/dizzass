@@ -74,8 +74,8 @@ jobs:
           fi
           python3 integration/test_native_core.py
           python3 tools/prepare_uart_posix.py --check
-          # Preserve the nine prior exact historical states and allow only
-          # the complete exact BM1368 sweep compatibility group in addition.
+          # Preserve the ten prior exact historical states and allow only
+          # the complete exact BM1368 address compatibility group in addition.
           python3 integration/tests/test_uart_posix_historical_135.py
           python3 -O integration/tests/test_uart_posix_historical_135.py
           historical_changes=$(git diff --raw --no-abbrev --no-renames \

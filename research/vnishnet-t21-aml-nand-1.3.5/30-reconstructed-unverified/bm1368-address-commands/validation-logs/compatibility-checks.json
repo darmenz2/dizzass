@@ -1,0 +1,603 @@
+{
+  "scope": "Only authored Python metadata, tamper controls and static byte readers. No C compilation/execution, original instruction interpreter, firmware, hardware, model/OOM probes, Git/network operations or remote writes.",
+  "runs": [
+    {
+      "name": "shared-controls",
+      "mode": "normal",
+      "command": [
+        "<python-with-capstone>",
+        "-B",
+        "integration/tests/test_current_dependency_pins_135.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "dbe95a67c1a15a0fe46a357220c2a772385600a8bb843b8fde7951edac8dda65",
+      "log": "logs/shared-controls-normal.log",
+      "log_sha256": "63295131442b5f924acec893bca846b281a3b940fba264402a14a3604a5096e8",
+      "output": "test_address_gate_shape_checked_without_full_hash (__main__.CurrentDependencyPins.test_address_gate_shape_checked_without_full_hash) ... ok\ntest_address_semantics_truncation_and_extra_bytes_fail_current_pin (__main__.CurrentDependencyPins.test_address_semantics_truncation_and_extra_bytes_fail_current_pin) ... ok\ntest_arbitrary_content_rejected (__main__.CurrentDependencyPins.test_arbitrary_content_rejected) ... ok\ntest_bm1368_gate_shape_checked_independently_of_current_hash (__main__.CurrentDependencyPins.test_bm1368_gate_shape_checked_independently_of_current_hash) ... ok\ntest_bm1368_prefix_and_gate_mutations_rejected (__main__.CurrentDependencyPins.test_bm1368_prefix_and_gate_mutations_rejected) ... ok\ntest_bm1368_prefix_checked_independently_of_current_hash (__main__.CurrentDependencyPins.test_bm1368_prefix_checked_independently_of_current_hash) ... ok\ntest_changed_original_pin_rejected (__main__.CurrentDependencyPins.test_changed_original_pin_rejected) ... ok\ntest_constructor_expected_pin_is_not_an_old_evidence_pin (__main__.CurrentDependencyPins.test_constructor_expected_pin_is_not_an_old_evidence_pin) ... ok\ntest_constructor_only_blob_rejected_as_current_checkout (__main__.CurrentDependencyPins.test_constructor_only_blob_rejected_as_current_checkout) ... ok\ntest_constructor_prefix_checked_independently_of_current_hash (__main__.CurrentDependencyPins.test_constructor_prefix_checked_independently_of_current_hash) ... ok\ntest_constructor_witness_hashes_are_independent (__main__.CurrentDependencyPins.test_constructor_witness_hashes_are_independent) ... ok\ntest_current_address_identity_components_are_independent (__main__.CurrentDependencyPins.test_current_address_identity_components_are_independent) ... ok\ntest_directories_and_symlinks_fail (__main__.CurrentDependencyPins.test_directories_and_symlinks_fail) ... ok\ntest_dispatch_prefix_and_gate_mutations_rejected (__main__.CurrentDependencyPins.test_dispatch_prefix_and_gate_mutations_rejected) ... ok\ntest_exact_address_transition_retains_sweep_witness (__main__.CurrentDependencyPins.test_exact_address_transition_retains_sweep_witness) ... ok\ntest_exact_current_blobs_and_original_witnesses (__main__.CurrentDependencyPins.test_exact_current_blobs_and_original_witnesses) ... ok\ntest_exact_preserved_reset_witness (__main__.CurrentDependencyPins.test_exact_preserved_reset_witness) ... ok\ntest_exact_preserved_ticket_witness (__main__.CurrentDependencyPins.test_exact_preserved_ticket_witness) ... ok\ntest_executable_mode_fails (__main__.CurrentDependencyPins.test_executable_mode_fails) ... ok\ntest_fifo_fails_without_reading_or_blocking (__main__.CurrentDependencyPins.test_fifo_fails_without_reading_or_blocking) ... ok\ntest_historical_blobs_rejected_as_current_checkout (__main__.CurrentDependencyPins.test_historical_blobs_rejected_as_current_checkout) ... ok\ntest_missing_paths_fail (__main__.CurrentDependencyPins.test_missing_paths_fail) ... ok\ntest_missing_reset_append_rejected_even_with_changed_full_identity (__main__.CurrentDependencyPins.test_missing_reset_append_rejected_even_with_changed_full_identity) ... ok\ntest_nonce_witness_remains_checked_after_all_transitions (__main__.CurrentDependencyPins.test_nonce_witness_remains_checked_after_all_transitions) ... ok\ntest_parent_symlink_fails (__main__.CurrentDependencyPins.test_parent_symlink_fails) ... ok\ntest_preserved_reset_identity_components_are_independent (__main__.CurrentDependencyPins.test_preserved_reset_identity_components_are_independent) ... ok\ntest_preserved_sweep_identity_components_are_independent (__main__.CurrentDependencyPins.test_preserved_sweep_identity_components_are_independent) ... ok\ntest_preserved_ticket_identity_components_are_independent (__main__.CurrentDependencyPins.test_preserved_ticket_identity_components_are_independent) ... ok\ntest_reset_and_ticket_pins_cannot_replace_nonce_expected_pin (__main__.CurrentDependencyPins.test_reset_and_ticket_pins_cannot_replace_nonce_expected_pin) ... ok\ntest_reset_gate_shape_checked_independently_of_current_hash (__main__.CurrentDependencyPins.test_reset_gate_shape_checked_independently_of_current_hash) ... ok\ntest_reset_only_blob_rejected_as_current_checkout (__main__.CurrentDependencyPins.test_reset_only_blob_rejected_as_current_checkout) ... ok\ntest_reset_prefix_and_gate_mutations_rejected (__main__.CurrentDependencyPins.test_reset_prefix_and_gate_mutations_rejected) ... ok\ntest_reset_prefix_checked_independently_of_ticket_hash (__main__.CurrentDependencyPins.test_reset_prefix_checked_independently_of_ticket_hash) ... ok\ntest_reset_transition_cannot_be_applied_to_another_path (__main__.CurrentDependencyPins.test_reset_transition_cannot_be_applied_to_another_path) ... ok\ntest_reverse_witness_checked_independently_of_current_hash (__main__.CurrentDependencyPins.test_reverse_witness_checked_independently_of_current_hash) ... ok\ntest_sweep_gate_shape_checked_without_full_hash (__main__.CurrentDependencyPins.test_sweep_gate_shape_checked_without_full_hash) ... ok\ntest_sweep_only_source_rejected_as_current (__main__.CurrentDependencyPins.test_sweep_only_source_rejected_as_current) ... ok\ntest_sweep_prefix_checked_without_address_full_hash (__main__.CurrentDependencyPins.test_sweep_prefix_checked_without_address_full_hash) ... ok\ntest_sweep_semantics_and_extra_bytes_fail_current_pin (__main__.CurrentDependencyPins.test_sweep_semantics_and_extra_bytes_fail_current_pin) ... ok\ntest_thermal_token_location_and_other_flags_rejected (__main__.CurrentDependencyPins.test_thermal_token_location_and_other_flags_rejected) ... ok\ntest_ticket_bytes_missing_duplicate_and_changed_fail_closed (__main__.CurrentDependencyPins.test_ticket_bytes_missing_duplicate_and_changed_fail_closed) ... ok\ntest_ticket_gate_shape_checked_independently_of_current_hash (__main__.CurrentDependencyPins.test_ticket_gate_shape_checked_independently_of_current_hash) ... ok\ntest_ticket_only_source_rejected_as_current (__main__.CurrentDependencyPins.test_ticket_only_source_rejected_as_current) ... ok\ntest_ticket_prefix_checked_without_sweep_full_hash (__main__.CurrentDependencyPins.test_ticket_prefix_checked_without_sweep_full_hash) ... ok\ntest_transition_cannot_be_applied_to_another_path (__main__.CurrentDependencyPins.test_transition_cannot_be_applied_to_another_path) ... ok\ntest_transition_shape_checked_independently_of_current_hash (__main__.CurrentDependencyPins.test_transition_shape_checked_independently_of_current_hash) ... ok\ntest_unrelated_pin_passes_and_mismatch_fails (__main__.CurrentDependencyPins.test_unrelated_pin_passes_and_mismatch_fails) ... ok\ntest_unsafe_or_noncanonical_paths_fail (__main__.CurrentDependencyPins.test_unsafe_or_noncanonical_paths_fail) ... ok\n\n----------------------------------------------------------------------\nRan 48 tests in 0.068s\n\nOK\n"
+    },
+    {
+      "name": "a13-controls",
+      "mode": "normal",
+      "command": [
+        "<python-with-capstone>",
+        "-B",
+        "integration/tests/test_uart_posix_historical_135.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "99baec01302951f16f0948e346ada634a8dd1c19de0cdb33cd863678e7aa329f",
+      "log": "logs/a13-controls-normal.log",
+      "log_sha256": "3aab244046a0739cd6168d90850c7871977b15929d362e59d6177a734db2458b",
+      "output": "test_all_mixed_old_constructor_reset_ticket_sweep_and_address_subsets (__main__.HistoricalChanges.test_all_mixed_old_constructor_reset_ticket_sweep_and_address_subsets) ... ok\ntest_all_prior_subsets_and_orders_keep_exact_acceptance (__main__.HistoricalChanges.test_all_prior_subsets_and_orders_keep_exact_acceptance) ... ok\ntest_current_address_group_matches_files_and_modes (__main__.HistoricalChanges.test_current_address_group_matches_files_and_modes) ... ok\ntest_duplicate_extra_and_malformed_records_fail (__main__.HistoricalChanges.test_duplicate_extra_and_malformed_records_fail) ... ok\ntest_every_address_pair_reordering_fails (__main__.HistoricalChanges.test_every_address_pair_reordering_fails) ... ok\ntest_every_constructor_pair_reordering_fails (__main__.HistoricalChanges.test_every_constructor_pair_reordering_fails) ... ok\ntest_every_record_field_is_bound (__main__.HistoricalChanges.test_every_record_field_is_bound) ... ok\ntest_every_reset_pair_reordering_fails (__main__.HistoricalChanges.test_every_reset_pair_reordering_fails) ... ok\ntest_every_sweep_pair_reordering_fails (__main__.HistoricalChanges.test_every_sweep_pair_reordering_fails) ... ok\ntest_every_ticket_pair_reordering_fails (__main__.HistoricalChanges.test_every_ticket_pair_reordering_fails) ... ok\ntest_exact_eleven_states_only (__main__.HistoricalChanges.test_exact_eleven_states_only) ... ok\ntest_only_complete_address_group_is_added_to_prior_ten_states (__main__.HistoricalChanges.test_only_complete_address_group_is_added_to_prior_ten_states) ... ok\ntest_only_complete_reset_group_was_added_to_prior_seven_states (__main__.HistoricalChanges.test_only_complete_reset_group_was_added_to_prior_seven_states) ... ok\ntest_only_complete_sweep_group_is_added_to_prior_nine_states (__main__.HistoricalChanges.test_only_complete_sweep_group_is_added_to_prior_nine_states) ... ok\ntest_only_complete_ticket_group_is_added_to_prior_eight_states (__main__.HistoricalChanges.test_only_complete_ticket_group_is_added_to_prior_eight_states) ... ok\ntest_prior_constructor_state_remains_an_exact_historical_witness (__main__.HistoricalChanges.test_prior_constructor_state_remains_an_exact_historical_witness) ... ok\ntest_prior_exact_states_retain_accepted_shell_witnesses (__main__.HistoricalChanges.test_prior_exact_states_retain_accepted_shell_witnesses) ... ok\ntest_prior_reset_state_remains_an_exact_historical_witness (__main__.HistoricalChanges.test_prior_reset_state_remains_an_exact_historical_witness) ... ok\ntest_prior_sweep_state_remains_an_exact_historical_witness (__main__.HistoricalChanges.test_prior_sweep_state_remains_an_exact_historical_witness) ... ok\ntest_prior_ticket_state_remains_an_exact_historical_witness (__main__.HistoricalChanges.test_prior_ticket_state_remains_an_exact_historical_witness) ... ok\n\n----------------------------------------------------------------------\nRan 20 tests in 0.813s\n\nOK\n"
+    },
+    {
+      "name": "l09-controls",
+      "mode": "normal",
+      "command": [
+        "<python-with-capstone>",
+        "-B",
+        "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/common-read-register/tests/test_evidence.py",
+        "--root",
+        "."
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "da2a6ab7d841722790395178b3df9675428d950f66fb7455c659b35695e3bf66",
+      "log": "logs/l09-controls-normal.log",
+      "log_sha256": "4b0dae3cf796426405a9138cd65ccf3de8ab3f1bf0b77e5c3dd94e9e540e65cc",
+      "output": "test_active_dependency_receipt_hash_cannot_be_replaced (__main__.EvidenceControls.test_active_dependency_receipt_hash_cannot_be_replaced) ... ok\ntest_added_raw_metadata_is_rejected (__main__.EvidenceControls.test_added_raw_metadata_is_rejected) ... ok\ntest_address_full_identity_predicates_are_independent (__main__.EvidenceControls.test_address_full_identity_predicates_are_independent) ... ok\ntest_address_gate_shape_checked_without_full_hash (__main__.EvidenceControls.test_address_gate_shape_checked_without_full_hash) ... ok\ntest_address_semantics_are_bound_by_current_source_identity (__main__.EvidenceControls.test_address_semantics_are_bound_by_current_source_identity) ... ok\ntest_all_17_actual_dependencies_match (__main__.EvidenceControls.test_all_17_actual_dependencies_match) ... ok\ntest_arm_branch_address_arithmetic (__main__.EvidenceControls.test_arm_branch_address_arithmetic) ... ok\ntest_assembly_is_re_rendered (__main__.EvidenceControls.test_assembly_is_re_rendered) ... ok\ntest_base_provenance_receipt_is_anchored (__main__.EvidenceControls.test_base_provenance_receipt_is_anchored) ... ok\ntest_branch_target_metadata_rejected (__main__.EvidenceControls.test_branch_target_metadata_rejected) ... ok\ntest_code_data_boundary_is_pinned (__main__.EvidenceControls.test_code_data_boundary_is_pinned) ... ok\ntest_complete_self_contained_snapshot (__main__.EvidenceControls.test_complete_self_contained_snapshot) ... ok\ntest_crc_bit_count_is_32 (__main__.EvidenceControls.test_crc_bit_count_is_32) ... ok\ntest_crc_final_return_is_included (__main__.EvidenceControls.test_crc_final_return_is_included) ... ok\ntest_crc_recurrence_word_is_pinned (__main__.EvidenceControls.test_crc_recurrence_word_is_pinned) ... ok\ntest_crc_source_same_length_mutation_rejected (__main__.EvidenceControls.test_crc_source_same_length_mutation_rejected) ... ok\ntest_current_index_load_offset (__main__.EvidenceControls.test_current_index_load_offset) ... ok\ntest_data_is_not_counted_as_code (__main__.EvidenceControls.test_data_is_not_counted_as_code) ... ok\ntest_dead_duplicate_is_preserved (__main__.EvidenceControls.test_dead_duplicate_is_preserved) ... ok\ntest_encoder_source_modification_rejected (__main__.EvidenceControls.test_encoder_source_modification_rejected) ... ok\ntest_every_other_active_dependency_remains_a_full_file_pin (__main__.EvidenceControls.test_every_other_active_dependency_remains_a_full_file_pin) ... ok\ntest_exact_address_transition_retains_sweep_witness (__main__.EvidenceControls.test_exact_address_transition_retains_sweep_witness) ... ok\ntest_exact_reset_transition_retains_constructor_receipt (__main__.EvidenceControls.test_exact_reset_transition_retains_constructor_receipt) ... ok\ntest_exact_sweep_transition_retains_ticket_witness (__main__.EvidenceControls.test_exact_sweep_transition_retains_ticket_witness) ... ok\ntest_exact_ticket_transition_retains_reset_witness (__main__.EvidenceControls.test_exact_ticket_transition_retains_reset_witness) ... ok\ntest_fixed_pins_cannot_be_replaced_by_consistent_metadata (__main__.EvidenceControls.test_fixed_pins_cannot_be_replaced_by_consistent_metadata) ... ok\ntest_get_status_format_must_not_be_renamed (__main__.EvidenceControls.test_get_status_format_must_not_be_renamed) ... ok\ntest_got_current_storage_word_rejected (__main__.EvidenceControls.test_got_current_storage_word_rejected) ... ok\ntest_initializer_key_instruction_rejected (__main__.EvidenceControls.test_initializer_key_instruction_rejected) ... ok\ntest_initializer_length_instruction_rejected (__main__.EvidenceControls.test_initializer_length_instruction_rejected) ... ok\ntest_initializer_pointer_rejected (__main__.EvidenceControls.test_initializer_pointer_rejected) ... ok\ntest_initializer_registration_slot_rejected (__main__.EvidenceControls.test_initializer_registration_slot_rejected) ... ok\ntest_instruction_count_is_pinned (__main__.EvidenceControls.test_instruction_count_is_pinned) ... ok\ntest_literal_edge_target_rejected (__main__.EvidenceControls.test_literal_edge_target_rejected) ... ok\ntest_literal_pool_is_pinned (__main__.EvidenceControls.test_literal_pool_is_pinned) ... ok\ntest_literal_use_register_rejected (__main__.EvidenceControls.test_literal_use_register_rejected) ... ok\ntest_logger_line_is_103 (__main__.EvidenceControls.test_logger_line_is_103) ... ok\ntest_minus_one_return_cannot_be_changed_to_zero (__main__.EvidenceControls.test_minus_one_return_cannot_be_changed_to_zero) ... ok\ntest_missing_branch_metadata_rejected (__main__.EvidenceControls.test_missing_branch_metadata_rejected) ... ok\ntest_old_plain_hwscan_literal_rejected (__main__.EvidenceControls.test_old_plain_hwscan_literal_rejected) ... ok\ntest_optimized_python_rejects_corruption (__main__.EvidenceControls.test_optimized_python_rejects_corruption) ... ok\ntest_optional_address_is_word_load_not_byte_load (__main__.EvidenceControls.test_optional_address_is_word_load_not_byte_load) ... ok\ntest_optional_original_mode_rejects_fake_elf (__main__.EvidenceControls.test_optional_original_mode_rejects_fake_elf) ... ok\ntest_original_execution_claim_rejected (__main__.EvidenceControls.test_original_execution_claim_rejected) ... ok\ntest_packet_broadcast_bit_zero_word (__main__.EvidenceControls.test_packet_broadcast_bit_zero_word) ... ok\ntest_parity_guard_bit_is_pinned (__main__.EvidenceControls.test_parity_guard_bit_is_pinned) ... ok\ntest_register_store_byte_offset (__main__.EvidenceControls.test_register_store_byte_offset) ... ok\ntest_research_index_edit_is_allowed_by_active_pins (__main__.EvidenceControls.test_research_index_edit_is_allowed_by_active_pins) ... ok\ntest_reset_full_identity_predicates_are_independent (__main__.EvidenceControls.test_reset_full_identity_predicates_are_independent) ... ok\ntest_reset_gate_shape_is_checked_without_full_source_hash (__main__.EvidenceControls.test_reset_gate_shape_is_checked_without_full_source_hash) ... ok\ntest_reset_prefix_checked_without_ticket_full_hash (__main__.EvidenceControls.test_reset_prefix_checked_without_ticket_full_hash) ... ok\ntest_reset_preserved_prefix_is_checked_without_full_source_hash (__main__.EvidenceControls.test_reset_preserved_prefix_is_checked_without_full_source_hash) ... ok\ntest_reset_source_rejects_old_constructor_and_nonce_sources (__main__.EvidenceControls.test_reset_source_rejects_old_constructor_and_nonce_sources) ... ok\ntest_reset_source_rejects_prefix_suffix_truncation_and_extra_bytes (__main__.EvidenceControls.test_reset_source_rejects_prefix_suffix_truncation_and_extra_bytes) ... ok\ntest_reset_transition_is_bound_to_exact_original_path_and_identity (__main__.EvidenceControls.test_reset_transition_is_bound_to_exact_original_path_and_identity) ... ok\ntest_section_name_metadata_rejected (__main__.EvidenceControls.test_section_name_metadata_rejected) ... ok\ntest_send_length_is_five (__main__.EvidenceControls.test_send_length_is_five) ... ok\ntest_source_image_hash_is_immutable (__main__.EvidenceControls.test_source_image_hash_is_immutable) ... ok\ntest_source_image_size_is_immutable (__main__.EvidenceControls.test_source_image_size_is_immutable) ... ok\ntest_static_pin_manifest_is_anchored (__main__.EvidenceControls.test_static_pin_manifest_is_anchored) ... ok\ntest_string_length_includes_nul (__main__.EvidenceControls.test_string_length_includes_nul) ... ok\ntest_sweep_full_identity_predicates_are_independent (__main__.EvidenceControls.test_sweep_full_identity_predicates_are_independent) ... ok\ntest_sweep_gate_shape_checked_without_full_hash (__main__.EvidenceControls.test_sweep_gate_shape_checked_without_full_hash) ... ok\ntest_sweep_prefix_checked_without_address_full_hash (__main__.EvidenceControls.test_sweep_prefix_checked_without_address_full_hash) ... ok\ntest_sweep_semantics_are_bound_by_current_source_identity (__main__.EvidenceControls.test_sweep_semantics_are_bound_by_current_source_identity) ... ok\ntest_ticket_full_identity_predicates_are_independent (__main__.EvidenceControls.test_ticket_full_identity_predicates_are_independent) ... ok\ntest_ticket_gate_shape_checked_without_full_hash (__main__.EvidenceControls.test_ticket_gate_shape_checked_without_full_hash) ... ok\ntest_ticket_prefix_checked_without_sweep_full_hash (__main__.EvidenceControls.test_ticket_prefix_checked_without_sweep_full_hash) ... ok\ntest_ticket_semantics_are_bound_by_current_source_identity (__main__.EvidenceControls.test_ticket_semantics_are_bound_by_current_source_identity) ... ok\ntest_transport_source_modification_rejected (__main__.EvidenceControls.test_transport_source_modification_rejected) ... ok\ntest_unwind_boundary_rejected (__main__.EvidenceControls.test_unwind_boundary_rejected) ... ok\ntest_wrong_diagnostic_path_rejected (__main__.EvidenceControls.test_wrong_diagnostic_path_rejected) ... ok\ntest_xor_key_is_immutable (__main__.EvidenceControls.test_xor_key_is_immutable) ... ok\n\n----------------------------------------------------------------------\nRan 73 tests in 0.912s\n\nOK\n"
+    },
+    {
+      "name": "l09-static",
+      "mode": "normal",
+      "command": [
+        "<python-with-capstone>",
+        "-B",
+        "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/common-read-register/verify_evidence.py",
+        "--root",
+        "."
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "82d8d7a583f9e2098b716a675100f7dccbf69f69bde4b704f1abeb713bfc3e45",
+      "log": "logs/l09-static-normal.log",
+      "log_sha256": "508bc61ebaeb51fc29aa8e1d6a373e99672bd3637848c7cfd8a43c3c4dcfbf56",
+      "output": "{\n  \"active_dependencies_checked\": 17,\n  \"active_dependency_total\": 17,\n  \"base_commit\": \"98ad426482947cf29beed1371a63136f8aac2b0c\",\n  \"base_provenance_files\": 18,\n  \"base_tree\": \"70d1e1b0e8e3786db2b843503dabf90ad486c6d1\",\n  \"decoded_instruction_counts\": {\n    \"cgminer\": {\n      \"body\": 82,\n      \"crc_body\": 76,\n      \"string_initializer_body\": 98\n    },\n    \"hwscan\": {\n      \"body\": 48,\n      \"crc_body\": 61\n    }\n  },\n  \"evidence_mode\": \"static fixed snapshot; no vendor execution\",\n  \"hardware_or_runtime_parity_proven\": false,\n  \"instruction_interpreter_used\": false,\n  \"original_executed\": false,\n  \"original_image_selections_checked\": {},\n  \"parity_identities_checked\": 7,\n  \"research_index_active_pin\": false,\n  \"status\": \"PASS\"\n}\n"
+    },
+    {
+      "name": "l12-controls",
+      "mode": "normal",
+      "command": [
+        "<python-with-capstone>",
+        "-B",
+        "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-sweep-clock/tests/test_evidence.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "c6fa44134622e85ad326bc962e458718a630e3104f1f71da7dbbc2c799eaf4db",
+      "log": "logs/l12-controls-normal.log",
+      "log_sha256": "65cf9601896abe3071d8a2c98e9706708636e36ca0edfd635fe2b567b50ff20b",
+      "output": "test_address_gate_shape_checked_without_full_hash (__main__.EvidenceTests.test_address_gate_shape_checked_without_full_hash) ... ok\ntest_address_identity_components_and_all_prior_sources_rejected (__main__.EvidenceTests.test_address_identity_components_and_all_prior_sources_rejected) ... ok\ntest_address_semantics_truncation_and_extra_bytes_rejected (__main__.EvidenceTests.test_address_semantics_truncation_and_extra_bytes_rejected) ... ok\ntest_argument_mask_writer_status_and_late_index_bytes (__main__.EvidenceTests.test_argument_mask_writer_status_and_late_index_bytes) ... ok\ntest_body_pool_boundary_and_provenance (__main__.EvidenceTests.test_body_pool_boundary_and_provenance) ... ok\ntest_bound_l11_dependency_drift (__main__.EvidenceTests.test_bound_l11_dependency_drift) ... ok\ntest_caller_gate_arguments_failure_and_ordering (__main__.EvidenceTests.test_caller_gate_arguments_failure_and_ordering) ... ok\ntest_changed_metadata_cannot_reauthorize_its_own_pins (__main__.EvidenceTests.test_changed_metadata_cannot_reauthorize_its_own_pins) ... ok\ntest_current_address_transition_retains_frozen_l12_identity (__main__.EvidenceTests.test_current_address_transition_retains_frozen_l12_identity) ... ok\ntest_frozen_runtime_entry_cannot_be_relabelled (__main__.EvidenceTests.test_frozen_runtime_entry_cannot_be_relabelled) ... ok\ntest_frozen_runtime_source_drift (__main__.EvidenceTests.test_frozen_runtime_source_drift) ... ok\ntest_logger_literals_and_direct_initializer_count (__main__.EvidenceTests.test_logger_literals_and_direct_initializer_count) ... ok\ntest_optional_original_identity_rejection (__main__.EvidenceTests.test_optional_original_identity_rejection) ... ok\ntest_ordinary_parity_and_one_writer_contract (__main__.EvidenceTests.test_ordinary_parity_and_one_writer_contract) ... ok\ntest_preserved_sweep_bytes_checked_without_address_full_hash (__main__.EvidenceTests.test_preserved_sweep_bytes_checked_without_address_full_hash) ... ok\ntest_reviewed_annotations_qualifiers_and_json_schema (__main__.EvidenceTests.test_reviewed_annotations_qualifiers_and_json_schema) ... ok\ntest_reviewed_packet_without_original_files (__main__.EvidenceTests.test_reviewed_packet_without_original_files) ... ok\ntest_sweep_and_pulse_constructor_associations (__main__.EvidenceTests.test_sweep_and_pulse_constructor_associations) ... ok\ntest_sweep_identity_components_independent_of_matching_entry (__main__.EvidenceTests.test_sweep_identity_components_independent_of_matching_entry) ... ok\n\n----------------------------------------------------------------------\nRan 19 tests in 10.516s\n\nOK\n"
+    },
+    {
+      "name": "l12-static",
+      "mode": "normal",
+      "command": [
+        "<python-with-capstone>",
+        "-B",
+        "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-sweep-clock/verify_evidence.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "07f8fae23bb4daa597d7ea2eacf6a6bbc689d9ed92b0d74e9e1f9090501a56fa",
+      "log": "logs/l12-static-normal.log",
+      "log_sha256": "2d859844ad8fe7987d596a8953ecb598882ce1a31e8857181f75b8987248f8d0",
+      "output": "{\"cgminer_startup_caller_witnessed\": true, \"firmware_executed\": false, \"full_coordinator_claimed\": false, \"hwscan_startup_caller_claimed\": false, \"instruction_interpreter_used\": false, \"l11_dependency_files_verified\": 3, \"limits\": \"Pinned static review and immutable L11 caller dependency; manual lifetime/parity deductions; no automatic C equivalence, native ABI or hardware acceptance\", \"local_regions\": 24, \"local_witness_bytes\": 1756, \"logger_strings\": 4, \"method_body_identity_claimed\": false, \"method_code_bytes\": {\"cgminer\": 264, \"hwscan\": 144}, \"method_pool_bytes\": {\"cgminer\": 24, \"hwscan\": 16}, \"ordinary_writer_calls\": 1, \"original_files_compared\": [], \"runtime_source_identities_verified\": 2, \"static_witness_verified\": true}\n"
+    },
+    {
+      "name": "l10-partition",
+      "mode": "normal",
+      "command": [
+        "<python-with-capstone>",
+        "-B",
+        "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-reset/tests/test_partition.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "dce3f6899d59dce9684790d2b5bdc94fdb614c747742b51d7d736190e39df8f1",
+      "log": "logs/l10-partition-normal.log",
+      "log_sha256": "2536cd9c3e7de92d791d2653a0a65c2dde9af8427d9165061564809e7978a2f1",
+      "output": "test_all_27_historical_mutants_and_exact_counts (__main__.PartitionTests.test_all_27_historical_mutants_and_exact_counts) ... ok\ntest_boundary_shift_is_rejected_without_hashes (__main__.PartitionTests.test_boundary_shift_is_rejected_without_hashes) ... ok\ntest_changed_constructor_prefix (__main__.PartitionTests.test_changed_constructor_prefix) ... ok\ntest_changed_reset_span (__main__.PartitionTests.test_changed_reset_span) ... ok\ntest_constructor_blob_is_independent_of_sha256 (__main__.PartitionTests.test_constructor_blob_is_independent_of_sha256) ... ok\ntest_constructor_sha256_is_independent_of_blob (__main__.PartitionTests.test_constructor_sha256_is_independent_of_blob) ... ok\ntest_exact_anchor_count_failure_is_retained (__main__.PartitionTests.test_exact_anchor_count_failure_is_retained) ... ok\ntest_exact_roundtrip_and_boundary (__main__.PartitionTests.test_exact_roundtrip_and_boundary) ... ok\ntest_historical_transformations_and_failure_policy_are_unchanged (__main__.PartitionTests.test_historical_transformations_and_failure_policy_are_unchanged) ... ok\ntest_independent_historical_identities (__main__.PartitionTests.test_independent_historical_identities) ... ok\ntest_opaque_later_suffix_can_repeat_every_anchor (__main__.PartitionTests.test_opaque_later_suffix_can_repeat_every_anchor) ... ok\ntest_reset_blob_is_independent_of_sha256 (__main__.PartitionTests.test_reset_blob_is_independent_of_sha256) ... ok\ntest_reset_gate_shape_without_hashes (__main__.PartitionTests.test_reset_gate_shape_without_hashes) ... ok\ntest_reset_sha256_is_independent_of_blob (__main__.PartitionTests.test_reset_sha256_is_independent_of_blob) ... ok\ntest_truncated_historical_spans (__main__.PartitionTests.test_truncated_historical_spans) ... ok\n\n----------------------------------------------------------------------\nRan 15 tests in 0.016s\n\nOK\n"
+    },
+    {
+      "name": "bm1368_frequency-static",
+      "mode": "normal",
+      "command": [
+        "<python-with-capstone>",
+        "-B",
+        "integration/tests/check_bm1368_frequency_evidence_135.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "88c46df56b81fa1170ae9634ff2dec28048c70f26f33440595829129382a26db",
+      "log": "logs/bm1368_frequency-static-normal.log",
+      "log_sha256": "ed145f3c93a95d3b5ee270a5b7fe6c990a8692f866a6d07f4459a97141251768",
+      "output": "BM1368_FREQUENCY135_EVIDENCE_PASS\n"
+    },
+    {
+      "name": "bm1368_register_write-static",
+      "mode": "normal",
+      "command": [
+        "<python-with-capstone>",
+        "-B",
+        "integration/tests/check_bm1368_register_write_evidence_135.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "33d0a51d420d5ecf82d33adf5556c3db0b25633a78d29b67a00682fb05aade1e",
+      "log": "logs/bm1368_register_write-static-normal.log",
+      "log_sha256": "3b8ce7f5d682c5aa99f95153f23c3f1184103e39470f4bc642d3930f5afddd56",
+      "output": "BM1368_REGISTER135_EVIDENCE_PASS\n"
+    },
+    {
+      "name": "bm1368_pulse_width-static",
+      "mode": "normal",
+      "command": [
+        "<python-with-capstone>",
+        "-B",
+        "integration/tests/check_bm1368_pulse_width_evidence_135.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "573c7e8093fc4364c976484a3360fe94a9a1b292b0f4e04e2f8fd05ef51a0853",
+      "log": "logs/bm1368_pulse_width-static-normal.log",
+      "log_sha256": "0d80d251b7731619f518ae9f2747ea60a361977333172b9306628324cb867936",
+      "output": "BM1368_PULSE135_EVIDENCE_PASS\n"
+    },
+    {
+      "name": "bm1368_reply_key-static",
+      "mode": "normal",
+      "command": [
+        "<python-with-capstone>",
+        "-B",
+        "integration/tests/check_bm1368_reply_key_evidence_135.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "aa120a0afe5d8dd6ae3f787a76250b7da10ffcfe06ea73cdd0b7f8e75eb757aa",
+      "log": "logs/bm1368_reply_key-static-normal.log",
+      "log_sha256": "4a73223a181d99014d86cd0db645532a4f872d80a26f0be6440d917f583db6c6",
+      "output": "BM1368_REPLY_KEY135_EVIDENCE_PASS\n"
+    },
+    {
+      "name": "chain_reset_cleanup-static",
+      "mode": "normal",
+      "command": [
+        "<python-with-capstone>",
+        "-B",
+        "integration/tests/check_chain_reset_cleanup_evidence_135.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "71bb01fd7d1b53bf38c84e34649acc8160954c2721e44437e1dac74ef1605688",
+      "log": "logs/chain_reset_cleanup-static-normal.log",
+      "log_sha256": "58d91d3f96b39fe2f0fceb7449b164d28cea9b6847caf92fc5688dfb5bef8747",
+      "output": "CHAIN_RESET_CLEANUP135_EVIDENCE_PASS\n"
+    },
+    {
+      "name": "chip_sensor_check-static",
+      "mode": "normal",
+      "command": [
+        "<python-with-capstone>",
+        "-B",
+        "integration/tests/check_chip_sensor_check_evidence_135.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "5b2aaaa96309c36eb6b1e8030bf2a5e887c83e3bf44f6150cd4e8ea259857d17",
+      "log": "logs/chip_sensor_check-static-normal.log",
+      "log_sha256": "9eb1c70a86b95ca85efcda53cb20831247ed94bee7b9dfaac93a27399fc2c012",
+      "output": "CHIP_SENSOR_CHECK135_EVIDENCE_PASS ranges=4 unchanged_files=22\n"
+    },
+    {
+      "name": "l08-static",
+      "mode": "normal",
+      "command": [
+        "<python-with-capstone>",
+        "-B",
+        "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-init/verify_evidence.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "f6a47fa51b5eae83e84b67c5728d21e39540a18181de7995d3e24a5cd2e58b8d",
+      "log": "logs/l08-static-normal.log",
+      "log_sha256": "2b7f5c2b12bab72c89857295302b758ab2b674d42f13bde23d38774da649f318",
+      "output": "BM1368_INIT_STATIC_PASS [{\"code_bytes\": 616, \"got_bytes\": 216, \"literal_bytes\": 216, \"methods\": 54, \"original_source_checked\": false, \"source\": \"cgminer\"}, {\"code_bytes\": 616, \"got_bytes\": 216, \"literal_bytes\": 216, \"methods\": 54, \"original_source_checked\": false, \"source\": \"hwscan\"}]\n"
+    },
+    {
+      "name": "l08-controls",
+      "mode": "normal",
+      "command": [
+        "<python-with-capstone>",
+        "-B",
+        "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-init/tests/test_evidence.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "88bfdde4e7a32cf2197f189da72c1172d98fe3a440823a1f65394eb675a96af0",
+      "log": "logs/l08-controls-normal.log",
+      "log_sha256": "a455dda3bdbe0714b3c7de8f64984c0175e7c1115fe8e55b2db74f7df67b1deb",
+      "output": "....................\n----------------------------------------------------------------------\nRan 20 tests in 0.043s\n\nOK\n"
+    },
+    {
+      "name": "l10-static",
+      "mode": "normal",
+      "command": [
+        "<python-with-capstone>",
+        "-B",
+        "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-reset/verify_evidence.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "f6f13d9f68e58562da88cd4697294e7a8278defe70ff67e164e83459d964162c",
+      "log": "logs/l10-static-normal.log",
+      "log_sha256": "aa0a263ae952f46ebe92a37fa396bbfb432025e6ce13377b684f5c2571ae5a87",
+      "output": "{\"firmware_executed\": false, \"instruction_interpreter_used\": false, \"limits\": \"ordinary callback contract; semantic inference is static review, not hardware acceptance or automatic C equivalence\", \"ordinary_sites_per_elf\": 24, \"original_files_compared\": [], \"static_witness_verified\": true, \"unreachable_cgminer_sites\": 4}\n"
+    },
+    {
+      "name": "l10-controls",
+      "mode": "normal",
+      "command": [
+        "<python-with-capstone>",
+        "-B",
+        "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-reset/tests/test_evidence.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "0cfcaaf59188c95dc2add76a6505d8585f224356088f90ce89efac695a6cd876",
+      "log": "logs/l10-controls-normal.log",
+      "log_sha256": "731ce6941b1d494477b90317c6a1ecfcda2c66e686faabb3b325cda8c473e44c",
+      "output": "test_branch_target_and_operand_annotation (__main__.EvidenceTests.test_branch_target_and_operand_annotation) ... ok\ntest_call_target_and_inventory (__main__.EvidenceTests.test_call_target_and_inventory) ... ok\ntest_canonical_witness (__main__.EvidenceTests.test_canonical_witness) ... ok\ntest_changed_pins_cannot_reauthorize_tamper (__main__.EvidenceTests.test_changed_pins_cannot_reauthorize_tamper) ... ok\ntest_code_and_own_digest_changed (__main__.EvidenceTests.test_code_and_own_digest_changed) ... ok\ntest_code_changed_without_digest (__main__.EvidenceTests.test_code_changed_without_digest) ... ok\ntest_duplicate_json_key (__main__.EvidenceTests.test_duplicate_json_key) ... ok\ntest_hex_schema (__main__.EvidenceTests.test_hex_schema) ... ok\ntest_logs_field_reload_and_return_metadata (__main__.EvidenceTests.test_logs_field_reload_and_return_metadata) ... ok\ntest_optional_original_size_and_hash (__main__.EvidenceTests.test_optional_original_size_and_hash) ... ok\ntest_parity_metadata_and_unreachable_sites (__main__.EvidenceTests.test_parity_metadata_and_unreachable_sites) ... ok\ntest_proof_masks_and_zero_output_metadata (__main__.EvidenceTests.test_proof_masks_and_zero_output_metadata) ... ok\ntest_range_inventory (__main__.EvidenceTests.test_range_inventory) ... ok\ntest_selected_semantic_words (__main__.EvidenceTests.test_selected_semantic_words) ... ok\ntest_slot_offset_and_got (__main__.EvidenceTests.test_slot_offset_and_got) ... ok\ntest_strict_schema (__main__.EvidenceTests.test_strict_schema) ... ok\ntest_string_initializer_and_data (__main__.EvidenceTests.test_string_initializer_and_data) ... ok\ntest_string_key_length_and_text (__main__.EvidenceTests.test_string_key_length_and_text) ... ok\ntest_whole_elf_provenance (__main__.EvidenceTests.test_whole_elf_provenance) ... ok\ntest_wrong_range_extent_and_name (__main__.EvidenceTests.test_wrong_range_extent_and_name) ... ok\n\n----------------------------------------------------------------------\nRan 20 tests in 10.334s\n\nOK\n"
+    },
+    {
+      "name": "l11-static",
+      "mode": "normal",
+      "command": [
+        "<python-with-capstone>",
+        "-B",
+        "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-ticket-mask/verify_evidence.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "96782445fba9faca08e41ae53c5165fab8b6db851650f5dd27185deb508a2f59",
+      "log": "logs/l11-static-normal.log",
+      "log_sha256": "8fbf93a0ee0b1d17e85052b53e26b4c4d9b00117bb4080f7346345d55083723d",
+      "output": "{\"cgminer_startup_caller_witnessed\": true, \"firmware_executed\": false, \"hwscan_startup_caller_claimed\": false, \"instruction_interpreter_used\": false, \"limits\": \"pinned static review with L07 selector dependency; no complete coordinator, native ABI or hardware acceptance\", \"logger_strings\": 4, \"method_code_bytes_per_elf\": 208, \"method_literal_bytes_per_elf\": 16, \"normalized_method_instructions\": 52, \"original_files_compared\": [], \"static_witness_verified\": true}\n"
+    },
+    {
+      "name": "l11-controls",
+      "mode": "normal",
+      "command": [
+        "<python-with-capstone>",
+        "-B",
+        "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-ticket-mask/tests/test_evidence.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "416ab257a9d59539ffaa8675baca5905528e8458abf41c09d0dc81c64fe7e60b",
+      "log": "logs/l11-controls-normal.log",
+      "log_sha256": "3aecb2ebb5a7ab59a385ec417c3743e1aadd1ec8f27e0e2ec0729d610162f38f",
+      "output": "test_actual_caller_owner_and_read_lifetimes (__main__.EvidenceTests.test_actual_caller_owner_and_read_lifetimes) ... ok\ntest_constructor_slot_and_got (__main__.EvidenceTests.test_constructor_slot_and_got) ... ok\ntest_exact_body_pool_and_input_boundaries (__main__.EvidenceTests.test_exact_body_pool_and_input_boundaries) ... ok\ntest_four_logger_strings_and_direct_initializer (__main__.EvidenceTests.test_four_logger_strings_and_direct_initializer) ... ok\ntest_optional_original_identity_refusal (__main__.EvidenceTests.test_optional_original_identity_refusal) ... ok\ntest_pins_cannot_reauthorize_changed_metadata (__main__.EvidenceTests.test_pins_cannot_reauthorize_changed_metadata) ... ok\ntest_proof_qualifiers_edges_and_operand_metadata (__main__.EvidenceTests.test_proof_qualifiers_edges_and_operand_metadata) ... ok\ntest_reviewed_witness_without_originals (__main__.EvidenceTests.test_reviewed_witness_without_originals) ... ok\ntest_strict_schema_and_json (__main__.EvidenceTests.test_strict_schema_and_json) ... ok\ntest_writer_arguments_branch_and_fresh_index_words (__main__.EvidenceTests.test_writer_arguments_branch_and_fresh_index_words) ... ok\n\n----------------------------------------------------------------------\nRan 10 tests in 8.665s\n\nOK\n"
+    },
+    {
+      "name": "shared-controls",
+      "mode": "optimized",
+      "command": [
+        "<python-with-capstone>",
+        "-O",
+        "-B",
+        "integration/tests/test_current_dependency_pins_135.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "dbe95a67c1a15a0fe46a357220c2a772385600a8bb843b8fde7951edac8dda65",
+      "log": "logs/shared-controls-optimized.log",
+      "log_sha256": "065bb9f1401b2b281681b99e1a64f24483667027d45d7d70e35e919ada19997b",
+      "output": "test_address_gate_shape_checked_without_full_hash (__main__.CurrentDependencyPins.test_address_gate_shape_checked_without_full_hash) ... ok\ntest_address_semantics_truncation_and_extra_bytes_fail_current_pin (__main__.CurrentDependencyPins.test_address_semantics_truncation_and_extra_bytes_fail_current_pin) ... ok\ntest_arbitrary_content_rejected (__main__.CurrentDependencyPins.test_arbitrary_content_rejected) ... ok\ntest_bm1368_gate_shape_checked_independently_of_current_hash (__main__.CurrentDependencyPins.test_bm1368_gate_shape_checked_independently_of_current_hash) ... ok\ntest_bm1368_prefix_and_gate_mutations_rejected (__main__.CurrentDependencyPins.test_bm1368_prefix_and_gate_mutations_rejected) ... ok\ntest_bm1368_prefix_checked_independently_of_current_hash (__main__.CurrentDependencyPins.test_bm1368_prefix_checked_independently_of_current_hash) ... ok\ntest_changed_original_pin_rejected (__main__.CurrentDependencyPins.test_changed_original_pin_rejected) ... ok\ntest_constructor_expected_pin_is_not_an_old_evidence_pin (__main__.CurrentDependencyPins.test_constructor_expected_pin_is_not_an_old_evidence_pin) ... ok\ntest_constructor_only_blob_rejected_as_current_checkout (__main__.CurrentDependencyPins.test_constructor_only_blob_rejected_as_current_checkout) ... ok\ntest_constructor_prefix_checked_independently_of_current_hash (__main__.CurrentDependencyPins.test_constructor_prefix_checked_independently_of_current_hash) ... ok\ntest_constructor_witness_hashes_are_independent (__main__.CurrentDependencyPins.test_constructor_witness_hashes_are_independent) ... ok\ntest_current_address_identity_components_are_independent (__main__.CurrentDependencyPins.test_current_address_identity_components_are_independent) ... ok\ntest_directories_and_symlinks_fail (__main__.CurrentDependencyPins.test_directories_and_symlinks_fail) ... ok\ntest_dispatch_prefix_and_gate_mutations_rejected (__main__.CurrentDependencyPins.test_dispatch_prefix_and_gate_mutations_rejected) ... ok\ntest_exact_address_transition_retains_sweep_witness (__main__.CurrentDependencyPins.test_exact_address_transition_retains_sweep_witness) ... ok\ntest_exact_current_blobs_and_original_witnesses (__main__.CurrentDependencyPins.test_exact_current_blobs_and_original_witnesses) ... ok\ntest_exact_preserved_reset_witness (__main__.CurrentDependencyPins.test_exact_preserved_reset_witness) ... ok\ntest_exact_preserved_ticket_witness (__main__.CurrentDependencyPins.test_exact_preserved_ticket_witness) ... ok\ntest_executable_mode_fails (__main__.CurrentDependencyPins.test_executable_mode_fails) ... ok\ntest_fifo_fails_without_reading_or_blocking (__main__.CurrentDependencyPins.test_fifo_fails_without_reading_or_blocking) ... ok\ntest_historical_blobs_rejected_as_current_checkout (__main__.CurrentDependencyPins.test_historical_blobs_rejected_as_current_checkout) ... ok\ntest_missing_paths_fail (__main__.CurrentDependencyPins.test_missing_paths_fail) ... ok\ntest_missing_reset_append_rejected_even_with_changed_full_identity (__main__.CurrentDependencyPins.test_missing_reset_append_rejected_even_with_changed_full_identity) ... ok\ntest_nonce_witness_remains_checked_after_all_transitions (__main__.CurrentDependencyPins.test_nonce_witness_remains_checked_after_all_transitions) ... ok\ntest_parent_symlink_fails (__main__.CurrentDependencyPins.test_parent_symlink_fails) ... ok\ntest_preserved_reset_identity_components_are_independent (__main__.CurrentDependencyPins.test_preserved_reset_identity_components_are_independent) ... ok\ntest_preserved_sweep_identity_components_are_independent (__main__.CurrentDependencyPins.test_preserved_sweep_identity_components_are_independent) ... ok\ntest_preserved_ticket_identity_components_are_independent (__main__.CurrentDependencyPins.test_preserved_ticket_identity_components_are_independent) ... ok\ntest_reset_and_ticket_pins_cannot_replace_nonce_expected_pin (__main__.CurrentDependencyPins.test_reset_and_ticket_pins_cannot_replace_nonce_expected_pin) ... ok\ntest_reset_gate_shape_checked_independently_of_current_hash (__main__.CurrentDependencyPins.test_reset_gate_shape_checked_independently_of_current_hash) ... ok\ntest_reset_only_blob_rejected_as_current_checkout (__main__.CurrentDependencyPins.test_reset_only_blob_rejected_as_current_checkout) ... ok\ntest_reset_prefix_and_gate_mutations_rejected (__main__.CurrentDependencyPins.test_reset_prefix_and_gate_mutations_rejected) ... ok\ntest_reset_prefix_checked_independently_of_ticket_hash (__main__.CurrentDependencyPins.test_reset_prefix_checked_independently_of_ticket_hash) ... ok\ntest_reset_transition_cannot_be_applied_to_another_path (__main__.CurrentDependencyPins.test_reset_transition_cannot_be_applied_to_another_path) ... ok\ntest_reverse_witness_checked_independently_of_current_hash (__main__.CurrentDependencyPins.test_reverse_witness_checked_independently_of_current_hash) ... ok\ntest_sweep_gate_shape_checked_without_full_hash (__main__.CurrentDependencyPins.test_sweep_gate_shape_checked_without_full_hash) ... ok\ntest_sweep_only_source_rejected_as_current (__main__.CurrentDependencyPins.test_sweep_only_source_rejected_as_current) ... ok\ntest_sweep_prefix_checked_without_address_full_hash (__main__.CurrentDependencyPins.test_sweep_prefix_checked_without_address_full_hash) ... ok\ntest_sweep_semantics_and_extra_bytes_fail_current_pin (__main__.CurrentDependencyPins.test_sweep_semantics_and_extra_bytes_fail_current_pin) ... ok\ntest_thermal_token_location_and_other_flags_rejected (__main__.CurrentDependencyPins.test_thermal_token_location_and_other_flags_rejected) ... ok\ntest_ticket_bytes_missing_duplicate_and_changed_fail_closed (__main__.CurrentDependencyPins.test_ticket_bytes_missing_duplicate_and_changed_fail_closed) ... ok\ntest_ticket_gate_shape_checked_independently_of_current_hash (__main__.CurrentDependencyPins.test_ticket_gate_shape_checked_independently_of_current_hash) ... ok\ntest_ticket_only_source_rejected_as_current (__main__.CurrentDependencyPins.test_ticket_only_source_rejected_as_current) ... ok\ntest_ticket_prefix_checked_without_sweep_full_hash (__main__.CurrentDependencyPins.test_ticket_prefix_checked_without_sweep_full_hash) ... ok\ntest_transition_cannot_be_applied_to_another_path (__main__.CurrentDependencyPins.test_transition_cannot_be_applied_to_another_path) ... ok\ntest_transition_shape_checked_independently_of_current_hash (__main__.CurrentDependencyPins.test_transition_shape_checked_independently_of_current_hash) ... ok\ntest_unrelated_pin_passes_and_mismatch_fails (__main__.CurrentDependencyPins.test_unrelated_pin_passes_and_mismatch_fails) ... ok\ntest_unsafe_or_noncanonical_paths_fail (__main__.CurrentDependencyPins.test_unsafe_or_noncanonical_paths_fail) ... ok\n\n----------------------------------------------------------------------\nRan 48 tests in 0.066s\n\nOK\n"
+    },
+    {
+      "name": "a13-controls",
+      "mode": "optimized",
+      "command": [
+        "<python-with-capstone>",
+        "-O",
+        "-B",
+        "integration/tests/test_uart_posix_historical_135.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "99baec01302951f16f0948e346ada634a8dd1c19de0cdb33cd863678e7aa329f",
+      "log": "logs/a13-controls-optimized.log",
+      "log_sha256": "c0f552ca8d9cd73d3b6a7733e1fac2eae72c59239bff7c2dfbd9bb6eb3557888",
+      "output": "test_all_mixed_old_constructor_reset_ticket_sweep_and_address_subsets (__main__.HistoricalChanges.test_all_mixed_old_constructor_reset_ticket_sweep_and_address_subsets) ... ok\ntest_all_prior_subsets_and_orders_keep_exact_acceptance (__main__.HistoricalChanges.test_all_prior_subsets_and_orders_keep_exact_acceptance) ... ok\ntest_current_address_group_matches_files_and_modes (__main__.HistoricalChanges.test_current_address_group_matches_files_and_modes) ... ok\ntest_duplicate_extra_and_malformed_records_fail (__main__.HistoricalChanges.test_duplicate_extra_and_malformed_records_fail) ... ok\ntest_every_address_pair_reordering_fails (__main__.HistoricalChanges.test_every_address_pair_reordering_fails) ... ok\ntest_every_constructor_pair_reordering_fails (__main__.HistoricalChanges.test_every_constructor_pair_reordering_fails) ... ok\ntest_every_record_field_is_bound (__main__.HistoricalChanges.test_every_record_field_is_bound) ... ok\ntest_every_reset_pair_reordering_fails (__main__.HistoricalChanges.test_every_reset_pair_reordering_fails) ... ok\ntest_every_sweep_pair_reordering_fails (__main__.HistoricalChanges.test_every_sweep_pair_reordering_fails) ... ok\ntest_every_ticket_pair_reordering_fails (__main__.HistoricalChanges.test_every_ticket_pair_reordering_fails) ... ok\ntest_exact_eleven_states_only (__main__.HistoricalChanges.test_exact_eleven_states_only) ... ok\ntest_only_complete_address_group_is_added_to_prior_ten_states (__main__.HistoricalChanges.test_only_complete_address_group_is_added_to_prior_ten_states) ... ok\ntest_only_complete_reset_group_was_added_to_prior_seven_states (__main__.HistoricalChanges.test_only_complete_reset_group_was_added_to_prior_seven_states) ... ok\ntest_only_complete_sweep_group_is_added_to_prior_nine_states (__main__.HistoricalChanges.test_only_complete_sweep_group_is_added_to_prior_nine_states) ... ok\ntest_only_complete_ticket_group_is_added_to_prior_eight_states (__main__.HistoricalChanges.test_only_complete_ticket_group_is_added_to_prior_eight_states) ... ok\ntest_prior_constructor_state_remains_an_exact_historical_witness (__main__.HistoricalChanges.test_prior_constructor_state_remains_an_exact_historical_witness) ... ok\ntest_prior_exact_states_retain_accepted_shell_witnesses (__main__.HistoricalChanges.test_prior_exact_states_retain_accepted_shell_witnesses) ... ok\ntest_prior_reset_state_remains_an_exact_historical_witness (__main__.HistoricalChanges.test_prior_reset_state_remains_an_exact_historical_witness) ... ok\ntest_prior_sweep_state_remains_an_exact_historical_witness (__main__.HistoricalChanges.test_prior_sweep_state_remains_an_exact_historical_witness) ... ok\ntest_prior_ticket_state_remains_an_exact_historical_witness (__main__.HistoricalChanges.test_prior_ticket_state_remains_an_exact_historical_witness) ... ok\n\n----------------------------------------------------------------------\nRan 20 tests in 0.788s\n\nOK\n"
+    },
+    {
+      "name": "l09-controls",
+      "mode": "optimized",
+      "command": [
+        "<python-with-capstone>",
+        "-O",
+        "-B",
+        "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/common-read-register/tests/test_evidence.py",
+        "--root",
+        "."
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "da2a6ab7d841722790395178b3df9675428d950f66fb7455c659b35695e3bf66",
+      "log": "logs/l09-controls-optimized.log",
+      "log_sha256": "1424ffbf470a185e46c929ba59197f9c119d54e909bc61c110ca915cb289abfe",
+      "output": "test_active_dependency_receipt_hash_cannot_be_replaced (__main__.EvidenceControls.test_active_dependency_receipt_hash_cannot_be_replaced) ... ok\ntest_added_raw_metadata_is_rejected (__main__.EvidenceControls.test_added_raw_metadata_is_rejected) ... ok\ntest_address_full_identity_predicates_are_independent (__main__.EvidenceControls.test_address_full_identity_predicates_are_independent) ... ok\ntest_address_gate_shape_checked_without_full_hash (__main__.EvidenceControls.test_address_gate_shape_checked_without_full_hash) ... ok\ntest_address_semantics_are_bound_by_current_source_identity (__main__.EvidenceControls.test_address_semantics_are_bound_by_current_source_identity) ... ok\ntest_all_17_actual_dependencies_match (__main__.EvidenceControls.test_all_17_actual_dependencies_match) ... ok\ntest_arm_branch_address_arithmetic (__main__.EvidenceControls.test_arm_branch_address_arithmetic) ... ok\ntest_assembly_is_re_rendered (__main__.EvidenceControls.test_assembly_is_re_rendered) ... ok\ntest_base_provenance_receipt_is_anchored (__main__.EvidenceControls.test_base_provenance_receipt_is_anchored) ... ok\ntest_branch_target_metadata_rejected (__main__.EvidenceControls.test_branch_target_metadata_rejected) ... ok\ntest_code_data_boundary_is_pinned (__main__.EvidenceControls.test_code_data_boundary_is_pinned) ... ok\ntest_complete_self_contained_snapshot (__main__.EvidenceControls.test_complete_self_contained_snapshot) ... ok\ntest_crc_bit_count_is_32 (__main__.EvidenceControls.test_crc_bit_count_is_32) ... ok\ntest_crc_final_return_is_included (__main__.EvidenceControls.test_crc_final_return_is_included) ... ok\ntest_crc_recurrence_word_is_pinned (__main__.EvidenceControls.test_crc_recurrence_word_is_pinned) ... ok\ntest_crc_source_same_length_mutation_rejected (__main__.EvidenceControls.test_crc_source_same_length_mutation_rejected) ... ok\ntest_current_index_load_offset (__main__.EvidenceControls.test_current_index_load_offset) ... ok\ntest_data_is_not_counted_as_code (__main__.EvidenceControls.test_data_is_not_counted_as_code) ... ok\ntest_dead_duplicate_is_preserved (__main__.EvidenceControls.test_dead_duplicate_is_preserved) ... ok\ntest_encoder_source_modification_rejected (__main__.EvidenceControls.test_encoder_source_modification_rejected) ... ok\ntest_every_other_active_dependency_remains_a_full_file_pin (__main__.EvidenceControls.test_every_other_active_dependency_remains_a_full_file_pin) ... ok\ntest_exact_address_transition_retains_sweep_witness (__main__.EvidenceControls.test_exact_address_transition_retains_sweep_witness) ... ok\ntest_exact_reset_transition_retains_constructor_receipt (__main__.EvidenceControls.test_exact_reset_transition_retains_constructor_receipt) ... ok\ntest_exact_sweep_transition_retains_ticket_witness (__main__.EvidenceControls.test_exact_sweep_transition_retains_ticket_witness) ... ok\ntest_exact_ticket_transition_retains_reset_witness (__main__.EvidenceControls.test_exact_ticket_transition_retains_reset_witness) ... ok\ntest_fixed_pins_cannot_be_replaced_by_consistent_metadata (__main__.EvidenceControls.test_fixed_pins_cannot_be_replaced_by_consistent_metadata) ... ok\ntest_get_status_format_must_not_be_renamed (__main__.EvidenceControls.test_get_status_format_must_not_be_renamed) ... ok\ntest_got_current_storage_word_rejected (__main__.EvidenceControls.test_got_current_storage_word_rejected) ... ok\ntest_initializer_key_instruction_rejected (__main__.EvidenceControls.test_initializer_key_instruction_rejected) ... ok\ntest_initializer_length_instruction_rejected (__main__.EvidenceControls.test_initializer_length_instruction_rejected) ... ok\ntest_initializer_pointer_rejected (__main__.EvidenceControls.test_initializer_pointer_rejected) ... ok\ntest_initializer_registration_slot_rejected (__main__.EvidenceControls.test_initializer_registration_slot_rejected) ... ok\ntest_instruction_count_is_pinned (__main__.EvidenceControls.test_instruction_count_is_pinned) ... ok\ntest_literal_edge_target_rejected (__main__.EvidenceControls.test_literal_edge_target_rejected) ... ok\ntest_literal_pool_is_pinned (__main__.EvidenceControls.test_literal_pool_is_pinned) ... ok\ntest_literal_use_register_rejected (__main__.EvidenceControls.test_literal_use_register_rejected) ... ok\ntest_logger_line_is_103 (__main__.EvidenceControls.test_logger_line_is_103) ... ok\ntest_minus_one_return_cannot_be_changed_to_zero (__main__.EvidenceControls.test_minus_one_return_cannot_be_changed_to_zero) ... ok\ntest_missing_branch_metadata_rejected (__main__.EvidenceControls.test_missing_branch_metadata_rejected) ... ok\ntest_old_plain_hwscan_literal_rejected (__main__.EvidenceControls.test_old_plain_hwscan_literal_rejected) ... ok\ntest_optimized_python_rejects_corruption (__main__.EvidenceControls.test_optimized_python_rejects_corruption) ... ok\ntest_optional_address_is_word_load_not_byte_load (__main__.EvidenceControls.test_optional_address_is_word_load_not_byte_load) ... ok\ntest_optional_original_mode_rejects_fake_elf (__main__.EvidenceControls.test_optional_original_mode_rejects_fake_elf) ... ok\ntest_original_execution_claim_rejected (__main__.EvidenceControls.test_original_execution_claim_rejected) ... ok\ntest_packet_broadcast_bit_zero_word (__main__.EvidenceControls.test_packet_broadcast_bit_zero_word) ... ok\ntest_parity_guard_bit_is_pinned (__main__.EvidenceControls.test_parity_guard_bit_is_pinned) ... ok\ntest_register_store_byte_offset (__main__.EvidenceControls.test_register_store_byte_offset) ... ok\ntest_research_index_edit_is_allowed_by_active_pins (__main__.EvidenceControls.test_research_index_edit_is_allowed_by_active_pins) ... ok\ntest_reset_full_identity_predicates_are_independent (__main__.EvidenceControls.test_reset_full_identity_predicates_are_independent) ... ok\ntest_reset_gate_shape_is_checked_without_full_source_hash (__main__.EvidenceControls.test_reset_gate_shape_is_checked_without_full_source_hash) ... ok\ntest_reset_prefix_checked_without_ticket_full_hash (__main__.EvidenceControls.test_reset_prefix_checked_without_ticket_full_hash) ... ok\ntest_reset_preserved_prefix_is_checked_without_full_source_hash (__main__.EvidenceControls.test_reset_preserved_prefix_is_checked_without_full_source_hash) ... ok\ntest_reset_source_rejects_old_constructor_and_nonce_sources (__main__.EvidenceControls.test_reset_source_rejects_old_constructor_and_nonce_sources) ... ok\ntest_reset_source_rejects_prefix_suffix_truncation_and_extra_bytes (__main__.EvidenceControls.test_reset_source_rejects_prefix_suffix_truncation_and_extra_bytes) ... ok\ntest_reset_transition_is_bound_to_exact_original_path_and_identity (__main__.EvidenceControls.test_reset_transition_is_bound_to_exact_original_path_and_identity) ... ok\ntest_section_name_metadata_rejected (__main__.EvidenceControls.test_section_name_metadata_rejected) ... ok\ntest_send_length_is_five (__main__.EvidenceControls.test_send_length_is_five) ... ok\ntest_source_image_hash_is_immutable (__main__.EvidenceControls.test_source_image_hash_is_immutable) ... ok\ntest_source_image_size_is_immutable (__main__.EvidenceControls.test_source_image_size_is_immutable) ... ok\ntest_static_pin_manifest_is_anchored (__main__.EvidenceControls.test_static_pin_manifest_is_anchored) ... ok\ntest_string_length_includes_nul (__main__.EvidenceControls.test_string_length_includes_nul) ... ok\ntest_sweep_full_identity_predicates_are_independent (__main__.EvidenceControls.test_sweep_full_identity_predicates_are_independent) ... ok\ntest_sweep_gate_shape_checked_without_full_hash (__main__.EvidenceControls.test_sweep_gate_shape_checked_without_full_hash) ... ok\ntest_sweep_prefix_checked_without_address_full_hash (__main__.EvidenceControls.test_sweep_prefix_checked_without_address_full_hash) ... ok\ntest_sweep_semantics_are_bound_by_current_source_identity (__main__.EvidenceControls.test_sweep_semantics_are_bound_by_current_source_identity) ... ok\ntest_ticket_full_identity_predicates_are_independent (__main__.EvidenceControls.test_ticket_full_identity_predicates_are_independent) ... ok\ntest_ticket_gate_shape_checked_without_full_hash (__main__.EvidenceControls.test_ticket_gate_shape_checked_without_full_hash) ... ok\ntest_ticket_prefix_checked_without_sweep_full_hash (__main__.EvidenceControls.test_ticket_prefix_checked_without_sweep_full_hash) ... ok\ntest_ticket_semantics_are_bound_by_current_source_identity (__main__.EvidenceControls.test_ticket_semantics_are_bound_by_current_source_identity) ... ok\ntest_transport_source_modification_rejected (__main__.EvidenceControls.test_transport_source_modification_rejected) ... ok\ntest_unwind_boundary_rejected (__main__.EvidenceControls.test_unwind_boundary_rejected) ... ok\ntest_wrong_diagnostic_path_rejected (__main__.EvidenceControls.test_wrong_diagnostic_path_rejected) ... ok\ntest_xor_key_is_immutable (__main__.EvidenceControls.test_xor_key_is_immutable) ... ok\n\n----------------------------------------------------------------------\nRan 73 tests in 1.021s\n\nOK\n"
+    },
+    {
+      "name": "l09-static",
+      "mode": "optimized",
+      "command": [
+        "<python-with-capstone>",
+        "-O",
+        "-B",
+        "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/common-read-register/verify_evidence.py",
+        "--root",
+        "."
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "82d8d7a583f9e2098b716a675100f7dccbf69f69bde4b704f1abeb713bfc3e45",
+      "log": "logs/l09-static-optimized.log",
+      "log_sha256": "508bc61ebaeb51fc29aa8e1d6a373e99672bd3637848c7cfd8a43c3c4dcfbf56",
+      "output": "{\n  \"active_dependencies_checked\": 17,\n  \"active_dependency_total\": 17,\n  \"base_commit\": \"98ad426482947cf29beed1371a63136f8aac2b0c\",\n  \"base_provenance_files\": 18,\n  \"base_tree\": \"70d1e1b0e8e3786db2b843503dabf90ad486c6d1\",\n  \"decoded_instruction_counts\": {\n    \"cgminer\": {\n      \"body\": 82,\n      \"crc_body\": 76,\n      \"string_initializer_body\": 98\n    },\n    \"hwscan\": {\n      \"body\": 48,\n      \"crc_body\": 61\n    }\n  },\n  \"evidence_mode\": \"static fixed snapshot; no vendor execution\",\n  \"hardware_or_runtime_parity_proven\": false,\n  \"instruction_interpreter_used\": false,\n  \"original_executed\": false,\n  \"original_image_selections_checked\": {},\n  \"parity_identities_checked\": 7,\n  \"research_index_active_pin\": false,\n  \"status\": \"PASS\"\n}\n"
+    },
+    {
+      "name": "l12-controls",
+      "mode": "optimized",
+      "command": [
+        "<python-with-capstone>",
+        "-O",
+        "-B",
+        "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-sweep-clock/tests/test_evidence.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "c6fa44134622e85ad326bc962e458718a630e3104f1f71da7dbbc2c799eaf4db",
+      "log": "logs/l12-controls-optimized.log",
+      "log_sha256": "8d94d949bec45d952c03910d4d5912ad9da29f47cb3948b1cfba3b3a75731f95",
+      "output": "test_address_gate_shape_checked_without_full_hash (__main__.EvidenceTests.test_address_gate_shape_checked_without_full_hash) ... ok\ntest_address_identity_components_and_all_prior_sources_rejected (__main__.EvidenceTests.test_address_identity_components_and_all_prior_sources_rejected) ... ok\ntest_address_semantics_truncation_and_extra_bytes_rejected (__main__.EvidenceTests.test_address_semantics_truncation_and_extra_bytes_rejected) ... ok\ntest_argument_mask_writer_status_and_late_index_bytes (__main__.EvidenceTests.test_argument_mask_writer_status_and_late_index_bytes) ... ok\ntest_body_pool_boundary_and_provenance (__main__.EvidenceTests.test_body_pool_boundary_and_provenance) ... ok\ntest_bound_l11_dependency_drift (__main__.EvidenceTests.test_bound_l11_dependency_drift) ... ok\ntest_caller_gate_arguments_failure_and_ordering (__main__.EvidenceTests.test_caller_gate_arguments_failure_and_ordering) ... ok\ntest_changed_metadata_cannot_reauthorize_its_own_pins (__main__.EvidenceTests.test_changed_metadata_cannot_reauthorize_its_own_pins) ... ok\ntest_current_address_transition_retains_frozen_l12_identity (__main__.EvidenceTests.test_current_address_transition_retains_frozen_l12_identity) ... ok\ntest_frozen_runtime_entry_cannot_be_relabelled (__main__.EvidenceTests.test_frozen_runtime_entry_cannot_be_relabelled) ... ok\ntest_frozen_runtime_source_drift (__main__.EvidenceTests.test_frozen_runtime_source_drift) ... ok\ntest_logger_literals_and_direct_initializer_count (__main__.EvidenceTests.test_logger_literals_and_direct_initializer_count) ... ok\ntest_optional_original_identity_rejection (__main__.EvidenceTests.test_optional_original_identity_rejection) ... ok\ntest_ordinary_parity_and_one_writer_contract (__main__.EvidenceTests.test_ordinary_parity_and_one_writer_contract) ... ok\ntest_preserved_sweep_bytes_checked_without_address_full_hash (__main__.EvidenceTests.test_preserved_sweep_bytes_checked_without_address_full_hash) ... ok\ntest_reviewed_annotations_qualifiers_and_json_schema (__main__.EvidenceTests.test_reviewed_annotations_qualifiers_and_json_schema) ... ok\ntest_reviewed_packet_without_original_files (__main__.EvidenceTests.test_reviewed_packet_without_original_files) ... ok\ntest_sweep_and_pulse_constructor_associations (__main__.EvidenceTests.test_sweep_and_pulse_constructor_associations) ... ok\ntest_sweep_identity_components_independent_of_matching_entry (__main__.EvidenceTests.test_sweep_identity_components_independent_of_matching_entry) ... ok\n\n----------------------------------------------------------------------\nRan 19 tests in 10.622s\n\nOK\n"
+    },
+    {
+      "name": "l12-static",
+      "mode": "optimized",
+      "command": [
+        "<python-with-capstone>",
+        "-O",
+        "-B",
+        "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-sweep-clock/verify_evidence.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "07f8fae23bb4daa597d7ea2eacf6a6bbc689d9ed92b0d74e9e1f9090501a56fa",
+      "log": "logs/l12-static-optimized.log",
+      "log_sha256": "2d859844ad8fe7987d596a8953ecb598882ce1a31e8857181f75b8987248f8d0",
+      "output": "{\"cgminer_startup_caller_witnessed\": true, \"firmware_executed\": false, \"full_coordinator_claimed\": false, \"hwscan_startup_caller_claimed\": false, \"instruction_interpreter_used\": false, \"l11_dependency_files_verified\": 3, \"limits\": \"Pinned static review and immutable L11 caller dependency; manual lifetime/parity deductions; no automatic C equivalence, native ABI or hardware acceptance\", \"local_regions\": 24, \"local_witness_bytes\": 1756, \"logger_strings\": 4, \"method_body_identity_claimed\": false, \"method_code_bytes\": {\"cgminer\": 264, \"hwscan\": 144}, \"method_pool_bytes\": {\"cgminer\": 24, \"hwscan\": 16}, \"ordinary_writer_calls\": 1, \"original_files_compared\": [], \"runtime_source_identities_verified\": 2, \"static_witness_verified\": true}\n"
+    },
+    {
+      "name": "l10-partition",
+      "mode": "optimized",
+      "command": [
+        "<python-with-capstone>",
+        "-O",
+        "-B",
+        "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-reset/tests/test_partition.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "dce3f6899d59dce9684790d2b5bdc94fdb614c747742b51d7d736190e39df8f1",
+      "log": "logs/l10-partition-optimized.log",
+      "log_sha256": "cdf26cef64b25b7815bd11565b7ee0bab396c1f9c3e51a93a813b7014e9be063",
+      "output": "test_all_27_historical_mutants_and_exact_counts (__main__.PartitionTests.test_all_27_historical_mutants_and_exact_counts) ... ok\ntest_boundary_shift_is_rejected_without_hashes (__main__.PartitionTests.test_boundary_shift_is_rejected_without_hashes) ... ok\ntest_changed_constructor_prefix (__main__.PartitionTests.test_changed_constructor_prefix) ... ok\ntest_changed_reset_span (__main__.PartitionTests.test_changed_reset_span) ... ok\ntest_constructor_blob_is_independent_of_sha256 (__main__.PartitionTests.test_constructor_blob_is_independent_of_sha256) ... ok\ntest_constructor_sha256_is_independent_of_blob (__main__.PartitionTests.test_constructor_sha256_is_independent_of_blob) ... ok\ntest_exact_anchor_count_failure_is_retained (__main__.PartitionTests.test_exact_anchor_count_failure_is_retained) ... ok\ntest_exact_roundtrip_and_boundary (__main__.PartitionTests.test_exact_roundtrip_and_boundary) ... ok\ntest_historical_transformations_and_failure_policy_are_unchanged (__main__.PartitionTests.test_historical_transformations_and_failure_policy_are_unchanged) ... ok\ntest_independent_historical_identities (__main__.PartitionTests.test_independent_historical_identities) ... ok\ntest_opaque_later_suffix_can_repeat_every_anchor (__main__.PartitionTests.test_opaque_later_suffix_can_repeat_every_anchor) ... ok\ntest_reset_blob_is_independent_of_sha256 (__main__.PartitionTests.test_reset_blob_is_independent_of_sha256) ... ok\ntest_reset_gate_shape_without_hashes (__main__.PartitionTests.test_reset_gate_shape_without_hashes) ... ok\ntest_reset_sha256_is_independent_of_blob (__main__.PartitionTests.test_reset_sha256_is_independent_of_blob) ... ok\ntest_truncated_historical_spans (__main__.PartitionTests.test_truncated_historical_spans) ... ok\n\n----------------------------------------------------------------------\nRan 15 tests in 0.017s\n\nOK\n"
+    },
+    {
+      "name": "bm1368_frequency-static",
+      "mode": "optimized",
+      "command": [
+        "<python-with-capstone>",
+        "-O",
+        "-B",
+        "integration/tests/check_bm1368_frequency_evidence_135.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "88c46df56b81fa1170ae9634ff2dec28048c70f26f33440595829129382a26db",
+      "log": "logs/bm1368_frequency-static-optimized.log",
+      "log_sha256": "ed145f3c93a95d3b5ee270a5b7fe6c990a8692f866a6d07f4459a97141251768",
+      "output": "BM1368_FREQUENCY135_EVIDENCE_PASS\n"
+    },
+    {
+      "name": "bm1368_register_write-static",
+      "mode": "optimized",
+      "command": [
+        "<python-with-capstone>",
+        "-O",
+        "-B",
+        "integration/tests/check_bm1368_register_write_evidence_135.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "33d0a51d420d5ecf82d33adf5556c3db0b25633a78d29b67a00682fb05aade1e",
+      "log": "logs/bm1368_register_write-static-optimized.log",
+      "log_sha256": "3b8ce7f5d682c5aa99f95153f23c3f1184103e39470f4bc642d3930f5afddd56",
+      "output": "BM1368_REGISTER135_EVIDENCE_PASS\n"
+    },
+    {
+      "name": "bm1368_pulse_width-static",
+      "mode": "optimized",
+      "command": [
+        "<python-with-capstone>",
+        "-O",
+        "-B",
+        "integration/tests/check_bm1368_pulse_width_evidence_135.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "573c7e8093fc4364c976484a3360fe94a9a1b292b0f4e04e2f8fd05ef51a0853",
+      "log": "logs/bm1368_pulse_width-static-optimized.log",
+      "log_sha256": "0d80d251b7731619f518ae9f2747ea60a361977333172b9306628324cb867936",
+      "output": "BM1368_PULSE135_EVIDENCE_PASS\n"
+    },
+    {
+      "name": "bm1368_reply_key-static",
+      "mode": "optimized",
+      "command": [
+        "<python-with-capstone>",
+        "-O",
+        "-B",
+        "integration/tests/check_bm1368_reply_key_evidence_135.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "aa120a0afe5d8dd6ae3f787a76250b7da10ffcfe06ea73cdd0b7f8e75eb757aa",
+      "log": "logs/bm1368_reply_key-static-optimized.log",
+      "log_sha256": "4a73223a181d99014d86cd0db645532a4f872d80a26f0be6440d917f583db6c6",
+      "output": "BM1368_REPLY_KEY135_EVIDENCE_PASS\n"
+    },
+    {
+      "name": "chain_reset_cleanup-static",
+      "mode": "optimized",
+      "command": [
+        "<python-with-capstone>",
+        "-O",
+        "-B",
+        "integration/tests/check_chain_reset_cleanup_evidence_135.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "71bb01fd7d1b53bf38c84e34649acc8160954c2721e44437e1dac74ef1605688",
+      "log": "logs/chain_reset_cleanup-static-optimized.log",
+      "log_sha256": "58d91d3f96b39fe2f0fceb7449b164d28cea9b6847caf92fc5688dfb5bef8747",
+      "output": "CHAIN_RESET_CLEANUP135_EVIDENCE_PASS\n"
+    },
+    {
+      "name": "chip_sensor_check-static",
+      "mode": "optimized",
+      "command": [
+        "<python-with-capstone>",
+        "-O",
+        "-B",
+        "integration/tests/check_chip_sensor_check_evidence_135.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "5b2aaaa96309c36eb6b1e8030bf2a5e887c83e3bf44f6150cd4e8ea259857d17",
+      "log": "logs/chip_sensor_check-static-optimized.log",
+      "log_sha256": "9eb1c70a86b95ca85efcda53cb20831247ed94bee7b9dfaac93a27399fc2c012",
+      "output": "CHIP_SENSOR_CHECK135_EVIDENCE_PASS ranges=4 unchanged_files=22\n"
+    },
+    {
+      "name": "l08-static",
+      "mode": "optimized",
+      "command": [
+        "<python-with-capstone>",
+        "-O",
+        "-B",
+        "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-init/verify_evidence.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "f6a47fa51b5eae83e84b67c5728d21e39540a18181de7995d3e24a5cd2e58b8d",
+      "log": "logs/l08-static-optimized.log",
+      "log_sha256": "2b7f5c2b12bab72c89857295302b758ab2b674d42f13bde23d38774da649f318",
+      "output": "BM1368_INIT_STATIC_PASS [{\"code_bytes\": 616, \"got_bytes\": 216, \"literal_bytes\": 216, \"methods\": 54, \"original_source_checked\": false, \"source\": \"cgminer\"}, {\"code_bytes\": 616, \"got_bytes\": 216, \"literal_bytes\": 216, \"methods\": 54, \"original_source_checked\": false, \"source\": \"hwscan\"}]\n"
+    },
+    {
+      "name": "l08-controls",
+      "mode": "optimized",
+      "command": [
+        "<python-with-capstone>",
+        "-O",
+        "-B",
+        "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-init/tests/test_evidence.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "88bfdde4e7a32cf2197f189da72c1172d98fe3a440823a1f65394eb675a96af0",
+      "log": "logs/l08-controls-optimized.log",
+      "log_sha256": "30e0b5770ff04a5c7e00d680f9712e03a3be66a404ea4f54cbb599d72211fc3f",
+      "output": "....................\n----------------------------------------------------------------------\nRan 20 tests in 0.055s\n\nOK\n"
+    },
+    {
+      "name": "l10-static",
+      "mode": "optimized",
+      "command": [
+        "<python-with-capstone>",
+        "-O",
+        "-B",
+        "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-reset/verify_evidence.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "f6f13d9f68e58562da88cd4697294e7a8278defe70ff67e164e83459d964162c",
+      "log": "logs/l10-static-optimized.log",
+      "log_sha256": "aa0a263ae952f46ebe92a37fa396bbfb432025e6ce13377b684f5c2571ae5a87",
+      "output": "{\"firmware_executed\": false, \"instruction_interpreter_used\": false, \"limits\": \"ordinary callback contract; semantic inference is static review, not hardware acceptance or automatic C equivalence\", \"ordinary_sites_per_elf\": 24, \"original_files_compared\": [], \"static_witness_verified\": true, \"unreachable_cgminer_sites\": 4}\n"
+    },
+    {
+      "name": "l10-controls",
+      "mode": "optimized",
+      "command": [
+        "<python-with-capstone>",
+        "-O",
+        "-B",
+        "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-reset/tests/test_evidence.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "0cfcaaf59188c95dc2add76a6505d8585f224356088f90ce89efac695a6cd876",
+      "log": "logs/l10-controls-optimized.log",
+      "log_sha256": "5ba94b155def9e666893bc09b6b6edbceac1282aa27fd542e9dfa6fbc4fb3277",
+      "output": "test_branch_target_and_operand_annotation (__main__.EvidenceTests.test_branch_target_and_operand_annotation) ... ok\ntest_call_target_and_inventory (__main__.EvidenceTests.test_call_target_and_inventory) ... ok\ntest_canonical_witness (__main__.EvidenceTests.test_canonical_witness) ... ok\ntest_changed_pins_cannot_reauthorize_tamper (__main__.EvidenceTests.test_changed_pins_cannot_reauthorize_tamper) ... ok\ntest_code_and_own_digest_changed (__main__.EvidenceTests.test_code_and_own_digest_changed) ... ok\ntest_code_changed_without_digest (__main__.EvidenceTests.test_code_changed_without_digest) ... ok\ntest_duplicate_json_key (__main__.EvidenceTests.test_duplicate_json_key) ... ok\ntest_hex_schema (__main__.EvidenceTests.test_hex_schema) ... ok\ntest_logs_field_reload_and_return_metadata (__main__.EvidenceTests.test_logs_field_reload_and_return_metadata) ... ok\ntest_optional_original_size_and_hash (__main__.EvidenceTests.test_optional_original_size_and_hash) ... ok\ntest_parity_metadata_and_unreachable_sites (__main__.EvidenceTests.test_parity_metadata_and_unreachable_sites) ... ok\ntest_proof_masks_and_zero_output_metadata (__main__.EvidenceTests.test_proof_masks_and_zero_output_metadata) ... ok\ntest_range_inventory (__main__.EvidenceTests.test_range_inventory) ... ok\ntest_selected_semantic_words (__main__.EvidenceTests.test_selected_semantic_words) ... ok\ntest_slot_offset_and_got (__main__.EvidenceTests.test_slot_offset_and_got) ... ok\ntest_strict_schema (__main__.EvidenceTests.test_strict_schema) ... ok\ntest_string_initializer_and_data (__main__.EvidenceTests.test_string_initializer_and_data) ... ok\ntest_string_key_length_and_text (__main__.EvidenceTests.test_string_key_length_and_text) ... ok\ntest_whole_elf_provenance (__main__.EvidenceTests.test_whole_elf_provenance) ... ok\ntest_wrong_range_extent_and_name (__main__.EvidenceTests.test_wrong_range_extent_and_name) ... ok\n\n----------------------------------------------------------------------\nRan 20 tests in 9.737s\n\nOK\n"
+    },
+    {
+      "name": "l11-static",
+      "mode": "optimized",
+      "command": [
+        "<python-with-capstone>",
+        "-O",
+        "-B",
+        "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-ticket-mask/verify_evidence.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "96782445fba9faca08e41ae53c5165fab8b6db851650f5dd27185deb508a2f59",
+      "log": "logs/l11-static-optimized.log",
+      "log_sha256": "8fbf93a0ee0b1d17e85052b53e26b4c4d9b00117bb4080f7346345d55083723d",
+      "output": "{\"cgminer_startup_caller_witnessed\": true, \"firmware_executed\": false, \"hwscan_startup_caller_claimed\": false, \"instruction_interpreter_used\": false, \"limits\": \"pinned static review with L07 selector dependency; no complete coordinator, native ABI or hardware acceptance\", \"logger_strings\": 4, \"method_code_bytes_per_elf\": 208, \"method_literal_bytes_per_elf\": 16, \"normalized_method_instructions\": 52, \"original_files_compared\": [], \"static_witness_verified\": true}\n"
+    },
+    {
+      "name": "l11-controls",
+      "mode": "optimized",
+      "command": [
+        "<python-with-capstone>",
+        "-O",
+        "-B",
+        "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-ticket-mask/tests/test_evidence.py"
+      ],
+      "cwd": "<repo>",
+      "exit_code": 0,
+      "entrypoint_sha256": "416ab257a9d59539ffaa8675baca5905528e8458abf41c09d0dc81c64fe7e60b",
+      "log": "logs/l11-controls-optimized.log",
+      "log_sha256": "8a4ead3f892a1c6f4d7ff1a25fa80580d59e5c0cc7dc9e06c8d932c96549d639",
+      "output": "test_actual_caller_owner_and_read_lifetimes (__main__.EvidenceTests.test_actual_caller_owner_and_read_lifetimes) ... ok\ntest_constructor_slot_and_got (__main__.EvidenceTests.test_constructor_slot_and_got) ... ok\ntest_exact_body_pool_and_input_boundaries (__main__.EvidenceTests.test_exact_body_pool_and_input_boundaries) ... ok\ntest_four_logger_strings_and_direct_initializer (__main__.EvidenceTests.test_four_logger_strings_and_direct_initializer) ... ok\ntest_optional_original_identity_refusal (__main__.EvidenceTests.test_optional_original_identity_refusal) ... ok\ntest_pins_cannot_reauthorize_changed_metadata (__main__.EvidenceTests.test_pins_cannot_reauthorize_changed_metadata) ... ok\ntest_proof_qualifiers_edges_and_operand_metadata (__main__.EvidenceTests.test_proof_qualifiers_edges_and_operand_metadata) ... ok\ntest_reviewed_witness_without_originals (__main__.EvidenceTests.test_reviewed_witness_without_originals) ... ok\ntest_strict_schema_and_json (__main__.EvidenceTests.test_strict_schema_and_json) ... ok\ntest_writer_arguments_branch_and_fresh_index_words (__main__.EvidenceTests.test_writer_arguments_branch_and_fresh_index_words) ... ok\n\n----------------------------------------------------------------------\nRan 10 tests in 8.216s\n\nOK\n"
+    }
+  ],
+  "passed": true
+}

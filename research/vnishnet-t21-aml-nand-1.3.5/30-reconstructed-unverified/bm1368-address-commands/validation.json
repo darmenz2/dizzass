@@ -1,0 +1,266 @@
+{
+  "schema": 1,
+  "kind": "authored-host-and-static-validation; no original execution",
+  "base_commit": "5b7ee62ef22b6eaa9adf8c7b86e99273dc917f76",
+  "base_tree": "da72d5da5a659a2376012ce4cce2f6c3dbdaa100",
+  "runtime": {
+    "source_prefix_preserved": 9245,
+    "new_span_bytes": 2035,
+    "historical_source_end": 11280,
+    "feature_gate": "VN135_BM1368_ADDRESS_COMMANDS_135",
+    "original_wrappers": 2
+  },
+  "host": {
+    "compiler": "GCC 14.2.0",
+    "scenario_count_each_run": 315,
+    "checks_each_run": 4318,
+    "wire_bytes": 256,
+    "high_word_aliases": 8,
+    "lower_composition_calls": 22,
+    "production_wrapper_invocations": 310,
+    "address_command_invocations": 308,
+    "common_read_register_invocations": 2,
+    "ordinary": true,
+    "asan_ubsan": true,
+    "instrumented_production_translation_units": 7,
+    "instrumented_fixture_translation_units": 1,
+    "semantic_controls": 34,
+    "semantic_control_result": "all compile and exit 1 with ADDRESS_COMMANDS_FAIL",
+    "count_scope": "315 focused scenarios include six CRC golden checks and one two-invocation callback replacement; not equivalence coverage"
+  },
+  "static": {
+    "named_test_categories": 13,
+    "normal_python": true,
+    "optimized_python": true,
+    "both_full_original_identity_and_data_comparisons": true,
+    "scope": "fixed bounded data/encoding/reference checks and manually reviewed ordinary control flow; no original instruction execution"
+  },
+  "regressions": [
+    {
+      "name": "constructor-nonce",
+      "command": [
+        "make",
+        "-C",
+        "<repo>/research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-init",
+        "CC=cc",
+        "PYTHON=<python-with-capstone>",
+        "test",
+        "sanitize"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 8.904,
+      "chip1368_sha256": "91cfb6f3bb640bcf3519027243970bcb37aeeb0275f96b931dd17cab940540d2",
+      "log": "constructor-nonce.log",
+      "log_sha256": "fd51ee3e2a7a41637d1e500b26f56f8c8ac0c873f49c1ca75c6f42f6b5beb1c8"
+    },
+    {
+      "name": "reset",
+      "command": [
+        "make",
+        "-C",
+        "<repo>/research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-reset",
+        "CC=cc",
+        "PYTHON=<python-with-capstone>",
+        "test",
+        "sanitize"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 24.224,
+      "chip1368_sha256": "91cfb6f3bb640bcf3519027243970bcb37aeeb0275f96b931dd17cab940540d2",
+      "log": "reset.log",
+      "log_sha256": "60e77f0c4f0797422a9b3dd1c0dc1e6796667fd9c58f1cbfe46503d54dfa4a16"
+    },
+    {
+      "name": "ticket-mask",
+      "command": [
+        "make",
+        "-C",
+        "<repo>/research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-ticket-mask",
+        "CC=cc",
+        "PYTHON=<python-with-capstone>",
+        "test",
+        "sanitize"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 20.107,
+      "chip1368_sha256": "91cfb6f3bb640bcf3519027243970bcb37aeeb0275f96b931dd17cab940540d2",
+      "log": "ticket-mask.log",
+      "log_sha256": "4af83893c23ff00a2a1d9d6a9eb1049f75481e09e1dfa854a26d29a8a9c33ab3"
+    },
+    {
+      "name": "common-read-host",
+      "command": [
+        "make",
+        "-C",
+        "<repo>/research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/common-read-register",
+        "CC=cc",
+        "PYTHON=<python-with-capstone>",
+        "host",
+        "controls",
+        "sanitize"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 8.477,
+      "chip1368_sha256": "91cfb6f3bb640bcf3519027243970bcb37aeeb0275f96b931dd17cab940540d2",
+      "log": "common-read-host.log",
+      "log_sha256": "b3bf85a48a865713328bc5514dce5af8f7916c353d1e10d5ac25366081d424a8"
+    },
+    {
+      "name": "sweep-clock-host",
+      "command": [
+        "make",
+        "-C",
+        "<repo>/research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-sweep-clock",
+        "CC=cc",
+        "PYTHON=<python-with-capstone>",
+        "host",
+        "controls",
+        "sanitize"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.438,
+      "chip1368_sha256": "91cfb6f3bb640bcf3519027243970bcb37aeeb0275f96b931dd17cab940540d2",
+      "log": "sweep-clock-host.log",
+      "log_sha256": "cb1e5e957da04bc6462b65c5c96e3d1b0a5dc36a71fc0cfd7cd377470c42429a"
+    }
+  ],
+  "compatibility": {
+    "successful_commands": 38,
+    "normal_and_optimized": true,
+    "historical_witnesses_preserved": true,
+    "frozen_input_files_checked": 205,
+    "preserved_prior_predicate_functions": 59,
+    "preserved_l10_l11_l12_mutants": 59,
+    "l08_limit": "existing constructor controls can change disabled suffix return statements; no byte-preservation claim for that older partition"
+  },
+  "setup_notes": [
+    "An initial compatibility-only L09 check used system Python without Capstone. The preserved log shows that setup failure. The existing Capstone venv then passed without source correction; only the final 38 successful commands are counted.",
+    "The host runner was rerun after adding receipts for three unchanged transitive headers so its final hash matches both records. No runtime or fixture correction was required."
+  ],
+  "limits": [
+    "Recording/refusing terminal callbacks only; no device or network I/O, real wait, firmware execution, interpreter, model/OOM probe or physical startup.",
+    "The continuing address sequence is a host fixture, not a translation of the entire coordinator, its dynamic count/delay/stride behavior or an original immediate readback.",
+    "ASan/UBSan covers the executed host paths and every fixture translation unit. Leak detection is disabled; no local Clang, native driver or hardware acceptance is claimed.",
+    "The existing CRC TU alone uses -Wno-sign-conversion in sanitizer builds; instrumentation is retained.",
+    "Local absolute paths in public receipts are replaced by stable labels. Source/object/output hashes retain the recorded values."
+  ],
+  "sources": [
+    {
+      "path": "libbitmain/src/chip/chip1368.c",
+      "bytes": 11280,
+      "sha256": "91cfb6f3bb640bcf3519027243970bcb37aeeb0275f96b931dd17cab940540d2"
+    },
+    {
+      "path": "integration/bm1368_address_commands_135.h",
+      "bytes": 3621,
+      "sha256": "f06b44fb4c4bd0bac18102be55db8b2ac13ee7c7e4ee60ce74508edc9fb8e00f"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-address-commands/tests/test_address_commands.c",
+      "bytes": 20579,
+      "sha256": "b2e12a30d2b69345ecd4b23f008396c320e4d94424b59e4a0fbbeedb0b73604a"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-address-commands/tests/run_host.py",
+      "bytes": 5179,
+      "sha256": "d0531eb1963075527a11359ddf4d5edc0112f8d453af8cb193e0f7e1fa714aee"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-address-commands/tests/negative_controls.py",
+      "bytes": 9438,
+      "sha256": "4fb0f4c73918a01cbf8da073455c4e47273e2fd21fb34a5182f4baf6408ab615"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-address-commands/verify_evidence.py",
+      "bytes": 26064,
+      "sha256": "3c54dbc51a341ba799b3520642836b0c127e4611a99f41e5d9a70dc32d6533ce"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-address-commands/tests/test_evidence.py",
+      "bytes": 6198,
+      "sha256": "c003677e9daf9da9befc8ba98a757102e9c4e5c5f1d4c6c461b91341ec113484"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-address-commands/static-witness.json",
+      "bytes": 157139,
+      "sha256": "ba3e88eac6852cd539ab16e4bd38790b91e776c8941dcba9d5d584b1c6bdd70b"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-address-commands/static-pins.json",
+      "bytes": 10534,
+      "sha256": "0a998d7ca8ced6672f45a7d501dd5ee7cc255fa6abd48092a8651172590340c2"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-address-commands/source-baseline.json",
+      "bytes": 6792,
+      "sha256": "93a1f1f7ce82a1735a5d518ee16278ffe62e81e47d89428f90f65edaa501e394"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-address-commands/Makefile",
+      "bytes": 508,
+      "sha256": "159a6790a912c0e609e760506e56282ea3032dde4c33d30591bc6849e4d7ee91"
+    },
+    {
+      "path": ".github/workflows/bm1368-address-commands-research.yml",
+      "bytes": 2408,
+      "sha256": "7ce0376dcf51fc1fee1e086406921511b1c54dd7fbbe309e31b03dbbdccd04ed"
+    }
+  ],
+  "logs": [
+    {
+      "path": "validation-logs/host-ordinary.json",
+      "bytes": 10363,
+      "sha256": "f1b9f1e1ec408b114b90749d5b300a071a1fdf23e1111f94e6310004f4320f92"
+    },
+    {
+      "path": "validation-logs/host-sanitized.json",
+      "bytes": 11432,
+      "sha256": "c7de02856402308df39d8507c1811d19a38e7cee986be9edaf70de31394ad243"
+    },
+    {
+      "path": "validation-logs/negative-controls.json",
+      "bytes": 55623,
+      "sha256": "0b58ec58eefcf983675ffe48863e0b5fae834ad51fdbe65e88d8e62484922019"
+    },
+    {
+      "path": "validation-logs/constructor-nonce.log",
+      "bytes": 8820,
+      "sha256": "317805ef6a232eb0581649219750858a620fae4e7b531bc09658478f7a5ad88c"
+    },
+    {
+      "path": "validation-logs/reset.log",
+      "bytes": 9178,
+      "sha256": "fddcc2f6d39847225b9d30fd5401521d673ff72dc8f819da085c9f2da3752ba7"
+    },
+    {
+      "path": "validation-logs/ticket-mask.log",
+      "bytes": 3881,
+      "sha256": "b3c756f4fa862d33837a5de220da9e66737699289847de2731cae49b6d883543"
+    },
+    {
+      "path": "validation-logs/common-read-host.log",
+      "bytes": 4259,
+      "sha256": "bd04e4f44c1191e868a31fd9aca897800f5144605b2e3cd88855c3f674a80b10"
+    },
+    {
+      "path": "validation-logs/sweep-clock-host.log",
+      "bytes": 755,
+      "sha256": "e1f563402676a15cb5b9ddd35d9492e7baf73566593468a9c11b51ce5e23af7f"
+    },
+    {
+      "path": "validation-logs/static-checks.json",
+      "bytes": 5492,
+      "sha256": "13d0434ef74f954df94ff404a10b87994f291990bc343d241c2a246ab9a15a3b"
+    },
+    {
+      "path": "validation-logs/compatibility-checks.json",
+      "bytes": 80531,
+      "sha256": "40312f9bbbfbabcd6d9d5be9002e2970b8ae2303ffc47d5735250ea54903bc37"
+    },
+    {
+      "path": "validation-logs/public-make.log",
+      "bytes": 4012,
+      "sha256": "1a9e8a56416e8ba5fdcb5b2fc81c0af0aac00f3d1f09617560dc4fc601bb204c"
+    }
+  ]
+}

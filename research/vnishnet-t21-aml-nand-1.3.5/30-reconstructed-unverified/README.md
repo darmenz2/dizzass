@@ -47,3 +47,12 @@ actual register-write composition and late-index failure diagnostic. The
 static caller extension proves entry flag and read lifetimes, and the focused
 host sequence demonstrates later pulse-width overwrite. This does not restore
 the full startup coordinator, native ABI or physical hardware behavior.
+
+## BM1368 startup address commands
+
+[INACTIVE and SET_ADDRESS](bm1368-address-commands/README.md) close the two
+command-wrapper dependencies in the proved inline addressing phase. They
+reuse the actual encoder/CRC/transport stack, preserving the sent address byte
+and the full address reloaded for failure diagnostics. The caller ignores
+their status values; the bounded host sequence preserves that distinction
+without claiming a complete startup coordinator or hardware acknowledgement.

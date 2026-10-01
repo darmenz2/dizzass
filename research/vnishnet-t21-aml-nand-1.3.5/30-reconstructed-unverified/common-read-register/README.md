@@ -37,17 +37,17 @@ checks 33 selected cgminer regions and 14 hwscan regions against full file hashe
 
 L10 kept the original source receipts, static pins and validation logs intact,
 and its 58-control validation remains a historical result. L11's 63-control
-validation is also historical. The current L12 checker still checks all 17
-active entries. For chip1368.c only, it requires the exact 9245-byte sweep
-source, recovers the exact 8350-byte L11 and 7519-byte L10 prefixes, validates
-all three separately gated appends, and applies the original receipt
+validation is also historical. L12's 68-test run remains a sweep snapshot. The current
+L13 checker still checks all 17 active entries. For chip1368.c only, it requires
+the exact 11280-byte address source, recovers the exact 9245-byte L12, 8350-byte
+L11 and 7519-byte L10 prefixes, validates all four separately gated appends, and applies the original receipt
 predicates to the unchanged 3803-byte constructor prefix. Every other active
 file remains an exact full-file pin; the research index is still the sole
 inactive provenance entry. This self-contained transition imports no shared
 checker. Its independent metadata controls cover both outer and inner
 identities and gate predicates, including matching-hash overrides.
 The earlier 50-test, 58-test and 63-test runs remain L09, L10 and L11 snapshot
-facts; new compatibility results belong to the L12 packet. Exact identities are in
+facts; new compatibility results belong to the L13 address packet. Exact identities are in
 [current dependency pins](../../../../integration/CURRENT_DEPENDENCY_PINS_135.md).
 
 The original path is `/tmp/build/libbitmain/src/chip/chip.c`, module `driver`,
