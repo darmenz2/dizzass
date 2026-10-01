@@ -1,0 +1,6 @@
+The initial sanitizer build applied -Wconversion -Werror uniformly to all unchanged dependencies. GCC 14.2 at -O1 with ASan/UBSan rejected the existing CRC source before any sanitized executable ran:
+
+reconstruction/support/crc5.c:15:58: error: conversion to 'unsigned int' from 'int' may change the sign of the result [-Werror=sign-conversion]
+    unsigned bit = (data[i / 8u] >> (7u - (i % 8u))) & 1u;
+
+The source is unchanged. uint8_t promotes to an int in [0,255]; right-shifting it by 0..7 remains nonnegative. The final build compiles units separately and adds only -Wno-sign-conversion for this existing CRC translation unit during sanitizer compilation. All other warning flags and all ASan/UBSan instrumentation remain enabled. This failed compilation is not a sanitizer test pass.

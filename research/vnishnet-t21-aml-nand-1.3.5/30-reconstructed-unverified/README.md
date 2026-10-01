@@ -17,3 +17,7 @@ The [bounded initializer](transport-init/README.md) adds the missing original se
 ## BM1368 method-table construction
 
 The [BM1368 constructor](bm1368-init/README.md) fills the 54 fixed method identities selected by chip 4 while preserving two caller-owned words. Its actual C body composes with the existing bounded initializer in host tests. It does not make those identities callable or establish hardware readiness.
+
+## Common READ_REGISTER command method
+
+The [common wrapper](common-read-register/README.md) reuses the existing encoder and actual transport seam, preserving bit/byte normalization, one-send status handling and failure diagnostics after callback mutation. Host composition calls the real reconstructed method through explicit typed bindings, with all lower writes recorded and refused. No cache or ACK behavior is inferred.

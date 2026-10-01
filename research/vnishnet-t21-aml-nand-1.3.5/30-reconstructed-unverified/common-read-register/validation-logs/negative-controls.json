@@ -1,0 +1,111 @@
+{
+  "baseline_pass": true,
+  "compiled_controls": 20,
+  "records": [
+    {
+      "control": "baseline",
+      "returncode": 0,
+      "output": "COMMON_READ_PASS cases=3086 checks=45714"
+    },
+    {
+      "control": "broadcast-nonzero",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=56 memcmp(body,r->expected,5)==0"
+    },
+    {
+      "control": "broadcast-equals-one",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=56 memcmp(body,r->expected,5)==0"
+    },
+    {
+      "control": "ignore-chip-address",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=56 memcmp(body,r->expected,5)==0"
+    },
+    {
+      "control": "cache-index-as-address",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=56 memcmp(body,r->expected,5)==0"
+    },
+    {
+      "control": "ignore-register",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=56 memcmp(body,r->expected,5)==0"
+    },
+    {
+      "control": "reject-high-register",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=103 vn135_common_read_register_135(&device,modes[m],a<7?&chip:NULL,registers[g],&transport,&log)==(r.status==0?0:-1)"
+    },
+    {
+      "control": "duplicate-aml-prefix",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=56 memcmp(body,r->expected,5)==0"
+    },
+    {
+      "control": "short-body",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=55 device==r->identity && n==5"
+    },
+    {
+      "control": "accept-positive",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=103 vn135_common_read_register_135(&device,modes[m],a<7?&chip:NULL,registers[g],&transport,&log)==(r.status==0?0:-1)"
+    },
+    {
+      "control": "accept-negative",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=103 vn135_common_read_register_135(&device,modes[m],a<7?&chip:NULL,registers[g],&transport,&log)==(r.status==0?0:-1)"
+    },
+    {
+      "control": "wrong-line",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=39 d->source_line==103 && d->severity==1"
+    },
+    {
+      "control": "wrong-severity",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=39 d->source_line==103 && d->severity==1"
+    },
+    {
+      "control": "wrong-index-increment",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=40 d->index_bits==index+UINT32_C(1)"
+    },
+    {
+      "control": "wrong-module",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=35 strcmp(d->module,\"driver\")==0"
+    },
+    {
+      "control": "wrong-format",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=38 strcmp(d->format,\"chain#%d - failed to send GET_STATUS command\")==0"
+    },
+    {
+      "control": "missing-log",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=104 r.sends==1 && r.logs==(unsigned)(r.status!=0)"
+    },
+    {
+      "control": "double-log",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=64 r->sends==1 && r->logs==0 && r->status!=0"
+    },
+    {
+      "control": "wrong-error-status",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=103 vn135_common_read_register_135(&device,modes[m],a<7?&chip:NULL,registers[g],&transport,&log)==(r.status==0?0:-1)"
+    },
+    {
+      "control": "double-send",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=54 r->sends==0 && r->logs==0"
+    },
+    {
+      "control": "index-read-before-send",
+      "returncode": 1,
+      "output": "COMMON_READ_FAIL line=40 d->index_bits==index+UINT32_C(1)"
+    }
+  ]
+}

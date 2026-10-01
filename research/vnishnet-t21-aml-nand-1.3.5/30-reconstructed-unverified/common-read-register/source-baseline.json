@@ -1,0 +1,114 @@
+{
+  "base_commit": "98ad426482947cf29beed1371a63136f8aac2b0c",
+  "base_tree": "70d1e1b0e8e3786db2b843503dabf90ad486c6d1",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "git_blob": "c9d99ca8e95e34f3644fb37e2fdeea359e61ec3d",
+      "sha256": "e829c42302bd775cfb9b705dc653429973888535b849d9a4965e9e6461bf746b",
+      "bytes": 4121
+    },
+    {
+      "path": "integration/bm1368_control.c",
+      "git_blob": "20b4b0476beb3968be590373f884e91b7d6fe46f",
+      "sha256": "6311c43f27b482114b7e18826727e2cd024b2bea4a74b911b5d73887757808f3",
+      "bytes": 3234
+    },
+    {
+      "path": "integration/bm1368_control.h",
+      "git_blob": "87433ca81112f6c0f15d88a2cb87a102f5c13ed1",
+      "sha256": "11ddb580caab82219f4df5d480ac17d74386a55ba798aaa47e54390c02aa351a",
+      "bytes": 2559
+    },
+    {
+      "path": "integration/transport_dispatch_135.h",
+      "git_blob": "18c8a723f4e56a7c5a9c082b2c07db0090c8089c",
+      "sha256": "7ca6a41c3fa943e068fb458c198164b2525aa04db43e9b0dc0e6cacda0855b36",
+      "bytes": 2481
+    },
+    {
+      "path": "libbitmain/src/transport-dispatch.c",
+      "git_blob": "d030308564c47bf409a3d381f16ddf262e6acf26",
+      "sha256": "5cd3632bf3610c8ec3a7d2ea9b3f9da7fc91bd26676598e41448d6376b531fd9",
+      "bytes": 3683
+    },
+    {
+      "path": "libbitmain/src/aml/chip.c",
+      "git_blob": "8a8614a9d356c6279b2e3d8e98aa61753b02b5e6",
+      "sha256": "06bc61d93243a33c9230cbeeb2e8a97524cf7e3a6d01679c9aa01a96d0234953",
+      "bytes": 1969
+    },
+    {
+      "path": "libbitmain/src/uart.c",
+      "git_blob": "7fdec4cf83867bbbbc69a1b2b8731663d85eb318",
+      "sha256": "fcdebe3884ae27027b630fcbd4e3b50898e575f679976cad72f140d9946033e0",
+      "bytes": 4089
+    },
+    {
+      "path": "reconstruction/support/crc5.c",
+      "git_blob": "1912ec8906fb520f7d7c5196ea5a7ec122aaeda8",
+      "sha256": "d03fe3a245dffeddb2d644d91671b44430ca81a007ad15b49db294c1a700e1a2",
+      "bytes": 896
+    },
+    {
+      "path": "include/xminer/recovery/chip1398.h",
+      "git_blob": "185b8fddfa06b40630158aefc1dd3ab2d3bc3439",
+      "sha256": "57c25fb7b8e234f1b3fc0eef972338398f4e6027dcee0e38f6c1eb6c5eadef14",
+      "bytes": 2898
+    },
+    {
+      "path": "include/xminer/recovery/aml_chip.h",
+      "git_blob": "9800cdd205e155441c307f90db7dc6df06ec4ca4",
+      "sha256": "490a1cdf5b1d0062fd43234bccd69e7efe05f2bbf878abef2d4f090a3637e725",
+      "bytes": 2126
+    },
+    {
+      "path": "include/xminer/recovery/uart.h",
+      "git_blob": "23838f3ac88d67f1c57c67914119f2d0a5059a54",
+      "sha256": "3ab7808d8cb55ebd817495fd95f36fcd27f71f3add4cd2edfcebc870b4ec3bbd",
+      "bytes": 3345
+    },
+    {
+      "path": "include/xminer/recovery/pll.h",
+      "git_blob": "de45948ffdca5c6b479ce843324413b7ac35c6fd",
+      "sha256": "96cb204b3a846ad82c09c8be5e480e0069751d1a79b191e53fa3dc2618a5602d",
+      "bytes": 2012
+    },
+    {
+      "path": "include/xminer/recovery/reg_cache.h",
+      "git_blob": "96af5995ab727f830219fa96f4e77e652161a458",
+      "sha256": "37aae34cab018e6c6f2282a8083aa01d6fd04da10e37f46d39b6162766a37ba6",
+      "bytes": 3577
+    },
+    {
+      "path": "integration/transport_initialize_135.h",
+      "git_blob": "30c6065b505f478258da8955aa9a36b22a8c32f4",
+      "sha256": "0e1d0f17f43efb165ccff93c4b7f0eb623e9ae5eb6b8698364b97844853da3ab",
+      "bytes": 2750
+    },
+    {
+      "path": "integration/bm1368_initialize_135.h",
+      "git_blob": "23a4b101c2f9b7f4fcccb6337ba010402dfa71a1",
+      "sha256": "9f15d1fe3bdeaa311a7b15b94a8cab7b83ca1e54ba9e68c62e3b1fd3db009c8b",
+      "bytes": 1628
+    },
+    {
+      "path": "integration/bm1368_nonce.h",
+      "git_blob": "d52253c292a1fb205800adf66b6a8bdeb79575c2",
+      "sha256": "46b3a1c6db6ec8dae2c86c45bf7baff6a79e612b6d03399fcecde3de8536209e",
+      "bytes": 1141
+    },
+    {
+      "path": "libbitmain/src/chip/chip1368.c",
+      "git_blob": "0de837d281e81eb4503b4193b45ef076ec600b6e",
+      "sha256": "b0d68763aa141ffa25e4df3b70e6e55a444cd59f44db405f51b9a80aea6a7a2a",
+      "bytes": 3803
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/README.md",
+      "git_blob": "c52a3c9df388379d956e6e5497daa33945b7ddd6",
+      "sha256": "3cbc3304e0d8b7c0e2f02e70b207a51d55a1d43a72ce6ae3ba8dd3f25daa36e0",
+      "bytes": 2097
+    }
+  ]
+}

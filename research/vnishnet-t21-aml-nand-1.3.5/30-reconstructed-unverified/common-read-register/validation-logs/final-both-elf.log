@@ -1,0 +1,29 @@
+{
+  "active_dependencies_checked": 17,
+  "active_dependency_total": 17,
+  "base_commit": "98ad426482947cf29beed1371a63136f8aac2b0c",
+  "base_provenance_files": 18,
+  "base_tree": "70d1e1b0e8e3786db2b843503dabf90ad486c6d1",
+  "decoded_instruction_counts": {
+    "cgminer": {
+      "body": 82,
+      "crc_body": 76,
+      "string_initializer_body": 98
+    },
+    "hwscan": {
+      "body": 48,
+      "crc_body": 61
+    }
+  },
+  "evidence_mode": "static fixed snapshot; no vendor execution",
+  "hardware_or_runtime_parity_proven": false,
+  "instruction_interpreter_used": false,
+  "original_executed": false,
+  "original_image_selections_checked": {
+    "cgminer": 33,
+    "hwscan": 14
+  },
+  "parity_identities_checked": 7,
+  "research_index_active_pin": false,
+  "status": "PASS"
+}
