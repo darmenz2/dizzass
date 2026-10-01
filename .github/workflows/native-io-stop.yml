@@ -1,0 +1,33 @@
+name: R-16 native and managed I/O stop
+on:
+  pull_request:
+    paths: ['.github/workflows/native-io-stop.yml', 'integration/native/native_io_stop.*', 'integration/review/native_io_stop/**']
+permissions:
+  contents: read
+jobs:
+  snapshot:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Export exact public source without credentials
+        env:
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -eu
+          root="$RUNNER_TEMP/r16-source-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$root"; cd "$root"
+          git init -q
+          git remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          git -c gc.auto=0 -c maintenance.auto=false fetch --depth=1 --no-tags origin "$HEAD"
+          git checkout -q --detach "$HEAD"
+          test "$(git rev-parse HEAD)" = "$HEAD"
+          mkdir snapshot
+          git archive --format=tar HEAD | gzip -n > snapshot/source.tar.gz
+          git rev-parse HEAD HEAD^{tree} > snapshot/revision.txt
+          sha256sum snapshot/source.tar.gz > snapshot/source.sha256
+          echo "SNAPSHOT=$root/snapshot" >> "$GITHUB_ENV"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r16-source
+          path: ${{ env.SNAPSHOT }}
+          retention-days: 7
