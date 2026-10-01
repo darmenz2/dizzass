@@ -1,0 +1,32 @@
+make: Entering directory '/workspace/scratch/5d7af20e7f5a/dizzass-uart-path/source/research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/aml-uart-path'
+python3 -B verify_evidence.py
+{"arm_interpreter_used": false, "firmware_executed": false, "proof": "static bytes, arithmetic and fixed data XOR only", "sources": {"cgminer": {"bytes": 1080, "ranges": 19, "reference_checked": false}, "hwscan": {"bytes": 228, "ranges": 14, "reference_checked": false}}}
+python3 -B -m unittest discover -s tests -p test_static_evidence.py -v
+test_nonempty_invalid_result (test_static_evidence.StaticEvidenceTests.test_nonempty_invalid_result) ... ok
+test_signed_condition (test_static_evidence.StaticEvidenceTests.test_signed_condition) ... ok
+test_table_swap (test_static_evidence.StaticEvidenceTests.test_table_swap) ... ok
+test_verified_frozen_bytes (test_static_evidence.StaticEvidenceTests.test_verified_frozen_bytes) ... ok
+test_wrong_callback (test_static_evidence.StaticEvidenceTests.test_wrong_callback) ... ok
+test_wrong_caller_target (test_static_evidence.StaticEvidenceTests.test_wrong_caller_target) ... ok
+test_wrong_constructor_slot (test_static_evidence.StaticEvidenceTests.test_wrong_constructor_slot) ... ok
+test_wrong_decode_length (test_static_evidence.StaticEvidenceTests.test_wrong_decode_length) ... ok
+test_wrong_limit (test_static_evidence.StaticEvidenceTests.test_wrong_limit) ... ok
+test_wrong_path_bytes (test_static_evidence.StaticEvidenceTests.test_wrong_path_bytes) ... ok
+test_wrong_thunk (test_static_evidence.StaticEvidenceTests.test_wrong_thunk) ... ok
+test_wrong_xor_key (test_static_evidence.StaticEvidenceTests.test_wrong_xor_key) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.039s
+
+OK
+python3 -B tests/test_semantic_controls.py --cc "cc" --build "build/controls"
+{"crashes_counted_as_detection": false, "firmware_executed": false, "pristine_passed": true, "reports": [{"compile_exit": 0, "expected_exit": 0, "name": "pristine", "run_exit": 0}, {"compile_exit": 0, "expected_exit": 1, "name": "wrong_chain0", "run_exit": 1}, {"compile_exit": 0, "expected_exit": 1, "name": "wrong_chain1", "run_exit": 1}, {"compile_exit": 0, "expected_exit": 1, "name": "wrong_chain2", "run_exit": 1}, {"compile_exit": 0, "expected_exit": 1, "name": "invalid_falls_back", "run_exit": 1}, {"compile_exit": 0, "expected_exit": 1, "name": "invalid_null", "run_exit": 1}, {"compile_exit": 0, "expected_exit": 1, "name": "reject_chain2", "run_exit": 1}, {"compile_exit": 0, "expected_exit": 1, "name": "wrap_index", "run_exit": 1}, {"compile_exit": 0, "expected_exit": 1, "name": "invalid_nonempty", "run_exit": 1}], "semantic_controls_rejected": 8}
+build/test_caller_seam
+passed: 11 existing-caller composition cases; every attempted open refused
+build/test_aml_uart_path
+passed: 393231 pathname-result cases; no device operations
+ASAN_OPTIONS=detect_leaks=0 UBSAN_OPTIONS=halt_on_error=1 build/test_aml_uart_path_sanitize
+passed: 393231 pathname-result cases; no device operations
+ASAN_OPTIONS=detect_leaks=0 UBSAN_OPTIONS=halt_on_error=1 build/test_caller_seam_sanitize
+passed: 11 existing-caller composition cases; every attempted open refused
+make: Leaving directory '/workspace/scratch/5d7af20e7f5a/dizzass-uart-path/source/research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/aml-uart-path'

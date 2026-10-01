@@ -1,0 +1,15 @@
+{
+  "base_commit": "9f1560bebd95194944167d80c53138d5387d5382",
+  "new_function": "vn135_aml_uart_path_135",
+  "production_registration_added": false,
+  "schema": 1,
+  "unchanged_inputs": {
+    "integration/backend_shutdown_135.h": "27a3c80b9b07d209cf46b2be9fb9372c2a5681c9b0f004df8dd83150665a21a5",
+    "integration/chain_work_start_135.h": "dacab8bcd3a05782294faf7f476bec53b1d56b3a4557e150a4db6876d708bd7e",
+    "integration/gpio_power_135.h": "f9a725ff09a998d139f9aac9e422da4b99787ec46dd8bdf2bc35fb52d07a888c",
+    "integration/thermal_routes_135.h": "e4e284b80fea953815830ae3eef71e0efd9a6fecee15837714942cbd65ece3f8",
+    "integration/thermal_sensors_135.h": "d55730051f5d7ed92313edaaea9d86e13ca735b77e487c1fde048b7e7b1943d8",
+    "src/backend/work-gen/chain-work-start.c": "ee52d3f8561ad6e4042ac1632134a274821a87586c7cdc557eb3cd727239c6fc"
+  },
+  "unchanged_reset_region_sha256": "242bd0fd824919cc37ea34cac531225f3ed577199b50b8b506c4445b37c218c0"
+}

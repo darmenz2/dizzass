@@ -1,0 +1,22 @@
+{
+  "boundary_evidence": "Bounded witness interval, not a complete-function or whole-program claim.",
+  "bytes": 12,
+  "caveat": "Linear static rendering; literal pools may remain in instruction windows. No complete CFG, runtime path, function extent or parity is proved.",
+  "disassembler": "capstone",
+  "disassembler_version": "5.0.6",
+  "end_exclusive": "0x000fef48",
+  "evidence_sources": [
+    "../../README.md",
+    "../../STATIC_PROOF.md"
+  ],
+  "file_offset": 978748,
+  "firmware_executed": false,
+  "mode": "arm",
+  "mode_evidence": "Selected aligned A32 instructions and direct return/call witnesses.",
+  "name": "generic-thunk-code",
+  "schema": 1,
+  "segment_flags": 5,
+  "sha256": "295f5e64ec49608cd78bba23fa073356aef600d609db640f0a1d072eaf03c3dd",
+  "source_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "start": "0x000fef3c"
+}

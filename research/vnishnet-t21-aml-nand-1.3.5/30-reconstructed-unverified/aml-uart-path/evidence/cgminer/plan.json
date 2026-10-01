@@ -1,0 +1,253 @@
+{
+  "ranges": [
+    {
+      "boundary_evidence": "Bounded witness interval, not a complete-function or whole-program claim.",
+      "end_exclusive": "0x11c0e0",
+      "evidence_sources": [
+        "../../README.md",
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Selected aligned A32 instructions and direct return/call witnesses.",
+      "name": "getter-code",
+      "sha256": "18af168e632520892c3692a7115f5d9cbb8656f6b3bf06ae9f35d370dc2f8d53",
+      "start": "0x11c080"
+    },
+    {
+      "boundary_evidence": "Bounded witness interval, not a complete-function or whole-program claim.",
+      "end_exclusive": "0x11c0f0",
+      "evidence_sources": [
+        "../../README.md",
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Known pointer cell, string bytes, or PC-relative literal, rendered as data.",
+      "name": "getter-literals",
+      "sha256": "281859be7a469f7d9b228b946800f24f666c32ff1fcf9fcac4f602f48fff9769",
+      "start": "0x11c0e0"
+    },
+    {
+      "boundary_evidence": "Bounded witness interval, not a complete-function or whole-program claim.",
+      "end_exclusive": "0x5db414",
+      "evidence_sources": [
+        "../../README.md",
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Known pointer cell, string bytes, or PC-relative literal, rendered as data.",
+      "name": "path-table",
+      "sha256": "59e383d7ac80debfd547b9046b215faa6efd05f0911ec87f0d142d2b884ffedc",
+      "start": "0x5db408"
+    },
+    {
+      "boundary_evidence": "Bounded witness interval, not a complete-function or whole-program claim.",
+      "end_exclusive": "0x5ee81c",
+      "evidence_sources": [
+        "../../README.md",
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Known pointer cell, string bytes, or PC-relative literal, rendered as data.",
+      "name": "path0-encoded",
+      "sha256": "4e9bc1084ae3060aa57e7c2df02fc914c83283b4e068c63244dcc3a720d79b43",
+      "start": "0x5ee810"
+    },
+    {
+      "boundary_evidence": "Bounded witness interval, not a complete-function or whole-program claim.",
+      "end_exclusive": "0x5ee828",
+      "evidence_sources": [
+        "../../README.md",
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Known pointer cell, string bytes, or PC-relative literal, rendered as data.",
+      "name": "path1-encoded",
+      "sha256": "a3e021f56602176084b502bda2c6126915218926463540d8dc8ad3ba25d9a604",
+      "start": "0x5ee818"
+    },
+    {
+      "boundary_evidence": "Bounded witness interval, not a complete-function or whole-program claim.",
+      "end_exclusive": "0x5ee834",
+      "evidence_sources": [
+        "../../README.md",
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Known pointer cell, string bytes, or PC-relative literal, rendered as data.",
+      "name": "path2-encoded",
+      "sha256": "0390888be6d0e77067d5b455138e4b8125f7f4c8ef95dc42b5400e925dd19221",
+      "start": "0x5ee824"
+    },
+    {
+      "boundary_evidence": "Bounded witness interval, not a complete-function or whole-program claim.",
+      "end_exclusive": "0x5c2548",
+      "evidence_sources": [
+        "../../README.md",
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Known pointer cell, string bytes, or PC-relative literal, rendered as data.",
+      "name": "empty-bytes",
+      "sha256": "62edd9793360b6babd31f6e06ed2dfc1dcd1f8e0c6b8866c76345db89e416a01",
+      "start": "0x5c2544"
+    },
+    {
+      "boundary_evidence": "Bounded witness interval, not a complete-function or whole-program claim.",
+      "end_exclusive": "0x11c4bc",
+      "evidence_sources": [
+        "../../README.md",
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Selected aligned A32 instructions and direct return/call witnesses.",
+      "name": "constructor-prefix",
+      "sha256": "77cbd622f2fe7a7f0147ac0038dcbf6c8d85113cc2d461da2d1dfbe1b75d2875",
+      "start": "0x11c2b8"
+    },
+    {
+      "boundary_evidence": "Bounded witness interval, not a complete-function or whole-program claim.",
+      "end_exclusive": "0x11c5b4",
+      "evidence_sources": [
+        "../../README.md",
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Known pointer cell, string bytes, or PC-relative literal, rendered as data.",
+      "name": "constructor-prefix-literals",
+      "sha256": "b96ce40bff63d114aa3f404f7edde86fe48c8e355ee92cdb762b86393f5b2d23",
+      "start": "0x11c58c"
+    },
+    {
+      "boundary_evidence": "Bounded witness interval, not a complete-function or whole-program claim.",
+      "end_exclusive": "0x11c58c",
+      "evidence_sources": [
+        "../../README.md",
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Selected aligned A32 instructions and direct return/call witnesses.",
+      "name": "path-decoder-code",
+      "sha256": "5cb45349b56ef9abe096a5cf52e9e56f33b8ab3ae63a24b4cf3c4307e44a0c39",
+      "start": "0x11c4bc"
+    },
+    {
+      "boundary_evidence": "Bounded witness interval, not a complete-function or whole-program claim.",
+      "end_exclusive": "0x11c5c0",
+      "evidence_sources": [
+        "../../README.md",
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Known pointer cell, string bytes, or PC-relative literal, rendered as data.",
+      "name": "decoder-literals",
+      "sha256": "abd51fce38517b1676e234255398c4bfda54c751cd65a5be26c4117f78ef6b79",
+      "start": "0x11c5b4"
+    },
+    {
+      "boundary_evidence": "Bounded witness interval, not a complete-function or whole-program claim.",
+      "end_exclusive": "0x5db064",
+      "evidence_sources": [
+        "../../README.md",
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Known pointer cell, string bytes, or PC-relative literal, rendered as data.",
+      "name": "init-array-slot",
+      "sha256": "2f2a75ff9ddf0237d26a774c20e999c14c3025efe3519f0a1cd6c31ca405964f",
+      "start": "0x5db060"
+    },
+    {
+      "boundary_evidence": "Bounded witness interval, not a complete-function or whole-program claim.",
+      "end_exclusive": "0xfc160",
+      "evidence_sources": [
+        "../../README.md",
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Selected aligned A32 instructions and direct return/call witnesses.",
+      "name": "install-code",
+      "sha256": "1219b21e32a28f388a3a7514c0e5bbd5d511aaeb2e9aa41e9ed7a5c680c7e8a0",
+      "start": "0xfc124"
+    },
+    {
+      "boundary_evidence": "Bounded witness interval, not a complete-function or whole-program claim.",
+      "end_exclusive": "0xfd12c",
+      "evidence_sources": [
+        "../../README.md",
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Known pointer cell, string bytes, or PC-relative literal, rendered as data.",
+      "name": "callback-slot-literal",
+      "sha256": "7f1a06c291bcec241a6f2b6a1c21687c252d44af187b7dc59436eef623825c14",
+      "start": "0xfd128"
+    },
+    {
+      "boundary_evidence": "Bounded witness interval, not a complete-function or whole-program claim.",
+      "end_exclusive": "0xfd140",
+      "evidence_sources": [
+        "../../README.md",
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Known pointer cell, string bytes, or PC-relative literal, rendered as data.",
+      "name": "callback-got-literal",
+      "sha256": "c9456a8246fb5b2b5795f2890316d3ab37ea866637bc574f6de066783d41cf05",
+      "start": "0xfd13c"
+    },
+    {
+      "boundary_evidence": "Bounded witness interval, not a complete-function or whole-program claim.",
+      "end_exclusive": "0x5dec94",
+      "evidence_sources": [
+        "../../README.md",
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Known pointer cell, string bytes, or PC-relative literal, rendered as data.",
+      "name": "callback-got",
+      "sha256": "6fac3dd6fcd3ccbd030f04817cfa35833ad0e0f603a37307ac9f3b1a550401ca",
+      "start": "0x5dec90"
+    },
+    {
+      "boundary_evidence": "Bounded witness interval, not a complete-function or whole-program claim.",
+      "end_exclusive": "0xfef48",
+      "evidence_sources": [
+        "../../README.md",
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Selected aligned A32 instructions and direct return/call witnesses.",
+      "name": "generic-thunk-code",
+      "sha256": "295f5e64ec49608cd78bba23fa073356aef600d609db640f0a1d072eaf03c3dd",
+      "start": "0xfef3c"
+    },
+    {
+      "boundary_evidence": "Bounded witness interval, not a complete-function or whole-program claim.",
+      "end_exclusive": "0xfef4c",
+      "evidence_sources": [
+        "../../README.md",
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "data",
+      "mode_evidence": "Known pointer cell, string bytes, or PC-relative literal, rendered as data.",
+      "name": "generic-thunk-literal",
+      "sha256": "e1e8ec25c8bd7b23ef4fabe57a13227290daebee282af8835c7457d0f762d67a",
+      "start": "0xfef48"
+    },
+    {
+      "boundary_evidence": "Bounded witness interval, not a complete-function or whole-program claim.",
+      "end_exclusive": "0xc34ec",
+      "evidence_sources": [
+        "../../README.md",
+        "../../STATIC_PROOF.md"
+      ],
+      "mode": "arm",
+      "mode_evidence": "Selected aligned A32 instructions and direct return/call witnesses.",
+      "name": "generic-caller-seam",
+      "sha256": "41f3817bafcfc21f2ac2d3ab513c60d8f9fbb1f52a7cb32132ecec9c1ad6ba11",
+      "start": "0xc34c4"
+    }
+  ],
+  "schema": 1,
+  "source_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9"
+}

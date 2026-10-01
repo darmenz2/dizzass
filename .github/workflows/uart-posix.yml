@@ -74,6 +74,21 @@ jobs:
           fi
           python3 integration/test_native_core.py
           python3 tools/prepare_uart_posix.py --check
-          test -z "$(git diff --name-only --diff-filter=MDR 12446bed78a060a49364a80bcbfb4340b13f4f27 HEAD)"
+          # Preserve every historical file; permit only the precisely reviewed PR #99
+          # platform addition. This is not a blanket exemption for platform.c.
+          historical_changes=$(git diff --raw --no-abbrev --no-renames \
+            --no-ext-diff --no-textconv --ignore-submodules=none \
+            --diff-filter=DMRT \
+            12446bed78a060a49364a80bcbfb4340b13f4f27 HEAD --)
+          approved_platform_change=$(printf '%s\t%s' \
+            ':100644 100644 f66d7c37b3d4e9f87ff892f35488db6140cb341c 0c0a6970e15c690af918aeeddbcc38fae5a06925 M' \
+            'libbitmain/src/aml/platform.c')
+          if [[ -n "$historical_changes" &&
+                "$historical_changes" != "$approved_platform_change" ]]; then
+            printf 'Unexpected historical source changes:\n%s\n' \
+              "$historical_changes" >&2
+            exit 1
+          fi
           git diff --exit-code
           echo 'Host PTYs only: no physical UART, ASIC, production driver, pool or merge.'
+

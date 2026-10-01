@@ -1,0 +1,88 @@
+{
+  "arm_interpreter_used": false,
+  "firmware_executed": false,
+  "limitation": "Path content result after normal string initialization, unchanged tables and readable opaque globals; not complete pointer/memory-trace equivalence or device behavior.",
+  "schema": 1,
+  "sources": {
+    "cgminer": {
+      "bytes": 6228004,
+      "empty_string_address": "0x5c2547",
+      "ranges": 19,
+      "sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+      "witness_bytes": 1080
+    },
+    "hwscan": {
+      "bytes": 4883216,
+      "empty_string_address": "0x48e00e",
+      "ranges": 14,
+      "sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+      "witness_bytes": 228
+    }
+  },
+  "strings": {
+    "cgminer": [
+      {
+        "address": "0x5ee810",
+        "decoded_bytes_hex": "2f6465762f747479533300",
+        "file_offset": 6088720,
+        "index": 0,
+        "pathname": "/dev/ttyS3",
+        "source_bytes_hex": "6f2425366f343439137340",
+        "source_sha256": "9e6af24c58308827e39d0e7db6d253104087019a50a71df51726177a77743e44",
+        "xor_key": 64
+      },
+      {
+        "address": "0x5ee81b",
+        "decoded_bytes_hex": "2f6465762f747479533200",
+        "file_offset": 6088731,
+        "index": 1,
+        "pathname": "/dev/ttyS2",
+        "source_bytes_hex": "b6fdfcefb6edede0caab99",
+        "source_sha256": "00fb46b9866d8261a91da6b7f7c56b8eab4e26b95244c284ad2df3001f296f9d",
+        "xor_key": 153
+      },
+      {
+        "address": "0x5ee826",
+        "decoded_bytes_hex": "2f6465762f747479533100",
+        "file_offset": 6088742,
+        "index": 2,
+        "pathname": "/dev/ttyS1",
+        "source_bytes_hex": "703b3a29702b2b260c6e5f",
+        "source_sha256": "bb7b595a31bc622dc19b62ec3baa145adec09ba47e37fefaba4823f2cc399c0a",
+        "xor_key": 95
+      }
+    ],
+    "hwscan": [
+      {
+        "address": "0x4821c9",
+        "decoded_bytes_hex": "2f6465762f747479533300",
+        "file_offset": 4661705,
+        "index": 0,
+        "pathname": "/dev/ttyS3",
+        "source_bytes_hex": "2f6465762f747479533300",
+        "source_sha256": "d39d4007828b03a898540e98c88958ee664d491c1583495485f29d57c344e16d",
+        "xor_key": 0
+      },
+      {
+        "address": "0x4821d4",
+        "decoded_bytes_hex": "2f6465762f747479533200",
+        "file_offset": 4661716,
+        "index": 1,
+        "pathname": "/dev/ttyS2",
+        "source_bytes_hex": "2f6465762f747479533200",
+        "source_sha256": "159bc9e7a00211675ea92d6687cf467f28b0dd35287146eb1097fb19596ce400",
+        "xor_key": 0
+      },
+      {
+        "address": "0x4821df",
+        "decoded_bytes_hex": "2f6465762f747479533100",
+        "file_offset": 4661727,
+        "index": 2,
+        "pathname": "/dev/ttyS1",
+        "source_bytes_hex": "2f6465762f747479533100",
+        "source_sha256": "cd6919967c3a229e4160c0779127111a5c1d8c763bb210411d78c16cae9acdb9",
+        "xor_key": 0
+      }
+    ]
+  }
+}
