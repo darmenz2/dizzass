@@ -38,3 +38,12 @@ evidence places the method on cgminer's startup and resume paths, including a
 later model-mask application after temporary all-ones masks. Focused host tests
 check exact broadcast arguments, fanout and post-writer error-index behavior;
 the whole coordinator and production binding remain separate work.
+
+## Original BM1368 SWEEP_CLOCK_CTRL method
+
+[bm1368-sweep-clock](bm1368-sweep-clock/README.md) reconstructs the original
+e32c0/f30d4 setter with its ignored second argument, distinct two-bit word,
+actual register-write composition and late-index failure diagnostic. The
+static caller extension proves entry flag and read lifetimes, and the focused
+host sequence demonstrates later pulse-width overwrite. This does not restore
+the full startup coordinator, native ABI or physical hardware behavior.

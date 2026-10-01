@@ -1,0 +1,187 @@
+{
+  "schema": 1,
+  "kind": "bm1368-sweep-clock-static-pins",
+  "metadata_sha256": "4f1fe48c5fdf552f7d3e297343527b53b07673b134638a54f9bc8e4debc6037b",
+  "sources": {
+    "cgminer": {
+      "elf_size": 6228004,
+      "elf_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+      "regions": [
+        {
+          "id": "prior-optional-config-gate",
+          "kind": "code",
+          "va": 351420,
+          "size": 96,
+          "sha256": "77525610b6340fb2d04389a7e17f312c508a8c4a578606071819f647a0811418"
+        },
+        {
+          "id": "sweep-gate-call-and-continuations",
+          "kind": "code",
+          "va": 352096,
+          "size": 832,
+          "sha256": "703570bccb5506504d4850eaffd63634de12b6d6517eedfa280f220a235f6261"
+        },
+        {
+          "id": "sweep-and-pulse-constructor",
+          "kind": "code",
+          "va": 922992,
+          "size": 88,
+          "sha256": "d8847bee311ba9a476b5cd345bcaf2687167276ee05bea72293cf087caf9212b"
+        },
+        {
+          "id": "pulse-slot-literal",
+          "kind": "data",
+          "va": 923420,
+          "size": 4,
+          "sha256": "a66d10a06ef0e93d9ecb6720d1fc06b14784a33de4eb9b9341c0fa68491c2068"
+        },
+        {
+          "id": "sweep-slot-literal",
+          "kind": "data",
+          "va": 923428,
+          "size": 4,
+          "sha256": "8b333f3c06e7af9dd51a237b518a598bab3889d5de2f73bef0216a3eca8b4eed"
+        },
+        {
+          "id": "preceding-return",
+          "kind": "code",
+          "va": 930492,
+          "size": 4,
+          "sha256": "e6aba9080d76748e6ba8225749778c6da1d93d11733f04a5ebc04ca34576ce3d"
+        },
+        {
+          "id": "sweep-code",
+          "kind": "code",
+          "va": 930496,
+          "size": 264,
+          "sha256": "c8ce3cfeec1eb718aa71b4b7d8a129df9c3e047d622804279c68f249c1e3bc1b"
+        },
+        {
+          "id": "sweep-pool",
+          "kind": "data",
+          "va": 930760,
+          "size": 24,
+          "sha256": "abb3fca1f514a06067ff7e4e21cee99dba309208d364de4de073bb9699190cd9"
+        },
+        {
+          "id": "following-entry",
+          "kind": "code",
+          "va": 930784,
+          "size": 16,
+          "sha256": "00d20caedd8d953d917e024e1391de1be4fb1edd5159d38db61104fd5118449c"
+        },
+        {
+          "id": "sweep-initializer",
+          "kind": "code",
+          "va": 939616,
+          "size": 44,
+          "sha256": "318084fc40eaba049aa2961d7255b04b506ba528e36c47773470d0fdd1edbb84"
+        },
+        {
+          "id": "sweep-initializer-literal",
+          "kind": "data",
+          "va": 942204,
+          "size": 4,
+          "sha256": "02395a8090e667391e94ebd2c72865a7ac44cca41d9acbc2b0ad1aa1e3f6d5bb"
+        },
+        {
+          "id": "pulse-slot-got",
+          "kind": "data",
+          "va": 6154924,
+          "size": 4,
+          "sha256": "797056335a72a121cdbd38b13381b5224c53c6ff321b2d172f8760f85fe98c87"
+        },
+        {
+          "id": "sweep-slot-got",
+          "kind": "data",
+          "va": 6155632,
+          "size": 4,
+          "sha256": "ff7bf73a0ba5c9b789fa6c14492d3ccdce358df4721a2c0a8dfd8a5edcaffa31"
+        },
+        {
+          "id": "sweep-string",
+          "kind": "data",
+          "va": 6206571,
+          "size": 42,
+          "sha256": "ad781c628824f60e5dd49487ce3a08597cf3fa378014311c0c83a9f7764b9ae0"
+        }
+      ]
+    },
+    "hwscan": {
+      "elf_size": 4883216,
+      "elf_sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+      "regions": [
+        {
+          "id": "sweep-and-pulse-constructor",
+          "kind": "code",
+          "va": 990792,
+          "size": 88,
+          "sha256": "d8847bee311ba9a476b5cd345bcaf2687167276ee05bea72293cf087caf9212b"
+        },
+        {
+          "id": "pulse-slot-literal",
+          "kind": "data",
+          "va": 991220,
+          "size": 4,
+          "sha256": "08dd6802a7bfa4e8c675184b645efe1db91c6579f6994fb687b3db28f56820fd"
+        },
+        {
+          "id": "sweep-slot-literal",
+          "kind": "data",
+          "va": 991228,
+          "size": 4,
+          "sha256": "cb4e34d702da2760ce8af411e30dfb82a794943944832043036a57da10c44350"
+        },
+        {
+          "id": "preceding-return",
+          "kind": "code",
+          "va": 995536,
+          "size": 4,
+          "sha256": "e6aba9080d76748e6ba8225749778c6da1d93d11733f04a5ebc04ca34576ce3d"
+        },
+        {
+          "id": "sweep-code",
+          "kind": "code",
+          "va": 995540,
+          "size": 144,
+          "sha256": "cd542fecf1188aafea36da6d09b8600ac16ec707e34bc3cfc6f11aaaa9ffc28d"
+        },
+        {
+          "id": "sweep-pool",
+          "kind": "data",
+          "va": 995684,
+          "size": 16,
+          "sha256": "ecbc645fad5345b36211547ff60c75159789b296c36e248ac46cce38f07bb2a9"
+        },
+        {
+          "id": "following-entry",
+          "kind": "code",
+          "va": 995700,
+          "size": 16,
+          "sha256": "00d20caedd8d953d917e024e1391de1be4fb1edd5159d38db61104fd5118449c"
+        },
+        {
+          "id": "sweep-string",
+          "kind": "data",
+          "va": 4711058,
+          "size": 42,
+          "sha256": "cf60758db17e51ccb6fdf070ae9784f16bde5ad13ab372c50be0ebac01b1ed9a"
+        },
+        {
+          "id": "pulse-slot-got",
+          "kind": "data",
+          "va": 4913276,
+          "size": 4,
+          "sha256": "fd03af57f4f181261df804cdddca5569205ab730647afb57f2b7f12f3e8904aa"
+        },
+        {
+          "id": "sweep-slot-got",
+          "kind": "data",
+          "va": 4914608,
+          "size": 4,
+          "sha256": "7bb6e099d63e4c5ecdbf0e44444c24f647ff82cbdf127dcfafed8f80753ea5e3"
+        }
+      ]
+    }
+  }
+}

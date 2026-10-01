@@ -36,17 +36,18 @@ in that snapshot. Optional complete-image verification
 checks 33 selected cgminer regions and 14 hwscan regions against full file hashes.
 
 L10 kept the original source receipts, static pins and validation logs intact,
-and its 58-control validation remains a historical result. The current L11
-checker still checks all 17 active entries. For chip1368.c only, it requires
-the exact 8350-byte ticket source, recovers the exact 7519-byte L10 prefix,
-validates both separately gated appends, and applies the original receipt
+and its 58-control validation remains a historical result. L11's 63-control
+validation is also historical. The current L12 checker still checks all 17
+active entries. For chip1368.c only, it requires the exact 9245-byte sweep
+source, recovers the exact 8350-byte L11 and 7519-byte L10 prefixes, validates
+all three separately gated appends, and applies the original receipt
 predicates to the unchanged 3803-byte constructor prefix. Every other active
 file remains an exact full-file pin; the research index is still the sole
 inactive provenance entry. This self-contained transition imports no shared
 checker. Its independent metadata controls cover both outer and inner
 identities and gate predicates, including matching-hash overrides.
-The earlier 50-test and 58-test runs remain L09 and L10 snapshot facts;
-new compatibility results belong to the L11 packet. Exact identities are in
+The earlier 50-test, 58-test and 63-test runs remain L09, L10 and L11 snapshot
+facts; new compatibility results belong to the L12 packet. Exact identities are in
 [current dependency pins](../../../../integration/CURRENT_DEPENDENCY_PINS_135.md).
 
 The original path is `/tmp/build/libbitmain/src/chip/chip.c`, module `driver`,
@@ -131,7 +132,7 @@ found no complete existing wrapper. Build files enumerate sources explicitly;
 the new original-path module is compiled only by this isolated target. At that
 2026-10-01 L09 snapshot, encoder, CRC, dispatcher, AML, UART, selector and
 constructor sources remained unchanged, so their whole-file pins and historical
-compatibility records remained valid. The later reset and ticket prefix transitions
+compatibility records remained valid. The later reset, ticket and sweep prefix transitions
 are described above; they do not rewrite those historical validation facts.
 The incomplete old vendor/source and Stage14 inventories are historical
 witnesses and are not rewritten. Pending runtime-stack work stays separate.

@@ -11,7 +11,7 @@ therefore need narrowly scoped compatibility transitions:
 | --- | --- | --- |
 | `bm1368_reply_key_135.json`, `chain_reset_cleanup_135.json`, `chip_sensor_check_135.json` | `integration/thermal-routes-135.mk` at `f68baf7a096b3b261e6249600b726eb120bebfbb` | `40d0fb336501875982f22ac6453ee4ddd58d8762` |
 | `bm1368_pulse_width_135.json` | `libbitmain/src/transport-dispatch.c` at `8ceb8405390e3eaf9f7b34480eb3cdd040a3b0ef` | `d030308564c47bf409a3d381f16ddf262e6acf26` |
-| `bm1368_frequency_135.json`, `bm1368_register_write_135.json`, `bm1368_pulse_width_135.json` | `libbitmain/src/chip/chip1368.c` at `c64374454e6e458ec1a175f21f03af141e29a3aa` | `1cd2c6e7612b494c28f0bbbab0e62434d104881d` |
+| `bm1368_frequency_135.json`, `bm1368_register_write_135.json`, `bm1368_pulse_width_135.json` | `libbitmain/src/chip/chip1368.c` at `c64374454e6e458ec1a175f21f03af141e29a3aa` | `f23565c15c9d174e644fc51a401e81dbe072dfd7` |
 
 The shared verifier requires the exact original expected pin and exact current
 blob, never an arbitrary list of accepted hashes. For the thermal Makefile,
@@ -36,24 +36,33 @@ The first 7519 bytes retain the complete L10 reset source, Git blob
 The bytes from 3803 through 7518 form the separately checked
 `VN135_BM1368_RESET_135` gate, including its header inside the gate.
 
-The complete current source is exactly 8350 bytes, Git blob
+The first 8350 bytes retain the complete L11 ticket source, Git blob
 `1cd2c6e7612b494c28f0bbbab0e62434d104881d`, SHA-256
 `ed818babcb847fb38094af8f08ae3c0ac6ef690192aa1e6030c3f8326e9968d9`.
-Only bytes after the preserved L10 source form the new
+Only bytes 7519 through 8349 form the independently checked
 `VN135_BM1368_TICKET_MASK_135` gate, including exactly its own header.
-The outer transition pins the full source and exact reset prefix before
-validating ticket gate shape. The existing reset-to-constructor and
-constructor-to-nonce predicates then apply unchanged to the recovered layers.
+
+The complete current source is exactly 9245 bytes, Git blob
+`f23565c15c9d174e644fc51a401e81dbe072dfd7`, SHA-256
+`e4c05fb8bc541e6e6b2a216cbaecf7ef57cc3d85101d59b81e8ebd3d4e2af7e4`.
+Only bytes after the preserved L11 source form the separately checked
+`VN135_BM1368_SWEEP_CLOCK_135` gate, including exactly its own header.
+The outer transition pins the full source and exact ticket prefix before
+validating sweep gate shape. The retained ticket-to-reset, reset-to-constructor
+and constructor-to-nonce predicates then apply to the recovered layers.
 Each header remains within its gate; no nested conditional, extra include,
 else/elif branch or text outside the reviewed append is admitted.
 
 All full-source and preserved-prefix identities remain independent checks.
-Neither an arbitrary suffix nor a reset-only, constructor-only or nonce-only
-source is accepted as the current checkout. The reset entry retains original
-error continuation and does not replace the distinct fail-fast
-`dizzass_bm1368_reset_cores` adapter. The ticket setter calls the existing pure
-low-byte transform and actual BM1368 writer; it adds no duplicate CRC, cache,
-protocol or transport implementation. No earlier source byte changes.
+Neither an arbitrary suffix nor a ticket-only, reset-only, constructor-only or
+nonce-only source is accepted as the current checkout. The reset entry retains
+original error continuation and does not replace the distinct fail-fast
+`dizzass_bm1368_reset_cores` adapter. The ticket setter retains its existing pure
+low-byte reversal and actual BM1368 writer. The sweep setter independently
+encodes `0x80008b00 | ((field1_2 & 3u) << 1)` and calls that same writer;
+it does not use the distinct BM1398 sweep encoding or replace the initial
+no-op or pulse-width methods. No duplicate CRC, cache, protocol or transport
+implementation is added and no earlier source byte changes.
 
 The constructor installs fixed original method identities; it does not execute
 those methods, establish their complete ABIs, or imply production/hardware
@@ -61,7 +70,7 @@ acceptance. This transition preserves the historical evidence manifests.
 
 The old blobs are only reconstruction witnesses. Substituting any old blob
 into a current checkout fails: it would undo the include-path repair or delete
-an exact initialization/reset/ticket append. No historical-replay acceptance
+an exact initialization/reset/ticket/sweep append. No historical-replay acceptance
 switch is added. Every other manifest dependency still must equal its original
 blob. Dependencies must use canonical repository-relative paths and be
 non-executable regular files, with no symlink parents. Missing files, renames,
@@ -94,24 +103,24 @@ experiments or device operations.
 The A-13 UART workflow keeps its historical baseline and complete raw `D/M/R/T`
 diff command unchanged. `check_uart_posix_historical_135.py` preserves all six
 originally accepted exact combinations and the complete eleven-record
-constructor and reset groups. It adds exactly one complete eleven-record ticket
-compatibility group. Its chip source destination is the exact 8350-byte blob;
-every other record stays the same. The new group is derived from complete
-historical/current tree metadata and candidate bytes, including modified
-existing files. The earlier eight accepted states remain byte-identical;
-only the ticket group's destination hashes are checked against the current
-checkout. Modes, old/new blob IDs, status, ordering and paths remain bound;
-partial or mixed groups fail. Metadata controls retain fixed hashes for all
-eight old states and exhaustively check subsets of all fourteen distinct
-records. The unfiltered PR workflow runs them normally and with `python3 -O`.
-No separate historical guard or workflow regression command is broadened.
+constructor, reset and ticket groups. It adds exactly one complete eleven-record
+sweep compatibility group. Its chip source destination is the exact 9245-byte
+blob; every other record stays the same, as independently derived from every
+historical/current tree leaf and actual candidate bytes/modes. The earlier nine
+accepted states remain byte-identical; only the sweep group's destination hashes
+are checked against the current checkout. Modes, old/new blob IDs, status,
+ordering and paths remain bound; partial or mixed groups fail. Metadata controls
+retain fixed hashes for all nine old states and exhaustively check subsets of all
+fifteen distinct records. The unfiltered PR workflow runs them normally and with
+`python3 -O`. No historical guard or workflow regression command is broadened.
 
 The L09 `common-read-register/verify_evidence.py` also actively checks chip1368.c.
 Its immutable `source-baseline.json` still records the 3803-byte constructor-only
 dependency, and its unchanged `static-pins.json` still anchors that receipt.
-A self-contained outer transition admits only the exact 8350-byte ticket source,
-recovers the exact 7519-byte L10 source and validates the ticket gate. It then
-retains the reset gate transition and applies every original size, SHA-256 and
+A self-contained outer transition admits only the exact 9245-byte sweep source,
+recovers the exact 8350-byte L11 source and validates the sweep gate. It then
+retains the exact ticket-to-reset and reset-to-constructor transitions and
+applies every original size, SHA-256 and
 Git-blob predicate to the preserved 3803-byte constructor dependency. No helper
 import or new workflow dependency is introduced. All 17 dependencies remain
 active; the other 16 stay full-file pins, and the research index remains the
@@ -120,14 +129,15 @@ identity, preserved bytes and gate shape with matching-hash overrides, along
 with prior-source rejection, receipt identities and unrelated dependencies.
 
 L08's constructor evidence and prior validation receipts remain unchanged. Its
-host builds and L09's host composition leave both later gates disabled. L10
-host fixtures leave the ticket gate disabled. Each old configuration therefore
+host builds and L09's host composition leave reset, ticket and sweep gates
+disabled. L10 host fixtures leave ticket and sweep gates disabled; L11's host
+fixtures leave the sweep gate disabled. Each old configuration therefore
 retains its original include and link closure.
 The existing nonce, constructor, cache, register writer, encoder, CRC, dispatcher
 and fail-fast implementations retain their previous bytes and contracts.
 
-L10's semantic control runner now partitions only its pinned original reset
-span rather than treating reset-to-EOF as one method. Both its constructor
+L10's semantic control runner continues to partition only its pinned original
+reset span [3803,7519). Both its constructor
 prefix and reset span remain independently pinned; every mutant preserves
 both the original prefix and later suffix byte-for-byte. All 27 existing
 control definitions, exact replacement counts, compiler flags and required
@@ -135,4 +145,9 @@ fixture failures remain unchanged. Metadata-only partition controls run
 normally and with Python `-O`. This scoped mutation helper is not a current-source
 acceptance policy: the exact global gates above remain mandatory. L10's
 source-baseline, static pins/witness, validation snapshot and logs stay immutable;
-new compatibility results are recorded in the L11 packet.
+new compatibility results are recorded in the L12 packet. L11's semantic
+control runner likewise retains its exact [7519,8350) ticket span and original
+prefix/witness hashes. Its 15 control definitions, flags and required clean
+fixture failures remain unchanged, with every later sweep byte preserved in
+each mutant. Neither span end is extended to EOF; historical L11 baselines,
+static pins/witnesses and validation snapshots/logs remain unchanged.

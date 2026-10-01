@@ -25,9 +25,12 @@ BM1368_CONSTRUCTOR_SIZE = 3803
 BM1368_RESET_BLOB = 'e024519eda8df9c1c85697548e8e0629f7c0f5cf'
 BM1368_RESET_SHA256 = 'e3c8cecb8869c59847db357d26541e95123fa1cb4cf2ef04642a62c2e1e0738d'
 BM1368_RESET_SIZE = 7519
-BM1368_CURRENT_BLOB = '1cd2c6e7612b494c28f0bbbab0e62434d104881d'
-BM1368_CURRENT_SHA256 = 'ed818babcb847fb38094af8f08ae3c0ac6ef690192aa1e6030c3f8326e9968d9'
-BM1368_CURRENT_SIZE = 8350
+BM1368_TICKET_BLOB = '1cd2c6e7612b494c28f0bbbab0e62434d104881d'
+BM1368_TICKET_SHA256 = 'ed818babcb847fb38094af8f08ae3c0ac6ef690192aa1e6030c3f8326e9968d9'
+BM1368_TICKET_SIZE = 8350
+BM1368_CURRENT_BLOB = 'f23565c15c9d174e644fc51a401e81dbe072dfd7'
+BM1368_CURRENT_SHA256 = 'e4c05fb8bc541e6e6b2a216cbaecf7ef57cc3d85101d59b81e8ebd3d4e2af7e4'
+BM1368_CURRENT_SIZE = 9245
 
 
 def require(ok, message):
@@ -70,11 +73,33 @@ def historical_dispatch_bytes(current):
     return old
 
 
-def reset_bm1368_bytes(current):
-    """Validate the exact ticket append and recover the unchanged L10 source."""
+def ticket_bm1368_bytes(current):
+    """Validate the exact sweep append and recover the unchanged L11 source."""
     require(len(current) == BM1368_CURRENT_SIZE
             and hashlib.sha256(current).hexdigest() == BM1368_CURRENT_SHA256
             and git_blob(current) == BM1368_CURRENT_BLOB,
+            'BM1368 chip source is not the reviewed sweep-clock blob')
+    ticket, added = current[:BM1368_TICKET_SIZE], current[BM1368_TICKET_SIZE:]
+    require(len(ticket) == BM1368_TICKET_SIZE
+            and hashlib.sha256(ticket).hexdigest() == BM1368_TICKET_SHA256
+            and git_blob(ticket) == BM1368_TICKET_BLOB,
+            'BM1368 preserved ticket source prefix changed')
+    require(added.startswith(b'\n#ifdef VN135_BM1368_SWEEP_CLOCK_135\n'
+                             b'#include "integration/bm1368_sweep_clock_135.h"\n')
+            and added.count(b'#if') == 1 and added.count(b'#endif') == 1
+            and added.count(b'#include') == 1
+            and b'#else' not in added and b'#elif' not in added
+            and added.endswith(b'\n#endif\n'),
+            'BM1368 sweep-clock append is not separately gated')
+    return ticket
+
+
+def reset_bm1368_bytes(current):
+    """Validate sweep and ticket layers, then recover the unchanged L10 source."""
+    current = ticket_bm1368_bytes(current)
+    require(len(current) == BM1368_TICKET_SIZE
+            and hashlib.sha256(current).hexdigest() == BM1368_TICKET_SHA256
+            and git_blob(current) == BM1368_TICKET_BLOB,
             'BM1368 chip source is not the reviewed ticket-mask blob')
     reset, added = current[:BM1368_RESET_SIZE], current[BM1368_RESET_SIZE:]
     require(len(reset) == BM1368_RESET_SIZE
@@ -92,7 +117,7 @@ def reset_bm1368_bytes(current):
 
 
 def constructor_bm1368_bytes(current):
-    """Validate ticket and reset layers, then recover the constructor witness."""
+    """Validate sweep, ticket and reset layers, then recover the constructor witness."""
     current = reset_bm1368_bytes(current)
     require(len(current) == BM1368_RESET_SIZE
             and hashlib.sha256(current).hexdigest() == BM1368_RESET_SHA256
@@ -114,7 +139,7 @@ def constructor_bm1368_bytes(current):
 
 
 def historical_bm1368_bytes(current):
-    """Validate all three exact appends and recover the unchanged nonce witness."""
+    """Validate all four exact appends and recover the unchanged nonce witness."""
     constructor = constructor_bm1368_bytes(current)
     old, added = constructor[:BM1368_OLD_SIZE], constructor[BM1368_OLD_SIZE:]
     require(git_blob(old) == BM1368_OLD_BLOB,

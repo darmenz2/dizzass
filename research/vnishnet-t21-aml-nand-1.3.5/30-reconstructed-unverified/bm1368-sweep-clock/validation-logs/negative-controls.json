@@ -1,0 +1,158 @@
+{
+  "kind": "authored-host-semantic-controls",
+  "controls": 17,
+  "source_sha256": "e4c05fb8bc541e6e6b2a216cbaecf7ef57cc3d85101d59b81e8ebd3d4e2af7e4",
+  "preserved_prefix_bytes": 8350,
+  "sweep_span_bytes": 895,
+  "untouched_suffix_bytes": 0,
+  "compiler": "cc",
+  "compile_flags": [
+    "-IREPOSITORY",
+    "-IREPOSITORY/include",
+    "-std=c11",
+    "-O2",
+    "-g",
+    "-Wall",
+    "-Wextra",
+    "-Wpedantic",
+    "-Werror",
+    "-Wconversion",
+    "-Wshadow",
+    "-DVN135_BM1368_SWEEP_CLOCK_135",
+    "-DVN135_BM1368_TICKET_MASK_135",
+    "-DVN135_BM1368_PULSE_WIDTH_135",
+    "-DVN135_BM1368_REGISTER_WRITE_135",
+    "-DVN135_TRANSPORT_DISPATCH_135"
+  ],
+  "unchanged_inputs": [
+    {
+      "path": "REPOSITORY/libbitmain/src/chip/chip1398.c",
+      "sha256": "378ce7ebfde45b71b50622c11fbac392a75a987eccfd7965c2caa2d57f076967"
+    },
+    {
+      "path": "REPOSITORY/libbitmain/src/chip/chip1368-register-write.c",
+      "sha256": "8e9d40fc87c102fc0342d64c93027f00b50c3b2c7abe590606300d9e8913629b"
+    },
+    {
+      "path": "REPOSITORY/libbitmain/src/chip/chip1368-pulse-width.c",
+      "sha256": "ef21a189bb5e0eea1e5ac219465f3548e2fe1dd815b849d8c622c5ce5e1092d6"
+    },
+    {
+      "path": "REPOSITORY/libbitmain/src/reg_cache.c",
+      "sha256": "e504e6e2bd0f568761567551586aa57db174cd3849ca11c22c9c0753ca28d339"
+    },
+    {
+      "path": "REPOSITORY/integration/bm1368_control.c",
+      "sha256": "6311c43f27b482114b7e18826727e2cd024b2bea4a74b911b5d73887757808f3"
+    },
+    {
+      "path": "REPOSITORY/reconstruction/support/crc5.c",
+      "sha256": "d03fe3a245dffeddb2d644d91671b44430ca81a007ad15b49db294c1a700e1a2"
+    },
+    {
+      "path": "REPOSITORY/libbitmain/src/transport-dispatch.c",
+      "sha256": "5cd3632bf3610c8ec3a7d2ea9b3f9da7fc91bd26676598e41448d6376b531fd9"
+    },
+    {
+      "path": "REPOSITORY/libbitmain/src/aml/chip.c",
+      "sha256": "06bc61d93243a33c9230cbeeb2e8a97524cf7e3a6d01679c9aa01a96d0234953"
+    },
+    {
+      "path": "REPOSITORY/libbitmain/src/uart.c",
+      "sha256": "fcdebe3884ae27027b630fcbd4e3b50898e575f679976cad72f140d9946033e0"
+    },
+    {
+      "path": "REPOSITORY/research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-sweep-clock/tests/test_sweep_clock.c",
+      "sha256": "fe241869d000cafdabadc494b2022dd119438a1c552dce0d2a21d206fd398420"
+    }
+  ],
+  "results": [
+    {
+      "name": "distinct-bm1368-fixed-word",
+      "returncode": 1,
+      "failure": "ORIGINAL_SWEEP_CLOCK_FAIL case=1 name=four-low-bit-values line=280 mode == 1 && chip == NULL && reg == f->expected_reg && value == f->expected_word"
+    },
+    {
+      "name": "only-two-field-bits",
+      "returncode": 1,
+      "failure": "ORIGINAL_SWEEP_CLOCK_FAIL case=5 name=selected-high-bits-ignored line=280 mode == 1 && chip == NULL && reg == f->expected_reg && value == f->expected_word"
+    },
+    {
+      "name": "output-bits-one-two",
+      "returncode": 1,
+      "failure": "ORIGINAL_SWEEP_CLOCK_FAIL case=2 name=four-low-bit-values line=280 mode == 1 && chip == NULL && reg == f->expected_reg && value == f->expected_word"
+    },
+    {
+      "name": "broadcast-mode-one",
+      "returncode": 1,
+      "failure": "ORIGINAL_SWEEP_CLOCK_FAIL case=1 name=four-low-bit-values line=280 mode == 1 && chip == NULL && reg == f->expected_reg && value == f->expected_word"
+    },
+    {
+      "name": "sweep-register",
+      "returncode": 1,
+      "failure": "ORIGINAL_SWEEP_CLOCK_FAIL case=1 name=four-low-bit-values line=280 mode == 1 && chip == NULL && reg == f->expected_reg && value == f->expected_word"
+    },
+    {
+      "name": "nonzero-writer-status-fails",
+      "returncode": 1,
+      "failure": "ORIGINAL_SWEEP_CLOCK_FAIL case=12 name=terminal-refusal line=373 result == f->expected_status"
+    },
+    {
+      "name": "zero-status-succeeds",
+      "returncode": 1,
+      "failure": "ORIGINAL_SWEEP_CLOCK_FAIL case=1 name=four-low-bit-values line=373 result == f->expected_status"
+    },
+    {
+      "name": "failure-status-minus-one",
+      "returncode": 1,
+      "failure": "ORIGINAL_SWEEP_CLOCK_FAIL case=12 name=terminal-refusal line=373 result == f->expected_status"
+    },
+    {
+      "name": "one-based-index-bits",
+      "returncode": 1,
+      "failure": "ORIGINAL_SWEEP_CLOCK_FAIL case=12 name=terminal-refusal line=263 diagnostic->index_bits == f->expected_outer_index"
+    },
+    {
+      "name": "source-line-463",
+      "returncode": 1,
+      "failure": "ORIGINAL_SWEEP_CLOCK_FAIL case=12 name=terminal-refusal line=258 diagnostic->line == 463 && diagnostic->severity == 1"
+    },
+    {
+      "name": "severity-one",
+      "returncode": 1,
+      "failure": "ORIGINAL_SWEEP_CLOCK_FAIL case=12 name=terminal-refusal line=258 diagnostic->line == 463 && diagnostic->severity == 1"
+    },
+    {
+      "name": "sweep-format",
+      "returncode": 1,
+      "failure": "ORIGINAL_SWEEP_CLOCK_FAIL case=12 name=terminal-refusal line=262 strcmp(diagnostic->format, \"chain#%d - failed to set SWEEP_CLOCK_CTRL\") == 0"
+    },
+    {
+      "name": "diagnostic-is-emitted",
+      "returncode": 1,
+      "failure": "ORIGINAL_SWEEP_CLOCK_FAIL case=12 name=terminal-refusal line=379 f->outer_logs == (unsigned)(f->expected_status != 0)"
+    },
+    {
+      "name": "second-argument-is-ignored",
+      "returncode": 1,
+      "failure": "ORIGINAL_SWEEP_CLOCK_FAIL case=2 name=four-low-bit-values line=280 mode == 1 && chip == NULL && reg == f->expected_reg && value == f->expected_word"
+    },
+    {
+      "name": "high-bits-are-accepted",
+      "returncode": 1,
+      "failure": "ORIGINAL_SWEEP_CLOCK_FAIL case=5 name=selected-high-bits-ignored line=373 result == f->expected_status"
+    },
+    {
+      "name": "post-writer-index",
+      "returncode": 1,
+      "failure": "ORIGINAL_SWEEP_CLOCK_FAIL case=16 name=fresh-index-after-send-refusal line=263 diagnostic->index_bits == f->expected_outer_index"
+    },
+    {
+      "name": "one-writer-call",
+      "returncode": 1,
+      "failure": "ORIGINAL_SWEEP_CLOCK_FAIL case=1 name=four-low-bit-values line=222 f->releases == 1 && f->attempts >= 1"
+    }
+  ],
+  "firmware_executed": false,
+  "hardware": false
+}

@@ -195,3 +195,27 @@ int32_t vn135_bm1368_set_ticket_mask_135(
     return -1;
 }
 #endif
+
+#ifdef VN135_BM1368_SWEEP_CLOCK_135
+#include "integration/bm1368_sweep_clock_135.h"
+
+int32_t vn135_bm1368_set_sweep_clock_135(
+    struct vn135_bm1368_frequency_device *device,
+    uint32_t ignored_2, uint32_t field1_2,
+    const struct vn135_bm1368_register_ops *writer, void *write_context,
+    const struct vn135_bm1368_sweep_clock_log_135 *log)
+{
+    (void)ignored_2;
+    const uint32_t value = UINT32_C(0x80008b00) | ((field1_2 & 3u) << 1);
+    if (vn135_bm1368_write_register_135(device, 1, NULL, 0x3c, value,
+            writer, write_context) == 0)
+        return 0;
+    const struct vn135_bm1368_sweep_clock_diagnostic_135 diagnostic = {
+        "driver", "/tmp/build/libbitmain/src/chip/chip1368.c", "[redacted]",
+        "chain#%d - failed to set SWEEP_CLOCK_CTRL", 463, 1,
+        device->index + UINT32_C(1)
+    };
+    log->emit(log->context, &diagnostic);
+    return -1;
+}
+#endif
