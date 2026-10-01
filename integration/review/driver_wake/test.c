@@ -223,6 +223,8 @@ static void initial14(void)
     C14(!atomic_load(&e.driver.scanning) && !atomic_load(&e.driver.enabled) && !atomic_load(&step_calls));
     close14(&e);++n14_cases;
 }
+/* R16 reuses these host fixtures; standalone assertions are unchanged. */
+#ifndef R14_WAKE_EMBED
 int main(void)
 {
     void (*volatile keep_native_fill)(struct thr_info *,struct cgpu_info *,struct device_drv *,const int)=fill_queue;
@@ -236,3 +238,5 @@ int main(void)
     tq_free(getq);getq=NULL;stgd_lock=NULL;C14(pthread_cond_destroy(&gws_cond)==0);
     printf("R14_PASS cases=%u checks=%u native_paused_loop=1 driver_condition_wait=1 hardware=0\n",n14_cases,atomic_load(&n14_checks));return 0;
 }
+
+#endif
