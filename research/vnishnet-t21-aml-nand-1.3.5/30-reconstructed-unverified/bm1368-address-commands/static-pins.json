@@ -1,0 +1,341 @@
+{
+  "kind": "bm1368-address-commands-static-pins",
+  "metadata_sha256": "4d98bd18d314cb337706fd7003eaf6ccdd0ec76f7f65afe946b443ebe8b3997d",
+  "schema": 1,
+  "sources": {
+    "cgminer": {
+      "elf_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+      "elf_size": 6228004,
+      "regions": [
+        {
+          "id": "caller-chip-address-multiply",
+          "kind": "code",
+          "sha256": "f3242611f2edc75bed097e419f3977e0a9323c3f5751698547c6e4b1ec10ddf5",
+          "size": 8,
+          "va": 343448
+        },
+        {
+          "id": "caller-coordinator-address-stage",
+          "kind": "code",
+          "sha256": "b28201cb7dfb72780471323b50429e1883a0d60d1b137f36f25d97c022c402b0",
+          "size": 120,
+          "va": 350936
+        },
+        {
+          "id": "caller-cold-chip-field-stores",
+          "kind": "code",
+          "sha256": "c45b1b62a59770ad579b9d858de54cc21b7da0f6ca4f5d198111e35088c5dcf9",
+          "size": 72,
+          "va": 472712
+        },
+        {
+          "id": "caller-board-view-accessor",
+          "kind": "code",
+          "sha256": "75cf4ac24b47097c94faca34d348431b77cdb0c00154c46e861f1b6fba5d93f4",
+          "size": 12,
+          "va": 684556
+        },
+        {
+          "id": "constructor-selected-block",
+          "kind": "code",
+          "sha256": "be81be0574071e93e098850b25a0535415602592363241c47f8d0dc30c8cb0bb",
+          "size": 88,
+          "va": 922816
+        },
+        {
+          "id": "slot-0xb8-literal",
+          "kind": "data",
+          "sha256": "2dad5f890f37b89733b8625fbf4aa92c3faa630cff88c2678f623c326b34065b",
+          "size": 4,
+          "va": 923356
+        },
+        {
+          "id": "slot-0xb4-literal",
+          "kind": "data",
+          "sha256": "444fb68bd930c3b59d2b12393520f3fe6491ed6961fffa4bdbcd2e220107c9aa",
+          "size": 4,
+          "va": 923360
+        },
+        {
+          "id": "preceding-return",
+          "kind": "code",
+          "sha256": "297f331f29d06493a35f941f9a29fa769c44e26102745fdcb60ccf94dc9e9a3a",
+          "size": 12,
+          "va": 935828
+        },
+        {
+          "id": "inactive-code",
+          "kind": "code",
+          "sha256": "94551474c9c8ebeb6dd8aa5d2b0e65e7bcd6e858e94da38833d3b508f8aa0b8b",
+          "size": 288,
+          "va": 935864
+        },
+        {
+          "id": "inactive-pool",
+          "kind": "data",
+          "sha256": "98f2f326123298edf2d81a0cf5c303199e5a153040121bd39208dfcc6b26de5e",
+          "size": 36,
+          "va": 936152
+        },
+        {
+          "id": "address-code",
+          "kind": "code",
+          "sha256": "99c4084fce9271ef1ecfa3deb4d4cab9dc2d8bd7dc81d9e04279f60c55a5e27a",
+          "size": 176,
+          "va": 936188
+        },
+        {
+          "id": "address-pool",
+          "kind": "data",
+          "sha256": "f63e1b101ee9e3a4225bd5470c2f4d2329aa5938f3fe51308d8e24818169be7f",
+          "size": 16,
+          "va": 936364
+        },
+        {
+          "id": "following-leaf",
+          "kind": "code",
+          "sha256": "6dcd5e75586fe6683156c0d559d4827b73bd48d501fa5781a1c6099aacd7c877",
+          "size": 8,
+          "va": 936380
+        },
+        {
+          "id": "initializer-code",
+          "kind": "code",
+          "sha256": "818c84fbf1c84dfab1aa8f852a2cf68cdea95de726fc8f1734ba244d72352201",
+          "size": 3304,
+          "va": 938864
+        },
+        {
+          "id": "initializer-pool",
+          "kind": "data",
+          "sha256": "218d1258317bbbcbec9acd68e70c7c6f4b89d9bda7b53491bdad52b8caff9148",
+          "size": 144,
+          "va": 942168
+        },
+        {
+          "id": "after-initializer-prologue",
+          "kind": "code",
+          "sha256": "56933b4e90f032e9030f4b53042b540f632696ddcb220173fc5bf97543a20e2b",
+          "size": 8,
+          "va": 942312
+        },
+        {
+          "id": "caller-delay-ms-constants",
+          "kind": "code",
+          "sha256": "8f31139857b1136cb156e14a6d24d2a7b0fc1271154cdc79b2e27ad74daeedae",
+          "size": 20,
+          "va": 1109340
+        },
+        {
+          "id": "caller-delay-ms-arithmetic",
+          "kind": "code",
+          "sha256": "b4595c4d5035307c1cef63b55d0dd54f81bd61879dc03caa47c6ba52ee5a2986",
+          "size": 56,
+          "va": 1109400
+        },
+        {
+          "id": "initializer-registration",
+          "kind": "data",
+          "sha256": "bde77998d34438e46530ea4f32972bb50ccfc36504c8fad84a328d8b2e2da63a",
+          "size": 4,
+          "va": 6139876
+        },
+        {
+          "id": "slot-0xb4-got",
+          "kind": "data",
+          "sha256": "99c1ef4514161056c0e421b1e1d129c4ec89be56d7a2b1dd039b5e988decffd9",
+          "size": 4,
+          "va": 6154704
+        },
+        {
+          "id": "slot-0xb8-got",
+          "kind": "data",
+          "sha256": "68743340a38cff2e48f27d4ab59fb6b88ca2e6d907df1d50356e541a2f8ecdfc",
+          "size": 4,
+          "va": 6155328
+        },
+        {
+          "id": "opaque-got-0xe538c",
+          "kind": "data",
+          "sha256": "7e7bcfdad7e741ae27d0a4858b29dd01afea5a6be7fce05f3e3a82740db7dda3",
+          "size": 4,
+          "va": 6155440
+        },
+        {
+          "id": "opaque-got-0xe481c",
+          "kind": "data",
+          "sha256": "5578bc5ca1ddc552898276b17fda89ec195af70775791d17c0b0cb3a357e5e3c",
+          "size": 4,
+          "va": 6156568
+        },
+        {
+          "id": "opaque-got-0xe5384",
+          "kind": "data",
+          "sha256": "eb66d60f168c192c323cabf4936c70d0d2cda46ef3894723674ce6e454f62b6c",
+          "size": 4,
+          "va": 6157664
+        },
+        {
+          "id": "opaque-got-0xe4808",
+          "kind": "data",
+          "sha256": "3e07e80c9fb6308c81c5204f853df90d1c3b49479d52d73ba9db11f261de15ca",
+          "size": 4,
+          "va": 6159088
+        },
+        {
+          "id": "string-module",
+          "kind": "data",
+          "sha256": "64a55a211d01dc292292fa14f929c00b510dd0da70734ea797b1636e001b3e93",
+          "size": 7,
+          "va": 6206432
+        },
+        {
+          "id": "string-source",
+          "kind": "data",
+          "sha256": "21e3cb1265c67df3e206ffcdcc8af58222b08f0252d352b2b1dd982f9300a406",
+          "size": 42,
+          "va": 6206439
+        },
+        {
+          "id": "string-function",
+          "kind": "data",
+          "sha256": "b4f867e0249b5f517303e494ce0950cb19c433503f70c9dec350e9e770e0126a",
+          "size": 11,
+          "va": 6206481
+        },
+        {
+          "id": "string-inactive_format",
+          "kind": "data",
+          "sha256": "6cc520050a18d8a8caaa4589d1fadf9b9a0894a18572ce4659178639007cc728",
+          "size": 42,
+          "va": 6206877
+        },
+        {
+          "id": "string-address_format",
+          "kind": "data",
+          "sha256": "1e2ad68e82214bd33c8ca3480de60e4c48252f9cf97e57481fcd5bef2e79fd78",
+          "size": 51,
+          "va": 6206919
+        }
+      ]
+    },
+    "hwscan": {
+      "elf_sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+      "elf_size": 4883216,
+      "regions": [
+        {
+          "id": "constructor-selected-block",
+          "kind": "code",
+          "sha256": "be81be0574071e93e098850b25a0535415602592363241c47f8d0dc30c8cb0bb",
+          "size": 88,
+          "va": 990616
+        },
+        {
+          "id": "slot-0xb8-literal",
+          "kind": "data",
+          "sha256": "ffdbf9a1bbcabef4c5677a4040cd750890179d99e58f67409693a91ccdd3c946",
+          "size": 4,
+          "va": 991156
+        },
+        {
+          "id": "slot-0xb4-literal",
+          "kind": "data",
+          "sha256": "411b7c9530ee4f679d02faf661a2280d5827f1f2a57c888b25b0a973f8808954",
+          "size": 4,
+          "va": 991160
+        },
+        {
+          "id": "preceding-return",
+          "kind": "code",
+          "sha256": "4dd8302084c19071ecd58dddc513642306c7155aadea8660a979a7573b056b7f",
+          "size": 12,
+          "va": 998320
+        },
+        {
+          "id": "inactive-code",
+          "kind": "code",
+          "sha256": "b55ce65c9961089462eb9cf20cb736ec1a8fcf68ee2c73b16590fdc8df6221bb",
+          "size": 152,
+          "va": 998348
+        },
+        {
+          "id": "inactive-pool",
+          "kind": "data",
+          "sha256": "fd356ef98af595eb2b7ca21ebb3f8d1e0ae57a196386066f043514abe9cbe72f",
+          "size": 16,
+          "va": 998500
+        },
+        {
+          "id": "address-code",
+          "kind": "code",
+          "sha256": "a12ac06d3a3442fc0e504e109274ef9fca959ae20dc71226479055db141277a8",
+          "size": 176,
+          "va": 998516
+        },
+        {
+          "id": "address-pool",
+          "kind": "data",
+          "sha256": "cc0a0a69576467249c20d7b4320676dcef92354d9826bee573c6e769f38599e1",
+          "size": 16,
+          "va": 998692
+        },
+        {
+          "id": "following-leaf",
+          "kind": "code",
+          "sha256": "6dcd5e75586fe6683156c0d559d4827b73bd48d501fa5781a1c6099aacd7c877",
+          "size": 8,
+          "va": 998708
+        },
+        {
+          "id": "string-function",
+          "kind": "data",
+          "sha256": "4b5ff616946aa201289595f21b4e085135f43222d5e6f2b8ba2f9bc82241d3a7",
+          "size": 11,
+          "va": 4707161
+        },
+        {
+          "id": "string-module",
+          "kind": "data",
+          "sha256": "6b2223c6c75d72fe4bd43ffc5a5aa427f68822c5b228e99d1e29e8fd088bb8b8",
+          "size": 7,
+          "va": 4708628
+        },
+        {
+          "id": "string-inactive_format",
+          "kind": "data",
+          "sha256": "a8b0321631ab18125eecb341f18af6fc57547b4c082fbf131d47c5473431dc00",
+          "size": 42,
+          "va": 4710445
+        },
+        {
+          "id": "string-address_format",
+          "kind": "data",
+          "sha256": "b382a71dfad0a36d709be1c854f17e738402d3307e8f895cc8a935acaf86c700",
+          "size": 51,
+          "va": 4710487
+        },
+        {
+          "id": "string-source",
+          "kind": "data",
+          "sha256": "a22fe6f4f8a0d5f29b251276a4647b1a807f19bb2985aa4301f986468589f931",
+          "size": 42,
+          "va": 4712431
+        },
+        {
+          "id": "slot-0xb8-got",
+          "kind": "data",
+          "sha256": "4f43b9742db7ab46834216d8c7b06be7346cb88c85494c73562ab6ded874af8d",
+          "size": 4,
+          "va": 4912516
+        },
+        {
+          "id": "slot-0xb4-got",
+          "kind": "data",
+          "sha256": "2406f2b1b019bca5ee4613edb7732a0648e5ede08d7fb32bf26bdd2b171079a9",
+          "size": 4,
+          "va": 4913824
+        }
+      ]
+    }
+  }
+}

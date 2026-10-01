@@ -6,17 +6,22 @@ are data, never executable firmware, an original-instruction oracle or C code.
 """
 import copy
 import hashlib
+import importlib.util
 import json
 from pathlib import Path
 import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 ROOT=Path(__file__).resolve().parents[1]
 VERIFIER=ROOT/'verify_evidence.py'
 BASE=json.loads((ROOT/'static-witness.json').read_text())
 PINS=json.loads((ROOT/'static-pins.json').read_text())
+_spec=importlib.util.spec_from_file_location('sweep_static_verifier',VERIFIER)
+verifier=importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(verifier)
 
 
 def region(witness,identifier,source='cgminer'):
@@ -125,8 +130,102 @@ class EvidenceTests(unittest.TestCase):
                 path=root/item['path'];path.parent.mkdir(parents=True,exist_ok=True)
                 path.write_bytes((ROOT.parents[3]/item['path']).read_bytes())
             target=root/'libbitmain/src/chip/chip1368.c'
-            raw=bytearray(target.read_bytes());raw[-2]^=1;target.write_bytes(raw)
+            original=target.read_bytes()
+            # Separate L12 prefix drift from new current-address suffix drift.
+            for offset in (9243,len(original)-2):
+                raw=bytearray(original);raw[offset]^=1;target.write_bytes(raw)
+                self.check(['--repo-root',str(root)],reason='reviewed runtime source identity mismatch')
+            target.write_bytes(original)
+            header=root/'integration/bm1368_sweep_clock_135.h'
+            header.write_bytes(header.read_bytes()+b'\n')
             self.check(['--repo-root',str(root)],reason='reviewed runtime source identity mismatch')
+
+    def address_source(self):
+        return (ROOT.parents[3]/verifier.BM1368_PATH).read_bytes()
+
+    def sweep_item(self):
+        return copy.deepcopy(BASE['proof']['runtime_sources'][0])
+
+    def matching_address_identity(self,raw):
+        blob=hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()
+        return patch.multiple(verifier,BM1368_ADDRESS_SIZE=len(raw),
+                              BM1368_ADDRESS_SHA256=verifier.sha(raw),BM1368_ADDRESS_BLOB=blob)
+
+    def test_current_address_transition_retains_frozen_l12_identity(self):
+        raw=self.address_source();item=self.sweep_item()
+        sweep=verifier.sweep_runtime_bytes(raw,item)
+        self.assertEqual(sweep,raw[:9245])
+        self.assertEqual(len(raw),11280)
+        self.assertEqual(item,{'path':'libbitmain/src/chip/chip1368.c','bytes':9245,
+                              'git_blob':'f23565c15c9d174e644fc51a401e81dbe072dfd7',
+                              'sha256':'e4c05fb8bc541e6e6b2a216cbaecf7ef57cc3d85101d59b81e8ebd3d4e2af7e4'})
+
+    def test_address_identity_components_and_all_prior_sources_rejected(self):
+        raw=self.address_source();item=self.sweep_item()
+        for constant,value in (('BM1368_ADDRESS_SIZE',11279),
+                               ('BM1368_ADDRESS_SHA256','0'*64),('BM1368_ADDRESS_BLOB','0'*40)):
+            with self.subTest(constant=constant), patch.object(verifier,constant,value):
+                with self.assertRaisesRegex(verifier.EvidenceError,'reviewed runtime source identity mismatch'):
+                    verifier.sweep_runtime_bytes(raw,item)
+        for end in (920,3803,7519,8350,9245):
+            with self.subTest(end=end):
+                with self.assertRaisesRegex(verifier.EvidenceError,'reviewed runtime source identity mismatch'):
+                    verifier.sweep_runtime_bytes(raw[:end],item)
+
+    def test_frozen_runtime_entry_cannot_be_relabelled(self):
+        raw=self.address_source()
+        for key,value in (('path',verifier.BM1368_PATH+'.copy'),('bytes',11280),
+                          ('sha256','0'*64),('git_blob','0'*40)):
+            item=self.sweep_item();item[key]=value
+            with self.subTest(key=key):
+                with self.assertRaisesRegex(verifier.EvidenceError,'historical sweep runtime identity differs'):
+                    verifier.sweep_runtime_bytes(raw,item)
+        self.reject(lambda w:w['proof']['runtime_sources'][0].__setitem__('bytes',11280))
+
+    def test_sweep_identity_components_independent_of_matching_entry(self):
+        raw=self.address_source()
+        for constant,key,value in (('BM1368_SWEEP_SIZE','bytes',9244),
+                                   ('BM1368_SWEEP_SHA256','sha256','0'*64),
+                                   ('BM1368_SWEEP_BLOB','git_blob','0'*40)):
+            item=self.sweep_item();item[key]=value
+            # Direct helper control bypasses entry equality, never metadata pins.
+            with self.subTest(constant=constant), patch.object(verifier,constant,value):
+                with self.assertRaisesRegex(verifier.EvidenceError,'preserved sweep runtime source identity mismatch'):
+                    verifier.sweep_runtime_bytes(raw,item)
+
+    def test_preserved_sweep_bytes_checked_without_address_full_hash(self):
+        raw=self.address_source();item=self.sweep_item()
+        for offset in (0,920,3802,3803,7518,7519,8349,8350,9244):
+            mutant=bytearray(raw);mutant[offset]^=1;mutant=bytes(mutant)
+            with self.subTest(offset=offset), self.matching_address_identity(mutant):
+                with self.assertRaisesRegex(verifier.EvidenceError,'preserved sweep runtime source identity mismatch'):
+                    verifier.sweep_runtime_bytes(mutant,item)
+
+    def test_address_gate_shape_checked_without_full_hash(self):
+        raw=self.address_source();sweep,added=raw[:9245],raw[9245:];item=self.sweep_item()
+        suffixes=[b'',added.replace(b'VN135_BM1368_ADDRESS_COMMANDS_135',b'OTHER_GATE'),
+                  added.replace(b'"integration/bm1368_address_commands_135.h"',b'"wrong.h"'),
+                  added.replace(b'#include "integration/bm1368_control.h"\n',b''),
+                  added.replace(b'"integration/bm1368_control.h"',b'"wrong-helper.h"'),
+                  b'int outside;\n'+added,added+added,added[:-8]]
+        for replacement in (b'\n#endif\nint outside;\n\n',
+                            b'\n#if OTHER\n#endif\n#endif\n',
+                            b'\n#else\n#endif\n',b'\n#elif OTHER\n#endif\n',
+                            b'\n#include "extra.h"\n#endif\n'):
+            suffixes.append(added.replace(b'\n#endif\n',replacement))
+        for index,suffix in enumerate(suffixes):
+            mutant=sweep+suffix
+            with self.subTest(mutation=index), self.matching_address_identity(mutant):
+                with self.assertRaisesRegex(verifier.EvidenceError,'address-commands append is not separately gated'):
+                    verifier.sweep_runtime_bytes(mutant,item)
+
+    def test_address_semantics_truncation_and_extra_bytes_rejected(self):
+        raw=self.address_source();sweep,added=raw[:9245],raw[9245:];item=self.sweep_item()
+        for suffix in (added.replace(b'669, 1,',b'670, 1,'),
+                       added.replace(b'699, 1,',b'700, 1,'),
+                       added.replace(b'frame + 2, 5',b'frame + 2, 4'),added+b'\n',added[:-1]):
+            with self.assertRaisesRegex(verifier.EvidenceError,'reviewed runtime source identity mismatch'):
+                verifier.sweep_runtime_bytes(sweep+suffix,item)
 
     def test_reviewed_annotations_qualifiers_and_json_schema(self):
         self.reject(lambda w:w['proof']['domain'].clear())

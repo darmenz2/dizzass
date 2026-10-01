@@ -28,9 +28,12 @@ BM1368_RESET_SIZE = 7519
 BM1368_TICKET_BLOB = '1cd2c6e7612b494c28f0bbbab0e62434d104881d'
 BM1368_TICKET_SHA256 = 'ed818babcb847fb38094af8f08ae3c0ac6ef690192aa1e6030c3f8326e9968d9'
 BM1368_TICKET_SIZE = 8350
-BM1368_CURRENT_BLOB = 'f23565c15c9d174e644fc51a401e81dbe072dfd7'
-BM1368_CURRENT_SHA256 = 'e4c05fb8bc541e6e6b2a216cbaecf7ef57cc3d85101d59b81e8ebd3d4e2af7e4'
-BM1368_CURRENT_SIZE = 9245
+BM1368_SWEEP_BLOB = 'f23565c15c9d174e644fc51a401e81dbe072dfd7'
+BM1368_SWEEP_SHA256 = 'e4c05fb8bc541e6e6b2a216cbaecf7ef57cc3d85101d59b81e8ebd3d4e2af7e4'
+BM1368_SWEEP_SIZE = 9245
+BM1368_CURRENT_BLOB = '890e2bfc9ead81a9cafe5b34c917b37133ea0d5e'
+BM1368_CURRENT_SHA256 = '91cfb6f3bb640bcf3519027243970bcb37aeeb0275f96b931dd17cab940540d2'
+BM1368_CURRENT_SIZE = 11280
 
 
 def require(ok, message):
@@ -73,11 +76,34 @@ def historical_dispatch_bytes(current):
     return old
 
 
-def ticket_bm1368_bytes(current):
-    """Validate the exact sweep append and recover the unchanged L11 source."""
+def sweep_bm1368_bytes(current):
+    """Validate the address append and recover the unchanged L12 source."""
     require(len(current) == BM1368_CURRENT_SIZE
             and hashlib.sha256(current).hexdigest() == BM1368_CURRENT_SHA256
             and git_blob(current) == BM1368_CURRENT_BLOB,
+            'BM1368 chip source is not the reviewed address-commands blob')
+    sweep, added = current[:BM1368_SWEEP_SIZE], current[BM1368_SWEEP_SIZE:]
+    require(len(sweep) == BM1368_SWEEP_SIZE
+            and hashlib.sha256(sweep).hexdigest() == BM1368_SWEEP_SHA256
+            and git_blob(sweep) == BM1368_SWEEP_BLOB,
+            'BM1368 preserved sweep source prefix changed')
+    require(added.startswith(b'\n#ifdef VN135_BM1368_ADDRESS_COMMANDS_135\n'
+                             b'#include "integration/bm1368_address_commands_135.h"\n'
+                             b'#include "integration/bm1368_control.h"\n')
+            and added.count(b'#if') == 1 and added.count(b'#endif') == 1
+            and added.count(b'#include') == 2
+            and b'#else' not in added and b'#elif' not in added
+            and added.endswith(b'\n#endif\n'),
+            'BM1368 address-commands append is not separately gated')
+    return sweep
+
+
+def ticket_bm1368_bytes(current):
+    """Validate address and sweep appends, then recover the unchanged L11 source."""
+    current = sweep_bm1368_bytes(current)
+    require(len(current) == BM1368_SWEEP_SIZE
+            and hashlib.sha256(current).hexdigest() == BM1368_SWEEP_SHA256
+            and git_blob(current) == BM1368_SWEEP_BLOB,
             'BM1368 chip source is not the reviewed sweep-clock blob')
     ticket, added = current[:BM1368_TICKET_SIZE], current[BM1368_TICKET_SIZE:]
     require(len(ticket) == BM1368_TICKET_SIZE
@@ -95,7 +121,7 @@ def ticket_bm1368_bytes(current):
 
 
 def reset_bm1368_bytes(current):
-    """Validate sweep and ticket layers, then recover the unchanged L10 source."""
+    """Validate address, sweep and ticket layers, then recover unchanged L10."""
     current = ticket_bm1368_bytes(current)
     require(len(current) == BM1368_TICKET_SIZE
             and hashlib.sha256(current).hexdigest() == BM1368_TICKET_SHA256
@@ -117,7 +143,7 @@ def reset_bm1368_bytes(current):
 
 
 def constructor_bm1368_bytes(current):
-    """Validate sweep, ticket and reset layers, then recover the constructor witness."""
+    """Validate all outer layers, then recover the constructor witness."""
     current = reset_bm1368_bytes(current)
     require(len(current) == BM1368_RESET_SIZE
             and hashlib.sha256(current).hexdigest() == BM1368_RESET_SHA256
@@ -139,7 +165,7 @@ def constructor_bm1368_bytes(current):
 
 
 def historical_bm1368_bytes(current):
-    """Validate all four exact appends and recover the unchanged nonce witness."""
+    """Validate all five exact appends and recover the unchanged nonce witness."""
     constructor = constructor_bm1368_bytes(current)
     old, added = constructor[:BM1368_OLD_SIZE], constructor[BM1368_OLD_SIZE:]
     require(git_blob(old) == BM1368_OLD_BLOB,

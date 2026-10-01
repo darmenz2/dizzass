@@ -129,7 +129,7 @@ This checker remains self-contained, with no shared-helper import. All immutable
 source receipts, static pins/witnesses and validation logs stay unchanged; new
 L11 control outcomes remain recorded in the L11 compatibility packet.
 
-L12 adds one further exact outer transition. The complete 9245-byte source
+L12 added one further exact outer transition. The complete 9245-byte source
 must match its fixed SHA-256 and Git blob; its first 8350 bytes must match the
 unchanged L11 source in length and both hashes. The sweep append has its own
 exact gate/header and terminal boundary. The existing ticket, reset and
@@ -141,6 +141,22 @@ Matching-hash contexts bypass each outer layer explicitly when exercising an
 inner predicate; the new outer hash cannot conceal a lost inner check.
 The checker imports no shared helper, all 17 active dependencies and original
 receipt meanings remain intact, and new outcomes belong to the L12 packet.
+
+L13 adds the exact address-to-sweep outer transition. The current source must
+be exactly 11280 bytes with Git blob
+`890e2bfc9ead81a9cafe5b34c917b37133ea0d5e` and SHA-256
+`91cfb6f3bb640bcf3519027243970bcb37aeeb0275f96b931dd17cab940540d2`.
+Its first 9245 bytes retain the independently pinned sweep size and hashes.
+The remaining 2035 bytes must form exactly one `VN135_BM1368_ADDRESS_COMMANDS_135`
+gate, with the new address header and existing encoder header in that order,
+no extra include or nested conditional, and the exact terminal boundary.
+All previous sweep/ticket/reset/constructor predicates and 17 active dependencies
+remain mandatory; a sweep-only source is now rejected as a previous checkout.
+The existing inner-layer controls carry the unchanged address suffix and match
+both outer identities when exercising an older predicate. New controls exercise
+the address identity, preserved sweep bytes and address gate separately. No
+shared helper import, evidence receipt update or historical test-result relabelling
+is introduced. L13 compatibility results belong to the address packet.
 
 ## Assumptions and limits
 

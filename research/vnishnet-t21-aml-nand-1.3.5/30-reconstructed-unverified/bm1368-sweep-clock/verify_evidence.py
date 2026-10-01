@@ -18,6 +18,14 @@ import sys
 
 HERE = Path(__file__).resolve().parent
 PINS_SHA256 = 'fd0cafe594ccd0d216b9aa26b4cfe7a45a6cf3bb730b7201e096fa7cd84cf12d'
+# Current-checkout transition only; the L12 witness and metadata pins stay exact.
+BM1368_PATH = 'libbitmain/src/chip/chip1368.c'
+BM1368_SWEEP_SIZE = 9245
+BM1368_SWEEP_BLOB = 'f23565c15c9d174e644fc51a401e81dbe072dfd7'
+BM1368_SWEEP_SHA256 = 'e4c05fb8bc541e6e6b2a216cbaecf7ef57cc3d85101d59b81e8ebd3d4e2af7e4'
+BM1368_ADDRESS_SIZE = 11280
+BM1368_ADDRESS_BLOB = '890e2bfc9ead81a9cafe5b34c917b37133ea0d5e'
+BM1368_ADDRESS_SHA256 = '91cfb6f3bb640bcf3519027243970bcb37aeeb0275f96b931dd17cab940540d2'
 MAX_JSON_BYTES = 1_000_000
 TARGETS = {'cgminer': {'writer':0xe4a74,'logger':0xfa0c4},
            'hwscan': {'writer':0xf3d7c,'logger':0xfeeb0}}
@@ -354,6 +362,32 @@ def verify_strings(strings, sources, readers):
             require(ref['id']==st['id'] and ref['target']==st[name],'wrong wrapper logger reference')
 
 
+def sweep_runtime_bytes(raw, item):
+    """Require exact current address source, then recover the frozen L12 bytes."""
+    require(item['path']==BM1368_PATH and item['bytes']==BM1368_SWEEP_SIZE
+            and item['git_blob']==BM1368_SWEEP_BLOB
+            and item['sha256']==BM1368_SWEEP_SHA256,
+            'historical sweep runtime identity differs')
+    require(len(raw)==BM1368_ADDRESS_SIZE and sha(raw)==BM1368_ADDRESS_SHA256
+            and hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()
+                ==BM1368_ADDRESS_BLOB,
+            'reviewed runtime source identity mismatch: '+BM1368_PATH+' (address commands)')
+    sweep,added=raw[:BM1368_SWEEP_SIZE],raw[BM1368_SWEEP_SIZE:]
+    require(len(sweep)==BM1368_SWEEP_SIZE and sha(sweep)==BM1368_SWEEP_SHA256
+            and hashlib.sha1(b'blob '+str(len(sweep)).encode()+b'\0'+sweep).hexdigest()
+                ==BM1368_SWEEP_BLOB,
+            'preserved sweep runtime source identity mismatch')
+    require(added.startswith(b'\n#ifdef VN135_BM1368_ADDRESS_COMMANDS_135\n'
+                             b'#include "integration/bm1368_address_commands_135.h"\n'
+                             b'#include "integration/bm1368_control.h"\n')
+            and added.count(b'#if')==1 and added.count(b'#endif')==1
+            and added.count(b'#include')==2
+            and b'#else' not in added and b'#elif' not in added
+            and added.endswith(b'\n#endif\n'),
+            'BM1368 address-commands append is not separately gated')
+    return sweep
+
+
 def verify_proof(proof, readers, repo_root):
     keys(proof,['basis','domain','nonclaims','method_contract','ordinary_parity','caller',
                 'lifetime_review','ordering','fixed_words','runtime_sources'],'proof')
@@ -393,6 +427,8 @@ def verify_proof(proof, readers, repo_root):
     for item in files:
         keys(item,['path','bytes','git_blob','sha256'],'runtime source')
         raw=(Path(repo_root)/item['path']).read_bytes()
+        if item['path']==BM1368_PATH:
+            raw=sweep_runtime_bytes(raw,item)
         require(len(raw)==item['bytes'] and sha(raw)==item['sha256'],'reviewed runtime source identity mismatch: '+item['path'])
         require(hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()==item['git_blob'],
                 'runtime Git blob mismatch')

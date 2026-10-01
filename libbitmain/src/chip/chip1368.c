@@ -219,3 +219,52 @@ int32_t vn135_bm1368_set_sweep_clock_135(
     return -1;
 }
 #endif
+
+#ifdef VN135_BM1368_ADDRESS_COMMANDS_135
+#include "integration/bm1368_address_commands_135.h"
+#include "integration/bm1368_control.h"
+
+int32_t vn135_bm1368_inactivate_135(
+    const struct vn135_common_read_device_135 *device,
+    const struct vn135_transport_dispatch_135 *transport,
+    const struct vn135_bm1368_address_log_135 *log)
+{
+    uint8_t frame[7];
+    size_t written = 0;
+    if (dizzass_bm1368_command_encode(DIZZASS_BM1368_INACTIVE, 0, 0, 0, 0,
+            frame, sizeof frame, &written) || written != sizeof frame)
+        return -1; /* Unreachable for the pinned encoder's bounded arguments. */
+    if (vn135_transport_send_135(transport, device->identity, frame + 2, 5) == 0)
+        return 0;
+    const struct vn135_bm1368_address_diagnostic_135 diagnostic = {
+        "driver", "/tmp/build/libbitmain/src/chip/chip1368.c", "[redacted]",
+        "chain#%d - failed to inactivate the chain", 669, 1,
+        *device->index + UINT32_C(1), 0, 0
+    };
+    log->emit(log->context, &diagnostic);
+    return -1;
+}
+
+int32_t vn135_bm1368_assign_address_135(
+    const struct vn135_common_read_device_135 *device,
+    const vn135_chip_reference *chip,
+    const struct vn135_transport_dispatch_135 *transport,
+    const struct vn135_bm1368_address_log_135 *log)
+{
+    uint8_t frame[7];
+    size_t written = 0;
+    if (dizzass_bm1368_command_encode(DIZZASS_BM1368_SET_ADDRESS, 0,
+            chip->wire_address & 255u, 0, 0, frame, sizeof frame, &written) ||
+            written != sizeof frame)
+        return -1; /* Unreachable for the pinned encoder's bounded arguments. */
+    if (vn135_transport_send_135(transport, device->identity, frame + 2, 5) == 0)
+        return 0;
+    const struct vn135_bm1368_address_diagnostic_135 diagnostic = {
+        "driver", "/tmp/build/libbitmain/src/chip/chip1368.c", "[redacted]",
+        "chain#%d - failed to assign chip address to 0x%02x", 699, 1,
+        *device->index + UINT32_C(1), 1, chip->wire_address
+    };
+    log->emit(log->context, &diagnostic);
+    return -1;
+}
+#endif

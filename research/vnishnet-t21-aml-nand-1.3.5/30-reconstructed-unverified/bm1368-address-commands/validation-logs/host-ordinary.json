@@ -1,0 +1,321 @@
+{
+  "sanitize_all_translation_units": false,
+  "commands": [
+    {
+      "command": [
+        "gcc",
+        "--version"
+      ],
+      "returncode": 0,
+      "stdout": "gcc (Debian 14.2.0-19) 14.2.0\nCopyright (C) 2024 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "gcc",
+        "-I<repo>",
+        "-I<repo>/include",
+        "-std=c11",
+        "-O2",
+        "-g",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Werror",
+        "-Wconversion",
+        "-Wshadow",
+        "-DVN135_BM1368_ADDRESS_COMMANDS_135",
+        "-DVN135_COMMON_READ_REGISTER_135",
+        "-DVN135_TRANSPORT_DISPATCH_135",
+        "-c",
+        "<repo>/libbitmain/src/chip/chip1368.c",
+        "-o",
+        "<workspace>/host-tests/ordinary/unit-0.o"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "gcc",
+        "-I<repo>",
+        "-I<repo>/include",
+        "-std=c11",
+        "-O2",
+        "-g",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Werror",
+        "-Wconversion",
+        "-Wshadow",
+        "-DVN135_BM1368_ADDRESS_COMMANDS_135",
+        "-DVN135_COMMON_READ_REGISTER_135",
+        "-DVN135_TRANSPORT_DISPATCH_135",
+        "-c",
+        "<repo>/libbitmain/src/chip/chip.c",
+        "-o",
+        "<workspace>/host-tests/ordinary/unit-1.o"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "gcc",
+        "-I<repo>",
+        "-I<repo>/include",
+        "-std=c11",
+        "-O2",
+        "-g",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Werror",
+        "-Wconversion",
+        "-Wshadow",
+        "-DVN135_BM1368_ADDRESS_COMMANDS_135",
+        "-DVN135_COMMON_READ_REGISTER_135",
+        "-DVN135_TRANSPORT_DISPATCH_135",
+        "-c",
+        "<repo>/integration/bm1368_control.c",
+        "-o",
+        "<workspace>/host-tests/ordinary/unit-2.o"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "gcc",
+        "-I<repo>",
+        "-I<repo>/include",
+        "-std=c11",
+        "-O2",
+        "-g",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Werror",
+        "-Wconversion",
+        "-Wshadow",
+        "-DVN135_BM1368_ADDRESS_COMMANDS_135",
+        "-DVN135_COMMON_READ_REGISTER_135",
+        "-DVN135_TRANSPORT_DISPATCH_135",
+        "-c",
+        "<repo>/reconstruction/support/crc5.c",
+        "-o",
+        "<workspace>/host-tests/ordinary/unit-3.o"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "gcc",
+        "-I<repo>",
+        "-I<repo>/include",
+        "-std=c11",
+        "-O2",
+        "-g",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Werror",
+        "-Wconversion",
+        "-Wshadow",
+        "-DVN135_BM1368_ADDRESS_COMMANDS_135",
+        "-DVN135_COMMON_READ_REGISTER_135",
+        "-DVN135_TRANSPORT_DISPATCH_135",
+        "-c",
+        "<repo>/libbitmain/src/transport-dispatch.c",
+        "-o",
+        "<workspace>/host-tests/ordinary/unit-4.o"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "gcc",
+        "-I<repo>",
+        "-I<repo>/include",
+        "-std=c11",
+        "-O2",
+        "-g",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Werror",
+        "-Wconversion",
+        "-Wshadow",
+        "-DVN135_BM1368_ADDRESS_COMMANDS_135",
+        "-DVN135_COMMON_READ_REGISTER_135",
+        "-DVN135_TRANSPORT_DISPATCH_135",
+        "-c",
+        "<repo>/libbitmain/src/aml/chip.c",
+        "-o",
+        "<workspace>/host-tests/ordinary/unit-5.o"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "gcc",
+        "-I<repo>",
+        "-I<repo>/include",
+        "-std=c11",
+        "-O2",
+        "-g",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Werror",
+        "-Wconversion",
+        "-Wshadow",
+        "-DVN135_BM1368_ADDRESS_COMMANDS_135",
+        "-DVN135_COMMON_READ_REGISTER_135",
+        "-DVN135_TRANSPORT_DISPATCH_135",
+        "-c",
+        "<repo>/libbitmain/src/uart.c",
+        "-o",
+        "<workspace>/host-tests/ordinary/unit-6.o"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "gcc",
+        "-I<repo>",
+        "-I<repo>/include",
+        "-std=c11",
+        "-O2",
+        "-g",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Werror",
+        "-Wconversion",
+        "-Wshadow",
+        "-DVN135_BM1368_ADDRESS_COMMANDS_135",
+        "-DVN135_COMMON_READ_REGISTER_135",
+        "-DVN135_TRANSPORT_DISPATCH_135",
+        "-c",
+        "<repo>/research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-address-commands/tests/test_address_commands.c",
+        "-o",
+        "<workspace>/host-tests/ordinary/unit-7.o"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "gcc",
+        "<workspace>/host-tests/ordinary/unit-0.o",
+        "<workspace>/host-tests/ordinary/unit-1.o",
+        "<workspace>/host-tests/ordinary/unit-2.o",
+        "<workspace>/host-tests/ordinary/unit-3.o",
+        "<workspace>/host-tests/ordinary/unit-4.o",
+        "<workspace>/host-tests/ordinary/unit-5.o",
+        "<workspace>/host-tests/ordinary/unit-6.o",
+        "<workspace>/host-tests/ordinary/unit-7.o",
+        "-o",
+        "<workspace>/host-tests/ordinary/test-address-commands"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "<workspace>/host-tests/ordinary/test-address-commands"
+      ],
+      "returncode": 0,
+      "stdout": "HOST_SEQUENCE_FIXTURE_PASS inactive_then_set_address=3 common_read_register=2\nADDRESS_COMMANDS_PASS cases=315 wire_bytes=256 high_word_aliases=8 lower_calls=22 checks=4318\n",
+      "stderr": ""
+    }
+  ],
+  "objects": [
+    {
+      "source": "<repo>/libbitmain/src/chip/chip1368.c",
+      "source_sha256": "91cfb6f3bb640bcf3519027243970bcb37aeeb0275f96b931dd17cab940540d2",
+      "object": "<workspace>/host-tests/ordinary/unit-0.o",
+      "object_sha256": "c88ba5a927808f5ef93b0e9d451eafb3b7b48a06dbbce6d75a65aeed64c2ac2b",
+      "instrumented": false
+    },
+    {
+      "source": "<repo>/libbitmain/src/chip/chip.c",
+      "source_sha256": "b9e6f4c431d99cd718fb4a41267c41efe99693216eb2d46591356d8f6de308d4",
+      "object": "<workspace>/host-tests/ordinary/unit-1.o",
+      "object_sha256": "c211fab39ed28af3930bc210485478b39e1edf67b10c7d692a499f9fbadb7ea2",
+      "instrumented": false
+    },
+    {
+      "source": "<repo>/integration/bm1368_control.c",
+      "source_sha256": "6311c43f27b482114b7e18826727e2cd024b2bea4a74b911b5d73887757808f3",
+      "object": "<workspace>/host-tests/ordinary/unit-2.o",
+      "object_sha256": "354ba1466fd144540577b660d4b54d508e96c5ee6ffa75cd9b54d580299322ec",
+      "instrumented": false
+    },
+    {
+      "source": "<repo>/reconstruction/support/crc5.c",
+      "source_sha256": "d03fe3a245dffeddb2d644d91671b44430ca81a007ad15b49db294c1a700e1a2",
+      "object": "<workspace>/host-tests/ordinary/unit-3.o",
+      "object_sha256": "69db6279a74db3a21ab0dad8c5bb09e86c6825a4b1dffc93e1bd5fbe3c26c516",
+      "instrumented": false
+    },
+    {
+      "source": "<repo>/libbitmain/src/transport-dispatch.c",
+      "source_sha256": "5cd3632bf3610c8ec3a7d2ea9b3f9da7fc91bd26676598e41448d6376b531fd9",
+      "object": "<workspace>/host-tests/ordinary/unit-4.o",
+      "object_sha256": "93089f02c755a26100ef5bc2b23b6386491b707e539374909053c0d8c6f78947",
+      "instrumented": false
+    },
+    {
+      "source": "<repo>/libbitmain/src/aml/chip.c",
+      "source_sha256": "06bc61d93243a33c9230cbeeb2e8a97524cf7e3a6d01679c9aa01a96d0234953",
+      "object": "<workspace>/host-tests/ordinary/unit-5.o",
+      "object_sha256": "0882d838328759d07b3d22d622c26e8ad245ea3463943e5c060ea98ae1e15c8e",
+      "instrumented": false
+    },
+    {
+      "source": "<repo>/libbitmain/src/uart.c",
+      "source_sha256": "fcdebe3884ae27027b630fcbd4e3b50898e575f679976cad72f140d9946033e0",
+      "object": "<workspace>/host-tests/ordinary/unit-6.o",
+      "object_sha256": "7b2451f4eb8ef185648fdc8821b48e82c827005bfd075cd85a0dfa1b584fd78a",
+      "instrumented": false
+    },
+    {
+      "source": "<repo>/research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-address-commands/tests/test_address_commands.c",
+      "source_sha256": "b2e12a30d2b69345ecd4b23f008396c320e4d94424b59e4a0fbbeedb0b73604a",
+      "object": "<workspace>/host-tests/ordinary/unit-7.o",
+      "object_sha256": "0a1f91182aacc86c744f9d0505e1e1af00064cc941eee8eddad568d060522ea0",
+      "instrumented": false
+    }
+  ],
+  "result": "passed",
+  "runner_sha256": "d0531eb1963075527a11359ddf4d5edc0112f8d453af8cb193e0f7e1fa714aee",
+  "headers": {
+    "integration/bm1368_address_commands_135.h": "f06b44fb4c4bd0bac18102be55db8b2ac13ee7c7e4ee60ce74508edc9fb8e00f",
+    "integration/common_read_register_135.h": "12c317b0c79d00a50b8a22af60bfbb5669761c37d9c1a21afaa1c3be49f6ea3b",
+    "integration/transport_dispatch_135.h": "7ca6a41c3fa943e068fb458c198164b2525aa04db43e9b0dc0e6cacda0855b36",
+    "integration/bm1368_control.h": "11ddb580caab82219f4df5d480ac17d74386a55ba798aaa47e54390c02aa351a",
+    "integration/bm1368_nonce.h": "46b3a1c6db6ec8dae2c86c45bf7baff6a79e612b6d03399fcecde3de8536209e",
+    "include/xminer/recovery/chip1398.h": "57c25fb7b8e234f1b3fc0eef972338398f4e6027dcee0e38f6c1eb6c5eadef14",
+    "include/xminer/recovery/aml_chip.h": "490a1cdf5b1d0062fd43234bccd69e7efe05f2bbf878abef2d4f090a3637e725",
+    "include/xminer/recovery/uart.h": "3ab7808d8cb55ebd817495fd95f36fcd27f71f3add4cd2edfcebc870b4ec3bbd",
+    "include/xminer/recovery/pll.h": "96cb204b3a846ad82c09c8be5e480e0069751d1a79b191e53fa3dc2618a5602d",
+    "include/xminer/recovery/reg_cache.h": "37aae34cab018e6c6f2282a8083aa01d6fd04da10e37f46d39b6162766a37ba6"
+  },
+  "executable_sha256": "eda781c4b84e3dd56cfddd49f227b80ed39510a723d66d113a08ec099699b143"
+}

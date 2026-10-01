@@ -27,15 +27,16 @@ class HistoricalChanges(unittest.TestCase):
             return False
         return True
 
-    def test_exact_ten_states_only(self):
+    def test_exact_eleven_states_only(self):
         self.assertEqual(guard.PRIOR_MASKS, (0, 32, 26, 58, 37, 63))
         self.assertEqual(len(guard.PRIOR_RECORDS), 6)
         self.assertEqual(len(guard.CONSTRUCTOR_RECORDS), 11)
         self.assertEqual(len(guard.RESET_RECORDS), 11)
         self.assertEqual(len(guard.TICKET_RECORDS), 11)
         self.assertEqual(len(guard.SWEEP_RECORDS), 11)
+        self.assertEqual(len(guard.ADDRESS_RECORDS), 11)
         approved = guard.approved_changes()
-        self.assertEqual(len(set(approved)), 10)
+        self.assertEqual(len(set(approved)), 11)
         for raw in approved:
             self.assertTrue(self.accepts(raw))
 
@@ -59,8 +60,8 @@ class HistoricalChanges(unittest.TestCase):
         self.assertEqual(guard.approved_changes()[6],raw)
         self.assertTrue(self.accepts(raw))
 
-    def test_current_sweep_group_matches_files_and_modes(self):
-        for record in guard.SWEEP_RECORDS:
+    def test_current_address_group_matches_files_and_modes(self):
+        for record in guard.ADDRESS_RECORDS:
             fields, path = record.split('\t')
             old_mode, new_mode, old, current, status = fields.split()
             self.assertEqual((old_mode, new_mode, status), (':100644', '100644', 'M'))
@@ -84,9 +85,9 @@ class HistoricalChanges(unittest.TestCase):
                 count += 1
         self.assertEqual(count, 1957)
 
-    def test_all_mixed_old_constructor_reset_ticket_and_sweep_subsets(self):
-        records = sorted(set(guard.PRIOR_RECORDS + guard.CONSTRUCTOR_RECORDS + guard.RESET_RECORDS + guard.TICKET_RECORDS + guard.SWEEP_RECORDS))
-        self.assertEqual(len(records), 15)
+    def test_all_mixed_old_constructor_reset_ticket_sweep_and_address_subsets(self):
+        records = sorted(set(guard.PRIOR_RECORDS + guard.CONSTRUCTOR_RECORDS + guard.RESET_RECORDS + guard.TICKET_RECORDS + guard.SWEEP_RECORDS + guard.ADDRESS_RECORDS))
+        self.assertEqual(len(records), 16)
         approved = set(guard.approved_changes())
         accepted = set()
         for mask in range(1 << len(records)):
@@ -149,7 +150,7 @@ class HistoricalChanges(unittest.TestCase):
 
     def test_only_complete_sweep_group_is_added_to_prior_nine_states(self):
         old_states=set(guard.approved_changes()[:9])
-        self.assertEqual(set(guard.approved_changes())-old_states,
+        self.assertEqual(set(guard.approved_changes()[:10])-old_states,
                          {'\n'.join(guard.SWEEP_RECORDS)})
         for index in range(len(guard.SWEEP_RECORDS)):
             records=list(guard.SWEEP_RECORDS)
@@ -159,6 +160,28 @@ class HistoricalChanges(unittest.TestCase):
     def test_every_sweep_pair_reordering_fails(self):
         for first, second in itertools.combinations(range(11), 2):
             records = list(guard.SWEEP_RECORDS)
+            records[first], records[second] = records[second], records[first]
+            self.assertFalse(self.accepts('\n'.join(records)), (first, second))
+
+    def test_prior_sweep_state_remains_an_exact_historical_witness(self):
+        raw='\n'.join(guard.SWEEP_RECORDS)
+        self.assertEqual(hashlib.sha256(raw.encode()).hexdigest(),
+                         'b5f9a9dbd3c0485226827d9bb97ae9a23d793d296d284379527cf060be68fba5')
+        self.assertEqual(guard.approved_changes()[9],raw)
+        self.assertTrue(self.accepts(raw))
+
+    def test_only_complete_address_group_is_added_to_prior_ten_states(self):
+        old_states=set(guard.approved_changes()[:10])
+        self.assertEqual(set(guard.approved_changes())-old_states,
+                         {'\n'.join(guard.ADDRESS_RECORDS)})
+        for index in range(len(guard.ADDRESS_RECORDS)):
+            records=list(guard.ADDRESS_RECORDS)
+            del records[index]
+            self.assertFalse(self.accepts('\n'.join(records)),index)
+
+    def test_every_address_pair_reordering_fails(self):
+        for first, second in itertools.combinations(range(11), 2):
+            records = list(guard.ADDRESS_RECORDS)
             records[first], records[second] = records[second], records[first]
             self.assertFalse(self.accepts('\n'.join(records)), (first, second))
 
