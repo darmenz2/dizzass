@@ -1,0 +1,38 @@
+name: BM1368 constructor research
+on:
+  pull_request:
+    branches: [work/reconstruction]
+    paths:
+      - 'libbitmain/src/chip/chip1368.c'
+      - 'libbitmain/src/transport-dispatch.c'
+      - 'integration/bm1368_initialize_135.h'
+      - 'integration/bm1368_nonce.h'
+      - 'integration/transport_initialize_135.h'
+      - 'integration/tests/test_bm1368_bounds.c'
+      - 'reference/cgminer.vendor.elf'
+      - 'research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-init/**'
+      - '.github/workflows/bm1368-init-research.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  constructor-host:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install static decoding libraries
+        run: |
+          python -m pip install --only-binary=:all: capstone==5.0.6 pyelftools==0.32
+      - name: Constructor, existing selector composition and nonce regression
+        run: make -C research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-init CC=${{ matrix.cc }} test sanitize
+      - name: Check cgminer bytes as data only
+        run: |
+          python -B research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-init/verify_evidence.py --cgminer reference/cgminer.vendor.elf
+          python -O -B research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-init/verify_evidence.py

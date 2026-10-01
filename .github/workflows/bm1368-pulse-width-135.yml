@@ -3,6 +3,8 @@ on:
   push:
     branches: [work/reconstruction]
     paths: &pulse_width_paths
+      - libbitmain/src/chip/chip1368.c
+      - integration/bm1368_initialize_135.h
       - integration/tests/current_dependency_pins_135.py
       - integration/tests/test_current_dependency_pins_135.py
       - integration/CURRENT_DEPENDENCY_PINS_135.md

@@ -74,42 +74,15 @@ jobs:
           fi
           python3 integration/test_native_core.py
           python3 tools/prepare_uart_posix.py --check
-          # Preserve historical files except the exact reviewed PR #99 platform
-          # addition and its thermal build/PR coverage compatibility repair as a
-          # complete group, plus the independent exact transport-initializer addition.
-          # The exact pulse checker/workflow repair is atomic and requires transport.
+          # Preserve the six prior exact historical combinations and allow only
+          # the complete exact BM1368 constructor compatibility group in addition.
+          python3 integration/tests/test_uart_posix_historical_135.py
+          python3 -O integration/tests/test_uart_posix_historical_135.py
           historical_changes=$(git diff --raw --no-abbrev --no-renames \
             --no-ext-diff --no-textconv --ignore-submodules=none \
             --diff-filter=DMRT \
             12446bed78a060a49364a80bcbfb4340b13f4f27 HEAD --)
-          approved_historical_changes=$(printf '%s\t%s\n' \
-            ':100644 100644 aa0a043df461bfc7e15487d60ebf8a4dcd915b52 dcc8a6f2b1d8b0b981f461f1d4f99448bbf328e3 M' \
-            '.github/workflows/thermal-routes-135.yml' \
-            ':100644 100644 f68baf7a096b3b261e6249600b726eb120bebfbb 40d0fb336501875982f22ac6453ee4ddd58d8762 M' \
-            'integration/thermal-routes-135.mk' \
-            ':100644 100644 f66d7c37b3d4e9f87ff892f35488db6140cb341c 0c0a6970e15c690af918aeeddbcc38fae5a06925 M' \
-            'libbitmain/src/aml/platform.c')
-          approved_transport_change=$(printf '%s\t%s' \
-            ':100644 100644 8ceb8405390e3eaf9f7b34480eb3cdd040a3b0ef d030308564c47bf409a3d381f16ddf262e6acf26 M' \
-            'libbitmain/src/transport-dispatch.c')
-          approved_pulse_workflow_change=$(printf '%s\t%s' \
-            ':100644 100644 9c839aca1ebf0a1347fded59b631a30d960940a5 4ebf163af82be3cde11d5c7b3b65fce61d3409db M' \
-            '.github/workflows/bm1368-pulse-width-135.yml')
-          approved_pulse_checker_change=$(printf '%s\t%s' \
-            ':100644 100644 21c016abf12cd427c53704f52f213572f3178438 cce7d0abfa75e7343158f1dbd4dbc30b93cf8c64 M' \
-            'integration/tests/check_bm1368_pulse_width_evidence_135.py')
-          case "$historical_changes" in
-            ''|"$approved_historical_changes"|"$approved_transport_change"|\
-            "$approved_historical_changes"$'\n'"$approved_transport_change"|\
-            "$approved_pulse_workflow_change"$'\n'"$approved_pulse_checker_change"$'\n'"$approved_transport_change"|\
-            "$approved_pulse_workflow_change"$'\n'"${approved_historical_changes%%$'\n'*}"$'\n'"$approved_pulse_checker_change"$'\n'"${approved_historical_changes#*$'\n'}"$'\n'"$approved_transport_change")
-              ;;
-            *)
-              printf 'Unexpected historical source changes:\n%s\n' \
-                "$historical_changes" >&2
-              exit 1
-              ;;
-          esac
+          python3 integration/tests/check_uart_posix_historical_135.py "$historical_changes"
           git diff --exit-code
           echo 'Host PTYs only: no physical UART, ASIC, production driver, pool or merge.'
 

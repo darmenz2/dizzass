@@ -1,0 +1,296 @@
+{
+  "compiled_controls": 57,
+  "baseline_pass": true,
+  "records": [
+    {
+      "control": "baseline",
+      "returncode": 0,
+      "semantic_detection": false
+    },
+    {
+      "control": "wrong-slot-0xdc",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0xbc",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0xc0",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0xc4",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0xc8",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0xcc",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0xd0",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0xd4",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0xd8",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x9c",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0xa0",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0xa4",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0xa8",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0xac",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0xb0",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0xb4",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0xb8",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x7c",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x80",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x84",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x88",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x8c",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x90",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x94",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x98",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x5c",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x60",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x64",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x68",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x6c",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x70",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x74",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x78",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x3c",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x40",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x44",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x48",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x4c",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x50",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x54",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x58",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x1c",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x20",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x24",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x28",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x2c",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x30",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x34",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x38",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x04",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x08",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x0c",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x10",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-slot-0x14",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "overwrite-preserved-0",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "overwrite-preserved-6",
+      "returncode": 1,
+      "semantic_detection": true
+    },
+    {
+      "control": "wrong-return",
+      "returncode": 1,
+      "semantic_detection": true
+    }
+  ]
+}

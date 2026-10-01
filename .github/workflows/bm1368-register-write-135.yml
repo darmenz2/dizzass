@@ -2,7 +2,12 @@ name: Check original 1.3.5 BM1368 register write
 on:
   push:
     branches: [work/reconstruction]
-    paths:
+    paths: &register_write_paths
+      - libbitmain/src/chip/chip1368.c
+      - integration/bm1368_initialize_135.h
+      - integration/tests/current_dependency_pins_135.py
+      - integration/tests/test_current_dependency_pins_135.py
+      - integration/CURRENT_DEPENDENCY_PINS_135.md
       - libbitmain/src/chip/chip1368-register-write.c
       - libbitmain/src/chip/chip1368-frequency.c
       - libbitmain/src/reg_cache.c
@@ -18,6 +23,9 @@ on:
       - tools/arm32*.py
       - reference/cgminer.vendor.elf
       - .github/workflows/bm1368-register-write-135.yml
+  pull_request:
+    branches: [work/reconstruction]
+    paths: *register_write_paths
   workflow_dispatch:
 permissions:
   contents: read
@@ -50,6 +58,11 @@ jobs:
           git checkout -q --detach FETCH_HEAD
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
           printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Current dependency pin compatibility controls
+        run: |
+          cd "$SOURCE_ROOT"
+          python3 integration/tests/test_current_dependency_pins_135.py
+          python3 -O integration/tests/test_current_dependency_pins_135.py
       - name: Original register CRC cache and PLL composition
         run: |
           cd "$SOURCE_ROOT"

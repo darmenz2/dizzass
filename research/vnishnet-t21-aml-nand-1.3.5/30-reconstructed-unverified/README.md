@@ -13,3 +13,7 @@ The extracted bytes and disassembly remain separate evidence tiers. Do not execu
 ## Transport/chip initialization
 
 The [bounded initializer](transport-init/README.md) adds the missing original selection and partial-write order, with explicit unresolved constructor callbacks and host/static tests. It does not register a production driver.
+
+## BM1368 method-table construction
+
+The [BM1368 constructor](bm1368-init/README.md) fills the 54 fixed method identities selected by chip 4 while preserving two caller-owned words. Its actual C body composes with the existing bounded initializer in host tests. It does not make those identities callable or establish hardware readiness.

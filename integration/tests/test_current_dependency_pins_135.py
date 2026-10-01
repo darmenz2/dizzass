@@ -18,10 +18,13 @@ class CurrentDependencyPins(unittest.TestCase):
         self.root = Path(self.temp.name)
         self.thermal = (ROOT / pins.THERMAL_PATH).read_bytes()
         self.dispatch = (ROOT / pins.DISPATCH_PATH).read_bytes()
+        self.bm1368 = (ROOT / pins.BM1368_PATH).read_bytes()
         self.old_thermal = pins.historical_thermal_bytes(self.thermal)
         self.old_dispatch = pins.historical_dispatch_bytes(self.dispatch)
+        self.old_bm1368 = pins.historical_bm1368_bytes(self.bm1368)
         self.put(pins.THERMAL_PATH, self.thermal)
         self.put(pins.DISPATCH_PATH, self.dispatch)
+        self.put(pins.BM1368_PATH, self.bm1368)
         self.other = 'integration/unchanged-dependency.h'
         self.put(self.other, b'unchanged\n')
         self.other_sha = pins.git_blob(b'unchanged\n')
@@ -39,14 +42,19 @@ class CurrentDependencyPins(unittest.TestCase):
         return ((pins.THERMAL_PATH, pins.THERMAL_OLD_BLOB, self.thermal,
                  self.old_thermal),
                 (pins.DISPATCH_PATH, pins.DISPATCH_OLD_BLOB, self.dispatch,
-                 self.old_dispatch))
+                 self.old_dispatch),
+                (pins.BM1368_PATH, pins.BM1368_OLD_BLOB, self.bm1368,
+                 self.old_bm1368))
 
     def test_exact_current_blobs_and_original_witnesses(self):
         self.assertEqual(pins.git_blob(self.thermal), pins.THERMAL_CURRENT_BLOB)
         self.assertEqual(pins.git_blob(self.dispatch), pins.DISPATCH_CURRENT_BLOB)
+        self.assertEqual(pins.git_blob(self.bm1368), pins.BM1368_CURRENT_BLOB)
         self.assertEqual(pins.git_blob(self.old_thermal), pins.THERMAL_OLD_BLOB)
         self.assertEqual(pins.git_blob(self.old_dispatch), pins.DISPATCH_OLD_BLOB)
         self.assertEqual(len(self.old_dispatch), pins.DISPATCH_OLD_SIZE)
+        self.assertEqual(pins.git_blob(self.old_bm1368), pins.BM1368_OLD_BLOB)
+        self.assertEqual(len(self.old_bm1368), pins.BM1368_OLD_SIZE)
         for path, old_sha, _, _ in self.pairs():
             self.check(path, old_sha)
 
@@ -102,6 +110,41 @@ class CurrentDependencyPins(unittest.TestCase):
         with patch.object(pins, 'DISPATCH_OLD_BLOB', '0' * 40):
             with self.assertRaises(ValueError):
                 pins.historical_dispatch_bytes(self.dispatch)
+        with patch.object(pins, 'BM1368_OLD_BLOB', '0' * 40):
+            with self.assertRaises(ValueError):
+                pins.historical_bm1368_bytes(self.bm1368)
+
+    def test_bm1368_prefix_and_gate_mutations_rejected(self):
+        for mutant in (
+                b'X' + self.bm1368[1:],
+                self.bm1368.replace(b'VN135_BM1368_INITIALIZE_135', b'OTHER_GATE'),
+                self.bm1368.replace(b'UINT32_C(0xe4a6c)', b'UINT32_C(0xe4a70)'),
+                self.bm1368 + b'int extra;\n',
+                self.bm1368[:-7]):
+            self.put(pins.BM1368_PATH, mutant)
+            with self.assertRaises(ValueError):
+                self.check(pins.BM1368_PATH, pins.BM1368_OLD_BLOB)
+
+    def test_bm1368_prefix_checked_independently_of_current_hash(self):
+        mutant = b'X' + self.bm1368[1:]
+        with patch.object(pins, 'BM1368_CURRENT_BLOB', pins.git_blob(mutant)):
+            with self.assertRaises(ValueError):
+                pins.historical_bm1368_bytes(mutant)
+
+    def test_bm1368_gate_shape_checked_independently_of_current_hash(self):
+        old, added = self.old_bm1368, self.bm1368[pins.BM1368_OLD_SIZE:]
+        for suffix in (
+                added.replace(b'VN135_BM1368_INITIALIZE_135', b'OTHER_GATE'),
+                b'int outside;\n' + added,
+                added.replace(b'\n#endif\n', b'\n#endif\nint outside;\n'),
+                added.replace(b'\n#endif\n', b'\n#if OTHER\n#endif\n#endif\n'),
+                added + added,
+                added[:-7]):
+            mutant = old + suffix
+            with self.subTest(suffix=suffix[:60]):
+                with patch.object(pins, 'BM1368_CURRENT_BLOB', pins.git_blob(mutant)):
+                    with self.assertRaises(ValueError):
+                        pins.historical_bm1368_bytes(mutant)
 
     def test_transition_shape_checked_independently_of_current_hash(self):
         mutant = self.thermal.replace(b'ROUTES135_FLAGS =', b'OTHER_FLAGS =')
@@ -129,6 +172,7 @@ class CurrentDependencyPins(unittest.TestCase):
     def test_missing_paths_fail(self):
         for path, expected in ((pins.THERMAL_PATH, pins.THERMAL_OLD_BLOB),
                                (pins.DISPATCH_PATH, pins.DISPATCH_OLD_BLOB),
+                               (pins.BM1368_PATH, pins.BM1368_OLD_BLOB),
                                (self.other, self.other_sha)):
             (self.root / path).unlink()
             with self.assertRaises(FileNotFoundError):
@@ -154,11 +198,12 @@ class CurrentDependencyPins(unittest.TestCase):
                 self.check(path, old_sha)
 
     def test_fifo_fails_without_reading_or_blocking(self):
-        target = self.root / pins.THERMAL_PATH
-        target.unlink()
-        os.mkfifo(target)
-        with self.assertRaises(ValueError):
-            self.check(pins.THERMAL_PATH, pins.THERMAL_OLD_BLOB)
+        for path, old_sha, _, _ in self.pairs():
+            target = self.root / path
+            target.unlink()
+            os.mkfifo(target)
+            with self.assertRaises(ValueError):
+                self.check(path, old_sha)
 
     def test_parent_symlink_fails(self):
         parent = self.root / 'libbitmain'
@@ -166,6 +211,8 @@ class CurrentDependencyPins(unittest.TestCase):
         parent.symlink_to(self.root / 'actual-libbitmain', target_is_directory=True)
         with self.assertRaises(ValueError):
             self.check(pins.DISPATCH_PATH, pins.DISPATCH_OLD_BLOB)
+        with self.assertRaises(ValueError):
+            self.check(pins.BM1368_PATH, pins.BM1368_OLD_BLOB)
 
     def test_unsafe_or_noncanonical_paths_fail(self):
         for path in ('', '/tmp/file', '../file', 'integration/../file',

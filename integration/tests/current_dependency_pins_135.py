@@ -1,4 +1,4 @@
-"""Current-checkout pins for the two exact PR #102/#103 dependency transitions.
+"""Current-checkout pins for exact reviewed dependency transitions.
 
 Historical evidence JSON remains byte-identical. See
 integration/CURRENT_DEPENDENCY_PINS_135.md for the old/new witnesses.
@@ -16,6 +16,10 @@ DISPATCH_PATH = 'libbitmain/src/transport-dispatch.c'
 DISPATCH_OLD_BLOB = '8ceb8405390e3eaf9f7b34480eb3cdd040a3b0ef'
 DISPATCH_CURRENT_BLOB = 'd030308564c47bf409a3d381f16ddf262e6acf26'
 DISPATCH_OLD_SIZE = 2305
+BM1368_PATH = 'libbitmain/src/chip/chip1368.c'
+BM1368_OLD_BLOB = 'c64374454e6e458ec1a175f21f03af141e29a3aa'
+BM1368_CURRENT_BLOB = '0de837d281e81eb4503b4193b45ef076ec600b6e'
+BM1368_OLD_SIZE = 920
 
 
 def require(ok, message):
@@ -58,6 +62,21 @@ def historical_dispatch_bytes(current):
     return old
 
 
+def historical_bm1368_bytes(current):
+    """Validate the exact constructor append and unchanged nonce source prefix."""
+    require(git_blob(current) == BM1368_CURRENT_BLOB,
+            'BM1368 chip source is not the reviewed constructor blob')
+    old, added = current[:BM1368_OLD_SIZE], current[BM1368_OLD_SIZE:]
+    require(git_blob(old) == BM1368_OLD_BLOB,
+            'BM1368 chip historical prefix changed')
+    require(added.startswith(b'\n#ifdef VN135_BM1368_INITIALIZE_135\n')
+            and added.count(b'\n#ifdef VN135_BM1368_INITIALIZE_135\n') == 1
+            and added.count(b'#if') == 1 and added.count(b'#endif') == 1
+            and added.endswith(b'\n#endif\n'),
+            'BM1368 constructor append is not separately gated')
+    return old
+
+
 def check_current_dependency(root, path, expected):
     """Enforce an existing pin, allowing only the precisely reviewed transition."""
     require(isinstance(path, str) and path != ''
@@ -81,5 +100,8 @@ def check_current_dependency(root, path, expected):
     elif path == DISPATCH_PATH:
         require(expected == DISPATCH_OLD_BLOB, 'historical transport dispatch pin changed')
         historical_dispatch_bytes(raw)
+    elif path == BM1368_PATH:
+        require(expected == BM1368_OLD_BLOB, 'historical BM1368 chip pin changed')
+        historical_bm1368_bytes(raw)
     else:
         require(git_blob(raw) == expected, 'old dependency changed: ' + path)
