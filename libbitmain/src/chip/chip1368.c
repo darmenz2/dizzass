@@ -87,3 +87,89 @@ int32_t vn135_bm1368_initialize_135(
     return 0;
 }
 #endif
+
+#ifdef VN135_BM1368_RESET_135
+#include "integration/bm1368_reset_135.h"
+
+static int32_t reset_signed_index_135(uint32_t word)
+{
+    return word <= INT32_MAX ? (int32_t)word :
+        (int32_t)((int64_t)word - INT64_C(4294967296));
+}
+
+static void reset_diagnostic_135(
+    const struct vn135_bm1368_reset_ops_135 *ops,
+    const struct vn135_bm1368_frequency_device *device,
+    uint32_t line, const char *format, uint32_t has_index)
+{
+    const struct vn135_bm1368_reset_diagnostic_135 diagnostic = {
+        "driver", "/tmp/build/libbitmain/src/chip/chip1368.c", "[redacted]",
+        format, line, 1, has_index, has_index ? device->index + UINT32_C(1) : 0
+    };
+    ops->emit(ops->log_context, &diagnostic);
+}
+
+int32_t vn135_bm1368_reset_cores_135(
+    struct vn135_bm1368_frequency_device *device,
+    const vn135_chip_reference *chip, uint32_t fast, uint32_t unused,
+    uint32_t clock, uint32_t pulse, const struct vn135_bm1368_reset_ops_135 *ops)
+{
+    uint32_t value = 0, misc;
+    const uint32_t delay = fast != 0 ? 1u : 5u;
+    const char *const misc_error = "Failed to read cached misc contol register";
+    const char *const core_error = "chain#%d - failed to send core command";
+    (void)unused;
+    if (ops->read_cached(ops->read_context, reset_signed_index_135(device->index),
+            chip->cache_index, 0x18, &value) != 0)
+        reset_diagnostic_135(ops, device, 844, misc_error, 0);
+    else
+        (void)ops->write_register(ops->write_context, device, 0, chip,
+            0x18, value & ~UINT32_C(0x300));
+
+    value = 0;
+    misc = 0; /* Original separate R3 output is zeroed before R2. */
+    if (ops->read_cached(ops->read_context, reset_signed_index_135(device->index),
+            chip->cache_index, 0xa8, &value) != 0)
+        reset_diagnostic_135(ops, device, 816,
+            "Failed to read cached soft reset register", 0);
+    else if (ops->read_cached(ops->read_context, reset_signed_index_135(device->index),
+            chip->cache_index, 0x18, &misc) != 0)
+        reset_diagnostic_135(ops, device, 821, misc_error, 0);
+    else {
+        value |= UINT32_C(0x1f0);
+        misc = (misc & UINT32_C(0x00f0ffff)) | UINT32_C(0xf0000000);
+        if (ops->write_register(ops->write_context, device, 0, chip,
+                0xa8, value) == 0)
+            (void)ops->write_register(ops->write_context, device, 0, chip, 0x18, misc);
+    }
+    (void)ops->wait_ms(ops->wait_context, delay);
+
+    value = 0;
+    if (ops->read_cached(ops->read_context, reset_signed_index_135(device->index),
+            chip->cache_index, 0x18, &value) != 0)
+        reset_diagnostic_135(ops, device, 844, misc_error, 0);
+    else
+        (void)ops->write_register(ops->write_context, device, 0, chip,
+            0x18, value | UINT32_C(0x300));
+    if (ops->write_register(ops->write_context, device, 0, chip,
+            0x3c, UINT32_C(0x80008b00)) != 0)
+        reset_diagnostic_135(ops, device, 444,
+            "chain#%d - failed to set SWEEP_CLOCK_CTRL", 1);
+    (void)ops->wait_ms(ops->wait_context, delay);
+
+    value = UINT32_C(0x80008000) | ((pulse & 3u) << 6) | ((clock & 7u) << 3);
+    if (ops->write_register(ops->write_context, device, 0, chip, 0x3c, value) != 0) {
+        reset_diagnostic_135(ops, device, 387, core_error, 1);
+        reset_diagnostic_135(ops, device, 538,
+            "chain#%d - failed to set CLOCK_DELAY_CTRL", 1);
+    }
+    (void)ops->wait_ms(ops->wait_context, delay);
+
+    if (ops->write_register(ops->write_context, device, 0, chip,
+            0x3c, UINT32_C(0x800082aa)) != 0)
+        reset_diagnostic_135(ops, device, 387, core_error, 1);
+    (void)ops->wait_ms(ops->wait_context, delay);
+    (void)ops->wait_ms(ops->wait_context, 10);
+    return 0;
+}
+#endif

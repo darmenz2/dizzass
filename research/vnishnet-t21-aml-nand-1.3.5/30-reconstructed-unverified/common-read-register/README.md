@@ -28,11 +28,23 @@ hwscan supplies matching plaintext. Neither original program or initializer is
 executed by this work.
 
 See the [complete static contract](STATIC_CONTRACT.md) and
-[checker scope/reproduction](STATIC_CHECKER.md). The public checker verifies all
-17 unchanged dependencies and the selected code, literal, string, branch and
-initializer witnesses with explicit checks that remain active under Python -O.
-All 50 checker tests pass in both modes. Optional complete-image verification
+[checker scope/reproduction](STATIC_CHECKER.md). The L09 validation snapshot
+accepted on 2026-10-01 checked all 17 unchanged dependencies and the selected
+code, literal, string, branch and initializer witnesses with explicit checks
+that remain active under Python -O. All 50 checker tests passed in both modes
+in that snapshot. Optional complete-image verification
 checks 33 selected cgminer regions and 14 hwscan regions against full file hashes.
+
+L10 keeps the original source receipts, static pins and validation logs intact.
+The current checker has 58 controls, passed normally and with Python -O, and
+still checks all 17 active entries. For chip1368.c only, it requires the exact
+7519-byte source containing the reset append, validates its separate gate, and applies the original
+receipt predicates to the unchanged 3803-byte constructor prefix. Every other
+active file remains an exact full-file pin. The research index is still the sole
+inactive provenance entry. This is a narrowly pinned current-source transition;
+the earlier 50-test run and unchanged-source statements describe the L09 snapshot.
+Exact identities are documented in
+[current dependency pins](../../../../integration/CURRENT_DEPENDENCY_PINS_135.md).
 
 The original path is `/tmp/build/libbitmain/src/chip/chip.c`, module `driver`,
 function text `[redacted]`, source line 103, severity 1, and format
@@ -77,7 +89,8 @@ helpers' omitted diagnostics remain omitted; one log refers to this wrapper.
 
 ## Host validation
 
-The current public suite passes 3,086 cases / 45,714 checks with GCC 14.2:
+The L09 validation snapshot accepted on 2026-10-01 passed 3,086 cases / 45,714
+checks with GCC 14.2:
 byte normalization and golden CRC vectors; NULL optional chip; zero/negative/
 positive/extreme send statuses; failure-only index access; post-send and log
 mutations; callback replacement for the next call; and complete refused-write
@@ -110,10 +123,12 @@ separate publication gate.
 
 ## Dependency and publication boundaries
 
-The pre-edit audit verified every accepted C source, header and workflow and
+The L09 pre-edit audit verified every accepted C source, header and workflow and
 found no complete existing wrapper. Build files enumerate sources explicitly;
-the new original-path module is compiled only by this isolated target. Encoder,
-CRC, dispatcher, AML, UART, selector and constructor sources remain unchanged,
-so their current whole-file pins and historical compatibility records remain
-valid. The incomplete old vendor/source and Stage14 inventories are historical
+the new original-path module is compiled only by this isolated target. At that
+2026-10-01 L09 snapshot, encoder, CRC, dispatcher, AML, UART, selector and
+constructor sources remained unchanged, so their whole-file pins and historical
+compatibility records remained valid. L10's later constructor-prefix transition
+is described above; it does not rewrite those historical validation facts.
+The incomplete old vendor/source and Stage14 inventories are historical
 witnesses and are not rewritten. Pending runtime-stack work stays separate.

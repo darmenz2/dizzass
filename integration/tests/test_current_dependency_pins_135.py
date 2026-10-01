@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Host-only pin controls: no firmware execution, ARM interpretation or devices."""
 import os
+from contextlib import contextmanager
+import hashlib
 from pathlib import Path
 import tempfile
 import unittest
@@ -22,6 +24,7 @@ class CurrentDependencyPins(unittest.TestCase):
         self.old_thermal = pins.historical_thermal_bytes(self.thermal)
         self.old_dispatch = pins.historical_dispatch_bytes(self.dispatch)
         self.old_bm1368 = pins.historical_bm1368_bytes(self.bm1368)
+        self.constructor_bm1368 = pins.constructor_bm1368_bytes(self.bm1368)
         self.put(pins.THERMAL_PATH, self.thermal)
         self.put(pins.DISPATCH_PATH, self.dispatch)
         self.put(pins.BM1368_PATH, self.bm1368)
@@ -38,6 +41,22 @@ class CurrentDependencyPins(unittest.TestCase):
     def check(self, path, expected):
         pins.check_current_dependency(self.root, path, expected)
 
+    @contextmanager
+    def accept_current_bm1368_identity(self, raw):
+        # Bypass every full-source identity predicate so a failed prefix/gate
+        # check is independently demonstrated rather than masked by hashing.
+        with patch.multiple(pins, BM1368_CURRENT_SIZE=len(raw),
+                            BM1368_CURRENT_BLOB=pins.git_blob(raw),
+                            BM1368_CURRENT_SHA256=hashlib.sha256(raw).hexdigest()):
+            yield
+
+    @contextmanager
+    def accept_constructor_bm1368_identity(self, raw):
+        with patch.multiple(pins, BM1368_CONSTRUCTOR_SIZE=len(raw),
+                            BM1368_CONSTRUCTOR_BLOB=pins.git_blob(raw),
+                            BM1368_CONSTRUCTOR_SHA256=hashlib.sha256(raw).hexdigest()):
+            yield
+
     def pairs(self):
         return ((pins.THERMAL_PATH, pins.THERMAL_OLD_BLOB, self.thermal,
                  self.old_thermal),
@@ -50,6 +69,12 @@ class CurrentDependencyPins(unittest.TestCase):
         self.assertEqual(pins.git_blob(self.thermal), pins.THERMAL_CURRENT_BLOB)
         self.assertEqual(pins.git_blob(self.dispatch), pins.DISPATCH_CURRENT_BLOB)
         self.assertEqual(pins.git_blob(self.bm1368), pins.BM1368_CURRENT_BLOB)
+        self.assertEqual(len(self.bm1368), pins.BM1368_CURRENT_SIZE)
+        self.assertEqual(hashlib.sha256(self.bm1368).hexdigest(), pins.BM1368_CURRENT_SHA256)
+        self.assertEqual(len(self.constructor_bm1368), pins.BM1368_CONSTRUCTOR_SIZE)
+        self.assertEqual(pins.git_blob(self.constructor_bm1368), pins.BM1368_CONSTRUCTOR_BLOB)
+        self.assertEqual(hashlib.sha256(self.constructor_bm1368).hexdigest(),
+                         pins.BM1368_CONSTRUCTOR_SHA256)
         self.assertEqual(pins.git_blob(self.old_thermal), pins.THERMAL_OLD_BLOB)
         self.assertEqual(pins.git_blob(self.old_dispatch), pins.DISPATCH_OLD_BLOB)
         self.assertEqual(len(self.old_dispatch), pins.DISPATCH_OLD_SIZE)
@@ -64,6 +89,11 @@ class CurrentDependencyPins(unittest.TestCase):
                 self.put(path, old)
                 with self.assertRaises(ValueError):
                     self.check(path, old_sha)
+
+    def test_constructor_only_blob_rejected_as_current_checkout(self):
+        self.put(pins.BM1368_PATH, self.constructor_bm1368)
+        with self.assertRaisesRegex(ValueError, 'not the reviewed reset blob'):
+            self.check(pins.BM1368_PATH, pins.BM1368_OLD_BLOB)
 
     def test_changed_original_pin_rejected(self):
         for path, _, current, _ in self.pairs():
@@ -127,12 +157,88 @@ class CurrentDependencyPins(unittest.TestCase):
 
     def test_bm1368_prefix_checked_independently_of_current_hash(self):
         mutant = b'X' + self.bm1368[1:]
-        with patch.object(pins, 'BM1368_CURRENT_BLOB', pins.git_blob(mutant)):
+        constructor = mutant[:pins.BM1368_CONSTRUCTOR_SIZE]
+        with self.accept_current_bm1368_identity(mutant):
+            with self.accept_constructor_bm1368_identity(constructor):
+                with self.assertRaisesRegex(ValueError, 'historical prefix changed'):
+                    pins.historical_bm1368_bytes(mutant)
+
+    def test_constructor_prefix_checked_independently_of_current_hash(self):
+        for offset in (0, pins.BM1368_OLD_SIZE, pins.BM1368_CONSTRUCTOR_SIZE - 1):
+            mutant = bytearray(self.bm1368)
+            mutant[offset] ^= 1
+            mutant = bytes(mutant)
+            with self.subTest(offset=offset):
+                with self.accept_current_bm1368_identity(mutant):
+                    with self.assertRaisesRegex(ValueError, 'constructor source prefix changed'):
+                        pins.constructor_bm1368_bytes(mutant)
+
+    def test_constructor_witness_hashes_are_independent(self):
+        for constant in ('BM1368_CONSTRUCTOR_BLOB', 'BM1368_CONSTRUCTOR_SHA256'):
+            with patch.object(pins, constant, '0' * len(getattr(pins, constant))):
+                with self.assertRaisesRegex(ValueError, 'constructor source prefix changed'):
+                    pins.constructor_bm1368_bytes(self.bm1368)
+
+    def test_current_reset_identity_components_are_independent(self):
+        for constant, wrong in (('BM1368_CURRENT_BLOB', '0' * 40),
+                                ('BM1368_CURRENT_SHA256', '0' * 64),
+                                ('BM1368_CURRENT_SIZE', len(self.bm1368) - 1)):
+            with patch.object(pins, constant, wrong):
+                with self.assertRaisesRegex(ValueError, 'not the reviewed reset blob'):
+                    pins.constructor_bm1368_bytes(self.bm1368)
+
+    def test_reset_prefix_and_gate_mutations_rejected(self):
+        for mutant in (
+                self.bm1368.replace(b'VN135_BM1368_RESET_135', b'OTHER_RESET_GATE'),
+                self.bm1368.replace(b'"integration/bm1368_reset_135.h"', b'"wrong.h"'),
+                self.bm1368.replace(b'UINT32_C(0x800082aa)', b'UINT32_C(0x800082ab)'),
+                self.bm1368 + self.bm1368[pins.BM1368_CONSTRUCTOR_SIZE:],
+                self.bm1368 + b'int outside;\n', self.bm1368[:-1]):
+            self.put(pins.BM1368_PATH, mutant)
             with self.assertRaises(ValueError):
-                pins.historical_bm1368_bytes(mutant)
+                self.check(pins.BM1368_PATH, pins.BM1368_OLD_BLOB)
+
+    def test_reset_gate_shape_checked_independently_of_current_hash(self):
+        added = self.bm1368[pins.BM1368_CONSTRUCTOR_SIZE:]
+        for suffix in (
+                added.replace(b'VN135_BM1368_RESET_135', b'OTHER_GATE'),
+                added.replace(b'"integration/bm1368_reset_135.h"', b'"wrong.h"'),
+                b'int outside;\n' + added,
+                added.replace(b'\n#endif\n', b'\n#endif\nint outside;\n\n'),
+                added.replace(b'\n#endif\n', b'\n#if OTHER\n#endif\n#endif\n'),
+                added.replace(b'\n#endif\n', b'\n#else\n#endif\n'),
+                added.replace(b'\n#endif\n', b'\n#elif OTHER\n#endif\n'),
+                added.replace(b'\n#endif\n', b'\n#include "extra.h"\n#endif\n'),
+                added + added, added[:-8]):
+            mutant = self.constructor_bm1368 + suffix
+            with self.subTest(suffix=suffix[:60]):
+                with self.accept_current_bm1368_identity(mutant):
+                    with self.assertRaisesRegex(ValueError, 'reset append is not separately gated'):
+                        pins.constructor_bm1368_bytes(mutant)
+
+    def test_constructor_expected_pin_is_not_an_old_evidence_pin(self):
+        with self.assertRaisesRegex(ValueError, 'historical BM1368 chip pin changed'):
+            self.check(pins.BM1368_PATH, pins.BM1368_CONSTRUCTOR_BLOB)
+
+    def test_reset_transition_cannot_be_applied_to_another_path(self):
+        alternate = pins.BM1368_PATH + '.reset-copy'
+        self.put(alternate, self.bm1368)
+        with self.assertRaises(ValueError):
+            pins.check_current_dependency(self.root, alternate, pins.BM1368_CONSTRUCTOR_BLOB)
+
+    def test_missing_reset_append_rejected_even_with_changed_full_identity(self):
+        with self.accept_current_bm1368_identity(self.constructor_bm1368):
+            with self.assertRaisesRegex(ValueError, 'reset append is not separately gated'):
+                pins.constructor_bm1368_bytes(self.constructor_bm1368)
+
+    def test_nonce_witness_remains_checked_after_both_transitions(self):
+        with patch.object(pins, 'BM1368_OLD_BLOB', '0' * 40):
+            with self.assertRaisesRegex(ValueError, 'historical prefix changed'):
+                pins.historical_bm1368_bytes(self.bm1368)
 
     def test_bm1368_gate_shape_checked_independently_of_current_hash(self):
-        old, added = self.old_bm1368, self.bm1368[pins.BM1368_OLD_SIZE:]
+        old, added = self.old_bm1368, self.constructor_bm1368[pins.BM1368_OLD_SIZE:]
+        reset = self.bm1368[pins.BM1368_CONSTRUCTOR_SIZE:]
         for suffix in (
                 added.replace(b'VN135_BM1368_INITIALIZE_135', b'OTHER_GATE'),
                 b'int outside;\n' + added,
@@ -140,11 +246,13 @@ class CurrentDependencyPins(unittest.TestCase):
                 added.replace(b'\n#endif\n', b'\n#if OTHER\n#endif\n#endif\n'),
                 added + added,
                 added[:-7]):
-            mutant = old + suffix
+            constructor = old + suffix
+            mutant = constructor + reset
             with self.subTest(suffix=suffix[:60]):
-                with patch.object(pins, 'BM1368_CURRENT_BLOB', pins.git_blob(mutant)):
-                    with self.assertRaises(ValueError):
-                        pins.historical_bm1368_bytes(mutant)
+                with self.accept_current_bm1368_identity(mutant):
+                    with self.accept_constructor_bm1368_identity(constructor):
+                        with self.assertRaisesRegex(ValueError, 'constructor append is not separately gated'):
+                            pins.historical_bm1368_bytes(mutant)
 
     def test_transition_shape_checked_independently_of_current_hash(self):
         mutant = self.thermal.replace(b'ROUTES135_FLAGS =', b'OTHER_FLAGS =')

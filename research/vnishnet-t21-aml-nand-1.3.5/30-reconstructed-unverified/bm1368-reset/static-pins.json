@@ -1,0 +1,334 @@
+{
+  "schema": 1,
+  "kind": "bm1368-reset-static-pins",
+  "metadata_sha256": "03d4fb5b63481de6ed962505061ede66e3e3a98b9008a528aa653b95b125362a",
+  "sources": {
+    "cgminer": {
+      "elf_size": 6228004,
+      "elf_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+      "regions": [
+        {
+          "id": "constructor-slot",
+          "kind": "code",
+          "va": 923188,
+          "size": 56,
+          "sha256": "28d9dcb09713aa3fae6e24cb384fa868b469301948c2b53b2529d12cd8a6eaff"
+        },
+        {
+          "id": "slot-displacement",
+          "kind": "data",
+          "va": 923504,
+          "size": 4,
+          "sha256": "b167ab672ed174c5c922d3cc3f31b14aab674fe2d1629698d77e8ae1fed5cbb3"
+        },
+        {
+          "id": "reset-code",
+          "kind": "code",
+          "va": 924516,
+          "size": 1336,
+          "sha256": "2bd23924d4d03db29282966416498d869fd453cfe15e7620adc78c1dd6283d7c"
+        },
+        {
+          "id": "reset-pool",
+          "kind": "data",
+          "va": 925852,
+          "size": 148,
+          "sha256": "465f42779dd7d7209d6c494655cb6d0b5da594fb2ac17169adb5c4f3a56a9e7c"
+        },
+        {
+          "id": "initializer-module",
+          "kind": "code",
+          "va": 938864,
+          "size": 152,
+          "sha256": "d14d559fb39c4fb645c1ed41f6e37f65bf7096d26f4840949d7853a09e3cb126"
+        },
+        {
+          "id": "initializer-source",
+          "kind": "code",
+          "va": 939080,
+          "size": 132,
+          "sha256": "51e0d903ed66b81bbb6ec8468c57c27c3ce004511684ccdf7905386dc98ab356"
+        },
+        {
+          "id": "initializer-function",
+          "kind": "code",
+          "va": 939260,
+          "size": 132,
+          "sha256": "88989aff4972e26960b143a0634f8a5f611d2d98bbed637ab66acaa5f82e6c1e"
+        },
+        {
+          "id": "initializer-sweep",
+          "kind": "code",
+          "va": 939616,
+          "size": 44,
+          "sha256": "318084fc40eaba049aa2961d7255b04b506ba528e36c47773470d0fdd1edbb84"
+        },
+        {
+          "id": "initializer-clock",
+          "kind": "code",
+          "va": 939840,
+          "size": 44,
+          "sha256": "bbd30e241e207fb120a0ff86cbdb2b1d608f59ccc70e3ef93b4966e735b58334"
+        },
+        {
+          "id": "initializer-core",
+          "kind": "code",
+          "va": 941896,
+          "size": 44,
+          "sha256": "085a8b16e7783b39681f0848a2e61a2585756827f484d4ba00dd27668aa74262"
+        },
+        {
+          "id": "initializer-misc",
+          "kind": "code",
+          "va": 941988,
+          "size": 44,
+          "sha256": "0c097de4d126fa2119c6c1ce91afd164aa43862e52dab15d0518f9e8be2095ee"
+        },
+        {
+          "id": "initializer-soft-reset",
+          "kind": "code",
+          "va": 942032,
+          "size": 136,
+          "sha256": "f83c749ef3d3135bad272946735f9bdb11ab49ef6c67bce0d8af0e0a106f64ed"
+        },
+        {
+          "id": "initializer-literal-module",
+          "kind": "data",
+          "va": 942176,
+          "size": 4,
+          "sha256": "69d1950d65221d7381c3a9d12d73ba49ecff982ce5d51853be44902cf04b4b6f"
+        },
+        {
+          "id": "initializer-literal-source",
+          "kind": "data",
+          "va": 942188,
+          "size": 4,
+          "sha256": "cb2a8eb06e68c5b606f3871347666003a94a3d1da34f2b7d0f01bba6b5033ff8"
+        },
+        {
+          "id": "initializer-literal-function",
+          "kind": "data",
+          "va": 942192,
+          "size": 4,
+          "sha256": "ef7807d205e2d19863b2a4d86bf980a66fb3904756716af483cba6bff581dbd6"
+        },
+        {
+          "id": "initializer-literal-sweep",
+          "kind": "data",
+          "va": 942204,
+          "size": 4,
+          "sha256": "02395a8090e667391e94ebd2c72865a7ac44cca41d9acbc2b0ad1aa1e3f6d5bb"
+        },
+        {
+          "id": "initializer-literal-clock",
+          "kind": "data",
+          "va": 942212,
+          "size": 4,
+          "sha256": "e13374d27b8f5da82e9becb24782bf5e453b4ac7b38a5d0c4d61dc384136e67b"
+        },
+        {
+          "id": "initializer-literal-core",
+          "kind": "data",
+          "va": 942300,
+          "size": 4,
+          "sha256": "77a751f1f9947a7c279aba7511bc920bc9193bcd884c7c1bbe683da2d5ce06f8"
+        },
+        {
+          "id": "initializer-literal-misc",
+          "kind": "data",
+          "va": 942304,
+          "size": 4,
+          "sha256": "a45eb8da4f23a6726faa8bdf728b1568e3e0515f04d4b712e25b1bf8cd9b438b"
+        },
+        {
+          "id": "initializer-literal-soft-reset",
+          "kind": "data",
+          "va": 942308,
+          "size": 4,
+          "sha256": "404220cb62a12ec96341e54d601e3a8c600194bf8c9865fac3ffe079f6674424"
+        },
+        {
+          "id": "delay",
+          "kind": "code",
+          "va": 1109292,
+          "size": 348,
+          "sha256": "57b063c0883ffb0c7342f7e0b757e714a5c7edac4e94ee3acd3d9b82ca939e34"
+        },
+        {
+          "id": "delay-pool",
+          "kind": "data",
+          "va": 1109640,
+          "size": 8,
+          "sha256": "dfb3486a938c54db25e73442ce6d62e81dfab45e7d52da910538244c2385c3bc"
+        },
+        {
+          "id": "slot-got",
+          "kind": "data",
+          "va": 6157680,
+          "size": 4,
+          "sha256": "5a818cbe5db43cb887b5b0d95a3a7f77b2a8b65f96bf8389395a61a6058519ed"
+        },
+        {
+          "id": "string-module",
+          "kind": "data",
+          "va": 6206432,
+          "size": 7,
+          "sha256": "64a55a211d01dc292292fa14f929c00b510dd0da70734ea797b1636e001b3e93"
+        },
+        {
+          "id": "string-source",
+          "kind": "data",
+          "va": 6206439,
+          "size": 42,
+          "sha256": "21e3cb1265c67df3e206ffcdcc8af58222b08f0252d352b2b1dd982f9300a406"
+        },
+        {
+          "id": "string-function",
+          "kind": "data",
+          "va": 6206481,
+          "size": 11,
+          "sha256": "b4f867e0249b5f517303e494ce0950cb19c433503f70c9dec350e9e770e0126a"
+        },
+        {
+          "id": "string-sweep",
+          "kind": "data",
+          "va": 6206571,
+          "size": 42,
+          "sha256": "ad781c628824f60e5dd49487ce3a08597cf3fa378014311c0c83a9f7764b9ae0"
+        },
+        {
+          "id": "string-clock",
+          "kind": "data",
+          "va": 6206650,
+          "size": 42,
+          "sha256": "d2016ac73cf8ef71cbe4311b71e0d372b3be1ce2513a1f00876e90a1f87b06d1"
+        },
+        {
+          "id": "string-core",
+          "kind": "data",
+          "va": 6207664,
+          "size": 39,
+          "sha256": "c7c429e788d068fb804514b20d20bb4baabcfda2fd7c0096992eda32556ac50d"
+        },
+        {
+          "id": "string-misc",
+          "kind": "data",
+          "va": 6207703,
+          "size": 43,
+          "sha256": "7cdfb7f6766fd46592a1bafd3e22b44bd0694142bd4c8a1bd610beda84cab23e"
+        },
+        {
+          "id": "string-soft-reset",
+          "kind": "data",
+          "va": 6207746,
+          "size": 42,
+          "sha256": "befd11a75a7c2104646b72ea87eafec21642f92b3a26cac90343f5a0ff0186e0"
+        }
+      ]
+    },
+    "hwscan": {
+      "elf_size": 4883216,
+      "elf_sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+      "regions": [
+        {
+          "id": "constructor-slot",
+          "kind": "code",
+          "va": 990988,
+          "size": 56,
+          "sha256": "28d9dcb09713aa3fae6e24cb384fa868b469301948c2b53b2529d12cd8a6eaff"
+        },
+        {
+          "id": "slot-displacement",
+          "kind": "data",
+          "va": 991304,
+          "size": 4,
+          "sha256": "f8a6572647995dcdabb47c1a673efe4a4b1a7c210057735b017d3e29b688f5b0"
+        },
+        {
+          "id": "reset-code",
+          "kind": "code",
+          "va": 991764,
+          "size": 972,
+          "sha256": "76a20509ee659c7b9ac040b7e1cced738ae34a25ba611607d5e555743e0cd030"
+        },
+        {
+          "id": "reset-pool",
+          "kind": "data",
+          "va": 992736,
+          "size": 108,
+          "sha256": "a260f5a09abfd1be39e88d7665757cafe3df9668d020ffc17cf59467e4925044"
+        },
+        {
+          "id": "delay",
+          "kind": "code",
+          "va": 1081728,
+          "size": 152,
+          "sha256": "9c19e5c336c8008af0b53049f59adf205b29d45735516c8bc9be9fba75b8f77f"
+        },
+        {
+          "id": "string-function",
+          "kind": "data",
+          "va": 4707161,
+          "size": 11,
+          "sha256": "4b5ff616946aa201289595f21b4e085135f43222d5e6f2b8ba2f9bc82241d3a7"
+        },
+        {
+          "id": "string-module",
+          "kind": "data",
+          "va": 4708628,
+          "size": 7,
+          "sha256": "6b2223c6c75d72fe4bd43ffc5a5aa427f68822c5b228e99d1e29e8fd088bb8b8"
+        },
+        {
+          "id": "string-misc",
+          "kind": "data",
+          "va": 4710704,
+          "size": 43,
+          "sha256": "abbc778f6a10eb6d7f45245c794327c43dd2d52578c42f3f64ad7c2453a5d7aa"
+        },
+        {
+          "id": "string-clock",
+          "kind": "data",
+          "va": 4710925,
+          "size": 42,
+          "sha256": "ef58e0e684cad1dec595c852ed801ac2916d3f3fe0b408bb240ae1686b19d807"
+        },
+        {
+          "id": "string-sweep",
+          "kind": "data",
+          "va": 4711058,
+          "size": 42,
+          "sha256": "cf60758db17e51ccb6fdf070ae9784f16bde5ad13ab372c50be0ebac01b1ed9a"
+        },
+        {
+          "id": "string-core",
+          "kind": "data",
+          "va": 4711843,
+          "size": 39,
+          "sha256": "8f158b52732a1dcbc5085449d8d96f45b40abdbc5d37e814e7de5d1690a8a217"
+        },
+        {
+          "id": "string-source",
+          "kind": "data",
+          "va": 4712431,
+          "size": 42,
+          "sha256": "a22fe6f4f8a0d5f29b251276a4647b1a807f19bb2985aa4301f986468589f931"
+        },
+        {
+          "id": "string-soft-reset",
+          "kind": "data",
+          "va": 4712522,
+          "size": 42,
+          "sha256": "ba996b816baa4f24970fc9bf3f448710dd0aeb7ab6a81fc0ddb50c9824a04117"
+        },
+        {
+          "id": "slot-got",
+          "kind": "data",
+          "va": 4914768,
+          "size": 4,
+          "sha256": "58c42a947d43929306eae78f3f879704c63d08b041b94df88fd0ae5d10b60d7d"
+        }
+      ]
+    }
+  }
+}

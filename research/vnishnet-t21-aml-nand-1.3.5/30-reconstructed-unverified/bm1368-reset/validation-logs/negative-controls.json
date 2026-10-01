@@ -1,0 +1,160 @@
+{
+  "kind": "authored-host-semantic-controls",
+  "controls": 27,
+  "source_sha256": "e3c8cecb8869c59847db357d26541e95123fa1cb4cf2ef04642a62c2e1e0738d",
+  "fixture_sha256": "31c198dde23f2bb2bc85ca56aeb382cb4770afe8c560e6d28233c9505c41ef1e",
+  "compiler": "cc",
+  "compile_flags": [
+    "-IREPOSITORY",
+    "-IREPOSITORY/include",
+    "-std=c11",
+    "-O2",
+    "-Wall",
+    "-Wextra",
+    "-Wpedantic",
+    "-Werror",
+    "-Wconversion",
+    "-Wshadow",
+    "-DVN135_BM1368_RESET_135"
+  ],
+  "results": [
+    {
+      "name": "normal-return-is-zero",
+      "returncode": 1,
+      "failure": "ORIGINAL_RESET_FAIL case=1 line=146 vn135_bm1368_reset_cores_135(&f->device,&f->chip,f->fast,f->unused, f->clock,f->pulse,&ops)==0"
+    },
+    {
+      "name": "fast-is-full-word",
+      "returncode": 1,
+      "failure": "ORIGINAL_RESET_FAIL case=2 line=114 e.id==f->waits && e.value==ms"
+    },
+    {
+      "name": "unused-fourth-scalar",
+      "returncode": 1,
+      "failure": "ORIGINAL_RESET_FAIL case=1 line=108 reg==e.reg && value==e.value"
+    },
+    {
+      "name": "positive-status-is-failure",
+      "returncode": 1,
+      "failure": "ORIGINAL_RESET_FAIL case=37 line=74 e.kind==kind"
+    },
+    {
+      "name": "r1-clear-both-bits",
+      "returncode": 1,
+      "failure": "ORIGINAL_RESET_FAIL case=1 line=108 reg==e.reg && value==e.value"
+    },
+    {
+      "name": "r2-soft-reset-mask",
+      "returncode": 1,
+      "failure": "ORIGINAL_RESET_FAIL case=7 line=108 reg==e.reg && value==e.value"
+    },
+    {
+      "name": "r3-clear-required-bits",
+      "returncode": 1,
+      "failure": "ORIGINAL_RESET_FAIL case=1 line=108 reg==e.reg && value==e.value"
+    },
+    {
+      "name": "r3-high-nibble",
+      "returncode": 1,
+      "failure": "ORIGINAL_RESET_FAIL case=1 line=108 reg==e.reg && value==e.value"
+    },
+    {
+      "name": "w2-gates-w3-on-zero",
+      "returncode": 1,
+      "failure": "ORIGINAL_RESET_FAIL case=1 line=74 e.kind==kind"
+    },
+    {
+      "name": "r4-set-both-bits",
+      "returncode": 1,
+      "failure": "ORIGINAL_RESET_FAIL case=7 line=108 reg==e.reg && value==e.value"
+    },
+    {
+      "name": "sweep-command-value",
+      "returncode": 1,
+      "failure": "ORIGINAL_RESET_FAIL case=1 line=108 reg==e.reg && value==e.value"
+    },
+    {
+      "name": "clock-mask-three-bits",
+      "returncode": 1,
+      "failure": "ORIGINAL_RESET_FAIL case=109411 line=108 reg==e.reg && value==e.value"
+    },
+    {
+      "name": "clock-shift-three",
+      "returncode": 1,
+      "failure": "ORIGINAL_RESET_FAIL case=1 line=108 reg==e.reg && value==e.value"
+    },
+    {
+      "name": "pulse-mask-two-bits",
+      "returncode": 1,
+      "failure": "ORIGINAL_RESET_FAIL case=109355 line=108 reg==e.reg && value==e.value"
+    },
+    {
+      "name": "final-core-command",
+      "returncode": 1,
+      "failure": "ORIGINAL_RESET_FAIL case=1 line=108 reg==e.reg && value==e.value"
+    },
+    {
+      "name": "final-ten-ms-wait",
+      "returncode": 1,
+      "failure": "ORIGINAL_RESET_FAIL case=1 line=114 e.id==f->waits && e.value==ms"
+    },
+    {
+      "name": "misc-log-line",
+      "returncode": 1,
+      "failure": "ORIGINAL_RESET_FAIL case=19 line=132 d->line==e.id && d->severity==1"
+    },
+    {
+      "name": "clock-log-line-not-pulse",
+      "returncode": 1,
+      "failure": "ORIGINAL_RESET_FAIL case=12151 line=132 d->line==e.id && d->severity==1"
+    },
+    {
+      "name": "wrapped-one-based-log-index",
+      "returncode": 1,
+      "failure": "ORIGINAL_RESET_FAIL case=4051 line=134 d->index_bits==(e.id<800?f->device.index+1u:0)"
+    },
+    {
+      "name": "r2-output-zero",
+      "returncode": 1,
+      "failure": "ORIGINAL_RESET_FAIL case=1 line=96 chip==f->chip.cache_index && *output==0"
+    },
+    {
+      "name": "r3-output-zero",
+      "returncode": 1,
+      "failure": "ORIGINAL_RESET_FAIL case=1 line=96 chip==f->chip.cache_index && *output==0"
+    },
+    {
+      "name": "write-mode-is-zero",
+      "returncode": 1,
+      "failure": "ORIGINAL_RESET_FAIL case=1 line=107 device==&f->device && chip==&f->chip && mode==0"
+    },
+    {
+      "name": "fresh-device-cache-index",
+      "returncode": 1,
+      "failure": "ORIGINAL_RESET_FAIL case=2 line=95 e.reg==reg && chain==signed_word(f->device.index)"
+    },
+    {
+      "name": "fresh-chip-cache-index",
+      "returncode": 1,
+      "failure": "ORIGINAL_RESET_FAIL case=2 line=96 chip==f->chip.cache_index && *output==0"
+    },
+    {
+      "name": "ignored-first-write-result",
+      "returncode": 1,
+      "failure": "ORIGINAL_RESET_FAIL case=811 line=146 vn135_bm1368_reset_cores_135(&f->device,&f->chip,f->fast,f->unused, f->clock,f->pulse,&ops)==0"
+    },
+    {
+      "name": "ignored-delay-result",
+      "returncode": 1,
+      "failure": "ORIGINAL_RESET_FAIL case=7 line=146 vn135_bm1368_reset_cores_135(&f->device,&f->chip,f->fast,f->unused, f->clock,f->pulse,&ops)==0"
+    },
+    {
+      "name": "second-w6-diagnostic",
+      "returncode": 1,
+      "failure": "ORIGINAL_RESET_FAIL case=12151 line=74 e.kind==kind"
+    }
+  ],
+  "firmware_executed": false,
+  "instruction_interpreter_used": false,
+  "hardware": false
+}

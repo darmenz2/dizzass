@@ -21,3 +21,11 @@ The [BM1368 constructor](bm1368-init/README.md) fills the 54 fixed method identi
 ## Common READ_REGISTER command method
 
 The [common wrapper](common-read-register/README.md) reuses the existing encoder and actual transport seam, preserving bit/byte normalization, one-send status handling and failure diagnostics after callback mutation. Host composition calls the real reconstructed method through explicit typed bindings, with all lower writes recorded and refused. No cache or ACK behavior is inferred.
+
+## Original BM1368 reset method
+
+The [original reset projection](bm1368-reset/README.md) implements the conditional
+cache/write/error graph and all five delay requests through explicit host
+callbacks, reusing the existing cache and command/transport stack in its tests.
+It preserves the original final zero even after errors; this is not a hardware
+readiness signal. The existing fail-fast adapter remains separate and unchanged.
