@@ -1,0 +1,415 @@
+{
+  "firmware_executed": false,
+  "kind": "static-scope-research",
+  "original_interpreter_used": false,
+  "schema": 1,
+  "source_code_executed": false,
+  "sources": {
+    "cgminer": {
+      "artifact_sha256": {
+        "chip-jumps.asm": "98c7c3dc22f49c79f7ccd0570f0b0e49fb33f9cfbc602736e96be10a60a5cd29",
+        "chip-jumps.json": "9f0a0fb969afd6d0b862672cc88850d94b372ac9861358cf552584c869beaf5a",
+        "entry.asm": "6fb7568a476795f623673b35128aabc5433bc3c18e0fee828cde45342153c47f",
+        "entry.json": "d1b82834d82c6f358ea5dbffcce993001487c3b3ef4581c7d4393d595fc18749",
+        "got-common-callback.asm": "e3ca32cc0ff8dce58465d060e623ae51e8a9ba0b8266db99c674e06f3c881660",
+        "got-common-callback.json": "2aec3d5786cf433a72f1ed739582d06db6664f7ea36208696d5ef041c2003b77",
+        "got-platform0-nonzero.asm": "e4022c9374abae24ef7ad6db71a23863b6b33095474e9d0c2d48a9b01e3af06f",
+        "got-platform0-nonzero.json": "656d37acf3cab900a95eba65e42ec1beebc78350a86f882d4f1ddff817f61acd",
+        "got-platform0-zero.asm": "94a3d5b071e0327e3342609e4285300c556ae26a1a45ab9fb07573f059dc89f8",
+        "got-platform0-zero.json": "fa26b7701dc0c9dc824e60606d23172f92c79e573538fe7a8f83fd31b769c02d",
+        "got-platform1.asm": "e76c000913a4a252acb65b0d13c4bceec3ab513b2a6408e2f489584e264011d3",
+        "got-platform1.json": "358f45970e4e640e96aaf0513370f4cf856facbf66e13a8f0c77a221dce44e76",
+        "got-platform2.asm": "118fe631a610a6af81a2168326de181a7e85c4d18f0f2f182504292e60ffc615",
+        "got-platform2.json": "0302ab0dfdaa34196314e0d825f9945e05883d17ffcff137b2b098d20687ab98",
+        "got-platform3.asm": "295d765e651ac2334ba99c7c7df9abbb17a3d79f0e18810bd43357c864789e40",
+        "got-platform3.json": "c96f2be0db5c1c349464e24ae0a2fd46905001644cf98e1c9073b31763a70864",
+        "got-platform4.asm": "b1ef9da8dc4ba8c448fbd33401167930a94e6b39ed27362fe38c468190e98020",
+        "got-platform4.json": "fd7f1be43d1afb0b4ad83396897c0d7f7b1fc21500d0bddc73421a94e8838eae",
+        "got-transport-object.asm": "7542e827dc34ce48c567db4684dcac9eacb93b12ff2d65c0a0b0b558e410ec38",
+        "got-transport-object.json": "433d2a5fe5b77bf833ad927e7895feaa32666272c606858cb1281ed9de612d00",
+        "initializer-branches.asm": "7f3b5377fcdcb91bfe4fd9d0ee8543703e38a619ecd3a85238e3a90505709195",
+        "initializer-branches.json": "a9993f2e77be919849e4fc27f4a1ddf9a0eb633061fd0eb4a5c90e8eb6cc72b2",
+        "literals.asm": "5528d840265db0f9127bc161f8fc0f6b90dde211e727f5c659d3c2e923fcea4c",
+        "literals.json": "130f00a9a1f97c1fe94e43a2b94569cb688fa47d5b8a02b0a2abb765d12ed5ba",
+        "native-backend-caller.asm": "d871c347f28036f3384d1a78097457ec12fef14877f8249936d60782a7cd997b",
+        "native-backend-caller.json": "1282fbe3b9caebbc143f4a048fc4edbd1ab65ae769093ce79bfc21afceda20ea",
+        "platform-jumps.asm": "dfb501247d073621fbf4ca6c6518cdffb8773700a5b1fd2ac01b00d4b2cebab7",
+        "platform-jumps.json": "dd54b3c46e70c52730adbcb06378201cb3076653d6a0549131c629fa533be703",
+        "platform-method-and-stores.asm": "6cae55f5725bc76a94de22418f73b2ed85adf621a166d150eb21f9812d431981",
+        "platform-method-and-stores.json": "fe8c0fdea6a735cb6b0ffa81ad593dba6151571478eb440eff049bfbe32e22af"
+      },
+      "bytes": 6228004,
+      "chip_initializers": [
+        {
+          "branch_instruction": "0xd241c",
+          "chip_selector": 0,
+          "tail_call": false,
+          "target": "0xd2db8"
+        },
+        {
+          "branch_instruction": "0xd2450",
+          "chip_selector": 1,
+          "tail_call": false,
+          "target": "0xd8c78"
+        },
+        {
+          "branch_instruction": "0xd2388",
+          "chip_selector": 2,
+          "tail_call": true,
+          "target": "0xea7c8"
+        },
+        {
+          "branch_instruction": "0xd2484",
+          "chip_selector": 3,
+          "tail_call": false,
+          "target": "0xdcbe0"
+        },
+        {
+          "branch_instruction": "0xd23c8",
+          "chip_selector": 4,
+          "tail_call": true,
+          "target": "0xe1450"
+        },
+        {
+          "branch_instruction": "0xd24b8",
+          "chip_selector": 5,
+          "tail_call": false,
+          "target": "0xe60e8"
+        },
+        {
+          "branch_instruction": "0xd2408",
+          "chip_selector": 6,
+          "tail_call": true,
+          "target": "0xf0560"
+        },
+        {
+          "branch_instruction": "0xd2414",
+          "chip_selector": 7,
+          "tail_call": true,
+          "target": "0xf4448"
+        }
+      ],
+      "fixed_words": {
+        "0xd21e8": "0xe3e00000",
+        "0xd21ec": "0xe35c0004",
+        "0xd21f0": "0x8a0000bc",
+        "0xd22d0": "0xe3510007",
+        "0xd22d8": "0xe5823018",
+        "0xd22e4": "0xe5842000",
+        "0xd22e8": "0x8a00007e",
+        "0xd24e8": "0xe8bd8c70"
+      },
+      "got": [
+        {
+          "got_address": "0x5df7bc",
+          "literal": "0xd24ec",
+          "literal_word": "0x50d5b8",
+          "load_instruction": "0xd21fc",
+          "role": "platform1",
+          "value": "0x11d0cc"
+        },
+        {
+          "got_address": "0x5dfe30",
+          "literal": "0xd24f4",
+          "literal_word": "0x50dbdc",
+          "load_instruction": "0xd224c",
+          "role": "platform0-nonzero",
+          "value": "0x10f938"
+        },
+        {
+          "got_address": "0x5df568",
+          "literal": "0xd24f8",
+          "literal_word": "0x50d30c",
+          "load_instruction": "0xd2254",
+          "role": "platform0-zero",
+          "value": "0x10fa38"
+        },
+        {
+          "got_address": "0x5dfa68",
+          "literal": "0xd2508",
+          "literal_word": "0x50d7d0",
+          "load_instruction": "0xd2290",
+          "role": "platform2",
+          "value": "0x117f7c"
+        },
+        {
+          "got_address": "0x5dfc80",
+          "literal": "0xd250c",
+          "literal_word": "0x50d9bc",
+          "load_instruction": "0xd22bc",
+          "role": "platform3",
+          "value": "0xf8048"
+        },
+        {
+          "got_address": "0x5df288",
+          "literal": "0xd2510",
+          "literal_word": "0x50cfb8",
+          "load_instruction": "0xd22c8",
+          "role": "platform4",
+          "value": "0x109740"
+        },
+        {
+          "got_address": "0x5df454",
+          "literal": "0xd2514",
+          "literal_word": "0x50d178",
+          "load_instruction": "0xd22d4",
+          "role": "transport-object",
+          "value": "0x68bf68"
+        },
+        {
+          "got_address": "0x5dead4",
+          "literal": "0xd2518",
+          "literal_word": "0x50c7ec",
+          "load_instruction": "0xd22e0",
+          "role": "common-callback",
+          "value": "0xd253c"
+        }
+      ],
+      "jump_tables": {
+        "chips": {
+          "base": "0xd22f8",
+          "targets": [
+            "0xd2318",
+            "0xd234c",
+            "0xd2380",
+            "0xd238c",
+            "0xd23c0",
+            "0xd23cc",
+            "0xd2400",
+            "0xd240c"
+          ]
+        },
+        "platforms": {
+          "base": "0xd220c",
+          "targets": [
+            "0xd2220",
+            "0xd22cc",
+            "0xd227c",
+            "0xd22b8",
+            "0xd22c4"
+          ]
+        }
+      },
+      "ordered_stores": [
+        {
+          "destination": "0x68bf80",
+          "instruction": "0xd22d8",
+          "value": "selected transport callback"
+        },
+        {
+          "destination": "caller output + 0",
+          "instruction": "0xd22e4",
+          "value": "0xd253c"
+        }
+      ],
+      "sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+      "witness_bytes": 988,
+      "witness_windows": 15
+    },
+    "hwscan": {
+      "artifact_sha256": {
+        "chip-jumps.asm": "b775500c6c836d6629c7c10fa93e64c6d3a36f62fa1c6f6873fed44ab3550c4d",
+        "chip-jumps.json": "44ee926215c801944aac47a25d203d21894e1cbb26f31752292307870ea8123c",
+        "early-caller.asm": "e70af6bada3159bc38f470a106b067ef2f528641a669bf0421de7694e1af1dc3",
+        "early-caller.json": "aead93d624aac71dd3838cfc081d47cda70bf06739e325a8b653be3b7012fa00",
+        "entry.asm": "5842e882ca490dd8925ad1df5e9e7e407f7841cd6ebf27623e6d8cf5369dc76b",
+        "entry.json": "6d0d67a2cd59f2a713b7e508c36fbd895f507861a78c766f95ab03fa0a6bcde9",
+        "got-common-callback.asm": "101e46602872c4e887d2574b9d1778b1c7b08fdb33cd3cc3ce79ae85574823a9",
+        "got-common-callback.json": "61c447dc99893271cc5756a3b8cd5b0a4aa2ea0babe4597d46a1fec27e2a6a71",
+        "got-platform0-nonzero.asm": "f5b05035ecedba75494be2589ce7b6026e08e9fa9329473f8d93c5a8f3cc40c2",
+        "got-platform0-nonzero.json": "ba9418c1ba019864e038a50cd96d5de76c94adc672ed98f58aac1dd4dd08a25e",
+        "got-platform0-zero.asm": "4c38e7558bafb17edc07e787c52cde39293bf06568ae31f6383e2928183cbc2c",
+        "got-platform0-zero.json": "1b44b70ac37e66326c9927aab804515fe84b3299f809f7f3c1a9066085b3d679",
+        "got-platform1.asm": "86a83ab202187434f47645a7e7d87cccfd71dfa276495f075509d7658c8e052a",
+        "got-platform1.json": "28e6f5a1d5b7e31b276ea2549f6fc54d1307dafb3a757ce11df4447f3c7adc93",
+        "got-platform2.asm": "ab7ed8fb7398b5ce8721fe6a5a3bed1e991d74852f0643bdfd50f0b829978ae5",
+        "got-platform2.json": "4eb901397937db1ba9ac84960fc77f51b0364f6c69f2a5bdb62774babb26c596",
+        "got-platform3.asm": "bd98aa0107d94e930ce1f85283955656d0b48dee2ce54cdc89acfbb2d49ba103",
+        "got-platform3.json": "3dacacb07ed0706edbb796e96f02de5e50cfc9b4ef4b4e35530d11f1249f8789",
+        "got-platform4.asm": "aa3c1f266769aa61fc6c75b16f1be6580d4dbd4c8b794b9bd9fcdac0279f8823",
+        "got-platform4.json": "3c7c0c56fd531604c735dd8ddfba62ec179f98876b17539c1793b6fe8343ec19",
+        "got-transport-object.asm": "5a2c6dd69471abebf918c85829fd3674047b3899e7b73055a2ddc58ffd557811",
+        "got-transport-object.json": "dd03f3efe17b23a716492dce41a65b200966e81ee52a393673f3ed79342afb9d",
+        "initializer-branches.asm": "a37f1cd7141a780a3ba2f870b7cb73c85bbdbcafca358c04b71a376dc30c0a2d",
+        "initializer-branches.json": "4665298cccd6985b39aa7f8981bc5aaea888ff08653b4dbbd994d7b0fc8283a7",
+        "literals.asm": "031c6a5c5a9aa89cbe0b523d5eba1d41343da4c684c270fdc264df313e4c4fdd",
+        "literals.json": "b577ca254da0945b82522803af47d648b70f5f2f7e7590cd3c208cffbea56f1d",
+        "mining-independent-lookup-caller.asm": "a26c23edc19f020caaea92fa7aac59beb4b45c88b39a723d63e36ad064e72d24",
+        "mining-independent-lookup-caller.json": "650205d17ce99e90a4dd4e0a77cfe2e001442c6d354ec06651b35630c1d09232",
+        "platform-jumps.asm": "52731663e82defb94e6de1f97d4c304bd818c9acfb4db4daaf672dffbe7fa62f",
+        "platform-jumps.json": "219b917899656c93c12130a3b61e3aa25cbdd32d89d3bae2f529f1804405d138",
+        "platform-method-and-stores.asm": "3ec0610b114a9728ec9a5e187aaf262a383b56d1cbf2185da78cb17c644fa0f1",
+        "platform-method-and-stores.json": "92035fef805dc9139f05d9b2003f50136abb558c89d5ed2f4169e5b375be60fc",
+        "preparation-call.asm": "9e3aba59c4dce8903d117a85ca0ada481920a0fae14194903c14f984cccb23b8",
+        "preparation-call.json": "a545ade417b4dd8bf82f3b16c57a5d4d721df98b42f5691c425da5e022d6f46d"
+      },
+      "bytes": 4883216,
+      "chip_initializers": [
+        {
+          "branch_instruction": "0xea764",
+          "chip_selector": 0,
+          "tail_call": true,
+          "target": "0xeaa88"
+        },
+        {
+          "branch_instruction": "0xea778",
+          "chip_selector": 1,
+          "tail_call": true,
+          "target": "0xed998"
+        },
+        {
+          "branch_instruction": "0xea784",
+          "chip_selector": 2,
+          "tail_call": true,
+          "target": "0xf6768"
+        },
+        {
+          "branch_instruction": "0xea790",
+          "chip_selector": 3,
+          "tail_call": true,
+          "target": "0xef940"
+        },
+        {
+          "branch_instruction": "0xea79c",
+          "chip_selector": 4,
+          "tail_call": true,
+          "target": "0xf1d28"
+        },
+        {
+          "branch_instruction": "0xea7a8",
+          "chip_selector": 5,
+          "tail_call": true,
+          "target": "0xf42a8"
+        },
+        {
+          "branch_instruction": "0xea7b4",
+          "chip_selector": 6,
+          "tail_call": true,
+          "target": "0xf95c8"
+        },
+        {
+          "branch_instruction": "0xea7c0",
+          "chip_selector": 7,
+          "tail_call": true,
+          "target": "0xfb130"
+        }
+      ],
+      "fixed_words": {
+        "0xea6a4": "0xe3500004",
+        "0xea6a8": "0x8a00002e",
+        "0xea714": "0xe3510007",
+        "0xea71c": "0xe580c018",
+        "0xea728": "0xe5830000",
+        "0xea72c": "0x8a00000d",
+        "0xea768": "0xe3e00000",
+        "0xea76c": "0xe8bd8800"
+      },
+      "got": [
+        {
+          "got_address": "0x4af8b8",
+          "literal": "0xea7c4",
+          "literal_word": "0x3c5200",
+          "load_instruction": "0xea6b0",
+          "role": "platform1",
+          "value": "0x10e5e0"
+        },
+        {
+          "got_address": "0x4afb1c",
+          "literal": "0xea7c8",
+          "literal_word": "0x3c5438",
+          "load_instruction": "0xea6dc",
+          "role": "platform0-nonzero",
+          "value": "0x108698"
+        },
+        {
+          "got_address": "0x4afbb0",
+          "literal": "0xea7cc",
+          "literal_word": "0x3c54c4",
+          "load_instruction": "0xea6e4",
+          "role": "platform0-zero",
+          "value": "0x108724"
+        },
+        {
+          "got_address": "0x4af910",
+          "literal": "0xea7d0",
+          "literal_word": "0x3c5214",
+          "load_instruction": "0xea6f4",
+          "role": "platform2",
+          "value": "0x10c724"
+        },
+        {
+          "got_address": "0x4af9e0",
+          "literal": "0xea7d4",
+          "literal_word": "0x3c52d8",
+          "load_instruction": "0xea700",
+          "role": "platform3",
+          "value": "0xfcd0c"
+        },
+        {
+          "got_address": "0x4aff54",
+          "literal": "0xea7d8",
+          "literal_word": "0x3c5840",
+          "load_instruction": "0xea70c",
+          "role": "platform4",
+          "value": "0x106244"
+        },
+        {
+          "got_address": "0x4afe54",
+          "literal": "0xea7dc",
+          "literal_word": "0x3c5734",
+          "load_instruction": "0xea718",
+          "role": "transport-object",
+          "value": "0x4e4c94"
+        },
+        {
+          "got_address": "0x4af744",
+          "literal": "0xea7e0",
+          "literal_word": "0x3c5018",
+          "load_instruction": "0xea724",
+          "role": "common-callback",
+          "value": "0xea7e4"
+        }
+      ],
+      "jump_tables": {
+        "chips": {
+          "base": "0xea73c",
+          "targets": [
+            "0xea75c",
+            "0xea770",
+            "0xea77c",
+            "0xea788",
+            "0xea794",
+            "0xea7a0",
+            "0xea7ac",
+            "0xea7b8"
+          ]
+        },
+        "platforms": {
+          "base": "0xea6c0",
+          "targets": [
+            "0xea6d4",
+            "0xea710",
+            "0xea6f0",
+            "0xea6fc",
+            "0xea708"
+          ]
+        }
+      },
+      "ordered_stores": [
+        {
+          "destination": "0x4e4cac",
+          "instruction": "0xea71c",
+          "value": "selected transport callback"
+        },
+        {
+          "destination": "caller output + 0",
+          "instruction": "0xea728",
+          "value": "0xea7e4"
+        }
+      ],
+      "sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+      "witness_bytes": 472,
+      "witness_windows": 17
+    }
+  }
+}

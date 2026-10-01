@@ -1,0 +1,21 @@
+{
+  "boundary_evidence": "Selected bounded static witnesses; callees and whole-program reachability are not implied.",
+  "bytes": 4,
+  "caveat": "Linear static rendering; literal pools may remain in instruction windows. No complete CFG, runtime path, function extent or parity is proved.",
+  "disassembler": "little-endian word rendering",
+  "disassembler_version": "1",
+  "end_exclusive": "0x004afb20",
+  "evidence_sources": [
+    "../../STATIC_PROOF.md"
+  ],
+  "file_offset": 4782876,
+  "firmware_executed": false,
+  "mode": "data",
+  "mode_evidence": "Manual A32 block/jump-table/literal/GOT classification; source kept as data.",
+  "name": "got-platform0-nonzero",
+  "schema": 1,
+  "segment_flags": 6,
+  "sha256": "31e42cc4bf5ba4e4da271815c93326290b34faa7e0b18ba591c4bf211122a8ae",
+  "source_sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+  "start": "0x004afb1c"
+}

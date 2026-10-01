@@ -75,7 +75,8 @@ jobs:
           python3 integration/test_native_core.py
           python3 tools/prepare_uart_posix.py --check
           # Preserve historical files except the exact reviewed PR #99 platform
-          # addition and its thermal build/PR coverage compatibility repair.
+          # addition and its thermal build/PR coverage compatibility repair as a
+          # complete group, plus the independent exact transport-initializer addition.
           historical_changes=$(git diff --raw --no-abbrev --no-renames \
             --no-ext-diff --no-textconv --ignore-submodules=none \
             --diff-filter=DMRT \
@@ -87,12 +88,19 @@ jobs:
             'integration/thermal-routes-135.mk' \
             ':100644 100644 f66d7c37b3d4e9f87ff892f35488db6140cb341c 0c0a6970e15c690af918aeeddbcc38fae5a06925 M' \
             'libbitmain/src/aml/platform.c')
-          if [[ -n "$historical_changes" &&
-                "$historical_changes" != "$approved_historical_changes" ]]; then
-            printf 'Unexpected historical source changes:\n%s\n' \
-              "$historical_changes" >&2
-            exit 1
-          fi
+          approved_transport_change=$(printf '%s\t%s' \
+            ':100644 100644 8ceb8405390e3eaf9f7b34480eb3cdd040a3b0ef d030308564c47bf409a3d381f16ddf262e6acf26 M' \
+            'libbitmain/src/transport-dispatch.c')
+          case "$historical_changes" in
+            ''|"$approved_historical_changes"|"$approved_transport_change"|\
+            "$approved_historical_changes"$'\n'"$approved_transport_change")
+              ;;
+            *)
+              printf 'Unexpected historical source changes:\n%s\n' \
+                "$historical_changes" >&2
+              exit 1
+              ;;
+          esac
           git diff --exit-code
           echo 'Host PTYs only: no physical UART, ASIC, production driver, pool or merge.'
 
