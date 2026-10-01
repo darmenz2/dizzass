@@ -1,0 +1,41 @@
+{
+  "recorded_at": "2026-10-01T10:29:00Z",
+  "status": "local host and static validation; exact-head remote CI separate",
+  "compiler": "gcc (Debian 14.2.0-19) 14.2.0",
+  "constructor_host": {
+    "cases": 277,
+    "checks": 17161,
+    "ordinary": true,
+    "asan_ubsan": true,
+    "leak_detection": false,
+    "all_aligned_shared_output_aliases": 56
+  },
+  "semantic_controls": {
+    "compiled": 57,
+    "required_exit": 1,
+    "required_marker": "BM1368_INIT_FAIL",
+    "crashes_or_compile_errors_counted": false
+  },
+  "static_checker": {
+    "tests": 20,
+    "negative_controls": 19,
+    "normal_and_optimized": true,
+    "both_full_source_hashes_and_all_witnesses_verified": true
+  },
+  "existing_nonce_bounds": {
+    "checks": 33047,
+    "ordinary_macro_disabled": true,
+    "asan_ubsan_macro_enabled": true
+  },
+  "macro_disabled_compatibility": {
+    "preprocessed_bytes_identical": true,
+    "gcc_O2_object_bytes_identical": true,
+    "preprocessed_sha256": "b770cb1cfaa74816714ed89c32a3de89ecb483d3cc59d2ac16d715b09f0b9829",
+    "object_sha256": "ca262db5625da35f87c7c627a72971e5a0768ad1458dfed21052508e29c8afeb"
+  },
+  "original_instruction_execution": false,
+  "hardware_test": false,
+  "full_native_build_local": false,
+  "clang_local": false,
+  "workflow_yaml_parsed": true
+}

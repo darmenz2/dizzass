@@ -1,0 +1,41 @@
+{
+  "base_commit": "59ec112b3fd31cc23eed51bf4527e2ca531db506",
+  "base_tree": "7f1673ee394de912eb998aed4be35caa57c0b98f",
+  "files": [
+    {
+      "path": "libbitmain/src/chip/chip1368.c",
+      "bytes": 920,
+      "git_blob": "c64374454e6e458ec1a175f21f03af141e29a3aa",
+      "sha256": "2e8ed770366a590a26c566151351f148ceebb198c35a9123a5ad09707f636831",
+      "current_use": "preserved prefix plus gated constructor"
+    },
+    {
+      "path": "integration/bm1368_nonce.h",
+      "bytes": 1141,
+      "git_blob": "d52253c292a1fb205800adf66b6a8bdeb79575c2",
+      "sha256": "46b3a1c6db6ec8dae2c86c45bf7baff6a79e612b6d03399fcecde3de8536209e",
+      "current_use": "unchanged dependency"
+    },
+    {
+      "path": "integration/transport_initialize_135.h",
+      "bytes": 2750,
+      "git_blob": "30c6065b505f478258da8955aa9a36b22a8c32f4",
+      "sha256": "0e1d0f17f43efb165ccff93c4b7f0eb623e9ae5eb6b8698364b97844853da3ab",
+      "current_use": "unchanged dependency"
+    },
+    {
+      "path": "libbitmain/src/transport-dispatch.c",
+      "bytes": 3683,
+      "git_blob": "d030308564c47bf409a3d381f16ddf262e6acf26",
+      "sha256": "5cd3632bf3610c8ec3a7d2ea9b3f9da7fc91bd26676598e41448d6376b531fd9",
+      "current_use": "unchanged dependency"
+    },
+    {
+      "path": "integration/tests/test_bm1368_bounds.c",
+      "bytes": 2003,
+      "git_blob": "5f0926772e251a088a2b54d35beea2a4c249d49d",
+      "sha256": "796db2fdecea8abaab89d52b662ace7405f8997eb9cefa6f1143325fe2448fcc",
+      "current_use": "unchanged dependency"
+    }
+  ]
+}
