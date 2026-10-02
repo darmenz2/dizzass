@@ -227,3 +227,25 @@ remain constructor-local, but its three return/overwrite mutants also alter late
 return statements inside disabled gates. The new drive-strength gate stays disabled in
 that suite. This retained baseline limitation is not byte-preserving suffix
 partition coverage; no partition repair or old-witness rewrite is part of L14.
+
+## Exact PR110 native-boundary documentation compatibility
+
+The first GitHub Actions run of the reconciled L14 candidate found that A-10's
+unchanged evidence pins `integration/CGMINER_FIRST_RU.md` at the pre-PR110 blob.
+The shared helper now handles that one exact path and old pin by validating the
+complete reviewed PR110 document and reversing its one-paragraph to two-paragraph
+edit. Current identity is 8,016 bytes, blob
+`e9ac152c1ac0405c4785ff4f0582ab16179b38ac`, SHA-256
+`c9733cfef78b3d00c1942e4fea68ad8179dac9978fd30ea1f284057cd4f5907f`.
+Recovered historical identity is 6,720 bytes, blob
+`567e8cd6cbb26bf761a27ab7ecc15b2fdb7265f7`, SHA-256
+`0ecc4fb72fe15cbcb91feeb3bccc1cd5bda157d9262218257099899952358a08`.
+The original document, arbitrary edits, wrong old pins and copied paths are not
+accepted as the current transition. All historical evidence JSON remains exact.
+
+Tests extend the existing changed-pin/content/path/file-type/mode controls to
+this document and independently exercise both whole-file identities, the unique
+paragraph replacement, outside-block changes and parent symlinks. The native
+checker, its tests, its workflow, the actual document and all runtime sources
+remain unchanged. No broad documentation exemption or checker pin transition is
+introduced. This source correction requires fresh GitHub Actions validation.

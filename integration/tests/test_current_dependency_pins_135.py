@@ -18,6 +18,9 @@ class CurrentDependencyPins(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
+        self.native_doc = (ROOT / pins.NATIVE_DOC_PATH).read_bytes()
+        self.old_native_doc = pins.historical_native_document_bytes(self.native_doc)
+        self.put(pins.NATIVE_DOC_PATH, self.native_doc)
         self.thermal = (ROOT / pins.THERMAL_PATH).read_bytes()
         self.dispatch = (ROOT / pins.DISPATCH_PATH).read_bytes()
         self.bm1368 = (ROOT / pins.BM1368_PATH).read_bytes()
@@ -110,12 +113,76 @@ class CurrentDependencyPins(unittest.TestCase):
             yield
 
     def pairs(self):
-        return ((pins.THERMAL_PATH, pins.THERMAL_OLD_BLOB, self.thermal,
+        return ((pins.NATIVE_DOC_PATH, pins.NATIVE_DOC_OLD_BLOB, self.native_doc,
+                 self.old_native_doc),
+                (pins.THERMAL_PATH, pins.THERMAL_OLD_BLOB, self.thermal,
                  self.old_thermal),
                 (pins.DISPATCH_PATH, pins.DISPATCH_OLD_BLOB, self.dispatch,
                  self.old_dispatch),
                 (pins.BM1368_PATH, pins.BM1368_OLD_BLOB, self.bm1368,
                  self.old_bm1368))
+
+    def test_native_document_transition_preserves_exact_historical_witness(self):
+        self.assertEqual(len(self.native_doc), 8016)
+        self.assertEqual(pins.git_blob(self.native_doc),
+                         'e9ac152c1ac0405c4785ff4f0582ab16179b38ac')
+        self.assertEqual(hashlib.sha256(self.native_doc).hexdigest(),
+                         'c9733cfef78b3d00c1942e4fea68ad8179dac9978fd30ea1f284057cd4f5907f')
+        self.assertEqual(len(self.old_native_doc), 6720)
+        self.assertEqual(pins.git_blob(self.old_native_doc),
+                         '567e8cd6cbb26bf761a27ab7ecc15b2fdb7265f7')
+        self.assertEqual(hashlib.sha256(self.old_native_doc).hexdigest(),
+                         '0ecc4fb72fe15cbcb91feeb3bccc1cd5bda157d9262218257099899952358a08')
+        self.check(pins.NATIVE_DOC_PATH, pins.NATIVE_DOC_OLD_BLOB)
+
+    def test_native_document_current_identity_components_are_independent(self):
+        for constant, wrong in (('NATIVE_DOC_CURRENT_BLOB', '0' * 40),
+                                ('NATIVE_DOC_CURRENT_SHA256', '0' * 64),
+                                ('NATIVE_DOC_CURRENT_SIZE', 8015)):
+            with self.subTest(constant=constant), patch.object(pins, constant, wrong):
+                with self.assertRaisesRegex(ValueError, 'not the reviewed PR110 blob'):
+                    pins.historical_native_document_bytes(self.native_doc)
+
+    def test_native_document_historical_identity_components_are_independent(self):
+        for constant, wrong in (('NATIVE_DOC_OLD_BLOB', '0' * 40),
+                                ('NATIVE_DOC_OLD_SHA256', '0' * 64),
+                                ('NATIVE_DOC_OLD_SIZE', 6719)):
+            with self.subTest(constant=constant), patch.object(pins, constant, wrong):
+                with self.assertRaisesRegex(ValueError, 'does not reconstruct'):
+                    pins.historical_native_document_bytes(self.native_doc)
+
+    @contextmanager
+    def accept_native_document_identity(self, raw):
+        with patch.multiple(pins, NATIVE_DOC_CURRENT_SIZE=len(raw),
+                            NATIVE_DOC_CURRENT_BLOB=pins.git_blob(raw),
+                            NATIVE_DOC_CURRENT_SHA256=hashlib.sha256(raw).hexdigest()):
+            yield
+
+    def test_native_document_block_remains_required_without_full_current_hash(self):
+        block = pins.NATIVE_DOC_CURRENT_BLOCK
+        reversed_block = b'\n\n'.join(reversed(block.split(b'\n\n')))
+        for mutant in (self.native_doc.replace(block, b'', 1),
+                       self.native_doc + block,
+                       self.native_doc.replace(block, reversed_block, 1)):
+            with self.subTest(size=len(mutant)), self.accept_native_document_identity(mutant):
+                with self.assertRaisesRegex(ValueError, 'transition is not unique'):
+                    pins.historical_native_document_bytes(mutant)
+
+    def test_native_document_outside_block_changes_fail_historical_identity(self):
+        for mutant in (self.native_doc + b'\n', b'X' + self.native_doc[1:]):
+            with self.subTest(size=len(mutant)), self.accept_native_document_identity(mutant):
+                with self.assertRaisesRegex(ValueError, 'does not reconstruct'):
+                    pins.historical_native_document_bytes(mutant)
+        with patch.object(pins, 'NATIVE_DOC_OLD_BLOCK', pins.NATIVE_DOC_OLD_BLOCK + b'X'):
+            with self.assertRaisesRegex(ValueError, 'does not reconstruct'):
+                pins.historical_native_document_bytes(self.native_doc)
+
+    def test_native_document_parent_symlink_fails(self):
+        parent = self.root / 'integration'
+        parent.rename(self.root / 'actual-integration')
+        parent.symlink_to(self.root / 'actual-integration', target_is_directory=True)
+        with self.assertRaises(ValueError):
+            self.check(pins.NATIVE_DOC_PATH, pins.NATIVE_DOC_OLD_BLOB)
 
     def test_exact_current_blobs_and_original_witnesses(self):
         self.assertEqual(pins.git_blob(self.thermal), pins.THERMAL_CURRENT_BLOB)
@@ -570,7 +637,8 @@ class CurrentDependencyPins(unittest.TestCase):
             self.check(self.other, self.other_sha)
 
     def test_missing_paths_fail(self):
-        for path, expected in ((pins.THERMAL_PATH, pins.THERMAL_OLD_BLOB),
+        for path, expected in ((pins.NATIVE_DOC_PATH, pins.NATIVE_DOC_OLD_BLOB),
+                               (pins.THERMAL_PATH, pins.THERMAL_OLD_BLOB),
                                (pins.DISPATCH_PATH, pins.DISPATCH_OLD_BLOB),
                                (pins.BM1368_PATH, pins.BM1368_OLD_BLOB),
                                (self.other, self.other_sha)):
