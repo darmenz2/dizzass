@@ -1,0 +1,84 @@
+# Proposal only. Not published, dispatched, or added to PR112.
+name: Diagnose preserved legacy pins on three exact source trees
+on:
+  pull_request:
+    branches: [work/reconstruction]
+    paths: [.github/workflows/legacy-pin-diagnostic.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compare:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+        lane: [chain-temperature, protocol-channel]
+        source:
+          - label: accepted-base
+            sha: 01299b84255542c16ee6d3f0c65a3e33e7aa876a
+          - label: native-boundary
+            sha: 5ae515ea5fe2fbf1061c3ead92c7b2344973569c
+          - label: reconciled-l14
+            sha: 4a8561f89ac8df29a812f3ab2e2c2f7580dc6692
+    env:
+      SOURCE_SHA: ${{ matrix.source.sha }}
+      CC: ${{ matrix.cc }}
+      LANE: ${{ matrix.lane }}
+    steps:
+      - name: Fetch exact source and pinned A15 dependencies without credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/legacy-pin-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-$LANE-$CC-${{ matrix.source.label }}"
+          mkdir "$root"; cd "$root"
+          git init -q
+          git remote add origin https://github.com/darmenz2/dizzass.git
+          git -c gc.auto=0 -c maintenance.auto=false fetch --depth=1 --no-tags origin \
+            "$SOURCE_SHA" \
+            12446bed78a060a49364a80bcbfb4340b13f4f27 \
+            eb1cd4ef625f1e28a560d132d2a76bab3162d723 \
+            4de412bdc0f2e4230d6c0e84b633a97105b15d21 \
+            2c8ed9672c711ad643c56d22b235d799cee28a09
+          git checkout -q --detach "$SOURCE_SHA"
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          printf 'SOURCE_HEAD=%s\nSOURCE_TREE=%s\n' "$(git rev-parse HEAD)" "$(git rev-parse HEAD^{tree})"
+          git hash-object integration/check_native_core.py
+          printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+          "$CC" --version | head -1
+      - name: Run unchanged chain-temperature checks
+        if: matrix.lane == 'chain-temperature'
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          make -f integration/chain-temperature-setup-135.mk CC="$CC" dizzass-chainset135-original dizzass-chainset135-test dizzass-chainset135-negative
+          make -f integration/chain-temperature-setup-135.mk CC="$CC" SANITIZE=1 dizzass-chainset135-test
+          make -f integration/thermal-sensors-135.mk CC="$CC" dizzass-thermal135-original dizzass-thermal135-test
+          make -f integration/thermal-routes-135.mk CC="$CC" dizzass-routes135-original dizzass-routes135-test
+          clang --analyze -I. -std=c11 -DVN135_CHAIN_TEMPERATURE_SETUP_135 -Xanalyzer -analyzer-output=text src/backend/chain-temperature-setup.c
+          python3 integration/tests/check_chain_temperature_setup_evidence_135.py
+          git diff --exit-code
+      - name: Run unchanged A15 staging and host tests
+        if: matrix.lane == 'protocol-channel'
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          python3 tools/prepare_protocol_channel_tx.py
+          make -f integration/protocol-channel-tx.mk CC="$CC" PT_DIR=build/a15 protocol-tx-test protocol-tx-negative
+          make -f integration/protocol-channel-tx.mk CC="$CC" PT_DIR=build/a15-san SANITIZE=1 protocol-tx-test
+          python3 integration/tests/test_protocol_channel_tx_negative.py --staging-checks
+          python3 -O integration/tests/test_protocol_channel_tx_negative.py --staging-checks
+          make -f integration/bm1368-control.mk CC="$CC" DIZZASS_CONTROL_DIR=build/a15-control dizzass-control-bounds dizzass-control-original
+          make -f integration/work-route.mk CC="$CC" top_srcdir=. DIZZASS_ROUTE_DIR=build/a15-route dizzass-work-route-original dizzass-work-route-bounds
+          make -f integration/transport-dispatch-135.mk CC="$CC" TRANSPORT135_DIR=build/a15-transport dizzass-dispatch135-original dizzass-dispatch135-test
+          if [ "$CC" = clang ]; then
+            clang --analyze -Ibuild/a15-deps -I. -Iinclude -std=c11 -pthread -Wall -Wextra -Wpedantic -Werror -Xanalyzer -analyzer-output=text integration/native/protocol_channel_tx.c
+          fi
+          python3 integration/test_native_core.py
+          python3 tools/prepare_protocol_channel_tx.py --check
+          test -z "$(git diff --name-only --diff-filter=MDR 12446bed78a060a49364a80bcbfb4340b13f4f27 HEAD)"
+          git diff --exit-code
