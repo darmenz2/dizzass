@@ -41,6 +41,9 @@ BM1368_SWEEP_SIZE = 9245
 BM1368_ADDRESS_BLOB = '890e2bfc9ead81a9cafe5b34c917b37133ea0d5e'
 BM1368_ADDRESS_SHA256 = '91cfb6f3bb640bcf3519027243970bcb37aeeb0275f96b931dd17cab940540d2'
 BM1368_ADDRESS_SIZE = 11280
+BM1368_DRIVE_BLOB = '355824db8f2127da4c678737ab86daf2a99f4a85'
+BM1368_DRIVE_SHA256 = 'd31a47e24504be3cf48cad8cbca96a9a38f08fd5aa0b0a27e672fac84bff5ce6'
+BM1368_DRIVE_SIZE = 14347
 BM1368_TICKET_BLOB = '1cd2c6e7612b494c28f0bbbab0e62434d104881d'
 BM1368_TICKET_SHA256 = 'ed818babcb847fb38094af8f08ae3c0ac6ef690192aa1e6030c3f8326e9968d9'
 TEXT = {
@@ -322,8 +325,30 @@ def verify_elf_metadata(name, row, supplement, pins):
                 'initializer is not a .init_array word')
 
 
+def address_source_bytes(data):
+    """Validate the exact drive-strength layer and recover unchanged L13."""
+    blob=hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
+    require(len(data) == BM1368_DRIVE_SIZE and sha256(data) == BM1368_DRIVE_SHA256
+            and blob == BM1368_DRIVE_BLOB,
+            'active dependency pin differs: '+BM1368_PATH+' (reviewed drive-strength source)')
+    address,added=data[:BM1368_ADDRESS_SIZE],data[BM1368_ADDRESS_SIZE:]
+    require(len(address) == BM1368_ADDRESS_SIZE and sha256(address) == BM1368_ADDRESS_SHA256
+            and hashlib.sha1(b'blob '+str(len(address)).encode()+b'\0'+address).hexdigest()
+                == BM1368_ADDRESS_BLOB,
+            'BM1368 preserved address source prefix differs')
+    require(added.startswith(b'\n#ifdef VN135_BM1368_DRIVE_STRENGTH_135\n'
+                             b'#include "integration/bm1368_drive_strength_135.h"\n')
+            and added.count(b'#if') == 1 and added.count(b'#endif') == 1
+            and added.count(b'#include') == 1
+            and b'#else' not in added and b'#elif' not in added
+            and added.endswith(b'\n#endif\n'),
+            'BM1368 drive-strength append is not separately gated')
+    return address
+
+
 def sweep_source_bytes(data):
-    """Validate the exact address layer without changing the L12 witness."""
+    """Validate drive-strength and address layers without changing L12."""
+    data=address_source_bytes(data)
     blob=hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
     require(len(data) == BM1368_ADDRESS_SIZE and sha256(data) == BM1368_ADDRESS_SHA256
             and blob == BM1368_ADDRESS_BLOB,

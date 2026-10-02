@@ -1,0 +1,611 @@
+{
+  "schema": 1,
+  "kind": "bm1368-group-register-static-pins",
+  "metadata_sha256": "42bcb43ed2c05a3858dd483c95978deae94ce72465e8d07889de3f9d26185d89",
+  "sources": {
+    "cgminer": {
+      "elf_size": 6228004,
+      "elf_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+      "regions": [
+        {
+          "id": "cgminer-53d98",
+          "kind": "code",
+          "va": 343448,
+          "file_offset": 277912,
+          "size": 8,
+          "sha256": "f3242611f2edc75bed097e419f3977e0a9323c3f5751698547c6e4b1ec10ddf5"
+        },
+        {
+          "id": "cgminer-55774",
+          "kind": "code",
+          "va": 350068,
+          "file_offset": 284532,
+          "size": 28,
+          "sha256": "a98d1393252c189eda821e9304a40286cd26c76c699599dd8d8abe629b263196"
+        },
+        {
+          "id": "cgminer-55f00",
+          "kind": "code",
+          "va": 352000,
+          "file_offset": 286464,
+          "size": 12,
+          "sha256": "0c36e12a08213fe7fc9da3d4a16b4820e67229f950b8c4adce4435bfe5019fbf"
+        },
+        {
+          "id": "cgminer-56378",
+          "kind": "code",
+          "va": 353144,
+          "file_offset": 287608,
+          "size": 120,
+          "sha256": "5d523a06f157a0fd6fac6684d4d592cb67b70168aea7c23827d9e38da50957bd"
+        },
+        {
+          "id": "cgminer-564b0",
+          "kind": "code",
+          "va": 353456,
+          "file_offset": 287920,
+          "size": 240,
+          "sha256": "f8ca0c7080221a225cdf53ec3d0f856184ab64050ec6c4c090cfbededaadb8a0"
+        },
+        {
+          "id": "cgminer-56604",
+          "kind": "code",
+          "va": 353796,
+          "file_offset": 288260,
+          "size": 192,
+          "sha256": "c7d48935d58f9602ec87d20d8bb79a335a0e7b8d6df6208b4702ea0e6b84927d"
+        },
+        {
+          "id": "cgminer-56b54",
+          "kind": "data",
+          "va": 355156,
+          "file_offset": 289620,
+          "size": 4,
+          "sha256": "c179f8948069cfe0aac9286dfb6bcc2b8aa3b28b9d54c549636b79abd34a479f"
+        },
+        {
+          "id": "cgminer-56b68",
+          "kind": "data",
+          "va": 355176,
+          "file_offset": 289640,
+          "size": 16,
+          "sha256": "3e6db4212f8696715325a4897fd0521c886a9c598dd7cc3cc3807ac6b2d163cc"
+        },
+        {
+          "id": "cgminer-56b8c",
+          "kind": "data",
+          "va": 355212,
+          "file_offset": 289676,
+          "size": 40,
+          "sha256": "4c9ba7d8c989a2486cb936993cd5fe9ac8f457e3a2d8db3c829b9014820259a0"
+        },
+        {
+          "id": "cgminer-5b1dc",
+          "kind": "code",
+          "va": 373212,
+          "file_offset": 307676,
+          "size": 4,
+          "sha256": "3bce1aed5c9366ac32edf95fe939760dc45cd3cae430ac99a2d91239763a58ad"
+        },
+        {
+          "id": "cgminer-5b20c",
+          "kind": "code",
+          "va": 373260,
+          "file_offset": 307724,
+          "size": 460,
+          "sha256": "f20dcdd603e82a463c04728917c1dc694b59191b8367732e77b15eee21398749"
+        },
+        {
+          "id": "cgminer-5ba0c",
+          "kind": "code",
+          "va": 375308,
+          "file_offset": 309772,
+          "size": 44,
+          "sha256": "bbd350d88af413d04a622ab0333f4fcc3708af98c8fe1a1fc73b8b18ddc85451"
+        },
+        {
+          "id": "cgminer-5ba64",
+          "kind": "code",
+          "va": 375396,
+          "file_offset": 309860,
+          "size": 44,
+          "sha256": "1bcf9522bc077fe355a34a3c499f3e4331a742f84fbaabff0fed429ceb064a91"
+        },
+        {
+          "id": "cgminer-5bae8",
+          "kind": "code",
+          "va": 375528,
+          "file_offset": 309992,
+          "size": 44,
+          "sha256": "068cccfbb3083f1af31d0edfd0f1fd0fc6589a17c201d40cecdfc5d7b1951e00"
+        },
+        {
+          "id": "cgminer-5c1e4",
+          "kind": "data",
+          "va": 377316,
+          "file_offset": 311780,
+          "size": 8,
+          "sha256": "7fbaa044cf7a931e70def3f41dead11ba19f5213fa93a9116ff8a6cc536938da"
+        },
+        {
+          "id": "cgminer-5c258",
+          "kind": "data",
+          "va": 377432,
+          "file_offset": 311896,
+          "size": 4,
+          "sha256": "2083639576b22e076463184c74c799175cbec1ae314829d02edcff28c620de7b"
+        },
+        {
+          "id": "cgminer-5c2e0",
+          "kind": "data",
+          "va": 377568,
+          "file_offset": 312032,
+          "size": 4,
+          "sha256": "89e36197c8008341b71c290cfca701c84129831f996d4d75eae4f1662ced19e6"
+        },
+        {
+          "id": "cgminer-5c320",
+          "kind": "data",
+          "va": 377632,
+          "file_offset": 312096,
+          "size": 4,
+          "sha256": "c2fd3be06d2e2f18d8827e34d5ddddc4b43458d697e482ffb04de7aecb8809db"
+        },
+        {
+          "id": "cgminer-5c458",
+          "kind": "data",
+          "va": 377944,
+          "file_offset": 312408,
+          "size": 4,
+          "sha256": "3479b6fcc35939869d656e6409905d6b2d0552b1ddb3d81f0fb019cc6c04e746"
+        },
+        {
+          "id": "cgminer-5c460",
+          "kind": "data",
+          "va": 377952,
+          "file_offset": 312416,
+          "size": 4,
+          "sha256": "3ce0964f19e1974cc28d94d87cad6c7ad972cd0738659737ef715cfb5eda3bb1"
+        },
+        {
+          "id": "cgminer-5c46c",
+          "kind": "data",
+          "va": 377964,
+          "file_offset": 312428,
+          "size": 4,
+          "sha256": "f71e173f46d202b4043d163b1c51c54cb043fbc149d841542db0ae0f8f3198c0"
+        },
+        {
+          "id": "cgminer-a720c",
+          "kind": "code",
+          "va": 684556,
+          "file_offset": 619020,
+          "size": 12,
+          "sha256": "75cf4ac24b47097c94faca34d348431b77cdb0c00154c46e861f1b6fba5d93f4"
+        },
+        {
+          "id": "cgminer-b58cc",
+          "kind": "code",
+          "va": 743628,
+          "file_offset": 678092,
+          "size": 16,
+          "sha256": "cbb2701852075da5e91837acadd7c5e58eb7f5d3f14717c7e2b3f04ad6a7cc30"
+        },
+        {
+          "id": "cgminer-b58dc",
+          "kind": "data",
+          "va": 743644,
+          "file_offset": 678108,
+          "size": 8,
+          "sha256": "8a8e89a4654f589b095d1099038270d53dd955641c0cd3fa196acb4c758e75ff"
+        },
+        {
+          "id": "cgminer-b58e4",
+          "kind": "code",
+          "va": 743652,
+          "file_offset": 678116,
+          "size": 352,
+          "sha256": "42cbbf0728046c719aa8443f70e07eaeaab1f6317a291c3d35eb2ae1979a331a"
+        },
+        {
+          "id": "cgminer-b5a44",
+          "kind": "data",
+          "va": 744004,
+          "file_offset": 678468,
+          "size": 8,
+          "sha256": "610d7a261c35f2e7338607b7f0d770f19356c896e343270ed56f64666a6e4bf4"
+        },
+        {
+          "id": "cgminer-b5a4c",
+          "kind": "code",
+          "va": 744012,
+          "file_offset": 678476,
+          "size": 12,
+          "sha256": "ff329fc9201b4779f4582177edf8d8b7542a2218a2882d4efeab7de376188d3d"
+        },
+        {
+          "id": "cgminer-b5ad4",
+          "kind": "code",
+          "va": 744148,
+          "file_offset": 678612,
+          "size": 196,
+          "sha256": "120f956315143b3abdaf2b01b9d189d254e28c49ca5cce5f256d43e6953315e7"
+        },
+        {
+          "id": "cgminer-b5d64",
+          "kind": "data",
+          "va": 744804,
+          "file_offset": 679268,
+          "size": 16,
+          "sha256": "53e30e09fad1f0810607f305cd7ab2c60d190c1770e455c88bc4d6bda3916038"
+        },
+        {
+          "id": "cgminer-e1538",
+          "kind": "code",
+          "va": 922936,
+          "file_offset": 857400,
+          "size": 44,
+          "sha256": "5ca0dff2c1c01651f4309e7a0bc084c15ae63b51ea277c303b5827a7cf6be749"
+        },
+        {
+          "id": "cgminer-e170c",
+          "kind": "data",
+          "va": 923404,
+          "file_offset": 857868,
+          "size": 8,
+          "sha256": "45f6a3835b3eb7487923da5a5c387c93a8e30290d3b126f386196ddef8a01b87"
+        },
+        {
+          "id": "cgminer-e36f0",
+          "kind": "code",
+          "va": 931568,
+          "file_offset": 866032,
+          "size": 12,
+          "sha256": "3a6bae4a219d3749775cc56e65924c9ee840a9e6b427c7dc2857b783853634ae"
+        },
+        {
+          "id": "cgminer-e3728",
+          "kind": "code",
+          "va": 931624,
+          "file_offset": 866088,
+          "size": 692,
+          "sha256": "ab79cf5615e41cef3bc606d43ce2c968eac107d2cd9fcd6d3f7a91d36641e7c0"
+        },
+        {
+          "id": "cgminer-e39dc",
+          "kind": "data",
+          "va": 932316,
+          "file_offset": 866780,
+          "size": 64,
+          "sha256": "39fc48af7ddeb65eb8d2865894d3582c1c207bbe4814c6a914e8a29eef081e9b"
+        },
+        {
+          "id": "cgminer-e3a1c",
+          "kind": "code",
+          "va": 932380,
+          "file_offset": 866844,
+          "size": 364,
+          "sha256": "00a27102185f70ad1daf4b4cd6563a452f66f82d05dc00f3c16077fed104f66d"
+        },
+        {
+          "id": "cgminer-e3b88",
+          "kind": "data",
+          "va": 932744,
+          "file_offset": 867208,
+          "size": 52,
+          "sha256": "b49c9acc5d6f602266589be59a04b72c79f22508f8cbb34409b6cacc924e2776"
+        },
+        {
+          "id": "cgminer-e3bbc",
+          "kind": "code",
+          "va": 932796,
+          "file_offset": 867260,
+          "size": 8,
+          "sha256": "846d663217119eef492bd8380034a33191408aa5af4d8eef8026a2b0e11127d2"
+        },
+        {
+          "id": "cgminer-e5370",
+          "kind": "code",
+          "va": 938864,
+          "file_offset": 873328,
+          "size": 3304,
+          "sha256": "818c84fbf1c84dfab1aa8f852a2cf68cdea95de726fc8f1734ba244d72352201"
+        },
+        {
+          "id": "cgminer-e6058",
+          "kind": "data",
+          "va": 942168,
+          "file_offset": 876632,
+          "size": 144,
+          "sha256": "218d1258317bbbcbec9acd68e70c7c6f4b89d9bda7b53491bdad52b8caff9148"
+        },
+        {
+          "id": "cgminer-e60e8",
+          "kind": "code",
+          "va": 942312,
+          "file_offset": 876776,
+          "size": 8,
+          "sha256": "56933b4e90f032e9030f4b53042b540f632696ddcb220173fc5bf97543a20e2b"
+        },
+        {
+          "id": "cgminer-5c8b1c",
+          "kind": "data",
+          "va": 6064924,
+          "file_offset": 5999388,
+          "size": 16,
+          "sha256": "d6321d12a7bc41060208f2206d6a288be5d8e02d4932ecf20f4a4d017768ec8b"
+        },
+        {
+          "id": "cgminer-5daf90",
+          "kind": "data",
+          "va": 6139792,
+          "file_offset": 6008720,
+          "size": 4,
+          "sha256": "0ebeda25e648e6c355ce06f39a386d608fc896ea4967d2ea94508bdd02255569"
+        },
+        {
+          "id": "cgminer-5dafb4",
+          "kind": "data",
+          "va": 6139828,
+          "file_offset": 6008756,
+          "size": 4,
+          "sha256": "ca3ff18e0020afa0fc46f3b6f2adba779533f70759a79e3c1a11fce473687861"
+        },
+        {
+          "id": "cgminer-5dafe4",
+          "kind": "data",
+          "va": 6139876,
+          "file_offset": 6008804,
+          "size": 4,
+          "sha256": "bde77998d34438e46530ea4f32972bb50ccfc36504c8fad84a328d8b2e2da63a"
+        },
+        {
+          "id": "cgminer-5dec68",
+          "kind": "data",
+          "va": 6155368,
+          "file_offset": 6024296,
+          "size": 4,
+          "sha256": "30ffb8f1010028ff06944d81b769a84d2923b2371984cfb07ca1b06b30c933ae"
+        },
+        {
+          "id": "cgminer-5dedd8",
+          "kind": "data",
+          "va": 6155736,
+          "file_offset": 6024664,
+          "size": 4,
+          "sha256": "53ac4f959f1583b92a2d69fdf73ab5fbfe10dd0057a84c219cf73f4605322df5"
+        },
+        {
+          "id": "cgminer-5df01c",
+          "kind": "data",
+          "va": 6156316,
+          "file_offset": 6025244,
+          "size": 4,
+          "sha256": "9ee5db201cc46767e904750acc5620e3ce0d05e372fe53a2f06d7465553e7644"
+        },
+        {
+          "id": "cgminer-5df198",
+          "kind": "data",
+          "va": 6156696,
+          "file_offset": 6025624,
+          "size": 4,
+          "sha256": "8db013b0e5db98e30b4fbc2727ec452b602806d1d2638b7717d3fb93a412e63a"
+        },
+        {
+          "id": "cgminer-5df324",
+          "kind": "data",
+          "va": 6157092,
+          "file_offset": 6026020,
+          "size": 4,
+          "sha256": "36dab79c84634f51b9ed5a20ba47ddb15af7a64a401388e76b49092ab078dd91"
+        },
+        {
+          "id": "cgminer-5df41c",
+          "kind": "data",
+          "va": 6157340,
+          "file_offset": 6026268,
+          "size": 4,
+          "sha256": "3af261e8362649ff598538ce74ecd0d7e61674438dfaacedbcdf9070c4cd95ec"
+        },
+        {
+          "id": "cgminer-5dfa28",
+          "kind": "data",
+          "va": 6158888,
+          "file_offset": 6027816,
+          "size": 4,
+          "sha256": "5f6bdc55e7f916e7c1e3f44379f04758b2a9403912431ce9efc793a0eb89addc"
+        },
+        {
+          "id": "cgminer-5dfe1c",
+          "kind": "data",
+          "va": 6159900,
+          "file_offset": 6028828,
+          "size": 4,
+          "sha256": "acc699391539de02e78d25e0f35288ce6583a05007137810cc90bdbfce9511b7"
+        },
+        {
+          "id": "cgminer-5e4260",
+          "kind": "data",
+          "va": 6177376,
+          "file_offset": 6046304,
+          "size": 49,
+          "sha256": "848fa540fe45dcb439099244295e180fbcb988ef1beb10ed5aa373ecc58e74be"
+        },
+        {
+          "id": "cgminer-5e4595",
+          "kind": "data",
+          "va": 6178197,
+          "file_offset": 6047125,
+          "size": 31,
+          "sha256": "fc427c4c25b056408a6bb254ab38a47c74d78679c5ee253ad63627e3cc546b59"
+        },
+        {
+          "id": "cgminer-5e45e1",
+          "kind": "data",
+          "va": 6178273,
+          "file_offset": 6047201,
+          "size": 43,
+          "sha256": "4c05977d1caae70633726c806ac75e8e82b48bbd055da99acaa02d7aa27a0189"
+        },
+        {
+          "id": "cgminer-5e4649",
+          "kind": "data",
+          "va": 6178377,
+          "file_offset": 6047305,
+          "size": 54,
+          "sha256": "98d36e4b663fb4dc3fff3afaef5aca6b3240024586be1c2fb106deb17b763f43"
+        },
+        {
+          "id": "cgminer-5e9038",
+          "kind": "data",
+          "va": 6197304,
+          "file_offset": 6066232,
+          "size": 39,
+          "sha256": "e6e01334d997fe3e40c35dfdc6711e49e08322e8ba8ce5d69007a0a0cae006b8"
+        },
+        {
+          "id": "cgminer-5eb3e0",
+          "kind": "data",
+          "va": 6206432,
+          "file_offset": 6075360,
+          "size": 60,
+          "sha256": "549a3724a8b6058159d67246ed34b4fbbe6012896458b1561b785f62df6f47e9"
+        },
+        {
+          "id": "cgminer-5eb515",
+          "kind": "data",
+          "va": 6206741,
+          "file_offset": 6075669,
+          "size": 136,
+          "sha256": "1976e10e1e7fd01a71c817938680c8f69b92b1ef450c78f5539785f722d98a87"
+        }
+      ]
+    },
+    "hwscan": {
+      "elf_size": 4883216,
+      "elf_sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+      "regions": [
+        {
+          "id": "hwscan-f1e10",
+          "kind": "code",
+          "va": 990736,
+          "file_offset": 925200,
+          "size": 44,
+          "sha256": "5ca0dff2c1c01651f4309e7a0bc084c15ae63b51ea277c303b5827a7cf6be749"
+        },
+        {
+          "id": "hwscan-f1fe4",
+          "kind": "data",
+          "va": 991204,
+          "file_offset": 925668,
+          "size": 8,
+          "sha256": "8575ea80aac393a28c3a70b28d1aaee1713a6cee81c6c3597994d26cd44a3425"
+        },
+        {
+          "id": "hwscan-f33d0",
+          "kind": "code",
+          "va": 996304,
+          "file_offset": 930768,
+          "size": 12,
+          "sha256": "d8bcda2560ceb2324ee12d8be4aa165483c92e41e8e295ee0fdd0b6380d05c51"
+        },
+        {
+          "id": "hwscan-f33ec",
+          "kind": "code",
+          "va": 996332,
+          "file_offset": 930796,
+          "size": 240,
+          "sha256": "87406b9d1f21eb417d04ea324ec294966bc2d5d3a8d4f7678167024538fbb9b7"
+        },
+        {
+          "id": "hwscan-f34dc",
+          "kind": "data",
+          "va": 996572,
+          "file_offset": 931036,
+          "size": 32,
+          "sha256": "ab08ee3c545629e6b4b6fed39c6261baf9e300cb0c7a8bfbdb9dc4844ad7a242"
+        },
+        {
+          "id": "hwscan-f34fc",
+          "kind": "code",
+          "va": 996604,
+          "file_offset": 931068,
+          "size": 236,
+          "sha256": "ecafb850f8afa258e94b955b9d659748d40256e2a96901ca2d199520e837b41b"
+        },
+        {
+          "id": "hwscan-f35e8",
+          "kind": "data",
+          "va": 996840,
+          "file_offset": 931304,
+          "size": 32,
+          "sha256": "d030e14b3df65ca118c24296117332ff4fc5e4aea87c0479e9fe8f81aa9a8a29"
+        },
+        {
+          "id": "hwscan-f3608",
+          "kind": "code",
+          "va": 996872,
+          "file_offset": 931336,
+          "size": 8,
+          "sha256": "846d663217119eef492bd8380034a33191408aa5af4d8eef8026a2b0e11127d2"
+        },
+        {
+          "id": "hwscan-2f0d7c",
+          "kind": "code",
+          "va": 3083644,
+          "file_offset": 3018108,
+          "size": 40,
+          "sha256": "928e7b349098330e65e8c65b661951baf87fe9336aa2f762d47a1802a51f4f7c"
+        },
+        {
+          "id": "hwscan-47d359",
+          "kind": "data",
+          "va": 4707161,
+          "file_offset": 4641625,
+          "size": 11,
+          "sha256": "4b5ff616946aa201289595f21b4e085135f43222d5e6f2b8ba2f9bc82241d3a7"
+        },
+        {
+          "id": "hwscan-47d914",
+          "kind": "data",
+          "va": 4708628,
+          "file_offset": 4643092,
+          "size": 7,
+          "sha256": "6b2223c6c75d72fe4bd43ffc5a5aa427f68822c5b228e99d1e29e8fd088bb8b8"
+        },
+        {
+          "id": "hwscan-47e627",
+          "kind": "data",
+          "va": 4711975,
+          "file_offset": 4646439,
+          "size": 136,
+          "sha256": "824e784bb3a8ff08f8b2010b8df86358159320bbc5f6e2149a802877c3cf321c"
+        },
+        {
+          "id": "hwscan-47e7ef",
+          "kind": "data",
+          "va": 4712431,
+          "file_offset": 4646895,
+          "size": 42,
+          "sha256": "a22fe6f4f8a0d5f29b251276a4647b1a807f19bb2985aa4301f986468589f931"
+        },
+        {
+          "id": "hwscan-4af984",
+          "kind": "data",
+          "va": 4913540,
+          "file_offset": 4782468,
+          "size": 4,
+          "sha256": "9b3c6459bd7ad25acd1234022a3a8b763903aad7974c87206e8f1f73e869bc1b"
+        },
+        {
+          "id": "hwscan-4afe24",
+          "kind": "data",
+          "va": 4914724,
+          "file_offset": 4783652,
+          "size": 4,
+          "sha256": "2a1d4ea0c530173d84458b281fb4d800d6e54673bd8eb7ceb206c64473cda4e1"
+        }
+      ]
+    }
+  }
+}

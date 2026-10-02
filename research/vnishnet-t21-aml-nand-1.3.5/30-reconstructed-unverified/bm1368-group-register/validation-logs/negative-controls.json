@@ -1,0 +1,348 @@
+{
+  "span": [
+    11280,
+    14347
+  ],
+  "controls": [
+    {
+      "name": "common-nonzero-output",
+      "target": "libbitmain/src/chip/chip1368.c",
+      "mutant_sha256": "9774c1fa3fc0a558ebb7a19525e5cd2b7ef4958a2143b05e2173fb27d3a00c61",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=107 f->common && reg == 0x58 && *value == 0 && f->reads < 8\n",
+      "compile_record_sha256": "679367c98e7cc55c5ca1555e85ca1da110893fa69e9de1a2a82964d8a4df7fe5"
+    },
+    {
+      "name": "chip-nonzero-output",
+      "target": "libbitmain/src/chip/chip1368.c",
+      "mutant_sha256": "5e6e55890ccaa280eab0bedc2211fd4067cf919cf359173353cd10b71fd07c2e",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=130 !f->common && reg == 0x58 && *value == 0 && f->reads < 8\n",
+      "compile_record_sha256": "6e73c449e4a005d7cf4d9af14d8874fcb57d4746adb98920007adc400caaebfe"
+    },
+    {
+      "name": "common-read-register",
+      "target": "libbitmain/src/chip/chip1368.c",
+      "mutant_sha256": "d935d623c1bfe06fb2a4de8e557f67e0956d081e6675e3e19be8ebfa25edc1b0",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=107 f->common && reg == 0x58 && *value == 0 && f->reads < 8\n",
+      "compile_record_sha256": "84a2ee6b64148c00e3a3b464b7c6163ed9f8faf82a5c267f91c26c49aa13b6ed"
+    },
+    {
+      "name": "chip-read-index",
+      "target": "libbitmain/src/chip/chip1368.c",
+      "mutant_sha256": "2f2a06eee8f2f759f3e09ad3607ff80d15d09032b47f5f2eeb3a7e65304b99d0",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=132 f->active_chip && chip == f->active_chip->cache_index\n",
+      "compile_record_sha256": "e6bd5748047d8f27eecc380334bd764a8dba1dcebf1df8ae6bc06d561fbd6b01"
+    },
+    {
+      "name": "common-positive-read-accepted",
+      "target": "libbitmain/src/chip/chip1368.c",
+      "mutant_sha256": "bfc0973bfdd5ebd07d6d26f9032c976c3be9aeb46b09f8a6111022f9d08dec03",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=298 invoke(&f, 0, 0) == -1 && strcmp(f.events, \"RL\") == 0\n",
+      "compile_record_sha256": "e539a374c352e4f0b11ec676735b9a0e513db1c698bc31c32b8a1a01b8aa5547"
+    },
+    {
+      "name": "chip-positive-read-accepted",
+      "target": "libbitmain/src/chip/chip1368.c",
+      "mutant_sha256": "540fa8b8c1058b38490be6a2b6d5aac0eb9e5f4299deefc74c2cdeb4941d694f",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=298 invoke(&f, 0, 0) == -1 && strcmp(f.events, \"RL\") == 0\n",
+      "compile_record_sha256": "0b26c8fdbf0a58fc367296b3a3998420da0170884b954cd3d5225856970e9e7b"
+    },
+    {
+      "name": "common-mask-three-bits",
+      "target": "libbitmain/src/chip/chip1368.c",
+      "mutant_sha256": "ab73c4c59706693217764beed01337afeccc8a0dae8b94c2f1f04505f698c189",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=169 memcmp(body, expected, sizeof expected) == 0\n",
+      "compile_record_sha256": "3597af7da0e33944100ea7a6abbfbd83fde7c144d6063eefa0ad64bb4623347e"
+    },
+    {
+      "name": "chip-clear-extra-bits",
+      "target": "libbitmain/src/chip/chip1368.c",
+      "mutant_sha256": "7b623f3f927fcfa4eb14a9c96c61f6bb3b9c71cec3759d7d04a0b3333b8f51e8",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=169 memcmp(body, expected, sizeof expected) == 0\n",
+      "compile_record_sha256": "5420d4fa916b0439b1b078a4299675ecdfc37760a12390f02977a476dfba492f"
+    },
+    {
+      "name": "common-shift-eight",
+      "target": "libbitmain/src/chip/chip1368.c",
+      "mutant_sha256": "be1d027c71f88910260623ab09f507fd24d80eb3099ab33af8070e95290da03e",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=169 memcmp(body, expected, sizeof expected) == 0\n",
+      "compile_record_sha256": "063910fe11d6397ac810c19d3d95a76780ef18228069236fec6bbdefc6ba1f2d"
+    },
+    {
+      "name": "chip-shift-thirteen",
+      "target": "libbitmain/src/chip/chip1368.c",
+      "mutant_sha256": "8ca3123020494d4431629d376723e65852a2ac5bcd47e6a783641cdf63411267",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=169 memcmp(body, expected, sizeof expected) == 0\n",
+      "compile_record_sha256": "865e326f69c9c6b75f98bd22b6824a66cfb8e7c5c2de5a976aa2488d1f5257f0"
+    },
+    {
+      "name": "common-wrong-mode",
+      "target": "libbitmain/src/chip/chip1368.c",
+      "mutant_sha256": "39bb4bf8a82081a356bac7ac91ad58a48850157bb66f2500c722bab44a94a373",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=169 memcmp(body, expected, sizeof expected) == 0\n",
+      "compile_record_sha256": "d4bece74c5f3d3b5974078c82c0cff1555d0e1e6d4b1a796380f43e065604b18"
+    },
+    {
+      "name": "chip-broadcast-mode",
+      "target": "libbitmain/src/chip/chip1368.c",
+      "mutant_sha256": "fb2f2891b281ea6ae368c29150c37d0701daa729e6888e6cef031100293248c7",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=169 memcmp(body, expected, sizeof expected) == 0\n",
+      "compile_record_sha256": "58f5642878645adacc156f7a0a4024f9ca4d3f53fe90f4d63a566b363886bd33"
+    },
+    {
+      "name": "chip-null-descriptor",
+      "target": "libbitmain/src/chip/chip1368.c",
+      "mutant_sha256": "44ec7b97dafe9a2f8db0b21ecf09e6e73128d76464c75fcc4473b689e832228a",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=169 memcmp(body, expected, sizeof expected) == 0\n",
+      "compile_record_sha256": "a2d6339f2c49cc7c8bdfaf4555f8e05e4ab79cb6d9b59e8b43c9dfbfe9c119f8"
+    },
+    {
+      "name": "common-write-register",
+      "target": "libbitmain/src/chip/chip1368.c",
+      "mutant_sha256": "3c6782cd4b80ef76318334580b726eb4c154278679ab64f81133f93209d4c56e",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=169 memcmp(body, expected, sizeof expected) == 0\n",
+      "compile_record_sha256": "1c71279f1458deecd9c636c37ff0689532ee5c53cb7b8d14827ea46cbb081549"
+    },
+    {
+      "name": "chip-write-register",
+      "target": "libbitmain/src/chip/chip1368.c",
+      "mutant_sha256": "f8d0d16c8b67aae629491dda186dac180d707970b203172e8f648cdc5b3f192c",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=169 memcmp(body, expected, sizeof expected) == 0\n",
+      "compile_record_sha256": "ce76440429cb67fcf3cb076b6c84459e3f0489d8c02c9e8d86b01c9f6c1e5cc6"
+    },
+    {
+      "name": "common-read-format",
+      "target": "libbitmain/src/chip/chip1368.c",
+      "mutant_sha256": "ddee5fa81395e143cb31ff8ac06774aa493117eac9007d3140533d2916d78987",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=231 strcmp(d->format, read_error ? (f->common ? \"Failed to read cached driver strenght register\" : \"Failed to read cached drive strength register\") : \"chain#%d - failed to config drive strength\") == 0\n",
+      "compile_record_sha256": "b762e1b2970fbedbb5455572c0b73b6c41ada11b3877eb779d1ebe9226ec4ba8"
+    },
+    {
+      "name": "chip-read-line",
+      "target": "libbitmain/src/chip/chip1368.c",
+      "mutant_sha256": "ee5d883c0d95dce89bdb62dc15920fb9b6a4f43dfe9cb1674ac26b20a8228855",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=230 d->source_line == (read_error ? (f->common ? 635u : 609u) : (f->common ? 645u : 619u))\n",
+      "compile_record_sha256": "02c6207bd9bbfb4278c809e8d626d489c03b3a4f55dc5fc4ab9804f51bd5d213"
+    },
+    {
+      "name": "common-write-line",
+      "target": "libbitmain/src/chip/chip1368.c",
+      "mutant_sha256": "16cc8e00232a743e9f3bcd4777d2e54a25881a8422f6ac4425bd96a739ab0273",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=230 d->source_line == (read_error ? (f->common ? 635u : 609u) : (f->common ? 645u : 619u))\n",
+      "compile_record_sha256": "31dc6eeb52a6127ce43ca4448b0de4b5911dbeef421309696fe6f8328a3a5178"
+    },
+    {
+      "name": "chip-write-success-on-error",
+      "target": "libbitmain/src/chip/chip1368.c",
+      "mutant_sha256": "6de921425edb526418cb103c6eef3950b6b2cb63de180f1bec5226cd9ec8c626",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=302 invoke(&f, 0, 0) == -1 && strcmp(f.events, \"RSWL\") == 0\n",
+      "compile_record_sha256": "4d189f71cc22aaf1d376e4ce3dec693096a7a75156ece58763f560a063220ea1"
+    },
+    {
+      "name": "common-write-success-on-error",
+      "target": "libbitmain/src/chip/chip1368.c",
+      "mutant_sha256": "d85f842a2b819b5e9e747c9c9cf52ba4ab83219e048f0e271c7d03aed4292252",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=302 invoke(&f, 0, 0) == -1 && strcmp(f.events, \"RSWL\") == 0\n",
+      "compile_record_sha256": "86b8c798cdf28876c15409f9da5d785192c60b8e9813f6c763fd0d0418a2a9cc"
+    },
+    {
+      "name": "diagnostic-index-constant",
+      "target": "libbitmain/src/chip/chip1368.c",
+      "mutant_sha256": "4159ed34ad5ef1002a44d486c4e10dfacec6d0072121d1df18991d4c21f13c73",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=235 d->index_bits == (read_error ? 0 : f->device.index + UINT32_C(1))\n",
+      "compile_record_sha256": "1f0a9e3e290c031a4e766a03516f093a1138352f8de1b75eead2abc4661651d3"
+    },
+    {
+      "name": "chain-getter-register",
+      "target": "libbitmain/src/chip/chip1368.c",
+      "mutant_sha256": "d296da59d99552d49d3105640c12d6c817c45dae20839a0c02c01094ffa2b99c",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=116 result == (chain >= 0 && chain < 2 ? 0 : -1)\n",
+      "compile_record_sha256": "4d9811ebc3850de3fd3b873b2f663b91d7dcdb23fc9616bf66cde73408905cdf"
+    },
+    {
+      "name": "chip-getter-common-table",
+      "target": "libbitmain/src/chip/chip1368.c",
+      "mutant_sha256": "21ea87ccb617234a03ec2824c801d463a975425ea37493659c9107394cfa055f",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=143 *value == f->chips[chain][chip].entries[0].value\n",
+      "compile_record_sha256": "5083fd854b8e1cfcb97f00bbe8a1a8a85b9c7c9b2f01461422b87f49f8f9fd18"
+    },
+    {
+      "name": "enable-bit0",
+      "target": "integration/bm1368_group_register_135.c",
+      "mutant_sha256": "fa203398d538de26857b6b8e51992851a09ad62877d2c551dec533bdbbec1adb",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=404 t.calls == (statuses[i] ? 2u : 4u)\n",
+      "compile_record_sha256": "5db2b2054ff765d34a0c7c6e1339a4199e8a658c5a7569cae1a4c66a201079aa"
+    },
+    {
+      "name": "skip-last-group",
+      "target": "integration/bm1368_group_register_135.c",
+      "mutant_sha256": "a034930917f020c5ad70facea704f3d1773cdd737294090630b4ee335714aca5",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=404 t.calls == (statuses[i] ? 2u : 4u)\n",
+      "compile_record_sha256": "d8ee1983c6dd8b649ec2bbe6f693f8b67626ad7ccf4b621b2c785c327e33f396"
+    },
+    {
+      "name": "group-index-off-by-one",
+      "target": "integration/bm1368_group_register_135.c",
+      "mutant_sha256": "77a39b904df0711eaee46819753726798ee308c4238be678db6b7404038d3fe3",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=406 t.indices[j] == (int32_t)(7u - j * 2u)\n",
+      "compile_record_sha256": "b0f5d103e7def7e6022fd0e0323ee2d3450ca169cddbc6963f0c063be0ed0b5b"
+    },
+    {
+      "name": "group-address-index-lost",
+      "target": "integration/bm1368_group_register_135.c",
+      "mutant_sha256": "b098b373f342421a394a6ee6126f1614cadf93ecd1b1dbb0c91555fcc32a82dd",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=407 t.addresses[j] == (7u - j * 2u) * 4u && t.settings[j] == 0xab\n",
+      "compile_record_sha256": "7da8d7153860798f03af3728669b5068c567f4a48069b0e6421567767c40b212"
+    },
+    {
+      "name": "group-late-owner-board",
+      "target": "integration/bm1368_group_register_135.c",
+      "mutant_sha256": "0cd2ea6c0431af133f32ca4a1b02685a280ea0df6ca7c9583ea89e4202026b24",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=423 t.indices[1] == 5 && t.addresses[1] == 25 && t.settings[1] == 0x92\n",
+      "compile_record_sha256": "411f0090046efa2b3411e53f403685bcbc215073605f76270a59fd6f04b2dcf7"
+    },
+    {
+      "name": "group-late-device",
+      "target": "integration/bm1368_group_register_135.c",
+      "mutant_sha256": "9a35949683d1c28db2874eb710b8b914205797438f6822c6fc3f87432950c966",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=355 device == t->device && t->calls < 8\n",
+      "compile_record_sha256": "be7ed689b5e9a49d951feb9d65a0573b29998bef54424b04b04ffc2970cd3598"
+    },
+    {
+      "name": "group-ignore-status",
+      "target": "integration/bm1368_group_register_135.c",
+      "mutant_sha256": "98244539d5e7e6f76d4a6d30b9340146dfde9294d67253df02e317daa2d27eb8",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=403 vn135_bm1368_configure_group_drive_strength_135(&chain) == (statuses[i] ? -1 : 0)\n",
+      "compile_record_sha256": "a00f7a79c03d9670fb73de95e885d75cbee96300336219fe7325c70563866bf3"
+    },
+    {
+      "name": "group-raw-status",
+      "target": "integration/bm1368_group_register_135.c",
+      "mutant_sha256": "bdc60a3152eebe30e7fd9c8f5de853e63e8c4c20eab784dd8127194a1f34aa23",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=403 vn135_bm1368_configure_group_drive_strength_135(&chain) == (statuses[i] ? -1 : 0)\n",
+      "compile_record_sha256": "ab39f3cbc8ceeee419b77095eb8c7cd1d79c6a5c6b51b4e75791995c60c3a388"
+    },
+    {
+      "name": "group-decrement-two",
+      "target": "integration/bm1368_group_register_135.c",
+      "mutant_sha256": "8a54c16240c4aaf1023fb7e9fc9780db689282510e8142f72d702611c87d1fe8",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=404 t.calls == (statuses[i] ? 2u : 4u)\n",
+      "compile_record_sha256": "1baab84c8af0cbde4e7eae2bef7ac520db2628ef57480a14b3bdcb702c77d552"
+    },
+    {
+      "name": "group-entry-count-one",
+      "target": "integration/bm1368_group_register_135.c",
+      "mutant_sha256": "0cef7e1c11c0c19b65560021a34dc7d8a6536c7413b77d2c7ccaaea25a8bd09d",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=404 t.calls == (statuses[i] ? 2u : 4u)\n",
+      "compile_record_sha256": "88db6e87f368f70ed1c0c9f21777f56d5e7495ed0098798c05d0940dd1080f26"
+    },
+    {
+      "name": "group-setting-low-bit",
+      "target": "integration/bm1368_group_register_135.c",
+      "mutant_sha256": "1910a8467050283f2ccc058da6191656ac0ceeae58e0678eb88fc82c1a2f3e65",
+      "wrapper_status": 1,
+      "compiled_all_units": true,
+      "clean_fixture_rejection": true,
+      "failure": "GROUP_REGISTER_FAIL line=407 t.addresses[j] == (7u - j * 2u) * 4u && t.settings[j] == 0xab\n",
+      "compile_record_sha256": "a7465be0fceae500c7bd4724a53187ec357263421a4a1009c5bca9628dd950ac"
+    }
+  ]
+}

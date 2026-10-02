@@ -1,0 +1,106 @@
+make: Entering directory '<repo>/research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-reset'
+<python-with-capstone> -B tests/run_host.py --root ../../../.. --build build/ordinary --cc cc
+ORIGINAL_RESET_PASS cases=131110 checks=17362511 reachable_status_tuples=6075 hardware=no
+COMPOSED_RESET_PASS cases=2661 checks=592778 hardware=no allocations=caller-owned real_waits=no
+<python-with-capstone> -B tests/negative_controls.py --root ../../../.. --cc cc
+ORIGINAL_RESET_CONTROLS_PASS controls=27
+<python-with-capstone> -B verify_evidence.py
+{"firmware_executed": false, "instruction_interpreter_used": false, "limits": "ordinary callback contract; semantic inference is static review, not hardware acceptance or automatic C equivalence", "ordinary_sites_per_elf": 24, "original_files_compared": [], "static_witness_verified": true, "unreachable_cgminer_sites": 4}
+<python-with-capstone> -B tests/test_evidence.py
+<python-with-capstone> -O -B tests/test_evidence.py
+<python-with-capstone> -B tests/test_partition.py
+<python-with-capstone> -O -B tests/test_partition.py
+<python-with-capstone> -B tests/run_host.py --root ../../../.. --build build/sanitized --cc cc --sanitize
+ORIGINAL_RESET_PASS cases=131110 checks=17362511 reachable_status_tuples=6075 hardware=no
+COMPOSED_RESET_PASS cases=2661 checks=592778 hardware=no allocations=caller-owned real_waits=no
+make: Leaving directory '<repo>/research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-reset'
+test_branch_target_and_operand_annotation (__main__.EvidenceTests.test_branch_target_and_operand_annotation) ... ok
+test_call_target_and_inventory (__main__.EvidenceTests.test_call_target_and_inventory) ... ok
+test_canonical_witness (__main__.EvidenceTests.test_canonical_witness) ... ok
+test_changed_pins_cannot_reauthorize_tamper (__main__.EvidenceTests.test_changed_pins_cannot_reauthorize_tamper) ... ok
+test_code_and_own_digest_changed (__main__.EvidenceTests.test_code_and_own_digest_changed) ... ok
+test_code_changed_without_digest (__main__.EvidenceTests.test_code_changed_without_digest) ... ok
+test_duplicate_json_key (__main__.EvidenceTests.test_duplicate_json_key) ... ok
+test_hex_schema (__main__.EvidenceTests.test_hex_schema) ... ok
+test_logs_field_reload_and_return_metadata (__main__.EvidenceTests.test_logs_field_reload_and_return_metadata) ... ok
+test_optional_original_size_and_hash (__main__.EvidenceTests.test_optional_original_size_and_hash) ... ok
+test_parity_metadata_and_unreachable_sites (__main__.EvidenceTests.test_parity_metadata_and_unreachable_sites) ... ok
+test_proof_masks_and_zero_output_metadata (__main__.EvidenceTests.test_proof_masks_and_zero_output_metadata) ... ok
+test_range_inventory (__main__.EvidenceTests.test_range_inventory) ... ok
+test_selected_semantic_words (__main__.EvidenceTests.test_selected_semantic_words) ... ok
+test_slot_offset_and_got (__main__.EvidenceTests.test_slot_offset_and_got) ... ok
+test_strict_schema (__main__.EvidenceTests.test_strict_schema) ... ok
+test_string_initializer_and_data (__main__.EvidenceTests.test_string_initializer_and_data) ... ok
+test_string_key_length_and_text (__main__.EvidenceTests.test_string_key_length_and_text) ... ok
+test_whole_elf_provenance (__main__.EvidenceTests.test_whole_elf_provenance) ... ok
+test_wrong_range_extent_and_name (__main__.EvidenceTests.test_wrong_range_extent_and_name) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 10.153s
+
+OK
+test_branch_target_and_operand_annotation (__main__.EvidenceTests.test_branch_target_and_operand_annotation) ... ok
+test_call_target_and_inventory (__main__.EvidenceTests.test_call_target_and_inventory) ... ok
+test_canonical_witness (__main__.EvidenceTests.test_canonical_witness) ... ok
+test_changed_pins_cannot_reauthorize_tamper (__main__.EvidenceTests.test_changed_pins_cannot_reauthorize_tamper) ... ok
+test_code_and_own_digest_changed (__main__.EvidenceTests.test_code_and_own_digest_changed) ... ok
+test_code_changed_without_digest (__main__.EvidenceTests.test_code_changed_without_digest) ... ok
+test_duplicate_json_key (__main__.EvidenceTests.test_duplicate_json_key) ... ok
+test_hex_schema (__main__.EvidenceTests.test_hex_schema) ... ok
+test_logs_field_reload_and_return_metadata (__main__.EvidenceTests.test_logs_field_reload_and_return_metadata) ... ok
+test_optional_original_size_and_hash (__main__.EvidenceTests.test_optional_original_size_and_hash) ... ok
+test_parity_metadata_and_unreachable_sites (__main__.EvidenceTests.test_parity_metadata_and_unreachable_sites) ... ok
+test_proof_masks_and_zero_output_metadata (__main__.EvidenceTests.test_proof_masks_and_zero_output_metadata) ... ok
+test_range_inventory (__main__.EvidenceTests.test_range_inventory) ... ok
+test_selected_semantic_words (__main__.EvidenceTests.test_selected_semantic_words) ... ok
+test_slot_offset_and_got (__main__.EvidenceTests.test_slot_offset_and_got) ... ok
+test_strict_schema (__main__.EvidenceTests.test_strict_schema) ... ok
+test_string_initializer_and_data (__main__.EvidenceTests.test_string_initializer_and_data) ... ok
+test_string_key_length_and_text (__main__.EvidenceTests.test_string_key_length_and_text) ... ok
+test_whole_elf_provenance (__main__.EvidenceTests.test_whole_elf_provenance) ... ok
+test_wrong_range_extent_and_name (__main__.EvidenceTests.test_wrong_range_extent_and_name) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 11.056s
+
+OK
+test_all_27_historical_mutants_and_exact_counts (__main__.PartitionTests.test_all_27_historical_mutants_and_exact_counts) ... ok
+test_boundary_shift_is_rejected_without_hashes (__main__.PartitionTests.test_boundary_shift_is_rejected_without_hashes) ... ok
+test_changed_constructor_prefix (__main__.PartitionTests.test_changed_constructor_prefix) ... ok
+test_changed_reset_span (__main__.PartitionTests.test_changed_reset_span) ... ok
+test_constructor_blob_is_independent_of_sha256 (__main__.PartitionTests.test_constructor_blob_is_independent_of_sha256) ... ok
+test_constructor_sha256_is_independent_of_blob (__main__.PartitionTests.test_constructor_sha256_is_independent_of_blob) ... ok
+test_exact_anchor_count_failure_is_retained (__main__.PartitionTests.test_exact_anchor_count_failure_is_retained) ... ok
+test_exact_roundtrip_and_boundary (__main__.PartitionTests.test_exact_roundtrip_and_boundary) ... ok
+test_historical_transformations_and_failure_policy_are_unchanged (__main__.PartitionTests.test_historical_transformations_and_failure_policy_are_unchanged) ... ok
+test_independent_historical_identities (__main__.PartitionTests.test_independent_historical_identities) ... ok
+test_opaque_later_suffix_can_repeat_every_anchor (__main__.PartitionTests.test_opaque_later_suffix_can_repeat_every_anchor) ... ok
+test_reset_blob_is_independent_of_sha256 (__main__.PartitionTests.test_reset_blob_is_independent_of_sha256) ... ok
+test_reset_gate_shape_without_hashes (__main__.PartitionTests.test_reset_gate_shape_without_hashes) ... ok
+test_reset_sha256_is_independent_of_blob (__main__.PartitionTests.test_reset_sha256_is_independent_of_blob) ... ok
+test_truncated_historical_spans (__main__.PartitionTests.test_truncated_historical_spans) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.017s
+
+OK
+test_all_27_historical_mutants_and_exact_counts (__main__.PartitionTests.test_all_27_historical_mutants_and_exact_counts) ... ok
+test_boundary_shift_is_rejected_without_hashes (__main__.PartitionTests.test_boundary_shift_is_rejected_without_hashes) ... ok
+test_changed_constructor_prefix (__main__.PartitionTests.test_changed_constructor_prefix) ... ok
+test_changed_reset_span (__main__.PartitionTests.test_changed_reset_span) ... ok
+test_constructor_blob_is_independent_of_sha256 (__main__.PartitionTests.test_constructor_blob_is_independent_of_sha256) ... ok
+test_constructor_sha256_is_independent_of_blob (__main__.PartitionTests.test_constructor_sha256_is_independent_of_blob) ... ok
+test_exact_anchor_count_failure_is_retained (__main__.PartitionTests.test_exact_anchor_count_failure_is_retained) ... ok
+test_exact_roundtrip_and_boundary (__main__.PartitionTests.test_exact_roundtrip_and_boundary) ... ok
+test_historical_transformations_and_failure_policy_are_unchanged (__main__.PartitionTests.test_historical_transformations_and_failure_policy_are_unchanged) ... ok
+test_independent_historical_identities (__main__.PartitionTests.test_independent_historical_identities) ... ok
+test_opaque_later_suffix_can_repeat_every_anchor (__main__.PartitionTests.test_opaque_later_suffix_can_repeat_every_anchor) ... ok
+test_reset_blob_is_independent_of_sha256 (__main__.PartitionTests.test_reset_blob_is_independent_of_sha256) ... ok
+test_reset_gate_shape_without_hashes (__main__.PartitionTests.test_reset_gate_shape_without_hashes) ... ok
+test_reset_sha256_is_independent_of_blob (__main__.PartitionTests.test_reset_sha256_is_independent_of_blob) ... ok
+test_truncated_historical_spans (__main__.PartitionTests.test_truncated_historical_spans) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.012s
+
+OK

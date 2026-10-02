@@ -3,6 +3,15 @@ name: Build native cgminer core
 on:
   push:
     branches: [work/reconstruction]
+  pull_request:
+    branches: [work/reconstruction]
+    paths:
+      - integration/check_native_core.py
+      - integration/test_native_core.py
+      - integration/native-check.mk
+      - Makefile.am
+      - configure.ac
+      - .github/workflows/cgminer-native.yml
   workflow_dispatch:
 
 permissions:

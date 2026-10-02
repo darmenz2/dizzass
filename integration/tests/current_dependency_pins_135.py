@@ -31,9 +31,22 @@ BM1368_TICKET_SIZE = 8350
 BM1368_SWEEP_BLOB = 'f23565c15c9d174e644fc51a401e81dbe072dfd7'
 BM1368_SWEEP_SHA256 = 'e4c05fb8bc541e6e6b2a216cbaecf7ef57cc3d85101d59b81e8ebd3d4e2af7e4'
 BM1368_SWEEP_SIZE = 9245
-BM1368_CURRENT_BLOB = '890e2bfc9ead81a9cafe5b34c917b37133ea0d5e'
-BM1368_CURRENT_SHA256 = '91cfb6f3bb640bcf3519027243970bcb37aeeb0275f96b931dd17cab940540d2'
-BM1368_CURRENT_SIZE = 11280
+BM1368_ADDRESS_BLOB = '890e2bfc9ead81a9cafe5b34c917b37133ea0d5e'
+BM1368_ADDRESS_SHA256 = '91cfb6f3bb640bcf3519027243970bcb37aeeb0275f96b931dd17cab940540d2'
+BM1368_ADDRESS_SIZE = 11280
+BM1368_CURRENT_BLOB = '355824db8f2127da4c678737ab86daf2a99f4a85'
+BM1368_CURRENT_SHA256 = 'd31a47e24504be3cf48cad8cbca96a9a38f08fd5aa0b0a27e672fac84bff5ce6'
+BM1368_CURRENT_SIZE = 14347
+
+NATIVE_DOC_PATH = 'integration/CGMINER_FIRST_RU.md'
+NATIVE_DOC_OLD_BLOB = '567e8cd6cbb26bf761a27ab7ecc15b2fdb7265f7'
+NATIVE_DOC_OLD_SHA256 = '0ecc4fb72fe15cbcb91feeb3bccc1cd5bda157d9262218257099899952358a08'
+NATIVE_DOC_OLD_SIZE = 6720
+NATIVE_DOC_CURRENT_BLOB = 'e9ac152c1ac0405c4785ff4f0582ab16179b38ac'
+NATIVE_DOC_CURRENT_SHA256 = 'c9733cfef78b3d00c1942e4fea68ad8179dac9978fd30ea1f284057cd4f5907f'
+NATIVE_DOC_CURRENT_SIZE = 8016
+NATIVE_DOC_OLD_BLOCK = 'integration/native-check.mk выводит фактически развёрнутый список cgminer_SOURCES из сгенерированного Makefile. check_native_core.py проверяет штатные исходники и отсутствие legacy-recovery модулей; при переданном nm-выводе также отклоняет vn135_* символы. Это проверка границы сборки текущей базы, не доказательство аппаратной функциональности. Когда появится настоящий T21-драйвер, разрешённые дополнительные исходники и тесты пересматриваются явно.'.encode('utf-8')
+NATIVE_DOC_CURRENT_BLOCK = 'integration/native-check.mk выводит фактически развёрнутый список cgminer_SOURCES из сгенерированного Makefile. check_native_core.py принимает только 114 путей из закреплённого upstream Makefile.am, включая его опциональные драйверы и заголовки. Каталог задан явно и не строится из проверяемой сборки: новый файл в integration/, новый driver-*.c или другом каталоге требует отдельного пересмотра политики. Обязательные исходники ядра, запрет дубликатов и небезопасных путей сохраняются; при переданном nm-выводе также отклоняются vn135_* символы. Проверка не обещает поддержку всех комбинаций upstream-драйверов, которые могут повторять один исходник. Это проверка границы сборки текущей базы, не доказательство аппаратной функциональности. Когда появится настоящий T21-драйвер, разрешённые дополнительные исходники и тесты пересматриваются явно.\n\nintegration/test_native_core.py проверяет соответствие каталога upstream Makefile.am, допустимость каждого штатного пути и отклонение посторонних модулей, в том числе после разворачивания переменных GNU make и через CLI. Workflow cgminer-native запускает эту проверку и настоящую host-сборку также для PR в work/reconstruction, меняющих проверку границы или конфигурацию сборки.'.encode('utf-8')
 
 
 def require(ok, message):
@@ -44,6 +57,22 @@ def require(ok, message):
 
 def git_blob(data):
     return hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest()
+
+
+def historical_native_document_bytes(current):
+    """Validate PR110's exact documentation edit and recover the old witness."""
+    require(len(current) == NATIVE_DOC_CURRENT_SIZE
+            and git_blob(current) == NATIVE_DOC_CURRENT_BLOB
+            and hashlib.sha256(current).hexdigest() == NATIVE_DOC_CURRENT_SHA256,
+            'native boundary document is not the reviewed PR110 blob')
+    require(current.count(NATIVE_DOC_CURRENT_BLOCK) == 1,
+            'native boundary document transition is not unique')
+    old = current.replace(NATIVE_DOC_CURRENT_BLOCK, NATIVE_DOC_OLD_BLOCK, 1)
+    require(len(old) == NATIVE_DOC_OLD_SIZE
+            and git_blob(old) == NATIVE_DOC_OLD_BLOB
+            and hashlib.sha256(old).hexdigest() == NATIVE_DOC_OLD_SHA256,
+            'native document transition does not reconstruct the historical witness')
+    return old
 
 
 def historical_thermal_bytes(current):
@@ -76,11 +105,33 @@ def historical_dispatch_bytes(current):
     return old
 
 
-def sweep_bm1368_bytes(current):
-    """Validate the address append and recover the unchanged L12 source."""
+def address_bm1368_bytes(current):
+    """Validate the drive-strength append and recover the unchanged L13 source."""
     require(len(current) == BM1368_CURRENT_SIZE
             and hashlib.sha256(current).hexdigest() == BM1368_CURRENT_SHA256
             and git_blob(current) == BM1368_CURRENT_BLOB,
+            'BM1368 chip source is not the reviewed drive-strength blob')
+    address, added = current[:BM1368_ADDRESS_SIZE], current[BM1368_ADDRESS_SIZE:]
+    require(len(address) == BM1368_ADDRESS_SIZE
+            and hashlib.sha256(address).hexdigest() == BM1368_ADDRESS_SHA256
+            and git_blob(address) == BM1368_ADDRESS_BLOB,
+            'BM1368 preserved address source prefix changed')
+    require(added.startswith(b'\n#ifdef VN135_BM1368_DRIVE_STRENGTH_135\n'
+                             b'#include "integration/bm1368_drive_strength_135.h"\n')
+            and added.count(b'#if') == 1 and added.count(b'#endif') == 1
+            and added.count(b'#include') == 1
+            and b'#else' not in added and b'#elif' not in added
+            and added.endswith(b'\n#endif\n'),
+            'BM1368 drive-strength append is not separately gated')
+    return address
+
+
+def sweep_bm1368_bytes(current):
+    """Validate drive-strength and address appends, then recover unchanged L12."""
+    current = address_bm1368_bytes(current)
+    require(len(current) == BM1368_ADDRESS_SIZE
+            and hashlib.sha256(current).hexdigest() == BM1368_ADDRESS_SHA256
+            and git_blob(current) == BM1368_ADDRESS_BLOB,
             'BM1368 chip source is not the reviewed address-commands blob')
     sweep, added = current[:BM1368_SWEEP_SIZE], current[BM1368_SWEEP_SIZE:]
     require(len(sweep) == BM1368_SWEEP_SIZE
@@ -165,7 +216,7 @@ def constructor_bm1368_bytes(current):
 
 
 def historical_bm1368_bytes(current):
-    """Validate all five exact appends and recover the unchanged nonce witness."""
+    """Validate all six exact appends and recover the unchanged nonce witness."""
     constructor = constructor_bm1368_bytes(current)
     old, added = constructor[:BM1368_OLD_SIZE], constructor[BM1368_OLD_SIZE:]
     require(git_blob(old) == BM1368_OLD_BLOB,
@@ -195,7 +246,10 @@ def check_current_dependency(root, path, expected):
             require(stat.S_ISREG(mode) and not mode & 0o111,
                     'dependency must be a non-executable regular file: ' + path)
     raw = target.read_bytes()
-    if path == THERMAL_PATH:
+    if path == NATIVE_DOC_PATH:
+        require(expected == NATIVE_DOC_OLD_BLOB, 'historical native document pin changed')
+        historical_native_document_bytes(raw)
+    elif path == THERMAL_PATH:
         require(expected == THERMAL_OLD_BLOB, 'historical thermal pin changed')
         historical_thermal_bytes(raw)
     elif path == DISPATCH_PATH:
