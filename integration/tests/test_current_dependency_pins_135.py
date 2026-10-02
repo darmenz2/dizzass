@@ -29,7 +29,9 @@ class CurrentDependencyPins(unittest.TestCase):
         self.ticket_append = self.ticket_bm1368[pins.BM1368_RESET_SIZE:]
         self.sweep_bm1368 = pins.sweep_bm1368_bytes(self.bm1368)
         self.sweep_append = self.sweep_bm1368[pins.BM1368_TICKET_SIZE:]
-        self.address_append = self.bm1368[pins.BM1368_SWEEP_SIZE:]
+        self.address_bm1368 = pins.address_bm1368_bytes(self.bm1368)
+        self.address_append = self.address_bm1368[pins.BM1368_SWEEP_SIZE:]
+        self.drive_append = self.bm1368[pins.BM1368_ADDRESS_SIZE:]
         self.constructor_bm1368 = pins.constructor_bm1368_bytes(self.bm1368)
         self.put(pins.THERMAL_PATH, self.thermal)
         self.put(pins.DISPATCH_PATH, self.dispatch)
@@ -48,7 +50,7 @@ class CurrentDependencyPins(unittest.TestCase):
         pins.check_current_dependency(self.root, path, expected)
 
     @contextmanager
-    def accept_address_bm1368_identity(self, raw):
+    def accept_drive_bm1368_identity(self, raw):
         # Bypass every full-source identity predicate so a failed prefix/gate
         # check is independently demonstrated rather than masked by hashing.
         with patch.multiple(pins, BM1368_CURRENT_SIZE=len(raw),
@@ -57,10 +59,20 @@ class CurrentDependencyPins(unittest.TestCase):
             yield
 
     @contextmanager
+    def accept_address_bm1368_identity(self, raw):
+        # Match the new outer identity and the preserved address source only.
+        address = raw[:-len(self.drive_append)]
+        with self.accept_drive_bm1368_identity(raw), patch.multiple(
+                pins, BM1368_ADDRESS_SIZE=len(address),
+                BM1368_ADDRESS_BLOB=pins.git_blob(address),
+                BM1368_ADDRESS_SHA256=hashlib.sha256(address).hexdigest()):
+            yield
+
+    @contextmanager
     def accept_current_bm1368_identity(self, raw):
-        # Existing inner controls match both new-current and sweep identities.
-        # The separately tested address-only helper leaves the sweep pin live.
-        sweep = raw[:-len(self.address_append)]
+        # Match the drive, address and sweep layers to expose older predicates.
+        # The address-only helper leaves the preserved sweep pin live.
+        sweep = raw[:-len(self.address_append)-len(self.drive_append)]
         with self.accept_address_bm1368_identity(raw), patch.multiple(
                 pins, BM1368_SWEEP_SIZE=len(sweep),
                 BM1368_SWEEP_BLOB=pins.git_blob(sweep),
@@ -76,9 +88,8 @@ class CurrentDependencyPins(unittest.TestCase):
 
     @contextmanager
     def accept_current_and_ticket_identity(self, raw):
-        # Older inner-predicate tests carry the unchanged outer sweep append.
-        # Both identities are matched so neither can mask an inner failure.
-        ticket = raw[:-len(self.sweep_append)-len(self.address_append)]
+        # Older controls retain all outer appends while matching their hashes.
+        ticket = raw[:-len(self.sweep_append)-len(self.address_append)-len(self.drive_append)]
         with self.accept_current_bm1368_identity(raw), \
                 self.accept_ticket_bm1368_identity(ticket):
             yield
@@ -133,7 +144,7 @@ class CurrentDependencyPins(unittest.TestCase):
 
     def test_constructor_only_blob_rejected_as_current_checkout(self):
         self.put(pins.BM1368_PATH, self.constructor_bm1368)
-        with self.assertRaisesRegex(ValueError, 'not the reviewed address-commands blob'):
+        with self.assertRaisesRegex(ValueError, 'not the reviewed drive-strength blob'):
             self.check(pins.BM1368_PATH, pins.BM1368_OLD_BLOB)
 
     def test_changed_original_pin_rejected(self):
@@ -254,7 +265,7 @@ class CurrentDependencyPins(unittest.TestCase):
                 added.replace(b'\n#endif\n', b'\n#include "extra.h"\n#endif\n'),
                 added + added, added[:-8]):
             reset = self.constructor_bm1368 + suffix
-            mutant = reset + self.ticket_append + self.sweep_append + self.address_append
+            mutant = reset + self.ticket_append + self.sweep_append + self.address_append + self.drive_append
             with self.subTest(suffix=suffix[:60]):
                 with self.accept_current_and_ticket_identity(mutant), \
                         self.accept_reset_bm1368_identity(reset):
@@ -272,7 +283,7 @@ class CurrentDependencyPins(unittest.TestCase):
             pins.check_current_dependency(self.root, alternate, pins.BM1368_CONSTRUCTOR_BLOB)
 
     def test_missing_reset_append_rejected_even_with_changed_full_identity(self):
-        mutant = self.constructor_bm1368 + self.ticket_append + self.sweep_append + self.address_append
+        mutant = self.constructor_bm1368 + self.ticket_append + self.sweep_append + self.address_append + self.drive_append
         with self.accept_current_and_ticket_identity(mutant), \
                 self.accept_reset_bm1368_identity(self.constructor_bm1368):
             with self.assertRaisesRegex(ValueError, 'reset append is not separately gated'):
@@ -295,7 +306,7 @@ class CurrentDependencyPins(unittest.TestCase):
                 added[:-7]):
             constructor = old + suffix
             reset_source = constructor + reset
-            mutant = reset_source + self.ticket_append + self.sweep_append + self.address_append
+            mutant = reset_source + self.ticket_append + self.sweep_append + self.address_append + self.drive_append
             with self.subTest(suffix=suffix[:60]):
                 with self.accept_current_and_ticket_identity(mutant), \
                         self.accept_reset_bm1368_identity(reset_source):
@@ -313,7 +324,7 @@ class CurrentDependencyPins(unittest.TestCase):
 
     def test_reset_only_blob_rejected_as_current_checkout(self):
         self.put(pins.BM1368_PATH, self.reset_bm1368)
-        with self.assertRaisesRegex(ValueError, 'not the reviewed address-commands blob'):
+        with self.assertRaisesRegex(ValueError, 'not the reviewed drive-strength blob'):
             self.check(pins.BM1368_PATH, pins.BM1368_OLD_BLOB)
 
     def test_preserved_reset_identity_components_are_independent(self):
@@ -346,7 +357,7 @@ class CurrentDependencyPins(unittest.TestCase):
                 added.replace(b'\n#endif\n', b'\n#include "extra.h"\n#endif\n'),
                 added + added, added[:-8])
         for suffix in suffixes:
-            mutant = self.reset_bm1368 + suffix + self.sweep_append + self.address_append
+            mutant = self.reset_bm1368 + suffix + self.sweep_append + self.address_append + self.drive_append
             with self.subTest(suffix=suffix[:60]), self.accept_current_and_ticket_identity(mutant):
                 with self.assertRaisesRegex(ValueError, 'ticket-mask append is not separately gated'):
                     pins.reset_bm1368_bytes(mutant)
@@ -361,7 +372,7 @@ class CurrentDependencyPins(unittest.TestCase):
 
     def test_reset_and_ticket_pins_cannot_replace_nonce_expected_pin(self):
         for expected in (pins.BM1368_RESET_BLOB, pins.BM1368_TICKET_BLOB,
-                         pins.BM1368_SWEEP_BLOB, pins.BM1368_CURRENT_BLOB):
+                         pins.BM1368_SWEEP_BLOB, pins.BM1368_ADDRESS_BLOB, pins.BM1368_CURRENT_BLOB):
             with self.assertRaisesRegex(ValueError, 'historical BM1368 chip pin changed'):
                 self.check(pins.BM1368_PATH, expected)
 
@@ -383,7 +394,7 @@ class CurrentDependencyPins(unittest.TestCase):
 
     def test_ticket_only_source_rejected_as_current(self):
         self.put(pins.BM1368_PATH, self.ticket_bm1368)
-        with self.assertRaisesRegex(ValueError, 'not the reviewed address-commands blob'):
+        with self.assertRaisesRegex(ValueError, 'not the reviewed drive-strength blob'):
             self.check(pins.BM1368_PATH, pins.BM1368_OLD_BLOB)
 
     def test_ticket_prefix_checked_without_sweep_full_hash(self):
@@ -408,7 +419,7 @@ class CurrentDependencyPins(unittest.TestCase):
                 added.replace(b'\n#endif\n', b'\n#include "extra.h"\n#endif\n'),
                 added + added, added[:-8])
         for suffix in suffixes:
-            mutant = self.ticket_bm1368 + suffix + self.address_append
+            mutant = self.ticket_bm1368 + suffix + self.address_append + self.drive_append
             with self.subTest(suffix=suffix[:60]), self.accept_current_bm1368_identity(mutant):
                 with self.assertRaisesRegex(ValueError, 'sweep-clock append is not separately gated'):
                     pins.ticket_bm1368_bytes(mutant)
@@ -418,8 +429,8 @@ class CurrentDependencyPins(unittest.TestCase):
                        self.sweep_append.replace(b'<< 1', b'<< 2'),
                        self.sweep_append.replace(b'463, 1,', b'464, 1,'),
                        self.sweep_append + b'\n', self.sweep_append[:-1]):
-            self.put(pins.BM1368_PATH, self.ticket_bm1368 + suffix + self.address_append)
-            with self.assertRaisesRegex(ValueError, 'not the reviewed address-commands blob'):
+            self.put(pins.BM1368_PATH, self.ticket_bm1368 + suffix + self.address_append + self.drive_append)
+            with self.assertRaisesRegex(ValueError, 'not the reviewed drive-strength blob'):
                 self.check(pins.BM1368_PATH, pins.BM1368_OLD_BLOB)
 
     def test_exact_address_transition_retains_sweep_witness(self):
@@ -428,20 +439,20 @@ class CurrentDependencyPins(unittest.TestCase):
                          'f23565c15c9d174e644fc51a401e81dbe072dfd7')
         self.assertEqual(hashlib.sha256(self.sweep_bm1368).hexdigest(),
                          'e4c05fb8bc541e6e6b2a216cbaecf7ef57cc3d85101d59b81e8ebd3d4e2af7e4')
-        self.assertEqual(self.bm1368, self.sweep_bm1368 + self.address_append)
+        self.assertEqual(self.address_bm1368, self.sweep_bm1368 + self.address_append)
         self.assertEqual(len(self.address_append), 2035)
 
     def test_current_address_identity_components_are_independent(self):
-        for constant, wrong in (('BM1368_CURRENT_BLOB', '0' * 40),
-                                ('BM1368_CURRENT_SHA256', '0' * 64),
-                                ('BM1368_CURRENT_SIZE', 11279)):
+        for constant, wrong in (('BM1368_ADDRESS_BLOB', '0' * 40),
+                                ('BM1368_ADDRESS_SHA256', '0' * 64),
+                                ('BM1368_ADDRESS_SIZE', 11279)):
             with self.subTest(constant=constant), patch.object(pins, constant, wrong):
-                with self.assertRaisesRegex(ValueError, 'not the reviewed address-commands blob'):
+                with self.assertRaisesRegex(ValueError, 'preserved address source prefix changed'):
                     pins.historical_bm1368_bytes(self.bm1368)
 
     def test_sweep_only_source_rejected_as_current(self):
         self.put(pins.BM1368_PATH, self.sweep_bm1368)
-        with self.assertRaisesRegex(ValueError, 'not the reviewed address-commands blob'):
+        with self.assertRaisesRegex(ValueError, 'not the reviewed drive-strength blob'):
             self.check(pins.BM1368_PATH, pins.BM1368_OLD_BLOB)
 
     def test_sweep_prefix_checked_without_address_full_hash(self):
@@ -467,7 +478,7 @@ class CurrentDependencyPins(unittest.TestCase):
                             b'\n#include "extra.h"\n#endif\n'):
             suffixes.append(added.replace(b'\n#endif\n', replacement))
         for index, suffix in enumerate(suffixes):
-            mutant = self.sweep_bm1368 + suffix
+            mutant = self.sweep_bm1368 + suffix + self.drive_append
             with self.subTest(mutation=index), self.accept_address_bm1368_identity(mutant):
                 with self.assertRaisesRegex(ValueError, 'address-commands append is not separately gated'):
                     pins.sweep_bm1368_bytes(mutant)
@@ -477,9 +488,63 @@ class CurrentDependencyPins(unittest.TestCase):
                        self.address_append.replace(b'699, 1,', b'700, 1,'),
                        self.address_append.replace(b'frame + 2, 5', b'frame + 2, 4'),
                        self.address_append + b'\n', self.address_append[:-1]):
-            self.put(pins.BM1368_PATH, self.sweep_bm1368 + suffix)
-            with self.assertRaisesRegex(ValueError, 'not the reviewed address-commands blob'):
+            self.put(pins.BM1368_PATH, self.sweep_bm1368 + suffix + self.drive_append)
+            with self.assertRaisesRegex(ValueError, 'not the reviewed drive-strength blob'):
                 self.check(pins.BM1368_PATH, pins.BM1368_OLD_BLOB)
+
+    def test_exact_drive_transition_retains_address_witness(self):
+        self.assertEqual(len(self.bm1368), 14347)
+        self.assertEqual(pins.git_blob(self.bm1368),
+                         '355824db8f2127da4c678737ab86daf2a99f4a85')
+        self.assertEqual(hashlib.sha256(self.bm1368).hexdigest(),
+                         'd31a47e24504be3cf48cad8cbca96a9a38f08fd5aa0b0a27e672fac84bff5ce6')
+        self.assertEqual(len(self.address_bm1368), 11280)
+        self.assertEqual(pins.git_blob(self.address_bm1368),
+                         '890e2bfc9ead81a9cafe5b34c917b37133ea0d5e')
+        self.assertEqual(hashlib.sha256(self.address_bm1368).hexdigest(),
+                         '91cfb6f3bb640bcf3519027243970bcb37aeeb0275f96b931dd17cab940540d2')
+        self.assertEqual(self.bm1368, self.address_bm1368 + self.drive_append)
+        self.assertEqual(len(self.drive_append), 3067)
+
+    def test_current_drive_identity_components_are_independent(self):
+        for constant, wrong in (('BM1368_CURRENT_BLOB', '0' * 40),
+                                ('BM1368_CURRENT_SHA256', '0' * 64),
+                                ('BM1368_CURRENT_SIZE', 14346)):
+            with self.subTest(constant=constant), patch.object(pins, constant, wrong):
+                with self.assertRaisesRegex(ValueError, 'not the reviewed drive-strength blob'):
+                    pins.historical_bm1368_bytes(self.bm1368)
+
+    def test_address_only_source_rejected_as_current(self):
+        self.put(pins.BM1368_PATH, self.address_bm1368)
+        with self.assertRaisesRegex(ValueError, 'not the reviewed drive-strength blob'):
+            self.check(pins.BM1368_PATH, pins.BM1368_OLD_BLOB)
+
+    def test_address_prefix_checked_without_drive_full_hash(self):
+        for offset in (0, 920, 3802, 3803, 7518, 7519, 8349, 8350, 9244, 9245, 11279):
+            raw = bytearray(self.bm1368)
+            raw[offset] ^= 1
+            mutant = bytes(raw)
+            with self.subTest(offset=offset), self.accept_drive_bm1368_identity(mutant):
+                with self.assertRaisesRegex(ValueError, 'preserved address source prefix changed'):
+                    pins.address_bm1368_bytes(mutant)
+
+    def test_drive_gate_shape_checked_without_full_hash(self):
+        added = self.drive_append
+        suffixes = [b'',
+            added.replace(b'VN135_BM1368_DRIVE_STRENGTH_135', b'OTHER_GATE'),
+            added.replace(b'"integration/bm1368_drive_strength_135.h"', b'"wrong.h"'),
+            b'int outside;\n' + added, added + added, added[:-8],
+            added[:-1], added + b'\n']
+        for replacement in (b'\n#endif\nint outside;\n\n',
+                            b'\n#if OTHER\n#endif\n#endif\n',
+                            b'\n#else\n#endif\n', b'\n#elif OTHER\n#endif\n',
+                            b'\n#include "extra.h"\n#endif\n'):
+            suffixes.append(added.replace(b'\n#endif\n', replacement))
+        for index, suffix in enumerate(suffixes):
+            mutant = self.address_bm1368 + suffix
+            with self.subTest(mutation=index), self.accept_drive_bm1368_identity(mutant):
+                with self.assertRaisesRegex(ValueError, 'drive-strength append is not separately gated'):
+                    pins.address_bm1368_bytes(mutant)
 
     def test_transition_shape_checked_independently_of_current_hash(self):
         mutant = self.thermal.replace(b'ROUTES135_FLAGS =', b'OTHER_FLAGS =')

@@ -24,6 +24,9 @@ BM1368_SWEEP_SIZE = 9245
 BM1368_SWEEP_BLOB = 'f23565c15c9d174e644fc51a401e81dbe072dfd7'
 BM1368_SWEEP_SHA256 = 'e4c05fb8bc541e6e6b2a216cbaecf7ef57cc3d85101d59b81e8ebd3d4e2af7e4'
 BM1368_ADDRESS_SIZE = 11280
+BM1368_DRIVE_BLOB = '355824db8f2127da4c678737ab86daf2a99f4a85'
+BM1368_DRIVE_SHA256 = 'd31a47e24504be3cf48cad8cbca96a9a38f08fd5aa0b0a27e672fac84bff5ce6'
+BM1368_DRIVE_SIZE = 14347
 BM1368_ADDRESS_BLOB = '890e2bfc9ead81a9cafe5b34c917b37133ea0d5e'
 BM1368_ADDRESS_SHA256 = '91cfb6f3bb640bcf3519027243970bcb37aeeb0275f96b931dd17cab940540d2'
 MAX_JSON_BYTES = 1_000_000
@@ -362,12 +365,34 @@ def verify_strings(strings, sources, readers):
             require(ref['id']==st['id'] and ref['target']==st[name],'wrong wrapper logger reference')
 
 
+def address_runtime_bytes(raw):
+    """Require exact current drive-strength source and recover frozen L13."""
+    require(len(raw)==BM1368_DRIVE_SIZE and sha(raw)==BM1368_DRIVE_SHA256
+            and hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()
+                ==BM1368_DRIVE_BLOB,
+            'reviewed runtime source identity mismatch: '+BM1368_PATH+' (drive strength)')
+    address,added=raw[:BM1368_ADDRESS_SIZE],raw[BM1368_ADDRESS_SIZE:]
+    require(len(address)==BM1368_ADDRESS_SIZE and sha(address)==BM1368_ADDRESS_SHA256
+            and hashlib.sha1(b'blob '+str(len(address)).encode()+b'\0'+address).hexdigest()
+                ==BM1368_ADDRESS_BLOB,
+            'preserved address runtime source identity mismatch')
+    require(added.startswith(b'\n#ifdef VN135_BM1368_DRIVE_STRENGTH_135\n'
+                             b'#include "integration/bm1368_drive_strength_135.h"\n')
+            and added.count(b'#if')==1 and added.count(b'#endif')==1
+            and added.count(b'#include')==1
+            and b'#else' not in added and b'#elif' not in added
+            and added.endswith(b'\n#endif\n'),
+            'BM1368 drive-strength append is not separately gated')
+    return address
+
+
 def sweep_runtime_bytes(raw, item):
-    """Require exact current address source, then recover the frozen L12 bytes."""
+    """Require exact current drive-strength source, then recover frozen L12."""
     require(item['path']==BM1368_PATH and item['bytes']==BM1368_SWEEP_SIZE
             and item['git_blob']==BM1368_SWEEP_BLOB
             and item['sha256']==BM1368_SWEEP_SHA256,
             'historical sweep runtime identity differs')
+    raw=address_runtime_bytes(raw)
     require(len(raw)==BM1368_ADDRESS_SIZE and sha(raw)==BM1368_ADDRESS_SHA256
             and hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()
                 ==BM1368_ADDRESS_BLOB,

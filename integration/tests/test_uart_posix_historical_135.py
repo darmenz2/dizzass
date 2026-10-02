@@ -27,7 +27,7 @@ class HistoricalChanges(unittest.TestCase):
             return False
         return True
 
-    def test_exact_twelve_states_only(self):
+    def test_exact_fourteen_states_only(self):
         self.assertEqual(guard.PRIOR_MASKS, (0, 32, 26, 58, 37, 63))
         self.assertEqual(len(guard.PRIOR_RECORDS), 6)
         self.assertEqual(len(guard.CONSTRUCTOR_RECORDS), 11)
@@ -36,9 +36,11 @@ class HistoricalChanges(unittest.TestCase):
         self.assertEqual(len(guard.SWEEP_RECORDS), 11)
         self.assertEqual(len(guard.ADDRESS_RECORDS), 11)
         self.assertEqual(len(guard.NATIVE_BOUNDARY_RECORDS), 15)
+        self.assertEqual(len(guard.GROUP_RECORDS), 11)
+        self.assertEqual(len(guard.GROUP_NATIVE_BOUNDARY_RECORDS), 15)
         approved = guard.approved_changes()
-        self.assertEqual(len(approved), 12)
-        self.assertEqual(len(set(approved)), 12)
+        self.assertEqual(len(approved), 14)
+        self.assertEqual(len(set(approved)), 14)
         for raw in approved:
             self.assertTrue(self.accepts(raw))
 
@@ -62,8 +64,8 @@ class HistoricalChanges(unittest.TestCase):
         self.assertEqual(guard.approved_changes()[6],raw)
         self.assertTrue(self.accepts(raw))
 
-    def test_current_native_boundary_group_matches_files_and_modes(self):
-        for record in guard.NATIVE_BOUNDARY_RECORDS:
+    def test_current_group_native_boundary_matches_files_and_modes(self):
+        for record in guard.GROUP_NATIVE_BOUNDARY_RECORDS:
             fields, path = record.split('\t')
             old_mode, new_mode, old, current, status = fields.split()
             self.assertEqual((old_mode, new_mode, status), (':100644', '100644', 'M'))
@@ -204,7 +206,7 @@ class HistoricalChanges(unittest.TestCase):
 
     def test_only_complete_native_boundary_state_is_added_to_prior_eleven(self):
         old_states = set(guard.approved_changes()[:11])
-        self.assertEqual(set(guard.approved_changes()) - old_states,
+        self.assertEqual(set(guard.approved_changes()[:12]) - old_states,
                          {'\n'.join(guard.NATIVE_BOUNDARY_RECORDS)})
         for index in range(len(guard.NATIVE_BOUNDARY_RECORDS)):
             records = list(guard.NATIVE_BOUNDARY_RECORDS)
@@ -252,6 +254,87 @@ class HistoricalChanges(unittest.TestCase):
     def test_every_native_boundary_pair_reordering_fails(self):
         for first, second in itertools.combinations(range(15), 2):
             records = list(guard.NATIVE_BOUNDARY_RECORDS)
+            records[first], records[second] = records[second], records[first]
+            self.assertFalse(self.accepts('\n'.join(records)), (first, second))
+
+    def test_all_mixed_old_constructor_reset_ticket_sweep_address_and_grouping_subsets(self):
+        records = sorted(set(guard.PRIOR_RECORDS + guard.CONSTRUCTOR_RECORDS + guard.RESET_RECORDS + guard.TICKET_RECORDS + guard.SWEEP_RECORDS + guard.ADDRESS_RECORDS + guard.GROUP_RECORDS))
+        self.assertEqual(len(records), 17)
+        approved = set(guard.approved_changes()[:11]) | {'\n'.join(guard.GROUP_RECORDS)}
+        accepted = set()
+        for mask in range(1 << len(records)):
+            raw = canonical(record for index, record in enumerate(records) if mask & (1 << index))
+            expected = raw in approved
+            self.assertEqual(self.accepts(raw), expected, mask)
+            if expected:
+                accepted.add(raw)
+        self.assertEqual(accepted, approved)
+
+    def test_saved_grouping_state_is_added_to_prior_twelve_states(self):
+        old_states=set(guard.approved_changes()[:12])
+        self.assertEqual(set(guard.approved_changes()[:13])-old_states,
+                         {'\n'.join(guard.GROUP_RECORDS)})
+        self.assertEqual(hashlib.sha256(guard.approved_changes()[12].encode()).hexdigest(),
+                         '925f05e1685514359ff7b3863898e628e36eeb76ae9e7e42a0c972683ee4fd60')
+        for index in range(len(guard.GROUP_RECORDS)):
+            records=list(guard.GROUP_RECORDS)
+            del records[index]
+            self.assertFalse(self.accepts('\n'.join(records)),index)
+
+    def test_every_grouping_pair_reordering_fails(self):
+        for first,second in itertools.combinations(range(len(guard.GROUP_RECORDS)),2):
+            records=list(guard.GROUP_RECORDS)
+            records[first],records[second]=records[second],records[first]
+            self.assertFalse(self.accepts('\n'.join(records)),(first,second))
+
+    def test_combined_state_is_the_exact_complete_witness(self):
+        raw = '\n'.join(guard.GROUP_NATIVE_BOUNDARY_RECORDS)
+        self.assertEqual(hashlib.sha256(raw.encode()).hexdigest(),
+                         '48d8cb79ca7902b2d26512ee281d7783e29d16eacd96e09fee01377cb2996232')
+        self.assertEqual(guard.approved_changes()[13], raw)
+        self.assertEqual(canonical(guard.GROUP_NATIVE_BOUNDARY_RECORDS), raw)
+        self.assertEqual(set(guard.approved_changes()) - set(guard.approved_changes()[:13]), {raw})
+        for index in range(len(guard.GROUP_NATIVE_BOUNDARY_RECORDS)):
+            records = list(guard.GROUP_NATIVE_BOUNDARY_RECORDS)
+            del records[index]
+            self.assertFalse(self.accepts('\n'.join(records)), index)
+
+    def test_native_additions_on_all_prior_states_remain_exact(self):
+        additions = tuple(record for record in guard.NATIVE_BOUNDARY_RECORDS
+                          if record not in guard.ADDRESS_RECORDS)
+        self.assertEqual(len(additions), 4)
+        self.assertEqual(set(guard.GROUP_NATIVE_BOUNDARY_RECORDS),
+                         set(guard.GROUP_RECORDS) | set(additions))
+        eligible = {'\n'.join(guard.ADDRESS_RECORDS), '\n'.join(guard.GROUP_RECORDS)}
+        count = 0
+        for prior in guard.approved_changes()[:13]:
+            for mask in range(1 << len(additions)):
+                records = prior.splitlines() + [record for index, record in enumerate(additions)
+                                               if mask & (1 << index)]
+                expected = mask == 0 or (prior in eligible and mask == 15)
+                self.assertEqual(self.accepts(canonical(records)), expected, (prior, mask))
+                count += 1
+        self.assertEqual(count, 208)
+
+    def test_all_combined_state_subsets_keep_exact_acceptance(self):
+        records = guard.GROUP_NATIVE_BOUNDARY_RECORDS
+        approved = set(guard.approved_changes())
+        accepted = set()
+        for mask in range(1 << len(records)):
+            raw = '\n'.join(record for index, record in enumerate(records)
+                            if mask & (1 << index))
+            expected = raw in approved
+            self.assertEqual(self.accepts(raw), expected, mask)
+            if expected:
+                accepted.add(raw)
+        self.assertEqual(accepted, {raw for raw in approved
+                                   if set(raw.splitlines()).issubset(records)})
+        self.assertIn('\n'.join(guard.GROUP_NATIVE_BOUNDARY_RECORDS), accepted)
+        self.assertIn('\n'.join(guard.GROUP_RECORDS), accepted)
+
+    def test_every_combined_state_pair_reordering_fails(self):
+        for first, second in itertools.combinations(range(15), 2):
+            records = list(guard.GROUP_NATIVE_BOUNDARY_RECORDS)
             records[first], records[second] = records[second], records[first]
             self.assertFalse(self.accepts('\n'.join(records)), (first, second))
 
