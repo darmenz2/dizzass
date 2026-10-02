@@ -1,0 +1,3 @@
+# Exact checksums for the bounded static evidence survive Windows checkout.
+evidence/*.asm text eol=lf
+evidence/*.json text eol=lf

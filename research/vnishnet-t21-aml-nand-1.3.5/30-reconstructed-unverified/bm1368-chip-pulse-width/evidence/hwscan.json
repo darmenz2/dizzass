@@ -1,0 +1,163 @@
+{
+  "reference_sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+  "architecture": "ARM ELF32 little-endian",
+  "firmware_execution": false,
+  "firmware_emulation": false,
+  "ranges": [
+    {
+      "role": "code",
+      "start": "0xf3174",
+      "end_exclusive": "0xf324c",
+      "length": 216,
+      "sha256": "275315f6bf34601e73c7cb5e7db75048c13ad952de7326ab0ed54aace2a21240"
+    },
+    {
+      "role": "literal_pool",
+      "start": "0xf324c",
+      "end_exclusive": "0xf3260",
+      "length": 20,
+      "sha256": "453a1d4d3cd56e572f2e232b53c49449b55ee586fb5dd02f63cf14dfda17b2d7"
+    },
+    {
+      "role": "complete_method",
+      "start": "0xf3174",
+      "end_exclusive": "0xf3260",
+      "length": 236,
+      "sha256": "73fa3b93bbb7c2c18acf9f8369ad6650fd453ab8010544cd91729b50086427fa"
+    }
+  ],
+  "calls": [
+    {
+      "address": "0xf31b4",
+      "target": "0xf3d7c"
+    },
+    {
+      "address": "0xf3208",
+      "target": "0xfeeb0"
+    },
+    {
+      "address": "0xf3238",
+      "target": "0xfeeb0"
+    }
+  ],
+  "logger_strings": [
+    {
+      "load": "0xf31c0",
+      "literal": "0xf324c",
+      "add": "0xf31d4",
+      "target": "0x47d914",
+      "register": "r8",
+      "length": 7,
+      "xor_key": 0,
+      "raw_hex": "64726976657200",
+      "raw_sha256": "6b2223c6c75d72fe4bd43ffc5a5aa427f68822c5b228e99d1e29e8fd088bb8b8",
+      "decoded_hex": "64726976657200",
+      "text": "driver",
+      "expected_exact_match": true
+    },
+    {
+      "load": "0xf31c8",
+      "literal": "0xf3250",
+      "add": "0xf31dc",
+      "target": "0x47e7ef",
+      "register": "r5",
+      "length": 42,
+      "xor_key": 0,
+      "raw_hex": "2f746d702f6275696c642f6c69626269746d61696e2f7372632f636869702f63686970313336382e6300",
+      "raw_sha256": "a22fe6f4f8a0d5f29b251276a4647b1a807f19bb2985aa4301f986468589f931",
+      "decoded_hex": "2f746d702f6275696c642f6c69626269746d61696e2f7372632f636869702f63686970313336382e6300",
+      "text": "/tmp/build/libbitmain/src/chip/chip1368.c",
+      "expected_exact_match": true
+    },
+    {
+      "load": "0xf31d0",
+      "literal": "0xf3254",
+      "add": "0xf31e4",
+      "target": "0x47d359",
+      "register": "r7",
+      "length": 11,
+      "xor_key": 0,
+      "raw_hex": "5b72656461637465645d00",
+      "raw_sha256": "4b5ff616946aa201289595f21b4e085135f43222d5e6f2b8ba2f9bc82241d3a7",
+      "decoded_hex": "5b72656461637465645d00",
+      "text": "[redacted]",
+      "expected_exact_match": true
+    },
+    {
+      "load": "0xf31e0",
+      "literal": "0xf3258",
+      "add": "0xf31f0",
+      "target": "0x47e5a3",
+      "register": "r1",
+      "length": 39,
+      "xor_key": 0,
+      "raw_hex": "636861696e232564202d206661696c656420746f2073656e6420636f726520636f6d6d616e6400",
+      "raw_sha256": "8f158b52732a1dcbc5085449d8d96f45b40abdbc5d37e814e7de5d1690a8a217",
+      "decoded_hex": "636861696e232564202d206661696c656420746f2073656e6420636f726520636f6d6d616e6400",
+      "text": "chain#%d - failed to send core command",
+      "expected_exact_match": true
+    },
+    {
+      "load": "0xf3214",
+      "literal": "0xf325c",
+      "add": "0xf3224",
+      "target": "0x47e20d",
+      "register": "r1",
+      "length": 42,
+      "xor_key": 0,
+      "raw_hex": "636861696e232564202d206661696c656420746f2073657420434c4f434b5f44454c41595f4354524c00",
+      "raw_sha256": "ef58e0e684cad1dec595c852ed801ac2916d3f3fe0b408bb240ae1686b19d807",
+      "decoded_hex": "636861696e232564202d206661696c656420746f2073657420434c4f434b5f44454c41595f4354524c00",
+      "text": "chain#%d - failed to set CLOCK_DELAY_CTRL",
+      "expected_exact_match": true
+    }
+  ],
+  "literal_pool_hex": "38a738000bb638006da13800abb33800e1af3800",
+  "cgminer_comparison": {
+    "reference_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+    "start": "0xe33e0",
+    "non_call_instruction_words_identical": 51,
+    "differing_instruction_words": [
+      {
+        "offset": "0x40",
+        "cgminer_address": "0xe3420",
+        "hwscan_address": "0xf31b4",
+        "cgminer_hex": "930500eb",
+        "hwscan_hex": "f00200eb"
+      },
+      {
+        "offset": "0x94",
+        "cgminer_address": "0xe3474",
+        "hwscan_address": "0xf3208",
+        "cgminer_hex": "125b00eb",
+        "hwscan_hex": "282f00eb"
+      },
+      {
+        "offset": "0xc4",
+        "cgminer_address": "0xe34a4",
+        "hwscan_address": "0xf3238",
+        "cgminer_hex": "065b00eb",
+        "hwscan_hex": "1c2f00eb"
+      }
+    ],
+    "control_flow": "All 51 non-call instruction words byte-identical; three BL destinations relocated.",
+    "logger_metadata": "All five strings identical; hwscan stores them plaintext (XOR key 0)."
+  },
+  "contract": {
+    "write_config_mode": 0,
+    "chip_argument": "original r1, passed unchanged as writer r2",
+    "register": "0x3c",
+    "value": "0x80008000 | ((original_r2 & 3) << 6) | ((original_r3 & 7) << 3)",
+    "success_return": 0,
+    "failure_return": -1,
+    "severity": 1,
+    "diagnostics_source_lines": [
+      387,
+      538
+    ],
+    "fresh_index_reads": [
+      "0xf31d8",
+      "0xf320c"
+    ]
+  }
+}

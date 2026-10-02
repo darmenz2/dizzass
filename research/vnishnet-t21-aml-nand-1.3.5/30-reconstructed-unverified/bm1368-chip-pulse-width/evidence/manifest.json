@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "kind": "bm1368-chip-pulse-width-static",
+  "source": {
+    "size": 6228004,
+    "sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9"
+  },
+  "regions": [
+    {
+      "name": "code",
+      "start": 930784,
+      "end": 931000,
+      "sha256": "7908fca036569ac33374f67f09cf0172f18e918654f5b7d590da6fd717366430"
+    },
+    {
+      "name": "literals",
+      "start": 931000,
+      "end": 931020,
+      "sha256": "74d3c202e104ffb63c3a2f8cd8bec7fc436f5ad2f501f2103e7821c93a4db51d"
+    },
+    {
+      "name": "constructor",
+      "start": 923000,
+      "end": 923076,
+      "sha256": "dbd567a63812084d3cdeaafb848563e73875ef8bc0e1f353fd7e161834096efd"
+    }
+  ],
+  "original_executed": false,
+  "instruction_interpreter_used": false
+}
