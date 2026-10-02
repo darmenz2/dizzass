@@ -1,0 +1,329 @@
+{
+  "schema": 1,
+  "kind": "bm1368-register-pair-static",
+  "original_executed": false,
+  "instruction_interpreter_used": false,
+  "sources": {
+    "cgminer": {
+      "size": 6228004,
+      "sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+      "regions": [
+        {
+          "name": "code",
+          "start": 932868,
+          "end": 933328,
+          "bytes_hex": "f04b2de918b08de210d04de20040a0e1180090e50c208de20180a0e1a810a0e3578d00eb0050e0e3000050e36300001a180094e508208de21810a0e3508d00eb000050e35d00001a7c919fe509909fe7000099e5011040e2900100e0010010e3000099e564619fe5011040e2900101e006609fe70c009de5010011e30200000a001096e5090051e3f4ffffca000058e30800000a001099e5012041e2910201e0010011e30900000a001096e5090051e3130000ca050000ea08209de5f010c0e30c108de50f0882e3ff2480e3100000ea001099e5003096e5012041e2910207e008209de50f1100e3011080e10f26c2e30c108de5010017e30500000a0a0053e3030000ba0f1100e3011080e10c108de5eeffffea08208de50400a0e100108de50110a0e30020a0e3a830a0e34f0300eb000050e32100001a000099e5011040e2900100e0010010e30200000a000096e5090050e3110000ca08009de50110a0e300008de50400a0e10020a0e31830a0e33e0300eb0050a0e1000099e5000055e3011040e20050e013900100e0010010e30a00000a000096e5090050e3070000da08009de50110a0e300008de50400a0e10020a0e31830a0e32c0300ebe5ffffea0500a0e118d04be2f08bbde8",
+          "sha256": "763ee4325290cac5d9913b3e8907b979b09894b2f9bbbd3c21ce5764b80412f1",
+          "assembly_file": "cgminer-code.asm",
+          "assembly_sha256": "f1850bea5c4994d428b81b392ff80cfd15c0c8235015ccc98dfd70b6d912af91"
+        },
+        {
+          "name": "literals",
+          "start": 933328,
+          "end": 933336,
+          "bytes_hex": "d4bf4f005cb34f00",
+          "sha256": "dcf52df5a5f460b20a63a0040fb7d26454ba9f2b53b5b6a0e6eaa67f3fbf991c"
+        },
+        {
+          "name": "constructor_code",
+          "start": 922912,
+          "end": 922988,
+          "bytes_hex": "d8e19fe50ee09fe7d4319fe503309fe7d0619fe506609fe7cc519fe505509fe7c8419fe504409fe7c4119fe501109fe7c0219fe502209fe77c2080e5802080e2720082e8903080e594e080e5",
+          "sha256": "5c025d20ff51251df31eaf91dd333aa4f03555da395edb1f4b3443420b5ead8e",
+          "assembly_file": "cgminer-constructor_code.asm",
+          "assembly_sha256": "d1efadf03ed59460718b31e102954c8dd2e18cdb6662af15a12d19b704635b2e"
+        },
+        {
+          "name": "constructor_literal",
+          "start": 923392,
+          "end": 923396,
+          "bytes_hex": "04d14f00",
+          "sha256": "c850968a1030074a868c1ac678133ffde2851c7dfc9e5f7c2788f3095c7647a5"
+        },
+        {
+          "name": "constructor_got",
+          "start": 6153776,
+          "end": 6153780,
+          "bytes_hex": "043c0e00",
+          "sha256": "7da7d813a7b15ad509ed945dd0e5bf3494102dd4ae84848ecffeac1af08a3b44"
+        },
+        {
+          "name": "opaque_x_got",
+          "start": 6159404,
+          "end": 6159408,
+          "bytes_hex": "c8b86800",
+          "sha256": "9a37d8f4068310cc4efe243d855fb4381615d2360279d957a556b9afe6480bb0"
+        },
+        {
+          "name": "opaque_y_got",
+          "start": 6156248,
+          "end": 6156252,
+          "bytes_hex": "10b86800",
+          "sha256": "aaba8d1c10bda99fe3fb16ee55bcf1f9f273419e4801b3303b527b0bfef7ff68"
+        }
+      ]
+    },
+    "hwscan": {
+      "size": 4883216,
+      "sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+      "regions": [
+        {
+          "name": "code",
+          "start": 996888,
+          "end": 997104,
+          "bytes_hex": "704c2de910b08de210d04de20040a0e1180090e50c208de20160a0e1a810a0e3034800eb0050e0e3000050e32600001a180094e508208de21810a0e3fc4700eb000050e32000001a0c009de5000056e30500000a08109de50f2100e3020080e10c008de50f16c1e3040000ea08109de5f000c0e30c008de50f1881e3ff1481e308108de50110a0e300008de50400a0e10020a0e3a830a0e3b10100eb000050e30900001a08009de50110a0e300008de50400a0e10020a0e31830a0e3a80100eb0050a0e1000050e30050e0130500a0e110d04be2708cbde8",
+          "sha256": "c32a75976b6e3f17ed1a24138469c512a857d46524c38708cbb9aec1f08a5b93",
+          "assembly_file": "hwscan-code.asm",
+          "assembly_sha256": "288d6c47fcf899cbb607f9edf829534cc313f44109db7c15f8e920b276475428"
+        },
+        {
+          "name": "constructor_code",
+          "start": 990712,
+          "end": 990788,
+          "bytes_hex": "d8e19fe50ee09fe7d4319fe503309fe7d0619fe506609fe7cc519fe505509fe7c8419fe504409fe7c4119fe501109fe7c0219fe502209fe77c2080e5802080e2720082e8903080e594e080e5",
+          "sha256": "5c025d20ff51251df31eaf91dd333aa4f03555da395edb1f4b3443420b5ead8e",
+          "assembly_file": "hwscan-constructor_code.asm",
+          "assembly_sha256": "ed4c2ed2a834f81fcb025939f0cff1d5cd781d7294470410bfc008c9cf2ca403"
+        },
+        {
+          "name": "constructor_literal",
+          "start": 991192,
+          "end": 991196,
+          "bytes_hex": "c8db3b00",
+          "sha256": "aca6cb76954a6885142f73112652db016b25cfc0e2e685d077f5fa77a995dca6"
+        },
+        {
+          "name": "constructor_got",
+          "start": 4913612,
+          "end": 4913616,
+          "bytes_hex": "18360f00",
+          "sha256": "34739460ddf66a0fd4ba1e5d3edb47d43bb0604ff986d1104e415bf44bc1b40a"
+        }
+      ]
+    }
+  },
+  "constructor_binding": {
+    "slot": 148,
+    "cgminer": {
+      "entry": 922704,
+      "load": 922912,
+      "pc_load": 922916,
+      "pc_value": 922924,
+      "literal": 923392,
+      "got": 6153776,
+      "method": 932868,
+      "retained_register": "lr",
+      "store": 922984
+    },
+    "hwscan": {
+      "entry": 990504,
+      "load": 990712,
+      "pc_load": 990716,
+      "pc_value": 990724,
+      "literal": 991192,
+      "got": 4913612,
+      "method": 996888,
+      "retained_register": "lr",
+      "store": 990784
+    },
+    "purpose": "numeric table identity, not a host function pointer or proof of T21 runtime dispatch"
+  },
+  "opaque_predicates": {
+    "arithmetic": "ARM SUB and MUL low 32 bits from one x snapshot.",
+    "proof": "Modulo 2, x*(x-1) is b*(b xor 1), zero for b=0 and b=1; low 32-bit truncation preserves bit zero. Separate x loads need not agree.",
+    "discarded_flag_test": {
+      "load": 932948,
+      "subtract": 932952,
+      "multiply": 932956,
+      "test": 932960,
+      "flags_overwritten_by": 932988,
+      "conditional_use_between_tests": false
+    },
+    "predicates": [
+      {
+        "load": 932964,
+        "subtract": 932972,
+        "multiply": 932976,
+        "test": 932988,
+        "branch": 932992,
+        "always_target": 933008
+      },
+      {
+        "load": 933016,
+        "subtract": 933020,
+        "multiply": 933024,
+        "test": 933028,
+        "branch": 933032,
+        "always_target": 933076
+      },
+      {
+        "load": 933076,
+        "subtract": 933084,
+        "multiply": 933088,
+        "test": 933112,
+        "branch": 933116,
+        "always_target": 933144
+      },
+      {
+        "load": 933180,
+        "subtract": 933184,
+        "multiply": 933188,
+        "test": 933192,
+        "branch": 933196,
+        "always_target": 933212
+      },
+      {
+        "load": 933244,
+        "subtract": 933252,
+        "multiply": 933260,
+        "test": 933264,
+        "branch": 933268,
+        "always_target": 933316
+      }
+    ],
+    "globals": [
+      {
+        "name": "x",
+        "got": 6159404,
+        "address": 6863048,
+        "section": ".bss"
+      },
+      {
+        "name": "y",
+        "got": 6156248,
+        "address": 6862864,
+        "section": ".bss"
+      }
+    ],
+    "bss": {
+      "address": 6358112,
+      "size": 526456,
+      "type": 8
+    },
+    "ordinary_enabled_y_value_read": 933080,
+    "ordinary_y_value_used_only_by_dead_compare": 933120,
+    "dead_y_value_reads": [
+      932996,
+      933036,
+      933200,
+      933272
+    ],
+    "dead_duplicate_second_write": 933308,
+    "dead_backedges": [
+      933004,
+      933140,
+      933312
+    ],
+    "valid_memory_required": true,
+    "original_nonfaulting_access_traces_projected": false,
+    "hardware_faults_or_altered_control_flow_modelled": false
+  },
+  "contract": {
+    "arguments": [
+      "device",
+      "flag"
+    ],
+    "flag_semantics": "zero vs any nonzero uint32 bits, not exact-one-only",
+    "reads": {
+      "cgminer": 1077640,
+      "hwscan": 1070668,
+      "kind": "COMMON chain table, no chip argument",
+      "order": [
+        168,
+        24
+      ],
+      "maximum_calls": 2,
+      "second_only_after_exactly_zero_first_status": true,
+      "chain": "fresh device+0x18 word bits interpreted signed before EACH getter",
+      "cgminer_index_loads": [
+        932884,
+        932916
+      ],
+      "hwscan_index_loads": [
+        996904,
+        996936
+      ],
+      "cgminer_calls": [
+        932900,
+        932928
+      ],
+      "hwscan_calls": [
+        996920,
+        996948
+      ],
+      "cgminer_output_stack_offsets": [
+        12,
+        8
+      ],
+      "hwscan_output_stack_offsets": [
+        12,
+        8
+      ],
+      "output_initialized_by_method": false,
+      "reader_precondition": "Each reached reader must write its output before inspecting it and must supply a uint32 word on exactly-zero return; no callback may inspect the incoming indeterminate output. Failure output is never inspected by the method.",
+      "failure_return": -1,
+      "nonzero_status_skips_remaining_calls": true
+    },
+    "values": {
+      "flag_nonzero": {
+        "a8": "cached_a8 | 0x10f",
+        "misc18": "cached_18 & ~0xf00000"
+      },
+      "flag_zero": {
+        "a8": "cached_a8 & ~0xf0",
+        "misc18": "cached_18 | 0xff0f0000"
+      },
+      "snapshot": "Both successful read outputs are local snapshots; later cache/index mutations do not reread or recompute them."
+    },
+    "writes": {
+      "cgminer": 936564,
+      "hwscan": 998780,
+      "device": "original device identity",
+      "mode": 1,
+      "chip": "NULL",
+      "order": [
+        168,
+        24
+      ],
+      "maximum_calls": 2,
+      "cgminer_calls": [
+        933168,
+        933236
+      ],
+      "hwscan_calls": [
+        997040,
+        997076
+      ],
+      "only_after_exactly_zero_both_read_statuses": true,
+      "second_only_after_exactly_zero_first_write": true,
+      "failure_return": -1,
+      "successful_pair_return": 0
+    },
+    "ordinary_failure_return": -1,
+    "ordinary_success_return": 0,
+    "outer_diagnostic_calls": 0,
+    "outer_string_metadata": [],
+    "waits": 0,
+    "retries": 0,
+    "rollback": false,
+    "ordinary_effect_sequence": "Read A8; on success read18; on success transform local snapshots by flag; writeA8 broadcast; on success write18 broadcast; any reached nonzero status returns-1 and skips all later method calls.",
+    "projection_boundaries": [
+      "Existing common getter has omitted internal diagnostics/access traces and added structural guards; only its original call identity/arguments are newly evidenced here.",
+      "Existing writer dispatch/cache/failure diagnostics remain that original reconstruction boundary; this method does not add outer logs or reinterpret a failed dispatch as rollback.",
+      "Mapped GOT/x/y storage, initialized original context, ordinary returning callees, valid nonaliasing borrowed outputs and external serialization are required."
+    ],
+    "not_established": [
+      "original nonredacted function name",
+      "direct T21 runtime caller or chip ownership",
+      "physical meaning or safety of register pair and flag",
+      "ASIC ACK or hardware acceptance",
+      "pool accepted share"
+    ],
+    "excluded": [
+      "CPU execution or instruction interpretation",
+      "memory faults",
+      "asynchronous machine state modification",
+      "reads of indeterminate callback output"
+    ]
+  }
+}

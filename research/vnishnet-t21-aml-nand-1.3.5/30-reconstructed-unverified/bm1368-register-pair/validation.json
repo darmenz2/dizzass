@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "date": "2026-10-02",
+  "parent_commit": "5891d4afe62ead6b306475303144aae57ad78dc1",
+  "method": {"cgminer": "0xe3c04", "hwscan": "0xf3618", "constructor_slot": "0x94"},
+  "actual_host_runs": [
+    {"compiler": "GCC 11.4", "mode": "ordinary", "scenarios": 72720, "checks": 1588216, "passed": true},
+    {"compiler": "GCC 11.4", "mode": "ASan/UBSan", "scenarios": 72720, "checks": 1588216, "detect_leaks": true, "passed": true},
+    {"compiler": "Clang 14", "mode": "ordinary", "scenarios": 72720, "checks": 1588216, "passed": true},
+    {"compiler": "Clang 14", "mode": "ASan/UBSan", "scenarios": 72720, "checks": 1588216, "detect_leaks": true, "passed": true}
+  ],
+  "compiled_semantic_controls": {
+    "gcc": {"baseline_passed": true, "controls_compiled": 19, "explicit_oracle_failures": 19},
+    "clang": {"baseline_passed": true, "controls_compiled": 19, "explicit_oracle_failures": 19},
+    "signals_build_failures_and_timeouts_counted_as_detection": false
+  },
+  "static_original_verification": {
+    "normal_python": true,
+    "optimized_python": true,
+    "cgminer_bounded_regions": 7,
+    "hwscan_bounded_regions": 4,
+    "checker_tests_normal": 41,
+    "checker_tests_optimized": 41,
+    "independent_packet_canonical_sha256": "cabcc929e16fbef5f1d0b7d5cde04e45cfff8dd65d68abd3a46b553a619e0b87"
+  },
+  "arm_compile": {"compiler": "Clang 14", "target": "armv7-none-eabihf", "freestanding": true, "result": "ELF32 ARM EABI5 relocatable object", "executed": false},
+  "native_core_boundary_tests": {"tests": 8, "passed": true},
+  "independent_implementation_reviews": {"completed": 2, "substantive_blockers": 0},
+  "makefile_am_upstream_blob": "17d2fbde26b5e8cb614b61908b84d5937af48325",
+  "validation_preparation": {
+    "initial_parallel_copy_race": true,
+    "initial_preparation_exit_code": 1,
+    "tests_started_before_preparation_failure": false,
+    "successful_host_and_static_preparations_run_sequentially": true
+  },
+  "scope": {
+    "original_executed": false,
+    "instruction_interpreter_used": false,
+    "hardware_or_pool_accessed": false,
+    "production_driver_registered": false,
+    "full_miner_build_verified_by_this_slice": false,
+    "t21_runtime_acceptance": false,
+    "physical_register_pair_meaning_established": false,
+    "original_cache_internal_diagnostic_parity_claimed": false,
+    "previous_chain_drive_clang_sanitizer_signal_cause_resolved": false
+  }
+}
