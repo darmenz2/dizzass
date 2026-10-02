@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "date": "2026-10-02",
+  "parent_commit": "f3d1bd1e32303424dbad5cdb17c859097224c646",
+  "method": {"cgminer": "0xe3a1c", "hwscan": "0xf34fc", "constructor_slot": "0x88"},
+  "actual_host_runs": [
+    {"compiler": "GCC 11.4", "mode": "ordinary", "scenarios": 15437, "checks": 380379, "passed": true},
+    {"compiler": "GCC 11.4", "mode": "ASan/UBSan", "scenarios": 15437, "checks": 380379, "detect_leaks": true, "passed": true},
+    {"compiler": "Clang 14", "mode": "ordinary", "scenarios": 15437, "checks": 380379, "passed": true},
+    {"compiler": "Clang 14", "mode": "ASan/UBSan", "scenarios": 15437, "checks": 380379, "detect_leaks": true, "verbosity": 1, "passed": true}
+  ],
+  "clang_sanitizer_initial_failure": {
+    "exit_code": 139,
+    "diagnostic": "Segmentation fault without an ASan or UBSan error report",
+    "cause_established": false,
+    "same_binary_successful_retry": true,
+    "additional_bounded_starts": 4,
+    "additional_starts_passed": 4,
+    "additional_starts_scenarios_each": 15437,
+    "additional_starts_checks_each": 380379,
+    "initialization_completed_in_passing_verbose_logs": true,
+    "pie_or_startup_cause_claimed": false
+  },
+  "compiled_semantic_controls": {
+    "gcc": {"baseline_passed": true, "controls_compiled": 17, "explicit_oracle_failures": 17},
+    "clang": {"baseline_passed": true, "controls_compiled": 17, "explicit_oracle_failures": 17},
+    "signals_build_failures_and_timeouts_counted_as_detection": false
+  },
+  "static_original_verification": {
+    "normal_python": true,
+    "optimized_python": true,
+    "cgminer_bounded_regions": 18,
+    "hwscan_bounded_regions": 5,
+    "checker_tests_normal": 54,
+    "checker_tests_optimized": 54,
+    "independent_packet_canonical_sha256": "1621a33cc7a942bd893c4d63e3bfb3e50d24a7caf9dde2626efb8654e9dfa7bc"
+  },
+  "arm_compile": {"compiler": "Clang 14", "target": "armv7-none-eabihf", "freestanding": true, "result": "ELF32 ARM EABI5 relocatable object", "executed": false},
+  "native_core_boundary_tests": {"tests": 8, "passed": true},
+  "independent_implementation_reviews": {"completed": 2, "substantive_blockers": 0},
+  "makefile_am_upstream_blob": "17d2fbde26b5e8cb614b61908b84d5937af48325",
+  "scope": {
+    "original_executed": false,
+    "instruction_interpreter_used": false,
+    "hardware_or_pool_accessed": false,
+    "production_driver_registered": false,
+    "full_miner_build_verified_by_this_slice": false,
+    "t21_runtime_acceptance": false,
+    "original_cache_internal_diagnostic_parity_claimed": false
+  }
+}
