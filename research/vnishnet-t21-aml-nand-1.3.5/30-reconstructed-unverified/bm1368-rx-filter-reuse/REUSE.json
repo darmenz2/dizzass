@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "kind": "bm1368-rx-filter-existing-implementation-reuse",
+  "parent_commit": "8ed6e6b4fe934f9853472f062b6d9738488fc06b",
+  "original_method": {
+    "cgminer": "0xe3bc4",
+    "hwscan": "0xf3610",
+    "constructor_slot": "0x90",
+    "ordinary_return": "0x40",
+    "incoming_arguments_read": false,
+    "ordinary_callees": [],
+    "register_or_transport_write": false
+  },
+  "existing_projection": {
+    "source": "src/backend/work-gen/work-gen.c",
+    "header": "include/xminer/recovery/work_rx.h",
+    "function": "vn135_work_rx_filtered_register",
+    "explicit_raw_selector_for_this_method": 4,
+    "scope": "Existing stage-6 dispatcher projection; not a new BM1368 function or vendor ABI",
+    "historical_evidence": "evidence/stage6/disasm/rx-filter-constant-4.S",
+    "historical_receipt": "evidence/verified-slices.json",
+    "source_identity": "Canonical LF full-file pins checked by evidence/static-witness.json and verify_evidence.py",
+    "original_global_selector_getter_projected": false,
+    "original_faults_or_GOT_access_trace_projected": false
+  },
+  "new_static_links": {
+    "constructor_to_constant": "BM1368 numeric slot+0x90 resolves to e3bc4/f3610",
+    "cgminer_dispatcher": "0xd2a84 raw selector4 -> jump entry+0x94 ->0xd2b38 -> ordinary call0xd2bc8 ->0xe3bc4",
+    "cgminer_dead_duplicate_call": "0xd2bec is unreachable in the declared ordinary parity domain",
+    "hwscan_dispatcher": "0xeaa24 raw selector4 -> table offset0x3c ->0xeaa80 ->tail branch0xeaa84 ->0xf3610",
+    "rx_use": "Two bounded cgminer register-response paths compare the dispatch result with the register-address byte; equality branches over the lower call0x108938",
+    "existing_host_use": "vn135_work_rx_next compares decoded register_address with vn135_work_rx_filtered_register(policy.chip_selector) and reports VN135_RX_REGISTER_FILTERED",
+    "constant_semantics": "Filtered register address0x40 in these RX paths; no assertion of physical register function"
+  },
+  "boundaries": {
+    "reply_key_slot_0x8c": "Distinct original e3bbc/f3608 returns0x44; 0x40 is not a frame-length deduction",
+    "raw_selector_is_t21_model": false,
+    "constructor_slot_runtime_call_established": false,
+    "direct_static_dispatcher_call_established": true,
+    "full_rx_thread_equivalence_claimed": false,
+    "crc_validation_claimed": false,
+    "queue_or_hardware_acceptance_claimed": false,
+    "production_linkage_changed": false,
+    "native_cgminer_core_changed": false,
+    "existing_sources_modified": false,
+    "historical_manifests_rewritten": false,
+    "original_executed_or_interpreted_this_run": false,
+    "historical_stage6_instruction_executing_tests_rerun": false,
+    "new_duplicate_c_function_added": false
+  }
+}

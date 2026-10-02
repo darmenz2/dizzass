@@ -1,0 +1,460 @@
+{
+  "schema": 1,
+  "kind": "bm1368-rx-filter-reuse-static",
+  "original_executed": false,
+  "instruction_interpreter_used": false,
+  "new_constant_implementation_added": false,
+  "sources": {
+    "cgminer": {
+      "size": 6228004,
+      "sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+      "regions": [
+        {
+          "name": "method_code",
+          "start": 932804,
+          "end": 932860,
+          "bytes_hex": "30009fe500009fe72c109fe501109fe7002090e5013042e2920302e0010012e30200000a002091e5090052e3f7ffffca4000a0e31eff2fe1",
+          "sha256": "becdc62d16e26e6b43f80c53febbe9bfdf8652e698047571d37354d28a0ff269",
+          "assembly_file": "cgminer-method_code.asm",
+          "assembly_sha256": "f23f976c070921db487bd268103caf16aff7af5f01f607db1b1defce43225107"
+        },
+        {
+          "name": "method_literals",
+          "start": 932860,
+          "end": 932868,
+          "bytes_hex": "b0b34f00c8bf4f00",
+          "sha256": "76c67a9436423dc04d495b6f63bfe873287411784bca07674034b4e236faf9c9"
+        },
+        {
+          "name": "constructor_code",
+          "start": 922920,
+          "end": 922984,
+          "bytes_hex": "d4319fe503309fe7d0619fe506609fe7cc519fe505509fe7c8419fe504409fe7c4119fe501109fe7c0219fe502209fe77c2080e5802080e2720082e8903080e5",
+          "sha256": "1f3a9ca1b64da10875ca27f1494ea78a13c9b32db2ccd736f9c8ade9e631462d",
+          "assembly_file": "cgminer-constructor_code.asm",
+          "assembly_sha256": "e75531883307f19e5b2a5fd1c16449b71de583757b68757b38f905d94d2a44b1"
+        },
+        {
+          "name": "constructor_literal",
+          "start": 923396,
+          "end": 923400,
+          "bytes_hex": "d8d94f00",
+          "sha256": "127d34f8166543190fdaec40d57f2af1a8d6c9d3de301c91afb3c9525f5b1c9b"
+        },
+        {
+          "name": "constructor_got",
+          "start": 6156044,
+          "end": 6156048,
+          "bytes_hex": "c43b0e00",
+          "sha256": "84fffead78e51ea264a21613510b36d68a9ca87e487689a320bee5b825a432ab"
+        },
+        {
+          "name": "method_x_got",
+          "start": 6156160,
+          "end": 6156164,
+          "bytes_hex": "08b86800",
+          "sha256": "cbbd75874638365787218bf6723c68cc22ff9985c982812cb1a94c819e16cc4d"
+        },
+        {
+          "name": "method_y_got",
+          "start": 6159264,
+          "end": 6159268,
+          "bytes_hex": "c0b86800",
+          "sha256": "8f2877ee53432d1cbbc70c3701dc066360e7bfc15a4982a7c162451cb8e02e5a"
+        },
+        {
+          "name": "dispatch_prefix_code",
+          "start": 862852,
+          "end": 862884,
+          "bytes_hex": "30482de908b08de24aad00eb040050e30900008a04108fe2000191e700f081e0",
+          "sha256": "8daba0717b5561d1b0486943e5da2c68b976ceaaa069676df70d3f79d7aa1f95",
+          "assembly_file": "cgminer-dispatch_prefix_code.asm",
+          "assembly_sha256": "bad3f456ab4d8b5667822c3a251a1f48456832c061dbe51b8e40907f9de77263"
+        },
+        {
+          "name": "dispatch_jump_data",
+          "start": 862884,
+          "end": 862904,
+          "bytes_hex": "1400000024000000580000006000000094000000",
+          "sha256": "12f52d6c08989c7f02206c273aabd8a0b535ba916b5db2ed3f9b557b21d9a3ca"
+        },
+        {
+          "name": "dispatch_suffix_code",
+          "start": 862904,
+          "end": 863220,
+          "bytes_hex": "3048bde8c20a00ea0000e0e3280000ea24419fe504409fe7000094e51c519fe5011040e2900100e005509fe7010010e32000000a000095e5090050e3260000ca1c0000ea3048bde8076900eaf0409fe504409fe7000094e5e8509fe5011040e2900100e005509fe7010010e31c00000a000095e5090050e3220000ca180000eac4409fe504409fe7000094e5bc509fe5011040e2900100e005509fe7010010e31a00000a000095e5090050e3200000ca160000ea3088bde83b2000eb001094e5012041e2910201e0010011e3f8ffff0a001095e50a0051e3f5ffffba322000ebf4ffffea8d3100eb001094e5012041e2910201e0010011e3edffff0a001095e50a0051e3eaffffba843100ebf4ffffeafd4300eb001094e5012041e2910201e0010011e3e2ffff0a001095e50a0051e3dfffffbaf44300ebf4ffffea",
+          "sha256": "7908c49f2351efaee6ce09b6130cdb7a161504ec691b63f2782e4082d8da5709",
+          "assembly_file": "cgminer-dispatch_suffix_code.asm",
+          "assembly_sha256": "5f3e19bcedf756762584a696ec77bba9e21c3261aaf384138d68b9c3677b0026"
+        },
+        {
+          "name": "dispatch_literals",
+          "start": 863220,
+          "end": 863244,
+          "bytes_hex": "1cce5000d0d15000e0cd500094d15000accd500060d15000",
+          "sha256": "6c6ac793028422aa8d7e6905c2bd33012bd52422f47920a9342a711808951bc0"
+        },
+        {
+          "name": "dispatch_x_got",
+          "start": 6158576,
+          "end": 6158580,
+          "bytes_hex": "30be6800",
+          "sha256": "a66e098f7adcee8e4d21087e91c783163354d4c593aed47291ef519e20025a20"
+        },
+        {
+          "name": "dispatch_y_got",
+          "start": 6159544,
+          "end": 6159548,
+          "bytes_hex": "3cbe6800",
+          "sha256": "a438f030428d9cc77628a6f8adc9712d100628c30a97f23dd546e29f0281418f"
+        },
+        {
+          "name": "rx_special_code",
+          "start": 804688,
+          "end": 804932,
+          "bytes_hex": "0a00a0e10810a0e10720a0e3ef3500eb62105be568001be5002319e51f1001e2b4365be158208de5bc35cde1b416cde12018a0e1300fbfe6311fbfe61f00cfe7610880e160008de5b93800eb4c139fe501109fe7001091e5012041e2910202e063105be5010012e31800000a30239fe502209fe7002092e5090052e3130000da0a00a0e10810a0e10720a0e3cf3500eb62105be568001be5002319e51f1001e2b4365be158208de5bc35cde1b416cde12018a0e1300fbfe6311fbfe61f00cfe7610880e160008de5993800ebcbffffead0a29fe50590a0e1010050e10aa09fe7c4529fe505509fe70100000a58008de23c1001eb",
+          "sha256": "0a13e5f2b023dbcf2a9e81854cf18c3cf1009eb182dba866cbf16069d157f287",
+          "assembly_file": "cgminer-rx_special_code.asm",
+          "assembly_sha256": "373fa7c461ea5d21dd449321a14e188095c15efc37aea7fdf9397fd2dc7eb30f"
+        },
+        {
+          "name": "rx_normal_code",
+          "start": 804984,
+          "end": 805512,
+          "bytes_hex": "00109ae580029fe5012041e200009fe7910201e0002319e558208de5000090e5010011e30400000a090050e3020000da000319e558008de5f0ffffea4c209de5010052e30d00000a0590a0e13c529fe5000052e305509fe71000001a00009ae5011040e2900100e0010010e31f00000a000095e5090050e3290000ca1b0000ea63105be50590a0e15c10cde562005be530109de5f8519fe505509fe7250000ea63005be564105be55c10cde50810a0e1200000ea0600a0e1638713eb00009ae5011040e2900100e0010010e3c8ffff0a0100a0e350008de5000095e50a0050e36efeffba0600a0e1578713ebf0ffffea00009ae564305be5011040e25c30cde5900102e063005be5001095e5010012e30600000a4c209de50a0051e30810a0e1040000ba64005be55c00cde5efffffea0810a0e14c209de55d00cde5000052e3000091e548809de52018a0e1300fbfe6311fbfe61f00cfe7610880e160008de50c00000a010052e30900001a00009ae5011040e2900100e0010010e30200000a000095e50a0050e3f7ffffaa3c809de5000000ea34809de500009ae5011040e2900100e0010010e30200000a000095e5090050e30c0000ca0000d8e51f0000e2b406cde1103800eb00109ae5012041e2910202e05d10dde5010012e30700000a002095e5090052e3040000da0000d8e51f0000e2b406cde1033800ebedffffea68804be2010050e16fffff0a6cffffea",
+          "sha256": "b68dc6a242287ba42358b62b0890a54346da7ccf507caacde1cc30e25fe41b26",
+          "assembly_file": "cgminer-rx_normal_code.asm",
+          "assembly_sha256": "2b6c46d8d83e73c850b92b90c29e589a4a1782cc35ac04f9147bcc107af80857"
+        }
+      ]
+    },
+    "hwscan": {
+      "size": 4883216,
+      "sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+      "regions": [
+        {
+          "name": "method_code",
+          "start": 996880,
+          "end": 996888,
+          "bytes_hex": "4000a0e31eff2fe1",
+          "sha256": "4fe40444ba4fa963fbe4230783e64a772a93d31a1ee99e83adc54d696880082b",
+          "assembly_file": "hwscan-method_code.asm",
+          "assembly_sha256": "6df143ccc2365b219b3f9308aa2c8324425dd317b174cfadfdd26f6b3b30ac0b"
+        },
+        {
+          "name": "constructor_code",
+          "start": 990720,
+          "end": 990784,
+          "bytes_hex": "d4319fe503309fe7d0619fe506609fe7cc519fe505509fe7c8419fe504409fe7c4119fe501109fe7c0219fe502209fe77c2080e5802080e2720082e8903080e5",
+          "sha256": "1f3a9ca1b64da10875ca27f1494ea78a13c9b32db2ccd736f9c8ade9e631462d",
+          "assembly_file": "hwscan-constructor_code.asm",
+          "assembly_sha256": "b2f622a1cdf3fa32cf195353de2eb25272c7bdcdeffd9b3fb109c5f953566ce3"
+        },
+        {
+          "name": "constructor_literal",
+          "start": 991196,
+          "end": 991200,
+          "bytes_hex": "fcd83b00",
+          "sha256": "6ba145d16974c7a2b8546b2ac34a090bcd45412216a9ca189d4a88cb3847985f"
+        },
+        {
+          "name": "constructor_got",
+          "start": 4912904,
+          "end": 4912908,
+          "bytes_hex": "10360f00",
+          "sha256": "9936062472c253523868f1bd1e675fedd678e503fc905395c1e9fa219c22eca8"
+        },
+        {
+          "name": "dispatch_prefix_code",
+          "start": 961060,
+          "end": 961092,
+          "bytes_hex": "00482de90db0a0e11a5800eb040050e30900008a04108fe2000191e700f081e0",
+          "sha256": "ce3828611aa13f38a7eedbdfae1f7f6d16c0f6e00b1d5544c0f6196df2b198c3",
+          "assembly_file": "hwscan-dispatch_prefix_code.asm",
+          "assembly_sha256": "e6357e5a2b5e3ff20ee191c34f83577d32c07762779318a11b41080ffe2732d5"
+        },
+        {
+          "name": "dispatch_jump_data",
+          "start": 961092,
+          "end": 961112,
+          "bytes_hex": "14000000240000002c000000340000003c000000",
+          "sha256": "2f5b471f3c16b01a29981d6c136aa0f6950871fe0ab047d0f8c8d6a01dc6124f"
+        },
+        {
+          "name": "dispatch_suffix_code",
+          "start": 961112,
+          "end": 961160,
+          "bytes_hex": "0048bde8090600ea0000e0e30088bde80048bde82f1100ea0048bde8523500ea0048bde80f1a00ea0048bde8e12200ea",
+          "sha256": "048b19fa4705912d6d8e2dcba51a9177604b459fc12a1c089cc5196a9932a79d",
+          "assembly_file": "hwscan-dispatch_suffix_code.asm",
+          "assembly_sha256": "3dd76e244f8a8cad97918218fbb55f960d7f96690c4855af1d437003acc9079e"
+        }
+      ]
+    }
+  },
+  "method": {
+    "arguments_read": [],
+    "cgminer": {
+      "entry": 932804,
+      "code_end": 932860,
+      "pool_end": 932868,
+      "return_instruction": 932852,
+      "return_edge": 932856
+    },
+    "hwscan": {
+      "entry": 996880,
+      "code_end": 996888,
+      "pool_bytes": 0,
+      "return_instruction": 996880,
+      "return_edge": 996884
+    },
+    "ordinary_return": 64,
+    "calls": 0,
+    "writes": 0,
+    "diagnostics": 0,
+    "no_original_nonredacted_name_claimed": true
+  },
+  "constructor_binding": {
+    "slot": 144,
+    "cgminer": {
+      "entry": 922704,
+      "load": 922920,
+      "pc_load": 922924,
+      "pc_value": 922932,
+      "literal": 923396,
+      "got": 6156044,
+      "method": 932804,
+      "retained_register": "r3",
+      "store": 922980
+    },
+    "hwscan": {
+      "entry": 990504,
+      "load": 990720,
+      "pc_load": 990724,
+      "pc_value": 990732,
+      "literal": 991196,
+      "got": 4912904,
+      "method": 996880,
+      "retained_register": "r3",
+      "store": 990780
+    },
+    "purpose": "numeric table identity; a host function pointer and T21 runtime dispatch are not inferred"
+  },
+  "opaque_predicates": {
+    "arithmetic": "ARM SUB and MUL low 32 bits from one x snapshot.",
+    "proof": "Modulo 2, x*(x-1) is b*(b xor 1), zero for b=0 and b=1; low 32-bit truncation preserves bit zero. Separate x loads need not agree.",
+    "method": [
+      {
+        "load": 932820,
+        "subtract": 932824,
+        "multiply": 932828,
+        "test": 932832,
+        "branch": 932836,
+        "always_target": 932852
+      }
+    ],
+    "selector4_dispatch": [
+      {
+        "load": 863040,
+        "subtract": 863048,
+        "multiply": 863052,
+        "test": 863060,
+        "branch": 863064,
+        "always_target": 863176
+      },
+      {
+        "load": 863180,
+        "subtract": 863184,
+        "multiply": 863188,
+        "test": 863192,
+        "branch": 863196,
+        "always_target": 863084
+      }
+    ],
+    "rx_reached_comparison_paths": [
+      {
+        "load": 804772,
+        "subtract": 804776,
+        "multiply": 804780,
+        "test": 804788,
+        "branch": 804792,
+        "always_target": 804896
+      },
+      {
+        "load": 805440,
+        "subtract": 805444,
+        "multiply": 805448,
+        "test": 805456,
+        "branch": 805460,
+        "always_target": 805496
+      }
+    ],
+    "globals": [
+      {
+        "name": "method_x",
+        "got": 6156160,
+        "address": 6862856,
+        "section": ".bss"
+      },
+      {
+        "name": "method_y",
+        "got": 6159264,
+        "address": 6863040,
+        "section": ".bss"
+      },
+      {
+        "name": "dispatch_x",
+        "got": 6158576,
+        "address": 6864432,
+        "section": ".bss"
+      },
+      {
+        "name": "dispatch_y",
+        "got": 6159544,
+        "address": 6864444,
+        "section": ".bss"
+      }
+    ],
+    "bss": {
+      "address": 6358112,
+      "size": 526456,
+      "type": 8
+    },
+    "dead_method_y_read": 932840,
+    "dead_method_backedge": 932848,
+    "dead_selector4_duplicate_call": 863212,
+    "dead_selector4_backedge": 863216,
+    "valid_memory_required": true,
+    "hardware_faults_or_altered_control_flow_modelled": false
+  },
+  "dispatcher": {
+    "cgminer": {
+      "entry": 862852,
+      "selector_getter": 1040316,
+      "selector_call": 862860,
+      "unsigned_range_cmp": 862864,
+      "out_of_range_branch": 862868,
+      "out_of_range_target": 862912,
+      "out_of_range_return": 4294967295,
+      "jump_base": 862884,
+      "jump_entries": [
+        20,
+        36,
+        88,
+        96,
+        148
+      ],
+      "selector4_target": 863032,
+      "ordinary_call": 863176,
+      "ordinary_callee": 932804,
+      "ordinary_calls_after_selector4": 1,
+      "ordinary_exit": 863084,
+      "dead_duplicate_call": 863212
+    },
+    "hwscan": {
+      "entry": 961060,
+      "selector_getter": 1051292,
+      "selector_call": 961068,
+      "unsigned_range_cmp": 961072,
+      "out_of_range_branch": 961076,
+      "out_of_range_target": 961120,
+      "out_of_range_return": 4294967295,
+      "jump_base": 961092,
+      "jump_entries": [
+        20,
+        36,
+        44,
+        52,
+        60
+      ],
+      "selector4_target": 961152,
+      "restore": 961152,
+      "ordinary_tailbranch": 961156,
+      "ordinary_callee": 996880
+    },
+    "scope": "Only the selector4 route is linked to the audited BM1368 table identity here; other selector callees are historical reuse, not newly reconstructed by this packet."
+  },
+  "rx_consumers": {
+    "source": "cgminer",
+    "original_function": 802900,
+    "windows_are_partial_function": true,
+    "scope": "Reached existing special/normal register response windows, with valid parser/ring/stack state and ordinary returning dispatcher; this is not complete RX/thread or hardware acceptance.",
+    "special": {
+      "window": [
+        804688,
+        804932
+      ],
+      "dispatcher_call": 804760,
+      "dispatcher": 862852,
+      "register_byte_load": 804784,
+      "register_byte_location": "fp-0x63, response payload byte 5 in the reached seven-byte special window",
+      "compare": 804904,
+      "equal_branch": 804920,
+      "equal_target": 804932,
+      "non_equal_record_pointer": 804924,
+      "non_equal_lower_call": 804928,
+      "lower_callee": 1083704
+    },
+    "normal": {
+      "window": [
+        804984,
+        805512
+      ],
+      "register_store": 805296,
+      "variant_register_loads": [
+        805244,
+        805124,
+        805144
+      ],
+      "register_record_location": "sp+0x5d",
+      "dispatcher_call": 805436,
+      "dispatcher": 862852,
+      "register_byte_load": 805452,
+      "compare": 805500,
+      "equal_branch": 805504,
+      "equal_target": 804932,
+      "non_equal_branch": 805508,
+      "non_equal_target": 804924
+    },
+    "effect": "For selector4, dispatcher result 0x40 is compared to the unsigned response register-address byte; equality skips the lower record call 0x108938 in these reached windows. Its full implementation and queue ownership are not established; no chip/core count or reply packet length meaning is inferred.",
+    "not_established": [
+      "complete original RX equivalence",
+      "direct T21 runtime or physical chip binding",
+      "live UART or ASIC acceptance",
+      "pool accepted share"
+    ]
+  },
+  "reuse": {
+    "baseline_commit": "8ed6e6b4fe934f9853472f062b6d9738488fc06b",
+    "new_algorithm_or_constant_added": false,
+    "source": {
+      "relative_path": "src/backend/work-gen/work-gen.c",
+      "projection": "vn135_work_rx_filtered_register",
+      "parser": "vn135_work_rx_next",
+      "normalization": "CRLF->LF only; lone CR rejected",
+      "canonical_lf_size": 6785,
+      "canonical_lf_sha256": "d3a848413ac670a62a9fc6818323516f59dfd9057fc605f0c3ef134b4eb3af75"
+    },
+    "header": {
+      "relative_path": "include/xminer/recovery/work_rx.h",
+      "normalization": "CRLF->LF only; lone CR rejected",
+      "canonical_lf_size": 3724,
+      "canonical_lf_sha256": "37d50c90b74bad73623100d52a269ab2c22568061e7637d6682e42d66722a60b"
+    },
+    "historical_stage6": {
+      "manifest": "evidence/stage6/recovery-manifest.json",
+      "slice": "rx-filter-constant-4",
+      "start": 932804,
+      "end_exclusive": 932860,
+      "sha256": "becdc62d16e26e6b43f80c53febbe9bfdf8652e698047571d37354d28a0ff269",
+      "historical_instruction_oracle_not_run": true
+    },
+    "meaning": "Existing authored offline C projection is reused; entire canonical LF source/header files are pinned, not represented as the vendor/native ABI or a new full-miner core.",
+    "receipt": {
+      "relative_path": "REUSE.json",
+      "canonical_json_size": 2472,
+      "canonical_json_sha256": "6d04b1a1bcf6708c974b869ea5b77b3bfb0c8a6a1b59db2b1fe7556d4ff4c79b",
+      "normalization": "Canonical JSON object serialization with sorted keys, compact separators, ASCII escaping, finite numbers only"
+    }
+  }
+}

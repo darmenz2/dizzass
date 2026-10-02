@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "date": "2026-10-02",
+  "parent_commit": "8ed6e6b4fe934f9853472f062b6d9738488fc06b",
+  "method": {"cgminer": "0xe3bc4", "hwscan": "0xf3610", "constructor_slot": "0x90"},
+  "result": "Static constructor/dispatcher/RX association with an existing stage-6 filtered-register projection",
+  "static_original_verification": {
+    "normal_python": true,
+    "optimized_python": true,
+    "cgminer_bounded_regions": 15,
+    "hwscan_bounded_regions": 7,
+    "checker_tests_normal": 36,
+    "checker_tests_optimized": 36,
+    "independent_packet_canonical_sha256": "ee713ee762f76ac7c3b30703d5eaf9f2cb7e383bc37a51b44e7afbb9e186a1c4"
+  },
+  "reused_authored_source_integrity": {
+    "source": {"path": "src/backend/work-gen/work-gen.c", "canonical_lf_bytes": 6785, "sha256": "d3a848413ac670a62a9fc6818323516f59dfd9057fc605f0c3ef134b4eb3af75"},
+    "header": {"path": "include/xminer/recovery/work_rx.h", "canonical_lf_bytes": 3724, "sha256": "37d50c90b74bad73623100d52a269ab2c22568061e7637d6682e42d66722a60b"},
+    "crlf_to_lf_only": true,
+    "lone_cr_rejected": true,
+    "both_python_modes_passed": true,
+    "existing_algorithm_retested_with_instruction_oracle": false
+  },
+  "reuse_receipt_integrity": {"path": "REUSE.json", "canonical_json_bytes": 2472, "canonical_json_sha256": "6d04b1a1bcf6708c974b869ea5b77b3bfb0c8a6a1b59db2b1fe7556d4ff4c79b", "both_python_modes_passed": true},
+  "static_review": {"existing_stage6_instruction_words_compared_to_exact_reference": 299, "word_mismatches": 0, "original_instructions_executed": false},
+  "native_core_boundary_tests": {"tests": 8, "passed": true},
+  "makefile_am_upstream_blob": "17d2fbde26b5e8cb614b61908b84d5937af48325",
+  "scope": {
+    "original_executed": false,
+    "instruction_interpreter_used": false,
+    "historical_instruction_executing_tests_rerun": false,
+    "new_c_algorithm_added": false,
+    "existing_source_or_header_modified": false,
+    "new_host_compiler_run": false,
+    "new_sanitizer_run": false,
+    "new_arm_compile": false,
+    "hardware_or_pool_accessed": false,
+    "production_driver_registered": false,
+    "full_rx_thread_or_lower_handler_equivalence_claimed": false,
+    "constructor_slot_indirect_runtime_call_established": false,
+    "t21_model_mapping_or_runtime_acceptance": false
+  }
+}
