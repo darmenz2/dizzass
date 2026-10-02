@@ -1,0 +1,305 @@
+{
+  "schema": 1,
+  "kind": "authored-host-and-static-validation; no original execution",
+  "base_commit": "01299b84255542c16ee6d3f0c65a3e33e7aa876a",
+  "base_tree": "69b65cf5413866bd1971e0d1b01412cf443c8f92",
+  "runtime": {
+    "source_prefix_preserved": 11280,
+    "new_span_bytes": 3067,
+    "historical_source_end": 14347,
+    "feature_gate": "VN135_BM1368_DRIVE_STRENGTH_135",
+    "original_wrappers": 2,
+    "actual_grouping_caller": "0xb58e4",
+    "grouping_original_source_proved": false
+  },
+  "host": {
+    "compiler": "GCC14.2.0",
+    "counts_each_run": {
+      "cases": 232,
+      "checks": 6911,
+      "group_cases": 14,
+      "composed_cases": 8
+    },
+    "ordinary": true,
+    "asan_ubsan": true,
+    "instrumented_production_translation_units": 9,
+    "instrumented_fixture_translation_units": 1,
+    "semantic_controls": 34,
+    "semantic_control_result": "all compile and exit1 with GROUP_REGISTER_FAIL",
+    "count_scope": "Focused host scenarios; three independent CRC goldens are checks, not extra scenarios. Counts are not equivalence coverage."
+  },
+  "static": {
+    "named_test_categories": 23,
+    "normal_python": true,
+    "optimized_python": true,
+    "both_full_original_identity_and_data_comparisons": true,
+    "regions": 74,
+    "raw_bytes": 7936,
+    "annotations": 1699,
+    "accepted_l11_capture_words_checked": 25,
+    "scope": "bounded data/encoding/reference checks and pinned manual CFG/parity/ABI contracts; no original instruction execution"
+  },
+  "regressions": [
+    {
+      "name": "constructor-nonce",
+      "command": [
+        "make",
+        "-C",
+        "<repo>/research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-init",
+        "CC=cc",
+        "PYTHON=<python-with-capstone>",
+        "test",
+        "sanitize"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 8.48,
+      "chip1368_sha256": "d31a47e24504be3cf48cad8cbca96a9a38f08fd5aa0b0a27e672fac84bff5ce6",
+      "log": "constructor-nonce.log",
+      "log_sha256": "a52eae33f0f0c024a817934dcd3ef9abbbcba1fed4987af6a3edbb37e929deec"
+    },
+    {
+      "name": "reset",
+      "command": [
+        "make",
+        "-C",
+        "<repo>/research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-reset",
+        "CC=cc",
+        "PYTHON=<python-with-capstone>",
+        "test",
+        "sanitize"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 26.682,
+      "chip1368_sha256": "d31a47e24504be3cf48cad8cbca96a9a38f08fd5aa0b0a27e672fac84bff5ce6",
+      "log": "reset.log",
+      "log_sha256": "741818f805337b87f09bc18df1a142adef19192c519f719f6d44ed849ddc85ea"
+    },
+    {
+      "name": "ticket-mask",
+      "command": [
+        "make",
+        "-C",
+        "<repo>/research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-ticket-mask",
+        "CC=cc",
+        "PYTHON=<python-with-capstone>",
+        "test",
+        "sanitize"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 18.621,
+      "chip1368_sha256": "d31a47e24504be3cf48cad8cbca96a9a38f08fd5aa0b0a27e672fac84bff5ce6",
+      "log": "ticket-mask.log",
+      "log_sha256": "ada0d3ea6079fbf92803209486704fb05691d829cd158eefea2c063b6b7e8ea4"
+    },
+    {
+      "name": "common-read-host",
+      "command": [
+        "make",
+        "-C",
+        "<repo>/research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/common-read-register",
+        "CC=cc",
+        "PYTHON=<python-with-capstone>",
+        "host",
+        "controls",
+        "sanitize"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 7.328,
+      "chip1368_sha256": "d31a47e24504be3cf48cad8cbca96a9a38f08fd5aa0b0a27e672fac84bff5ce6",
+      "log": "common-read-host.log",
+      "log_sha256": "46ffa0f3d73eaa3fe48deedba711b74f85090e1eba05683d9b25cb92d152b748"
+    },
+    {
+      "name": "sweep-clock-host",
+      "command": [
+        "make",
+        "-C",
+        "<repo>/research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-sweep-clock",
+        "CC=cc",
+        "PYTHON=<python-with-capstone>",
+        "host",
+        "controls",
+        "sanitize"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.306,
+      "chip1368_sha256": "d31a47e24504be3cf48cad8cbca96a9a38f08fd5aa0b0a27e672fac84bff5ce6",
+      "log": "sweep-clock-host.log",
+      "log_sha256": "dda80aafc692cd6c9072f974ac559d38def3040b492331238299f2b0b37817e5"
+    },
+    {
+      "name": "address-commands",
+      "command": [
+        "make",
+        "-C",
+        "<repo>/research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-address-commands",
+        "CC=cc",
+        "PYTHON=<python-with-capstone>",
+        "test",
+        "sanitize"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 4.566,
+      "chip1368_sha256": "d31a47e24504be3cf48cad8cbca96a9a38f08fd5aa0b0a27e672fac84bff5ce6",
+      "log": "address-commands.log",
+      "log_sha256": "1551d1f89d98651775e14bdac231ab183f43f9d7ae9d4790d7ac6036f56587c4"
+    }
+  ],
+  "compatibility": {
+    "successful_commands": 42,
+    "normal_and_optimized": true,
+    "frozen_input_files_checked": 351,
+    "preserved_prior_predicate_functions": 62,
+    "preserved_prior_a13_states": 11,
+    "preserved_l10_l11_l12_l13_mutants": 93,
+    "new_a13_state_sha256": "925f05e1685514359ff7b3863898e628e36eeb76ae9e7e42a0c972683ee4fd60",
+    "l08_limit": "Older constructor controls may rewrite disabled suffix return statements; no whole-suffix preservation claim."
+  },
+  "setup_notes": [
+    "The initial semantic-control attempts rejected a control that crashed instead of producing a clean assertion. The fixture was strengthened to assert the real cache status for its valid owned tables. Only the final34 compiled, clean rejections are counted; early attempts are retained in the recovery checkpoint.",
+    "The compatibility author corrected a new gate-ending validator typo found by its initial controls. Historical predicates and runtime bytes were unchanged; only the final42 passing commands are counted.",
+    "Independent review identified missing public bytes for the named optional common-call site. A six-range, 231-byte caller/diagnostic supplement and 25 accepted L11 capture words now support that claim; the affected static checks and aggregate public target were rerun.",
+    "No runtime implementation correction was required. Independent adversarial runtime and compatibility acceptance is recorded separately."
+  ],
+  "limits": [
+    "All external effects are recorded host callbacks. No device/network I/O, actual delay, firmware process, interpreter, model/OOM/malformed-pointer probe or physical startup.",
+    "The real grouping caller is a typed host projection. Its full coordinator, exact original source file and hwscan counterpart are not claimed.",
+    "Every host TU is instrumented under ASan+UBSan; leak detection is disabled. Local Clang was unavailable, so its proposed PR matrix lane is not a local pass.",
+    "The existing CRC TU alone uses -Wno-sign-conversion in sanitizer builds; instrumentation remains enabled.",
+    "Source/object/output hashes are retained. Public logs replace local absolute paths with stable labels."
+  ],
+  "sources": [
+    {
+      "path": "libbitmain/src/chip/chip1368.c",
+      "bytes": 14347,
+      "sha256": "d31a47e24504be3cf48cad8cbca96a9a38f08fd5aa0b0a27e672fac84bff5ce6"
+    },
+    {
+      "path": "integration/bm1368_drive_strength_135.h",
+      "bytes": 3172,
+      "sha256": "86e34ab38577ba71088562a2a7b5bfc5a0af356ad3a4cb76f6daa455641e41e3"
+    },
+    {
+      "path": "integration/bm1368_group_register_135.c",
+      "bytes": 1771,
+      "sha256": "aaa823821f5418921221fbbc2b758057c1a56ff20fd872925bf2368f86baefda"
+    },
+    {
+      "path": "integration/bm1368_group_register_135.h",
+      "bytes": 3464,
+      "sha256": "050de3e6bbf861b770e7cf3fce1c466388f0a57721767ef153b0654810d9b43d"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-group-register/tests/test_group_register.c",
+      "bytes": 27152,
+      "sha256": "e3b66556e5b5c3089cd10073d92beddfb3f1b8fdf728379847bb8f999b3014ec"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-group-register/tests/run_host.py",
+      "bytes": 5119,
+      "sha256": "04e8b1af3aa74be589cf762b2f09bf0f9d4f9be4b709c1c499966878182d78a9"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-group-register/tests/negative_controls.py",
+      "bytes": 7945,
+      "sha256": "728c7483217c9495e3f1d66430cde0af21910d009aac61c24bdbfa6126a2d5e0"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-group-register/verify_evidence.py",
+      "bytes": 24092,
+      "sha256": "2d368f974386cda75e0ce2403a20e285cf38f03db527a8034e2189c48006a3da"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-group-register/tests/test_evidence.py",
+      "bytes": 5266,
+      "sha256": "b59029e5898d8cfdf42bc90dd4dc933b35a8067a0249589bdec11990e62d9204"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-group-register/static-witness.json",
+      "bytes": 252548,
+      "sha256": "73e8fc4774f1ff0c6772ec3d5c51828167646c3d3817ba2723c05bda43ec345f"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-group-register/static-pins.json",
+      "bytes": 18753,
+      "sha256": "0aae42fe26bc9c6a06ccbaddaa55f3bf4be8ed6093221f53fc1ac130bd889f5c"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-group-register/source-baseline.json",
+      "bytes": 5878,
+      "sha256": "6167765e5edb7d663e1ecae6c4a8682ceb8f3bc64b427db975619e3096ac9ce1"
+    },
+    {
+      "path": "research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-group-register/Makefile",
+      "bytes": 856,
+      "sha256": "9ba51dcb22fea99c1a3fa58babfc457f9666f21d2ede64529f689279ee09aa58"
+    },
+    {
+      "path": ".github/workflows/bm1368-group-register-research.yml",
+      "bytes": 2582,
+      "sha256": "28fbdcda42750ae1a9eae6fe683a54776de6498f7291f65b1894e975ed519dbd"
+    }
+  ],
+  "logs": [
+    {
+      "path": "validation-logs/host-ordinary.json",
+      "bytes": 14860,
+      "sha256": "ccf711504b430cd2071d2bdbd8daf1de057ebbe73821082d3a8df4d792a1952f"
+    },
+    {
+      "path": "validation-logs/host-sanitized.json",
+      "bytes": 16133,
+      "sha256": "ca6b3a9d0d56f666b7c05c325fcca0bf936115124bf47947e9585b7e4725325b"
+    },
+    {
+      "path": "validation-logs/negative-controls.json",
+      "bytes": 17126,
+      "sha256": "ff9e55ae57db67b219458ef90e94663d28f3f866d998452bdc5f1711782e4f8f"
+    },
+    {
+      "path": "validation-logs/constructor-nonce.log",
+      "bytes": 8820,
+      "sha256": "823630c2aead7e35a1366f5a42e4965757cbed87654113441bb7ac8273fba332"
+    },
+    {
+      "path": "validation-logs/reset.log",
+      "bytes": 9180,
+      "sha256": "39cbdadf937032aa64d7c76809c2ed43bab6de3ebdd096849abb91c401bc4f08"
+    },
+    {
+      "path": "validation-logs/ticket-mask.log",
+      "bytes": 3881,
+      "sha256": "4573cb8d90aeacede4250aa52074709f72ee5ec78a5ffedd22bed5df993daf48"
+    },
+    {
+      "path": "validation-logs/common-read-host.log",
+      "bytes": 4259,
+      "sha256": "bd04e4f44c1191e868a31fd9aca897800f5144605b2e3cd88855c3f674a80b10"
+    },
+    {
+      "path": "validation-logs/sweep-clock-host.log",
+      "bytes": 755,
+      "sha256": "e1f563402676a15cb5b9ddd35d9492e7baf73566593468a9c11b51ce5e23af7f"
+    },
+    {
+      "path": "validation-logs/address-commands.log",
+      "bytes": 4102,
+      "sha256": "68c74a18527e8f54cfdefd643a7fcac9f481e35503c7e44ec7798a63a90715d4"
+    },
+    {
+      "path": "validation-logs/static-checks.json",
+      "bytes": 5601,
+      "sha256": "e2dd36feeb531ac3b22e370e9b932783731923434b40bc146c8be50ca958f7e7"
+    },
+    {
+      "path": "validation-logs/compatibility-checks.json",
+      "bytes": 91238,
+      "sha256": "86d1a980c1703f2c07581cad2d5ed4d183f43b475bc3dc9be90d846ac7240b49"
+    },
+    {
+      "path": "validation-logs/public-make.log",
+      "bytes": 3103,
+      "sha256": "86911784026815e06ada99ddd6090a2d7f40ae08d4d05f7382f940da07a69f70"
+    }
+  ]
+}

@@ -10,6 +10,10 @@ on:
       - integration/CHAIN_TEMPERATURE_SETUP_135_RU.md
       - integration/evidence/chain_temperature_setup_135.json
       - integration/tests/*chain_temperature_setup*
+      - integration/check_native_core.py
+      - integration/tests/current_dependency_pins_135.py
+      - integration/tests/test_current_dependency_pins_135.py
+      - integration/tests/test_native_boundary_compatibility_135.py
       - .github/workflows/chain-temperature-setup-135.yml
   workflow_dispatch:
 permissions:
@@ -40,6 +44,14 @@ jobs:
           git checkout -q --detach FETCH_HEAD
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
           printf 'SOURCE_ROOT=%s\n' "$root" >> "$GITHUB_ENV"
+      - name: Exact native-checker dependency and caller controls
+        run: |
+          set -euo pipefail
+          cd "$SOURCE_ROOT"
+          python3 integration/tests/test_current_dependency_pins_135.py
+          python3 -O integration/tests/test_current_dependency_pins_135.py
+          python3 integration/tests/test_native_boundary_compatibility_135.py
+          python3 -O integration/tests/test_native_boundary_compatibility_135.py
       - name: Original coordinator and existing initializer comparisons
         run: |
           set -euo pipefail

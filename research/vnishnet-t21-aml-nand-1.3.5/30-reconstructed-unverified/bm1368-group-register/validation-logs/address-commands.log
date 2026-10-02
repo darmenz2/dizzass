@@ -1,0 +1,50 @@
+make: Entering directory '<repo>/research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-address-commands'
+<python-with-capstone> -B tests/run_host.py --root ../../../.. --build build/ordinary --cc cc
+HOST_SEQUENCE_FIXTURE_PASS inactive_then_set_address=3 common_read_register=2
+ADDRESS_COMMANDS_PASS cases=315 wire_bytes=256 high_word_aliases=8 lower_calls=22 checks=4318
+<python-with-capstone> -B tests/negative_controls.py --root ../../../.. --cc cc
+ADDRESS_COMMANDS_CONTROLS_PASS controls=34
+<python-with-capstone> -B verify_evidence.py
+{"firmware_executed": false, "instruction_interpreter_used": false, "original_files_compared": [], "runtime_span": "chip1368.c prefix [0,11280); header exact 3621 bytes", "semantic_basis": "manual static CFG/parity/ABI review; no automatic equivalence or hardware acceptance", "static_witness_verified": true}
+<python-with-capstone> -B tests/test_evidence.py
+<python-with-capstone> -O -B tests/test_evidence.py
+<python-with-capstone> -B tests/run_host.py --root ../../../.. --build build/sanitized --cc cc --sanitize
+HOST_SEQUENCE_FIXTURE_PASS inactive_then_set_address=3 common_read_register=2
+ADDRESS_COMMANDS_PASS cases=315 wire_bytes=256 high_word_aliases=8 lower_calls=22 checks=4318
+make: Leaving directory '<repo>/research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-address-commands'
+test_accepted_static_packet (__main__.EvidenceTests.test_accepted_static_packet) ... ok
+test_address_word_metadata_control (__main__.EvidenceTests.test_address_word_metadata_control) ... ok
+test_branch_inventory_control (__main__.EvidenceTests.test_branch_inventory_control) ... ok
+test_caller_ignored_status_control (__main__.EvidenceTests.test_caller_ignored_status_control) ... ok
+test_constructor_identity_control (__main__.EvidenceTests.test_constructor_identity_control) ... ok
+test_dependency_and_runtime_controls (__main__.EvidenceTests.test_dependency_and_runtime_controls) ... ok
+test_hash_refreshed_instruction_controls (__main__.EvidenceTests.test_hash_refreshed_instruction_controls) ... ok
+test_overlapping_range_control (__main__.EvidenceTests.test_overlapping_range_control) ... ok
+test_read_timing_control (__main__.EvidenceTests.test_read_timing_control) ... ok
+test_refreshed_metadata_pin_control (__main__.EvidenceTests.test_refreshed_metadata_pin_control) ... ok
+test_schema_and_json_controls (__main__.EvidenceTests.test_schema_and_json_controls) ... ok
+test_status_contract_control (__main__.EvidenceTests.test_status_contract_control) ... ok
+test_string_bound_and_key_controls (__main__.EvidenceTests.test_string_bound_and_key_controls) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.133s
+
+OK
+test_accepted_static_packet (__main__.EvidenceTests.test_accepted_static_packet) ... ok
+test_address_word_metadata_control (__main__.EvidenceTests.test_address_word_metadata_control) ... ok
+test_branch_inventory_control (__main__.EvidenceTests.test_branch_inventory_control) ... ok
+test_caller_ignored_status_control (__main__.EvidenceTests.test_caller_ignored_status_control) ... ok
+test_constructor_identity_control (__main__.EvidenceTests.test_constructor_identity_control) ... ok
+test_dependency_and_runtime_controls (__main__.EvidenceTests.test_dependency_and_runtime_controls) ... ok
+test_hash_refreshed_instruction_controls (__main__.EvidenceTests.test_hash_refreshed_instruction_controls) ... ok
+test_overlapping_range_control (__main__.EvidenceTests.test_overlapping_range_control) ... ok
+test_read_timing_control (__main__.EvidenceTests.test_read_timing_control) ... ok
+test_refreshed_metadata_pin_control (__main__.EvidenceTests.test_refreshed_metadata_pin_control) ... ok
+test_schema_and_json_controls (__main__.EvidenceTests.test_schema_and_json_controls) ... ok
+test_status_contract_control (__main__.EvidenceTests.test_status_contract_control) ... ok
+test_string_bound_and_key_controls (__main__.EvidenceTests.test_string_bound_and_key_controls) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.154s
+
+OK

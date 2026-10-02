@@ -56,3 +56,13 @@ reuse the actual encoder/CRC/transport stack, preserving the sent address byte
 and the full address reloaded for failure diagnostics. The caller ignores
 their status values; the bounded host sequence preserves that distinction
 without claiming a complete startup coordinator or hardware acknowledgement.
+
+## BM1368 group register configuration
+
+[Register-0x58 configuration](bm1368-group-register/README.md) implements the
+common and chip cache read/modify/write methods and the actual descending
+group-end caller. It reuses the existing cache, writer and transport stack,
+preserving partial effects, mutable field observations and first-error handling.
+The caller is an explicitly typed integration projection because its exact
+original source file is unproved. A [closure plan](bm1368-group-register/CONVERGENCE_PLAN.md)
+tracks the remaining named dependencies before full coordinator composition.
