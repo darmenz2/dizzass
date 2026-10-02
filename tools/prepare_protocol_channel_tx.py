@@ -9,6 +9,10 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / 'integration/tests'))
+from current_dependency_pins_135 import (
+    NATIVE_CHECKER_PATH, check_current_dependency, historical_native_checker_bytes)
+
 MANIFEST = ROOT / 'integration/evidence/protocol_channel_tx_dependencies.json'
 IGNORE = b'*\n'
 
@@ -43,7 +47,13 @@ def output_path(name: str) -> Path:
 def prepare(out: Path, source: Path | None, check: bool) -> None:
     manifest = json.loads(MANIFEST.read_text())
     for entry in manifest['unchanged']:
-        verify(regular(ROOT / entry['path'], ROOT), entry)
+        data = regular(ROOT / entry['path'], ROOT)
+        if entry['path'] == NATIVE_CHECKER_PATH:
+            # Bind the canonical current file/mode and original expected blob,
+            # then retain BOTH original manifest hashes against its old witness.
+            check_current_dependency(ROOT, entry['path'], entry['blob'])
+            data = historical_native_checker_bytes(data)
+        verify(data, entry)
     entries = manifest['pending']
     if check:
         expected = {e['path'] for e in entries} | {'.gitignore'}

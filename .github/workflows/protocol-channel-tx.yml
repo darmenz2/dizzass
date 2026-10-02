@@ -8,6 +8,12 @@ on:
       - integration/protocol-channel-tx.mk
       - integration/evidence/protocol_channel_tx_dependencies.json
       - tools/prepare_protocol_channel_tx.py
+      - integration/check_native_core.py
+      - integration/tests/current_dependency_pins_135.py
+      - integration/tests/test_current_dependency_pins_135.py
+      - integration/tests/check_uart_posix_historical_135.py
+      - integration/tests/test_uart_posix_historical_135.py
+      - integration/tests/test_native_boundary_compatibility_135.py
       - integration/PROTOCOL_CHANNEL_TX_RU.md
       - .github/workflows/protocol-channel-tx.yml
 permissions:
@@ -61,7 +67,17 @@ jobs:
             clang --analyze -Ibuild/a15-deps -I. -Iinclude -std=c11 -pthread -Wall -Wextra -Wpedantic -Werror -Xanalyzer -analyzer-output=text integration/native/protocol_channel_tx.c
           fi
           python3 integration/test_native_core.py
+          python3 integration/tests/test_current_dependency_pins_135.py
+          python3 -O integration/tests/test_current_dependency_pins_135.py
+          python3 integration/tests/test_native_boundary_compatibility_135.py
+          python3 -O integration/tests/test_native_boundary_compatibility_135.py
+          python3 integration/tests/test_uart_posix_historical_135.py
+          python3 -O integration/tests/test_uart_posix_historical_135.py
           python3 tools/prepare_protocol_channel_tx.py --check
-          test -z "$(git diff --name-only --diff-filter=MDR 12446bed78a060a49364a80bcbfb4340b13f4f27 HEAD)"
+          historical_changes=$(git diff --raw --no-abbrev --no-renames \
+            --no-ext-diff --no-textconv --ignore-submodules=none \
+            --diff-filter=DMRT \
+            12446bed78a060a49364a80bcbfb4340b13f4f27 HEAD --)
+          python3 integration/tests/check_uart_posix_historical_135.py "$historical_changes"
           git diff --exit-code
           echo 'Host PTYs only. No physical UART, native job publication, production driver or share.'

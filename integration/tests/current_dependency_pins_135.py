@@ -49,6 +49,76 @@ NATIVE_DOC_OLD_BLOCK = 'integration/native-check.mk выводит фактич�
 NATIVE_DOC_CURRENT_BLOCK = 'integration/native-check.mk выводит фактически развёрнутый список cgminer_SOURCES из сгенерированного Makefile. check_native_core.py принимает только 114 путей из закреплённого upstream Makefile.am, включая его опциональные драйверы и заголовки. Каталог задан явно и не строится из проверяемой сборки: новый файл в integration/, новый driver-*.c или другом каталоге требует отдельного пересмотра политики. Обязательные исходники ядра, запрет дубликатов и небезопасных путей сохраняются; при переданном nm-выводе также отклоняются vn135_* символы. Проверка не обещает поддержку всех комбинаций upstream-драйверов, которые могут повторять один исходник. Это проверка границы сборки текущей базы, не доказательство аппаратной функциональности. Когда появится настоящий T21-драйвер, разрешённые дополнительные исходники и тесты пересматриваются явно.\n\nintegration/test_native_core.py проверяет соответствие каталога upstream Makefile.am, допустимость каждого штатного пути и отклонение посторонних модулей, в том числе после разворачивания переменных GNU make и через CLI. Workflow cgminer-native запускает эту проверку и настоящую host-сборку также для PR в work/reconstruction, меняющих проверку границы или конфигурацию сборки.'.encode('utf-8')
 
 
+NATIVE_CHECKER_PATH = 'integration/check_native_core.py'
+NATIVE_CHECKER_OLD_BLOB = 'f8ded2a8a47d9e50fa731b5e89f09ce246eabe2c'
+NATIVE_CHECKER_OLD_SHA256 = '92df543db473146f6b74a40bbd0b00738c77c8f4bb060ce324cce323408b51b2'
+NATIVE_CHECKER_OLD_SIZE = 2457
+NATIVE_CHECKER_CURRENT_BLOB = '4dc9a905b58e9c3f9a934d36db5fae1228c45fda'
+NATIVE_CHECKER_CURRENT_SHA256 = 'eb70a5f62fa34cae7f909a99f05991a0dc61dbdb6611ea8e687c5e6c802eaf6b'
+NATIVE_CHECKER_CURRENT_SIZE = 4788
+# PR110 changed exactly the policy declaration, unsafe-path condition and
+# membership predicate. Reverse only these complete, reviewed source hunks.
+NATIVE_CHECKER_OLD_HUNKS = (
+    (
+        b'FORBIDDEN_PREFIXES = ("src/", "libbitmain/", "reconstruction/", "tests/", "reference/")\n'
+    ),
+    (
+        b'        if path.is_absolute() or ".." in path.parts or "$" in token:\n'
+    ),
+    (
+        b'        if name.startswith(FORBIDDEN_PREFIXES):\n'
+    ),
+)
+NATIVE_CHECKER_CURRENT_HUNKS = (
+    (
+        b'# Union of cgminer_SOURCES entries in pinned upstream Makefile.am, blob\n'
+        b'# 17d2fbde26b5e8cb614b61908b84d5937af48325. Keep this policy explicit: do not\n'
+        b'# derive it from the build evidence being checked. A new native adapter needs\n'
+        b'# a reviewed policy change even when it lives outside the recovery directories.\n'
+        b'BASELINE_SOURCES = frozenset("""\n'
+        b'    A1-board-selector-CCD.c A1-board-selector-CCR.c A1-board-selector.h\n'
+        b'    A1-common.h A1-trimpot-mcp4x.c A1-trimpot-mcp4x.h\n'
+        b'    api.c bench_block.h\n'
+        b'    bf16-bitfury16.c bf16-bitfury16.h bf16-brd-control.c bf16-brd-control.h\n'
+        b'    bf16-communication.c bf16-communication.h bf16-ctrldevice.c bf16-ctrldevice.h\n'
+        b'    bf16-device.h bf16-gpiodevice.c bf16-gpiodevice.h\n'
+        b'    bf16-mspcontrol.c bf16-mspcontrol.h bf16-spidevice.c bf16-spidevice.h\n'
+        b'    bf16-uartdevice.c bf16-uartdevice.h bitmain-board-test.c bitmain-board-test.h\n'
+        b'    cgminer.c compat.h crc.h crc16.c\n'
+        b'    dm_compat.c dm_fan_ctrl.c dm_temp_ctrl.c dragonmint_t1.c\n'
+        b'    driver-SPI-bitmine-A1.c driver-SPI-dragonmint-t1.c\n'
+        b'    driver-avalon-miner.c driver-avalon-miner.h driver-avalon.c driver-avalon.h\n'
+        b'    driver-avalon2.c driver-avalon2.h driver-avalon4.c driver-avalon4.h\n'
+        b'    driver-avalon7.c driver-avalon7.h driver-avalon8.c driver-avalon8.h\n'
+        b'    driver-bab.c driver-bflsc.c driver-bflsc.h driver-bitforce.c\n'
+        b'    driver-bitfury.c driver-bitfury.h driver-bitfury16.c driver-bitfury16.h\n'
+        b'    driver-bitmain.c driver-bitmain.h driver-blockerupter.c driver-blockerupter.h\n'
+        b'    driver-btm-soc.c driver-btm-soc.h driver-cointerra.c driver-cointerra.h\n'
+        b'    driver-drillbit.c driver-drillbit.h driver-hashfast.c driver-hashfast.h\n'
+        b'    driver-hashratio.c driver-hashratio.h driver-icarus.c driver-klondike.c\n'
+        b'    driver-knc.c driver-minion.c driver-modminer.c\n'
+        b'    driver-spondoolies-sp10-p.c driver-spondoolies-sp10-p.h\n'
+        b'    driver-spondoolies-sp10.c driver-spondoolies-sp10.h\n'
+        b'    driver-spondoolies-sp30-p.c driver-spondoolies-sp30-p.h\n'
+        b'    driver-spondoolies-sp30.c driver-spondoolies-sp30.h\n'
+        b'    elist.h fpgautils.c fpgautils.h hf_protocol.h hf_protocol_be.h\n'
+        b'    i2c-context.c i2c-context.h klist.c klist.h\n'
+        b'    knc-asic.c knc-asic.h knc-transport-spi.c knc-transport.h\n'
+        b'    libbitfury.c libbitfury.h logging.c logging.h mcp2210.c mcp2210.h\n'
+        b'    miner.h noncedup.c sha2.c sha2.h spi-context.c spi-context.h\n'
+        b'    usbutils.c usbutils.h uthash.h util.c util.h\n'
+        b'""".split())\n'
+    ),
+    (
+        b'        if (path.is_absolute() or ".." in path.parts or "$" in token\n'
+        b'                or "\\\\" in token or ":" in token or token.endswith(("/", "/."))):\n'
+    ),
+    (
+        b'        if name not in BASELINE_SOURCES:\n'
+    ),
+)
+
+
 def require(ok, message):
     # Explicit exceptions retain every check under python -O.
     if not ok:
@@ -72,6 +142,27 @@ def historical_native_document_bytes(current):
             and git_blob(old) == NATIVE_DOC_OLD_BLOB
             and hashlib.sha256(old).hexdigest() == NATIVE_DOC_OLD_SHA256,
             'native document transition does not reconstruct the historical witness')
+    return old
+
+
+def historical_native_checker_bytes(current):
+    """Validate PR110's exact checker edit and recover the complete old witness."""
+    require(len(current) == NATIVE_CHECKER_CURRENT_SIZE
+            and git_blob(current) == NATIVE_CHECKER_CURRENT_BLOB
+            and hashlib.sha256(current).hexdigest() == NATIVE_CHECKER_CURRENT_SHA256,
+            'native boundary checker is not the reviewed PR110 blob')
+    require(len(NATIVE_CHECKER_CURRENT_HUNKS) == len(NATIVE_CHECKER_OLD_HUNKS) == 3,
+            'native boundary checker transition must contain three hunks')
+    old = current
+    for current_hunk, old_hunk in zip(NATIVE_CHECKER_CURRENT_HUNKS,
+                                      NATIVE_CHECKER_OLD_HUNKS):
+        require(old.count(current_hunk) == 1,
+                'native boundary checker transition hunk is not unique')
+        old = old.replace(current_hunk, old_hunk, 1)
+    require(len(old) == NATIVE_CHECKER_OLD_SIZE
+            and git_blob(old) == NATIVE_CHECKER_OLD_BLOB
+            and hashlib.sha256(old).hexdigest() == NATIVE_CHECKER_OLD_SHA256,
+            'native checker transition does not reconstruct the historical witness')
     return old
 
 
@@ -249,6 +340,9 @@ def check_current_dependency(root, path, expected):
     if path == NATIVE_DOC_PATH:
         require(expected == NATIVE_DOC_OLD_BLOB, 'historical native document pin changed')
         historical_native_document_bytes(raw)
+    elif path == NATIVE_CHECKER_PATH:
+        require(expected == NATIVE_CHECKER_OLD_BLOB, 'historical native checker pin changed')
+        historical_native_checker_bytes(raw)
     elif path == THERMAL_PATH:
         require(expected == THERMAL_OLD_BLOB, 'historical thermal pin changed')
         historical_thermal_bytes(raw)

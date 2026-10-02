@@ -249,3 +249,43 @@ paragraph replacement, outside-block changes and parent symlinks. The native
 checker, its tests, its workflow, the actual document and all runtime sources
 remain unchanged. No broad documentation exemption or checker pin transition is
 introduced. This source correction requires fresh GitHub Actions validation.
+
+## A08/A15 native-checker compatibility after the three-source diagnostic
+
+Diagnostic PR113 ran both suites at accepted base01299b84, PR1115ae515ea and
+PR1124a8561f8. A08 passed on the base but both later revisions rejected the
+historical native-checker pin before runtime testing. A15 passed base host,
+sanitized and staging tests, then rejected its old empty historical-diff gate;
+both later revisions stopped earlier at the same native-checker pin.
+
+The narrowly scoped transition validates current `integration/check_native_core.py`
+as 4,788 bytes, blob `4dc9a905b58e9c3f9a934d36db5fae1228c45fda`, SHA-256
+`eb70a5f62fa34cae7f909a99f05991a0dc61dbdb6611ea8e687c5e6c802eaf6b`.
+It reverses the exact three reviewed edit hunks and verifies the old complete
+2,457-byte witness, blob `f8ded2a8a47d9e50fa731b5e89f09ce246eabe2c`, SHA-256
+`92df543db473146f6b74a40bbd0b00738c77c8f4bb060ce324cce323408b51b2`.
+Only the canonical checker path with the original expected pin can use this
+transition. The actual stronger native checker and all original evidence remain
+unchanged. A08 uses this boundary only for that one immutable dependency.
+A15 still applies BOTH its original Git blob and SHA-256 manifest checks to the
+recovered old bytes. All other unchanged and all pending/staged blobs retain
+their existing checks. There is no path-only exemption or arbitrary old/current
+alternative. File-mode, symlink, path, wrong-pin and inverse-edit controls apply.
+
+A15 now uses the existing strict full raw-DMRT state predicate against its same
+historical baseline. Empty original-baseline acceptance and all fourteen existing
+exact states remain unchanged. Complete historical-tree comparison shows every
+repair file was added after that baseline, so the unchanged DMRT filter yields
+the already approved fifteen-record grouping plus native state, SHA-256
+`48d8cb79ca7902b2d26512ee281d7783e29d16eacd96e09fee01377cb2996232`.
+No new accepted state is needed, and no independent caller/workflow subset is
+approved. The gate and its thirty-three regression tests remain byte-identical. Existing
+runtime assertions, staging checks, native source policy and hardware boundaries
+are unchanged. Both full suites run normal/optimized shared-pin and boundary-wiring controls;
+A15 also runs the unchanged full-state controls. Their path filters include
+the native checker and newly used controls for future dependency edits.
+
+The repaired A08 checker path and A15 staging/workflow paths trigger their full
+existing pull-request suites. This source repair requires fresh GitHub Actions
+on the exact candidate and a fixed-source diagnostic including the corrected
+revision; the earlier blocked stages are not treated as runtime passes.

@@ -21,6 +21,9 @@ class CurrentDependencyPins(unittest.TestCase):
         self.native_doc = (ROOT / pins.NATIVE_DOC_PATH).read_bytes()
         self.old_native_doc = pins.historical_native_document_bytes(self.native_doc)
         self.put(pins.NATIVE_DOC_PATH, self.native_doc)
+        self.native_checker = (ROOT / pins.NATIVE_CHECKER_PATH).read_bytes()
+        self.old_native_checker = pins.historical_native_checker_bytes(self.native_checker)
+        self.put(pins.NATIVE_CHECKER_PATH, self.native_checker)
         self.thermal = (ROOT / pins.THERMAL_PATH).read_bytes()
         self.dispatch = (ROOT / pins.DISPATCH_PATH).read_bytes()
         self.bm1368 = (ROOT / pins.BM1368_PATH).read_bytes()
@@ -115,6 +118,8 @@ class CurrentDependencyPins(unittest.TestCase):
     def pairs(self):
         return ((pins.NATIVE_DOC_PATH, pins.NATIVE_DOC_OLD_BLOB, self.native_doc,
                  self.old_native_doc),
+                (pins.NATIVE_CHECKER_PATH, pins.NATIVE_CHECKER_OLD_BLOB,
+                 self.native_checker, self.old_native_checker),
                 (pins.THERMAL_PATH, pins.THERMAL_OLD_BLOB, self.thermal,
                  self.old_thermal),
                 (pins.DISPATCH_PATH, pins.DISPATCH_OLD_BLOB, self.dispatch,
@@ -183,6 +188,152 @@ class CurrentDependencyPins(unittest.TestCase):
         parent.symlink_to(self.root / 'actual-integration', target_is_directory=True)
         with self.assertRaises(ValueError):
             self.check(pins.NATIVE_DOC_PATH, pins.NATIVE_DOC_OLD_BLOB)
+
+    @contextmanager
+    def accept_native_checker_identity(self, raw):
+        # Bypass only the full current identity to expose every reverse hunk
+        # and the independent, complete historical witness identity.
+        with patch.multiple(pins, NATIVE_CHECKER_CURRENT_SIZE=len(raw),
+                            NATIVE_CHECKER_CURRENT_BLOB=pins.git_blob(raw),
+                            NATIVE_CHECKER_CURRENT_SHA256=hashlib.sha256(raw).hexdigest()):
+            yield
+
+    def test_native_checker_transition_preserves_exact_historical_witness(self):
+        self.assertEqual(len(self.native_checker), 4788)
+        self.assertEqual(pins.git_blob(self.native_checker),
+                         '4dc9a905b58e9c3f9a934d36db5fae1228c45fda')
+        self.assertEqual(hashlib.sha256(self.native_checker).hexdigest(),
+                         'eb70a5f62fa34cae7f909a99f05991a0dc61dbdb6611ea8e687c5e6c802eaf6b')
+        self.assertEqual(len(self.old_native_checker), 2457)
+        self.assertEqual(pins.git_blob(self.old_native_checker),
+                         'f8ded2a8a47d9e50fa731b5e89f09ce246eabe2c')
+        self.assertEqual(hashlib.sha256(self.old_native_checker).hexdigest(),
+                         '92df543db473146f6b74a40bbd0b00738c77c8f4bb060ce324cce323408b51b2')
+        self.assertEqual(len(pins.NATIVE_CHECKER_CURRENT_HUNKS), 3)
+        self.assertEqual(len(pins.NATIVE_CHECKER_OLD_HUNKS), 3)
+        for current_hunk, old_hunk in zip(pins.NATIVE_CHECKER_CURRENT_HUNKS,
+                                          pins.NATIVE_CHECKER_OLD_HUNKS):
+            self.assertEqual(self.native_checker.count(current_hunk), 1)
+            self.assertEqual(self.old_native_checker.count(old_hunk), 1)
+        self.check(pins.NATIVE_CHECKER_PATH, pins.NATIVE_CHECKER_OLD_BLOB)
+
+    def test_native_checker_historical_source_is_not_current(self):
+        with self.assertRaisesRegex(ValueError, 'not the reviewed PR110 blob'):
+            pins.historical_native_checker_bytes(self.old_native_checker)
+        self.put(pins.NATIVE_CHECKER_PATH, self.old_native_checker)
+        with self.assertRaisesRegex(ValueError, 'not the reviewed PR110 blob'):
+            self.check(pins.NATIVE_CHECKER_PATH, pins.NATIVE_CHECKER_OLD_BLOB)
+
+    def test_native_checker_current_pin_cannot_replace_original_pin(self):
+        with self.assertRaisesRegex(ValueError, 'historical native checker pin changed'):
+            self.check(pins.NATIVE_CHECKER_PATH, pins.NATIVE_CHECKER_CURRENT_BLOB)
+
+    def test_native_checker_current_identity_components_are_independent(self):
+        for constant, wrong in (('NATIVE_CHECKER_CURRENT_BLOB', '0' * 40),
+                                ('NATIVE_CHECKER_CURRENT_SHA256', '0' * 64),
+                                ('NATIVE_CHECKER_CURRENT_SIZE', 4787)):
+            with self.subTest(constant=constant), patch.object(pins, constant, wrong):
+                with self.assertRaisesRegex(ValueError, 'not the reviewed PR110 blob'):
+                    pins.historical_native_checker_bytes(self.native_checker)
+
+    def test_native_checker_historical_identity_components_are_independent(self):
+        for constant, wrong in (('NATIVE_CHECKER_OLD_BLOB', '0' * 40),
+                                ('NATIVE_CHECKER_OLD_SHA256', '0' * 64),
+                                ('NATIVE_CHECKER_OLD_SIZE', 2456)):
+            with self.subTest(constant=constant), patch.object(pins, constant, wrong):
+                with self.assertRaisesRegex(ValueError, 'does not reconstruct'):
+                    pins.historical_native_checker_bytes(self.native_checker)
+
+    def test_native_checker_reverse_requires_exactly_three_hunks(self):
+        for constant in ('NATIVE_CHECKER_CURRENT_HUNKS', 'NATIVE_CHECKER_OLD_HUNKS'):
+            original = getattr(pins, constant)
+            for mutant in (original[:-1], original + (original[0],)):
+                with self.subTest(constant=constant, count=len(mutant)):
+                    with patch.object(pins, constant, mutant):
+                        with self.assertRaisesRegex(ValueError, 'must contain three hunks'):
+                            pins.historical_native_checker_bytes(self.native_checker)
+
+    def test_native_checker_each_hunk_required_without_full_current_identity(self):
+        for index, (current_hunk, old_hunk) in enumerate(zip(
+                pins.NATIVE_CHECKER_CURRENT_HUNKS, pins.NATIVE_CHECKER_OLD_HUNKS)):
+            replacements = (b'', current_hunk + current_hunk,
+                            b'X' + current_hunk[1:], old_hunk)
+            for mutation, replacement in enumerate(replacements):
+                mutant = self.native_checker.replace(current_hunk, replacement, 1)
+                with self.subTest(hunk=index, mutation=mutation):
+                    with self.accept_native_checker_identity(mutant):
+                        with self.assertRaisesRegex(ValueError, 'hunk is not unique'):
+                            pins.historical_native_checker_bytes(mutant)
+
+    def test_native_checker_reordered_hunks_fail_historical_identity(self):
+        hunks = pins.NATIVE_CHECKER_CURRENT_HUNKS
+        for first, second in ((0, 1), (0, 2), (1, 2)):
+            marker = b'\0native-checker-hunk-swap\0'
+            self.assertNotIn(marker, self.native_checker)
+            mutant = self.native_checker.replace(hunks[first], marker, 1)
+            mutant = mutant.replace(hunks[second], hunks[first], 1)
+            mutant = mutant.replace(marker, hunks[second], 1)
+            with self.subTest(first=first, second=second):
+                with self.accept_native_checker_identity(mutant):
+                    with self.assertRaisesRegex(ValueError, 'does not reconstruct'):
+                        pins.historical_native_checker_bytes(mutant)
+
+    def test_native_checker_surrounding_bytes_fail_historical_identity(self):
+        # Touch every unchanged region: before, between and after the hunks.
+        hunks = pins.NATIVE_CHECKER_CURRENT_HUNKS
+        offsets = (0,) + tuple(self.native_checker.index(hunk) + len(hunk)
+                               for hunk in hunks) + (len(self.native_checker) - 1,)
+        mutants = [self.native_checker + b'\n', self.native_checker[:-1]]
+        for offset in offsets:
+            mutant = bytearray(self.native_checker)
+            mutant[offset] ^= 1
+            mutants.append(bytes(mutant))
+        for index, mutant in enumerate(mutants):
+            with self.subTest(mutation=index), self.accept_native_checker_identity(mutant):
+                with self.assertRaisesRegex(ValueError, 'does not reconstruct'):
+                    pins.historical_native_checker_bytes(mutant)
+
+    def test_native_checker_each_old_hunk_corruption_fails_historical_identity(self):
+        original = pins.NATIVE_CHECKER_OLD_HUNKS
+        for index, old_hunk in enumerate(original):
+            for replacement in (b'', old_hunk + b'X', b'X' + old_hunk[1:]):
+                mutant = original[:index] + (replacement,) + original[index + 1:]
+                with self.subTest(hunk=index, size=len(replacement)):
+                    with patch.object(pins, 'NATIVE_CHECKER_OLD_HUNKS', mutant):
+                        with self.assertRaisesRegex(ValueError, 'does not reconstruct'):
+                            pins.historical_native_checker_bytes(self.native_checker)
+
+    def test_native_checker_missing_path_fails(self):
+        (self.root / pins.NATIVE_CHECKER_PATH).unlink()
+        with self.assertRaises(FileNotFoundError):
+            self.check(pins.NATIVE_CHECKER_PATH, pins.NATIVE_CHECKER_OLD_BLOB)
+
+    def test_native_checker_parent_symlink_fails(self):
+        parent = self.root / 'integration'
+        parent.rename(self.root / 'actual-integration')
+        parent.symlink_to(self.root / 'actual-integration', target_is_directory=True)
+        with self.assertRaisesRegex(ValueError, 'parent is not a directory'):
+            self.check(pins.NATIVE_CHECKER_PATH, pins.NATIVE_CHECKER_OLD_BLOB)
+
+    def test_native_checker_each_executable_bit_fails(self):
+        for mode in (0o744, 0o654, 0o645):
+            with self.subTest(mode=oct(mode)):
+                (self.root / pins.NATIVE_CHECKER_PATH).chmod(mode)
+                with self.assertRaisesRegex(ValueError, 'non-executable regular file'):
+                    self.check(pins.NATIVE_CHECKER_PATH, pins.NATIVE_CHECKER_OLD_BLOB)
+
+    def test_native_checker_noncanonical_path_or_type_fails(self):
+        for path in ('', '/' + pins.NATIVE_CHECKER_PATH,
+                     './' + pins.NATIVE_CHECKER_PATH, '../' + pins.NATIVE_CHECKER_PATH,
+                     'integration/../' + pins.NATIVE_CHECKER_PATH,
+                     'integration//check_native_core.py',
+                     'integration/./check_native_core.py',
+                     pins.NATIVE_CHECKER_PATH + '/',
+                     None, Path(pins.NATIVE_CHECKER_PATH),
+                     pins.NATIVE_CHECKER_PATH.encode(), 1, []):
+            with self.subTest(path=path):
+                with self.assertRaisesRegex(ValueError, 'canonical and repository-relative'):
+                    self.check(path, pins.NATIVE_CHECKER_OLD_BLOB)
 
     def test_exact_current_blobs_and_original_witnesses(self):
         self.assertEqual(pins.git_blob(self.thermal), pins.THERMAL_CURRENT_BLOB)
