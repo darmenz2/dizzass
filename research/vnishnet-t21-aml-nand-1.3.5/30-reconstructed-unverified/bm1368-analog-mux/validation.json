@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "date": "2026-10-02",
+  "parent_commit": "8717119980ba3b15b4e8e195448436460f799f2f",
+  "method": {"cgminer": "0xe35c0", "hwscan": "0xf3354", "constructor_slot": "0x80"},
+  "actual_host_runs": [
+    {"compiler": "GCC 11.4", "mode": "ordinary", "scenarios": 1984, "checks": 50384, "passed": true},
+    {"compiler": "GCC 11.4", "mode": "ASan/UBSan", "scenarios": 1984, "checks": 50384, "detect_leaks": true, "passed": true},
+    {"compiler": "Clang 14", "mode": "ordinary", "scenarios": 1984, "checks": 50384, "passed": true},
+    {"compiler": "Clang 14", "mode": "ASan/UBSan", "scenarios": 1984, "checks": 50384, "detect_leaks": true, "passed": true}
+  ],
+  "compiled_semantic_controls": {
+    "gcc": {"baseline_passed": true, "controls_compiled": 11, "explicit_oracle_failures": 11},
+    "clang": {"baseline_passed": true, "controls_compiled": 11, "explicit_oracle_failures": 11},
+    "signals_build_failures_and_timeouts_counted_as_detection": false
+  },
+  "static_original_verification": {
+    "normal_python": true,
+    "optimized_python": true,
+    "cgminer_bounded_regions": 16,
+    "hwscan_bounded_regions": 5,
+    "checker_tests_normal": 27,
+    "checker_tests_optimized": 27,
+    "independent_packet_canonical_sha256": "db1575c1e3bcd590d0000cc4267bce42b9a0259741b194397ef04102ee39516c"
+  },
+  "arm_compile": {"compiler": "Clang 14", "target": "armv7-none-eabihf", "freestanding": true, "result": "ELF32 ARM EABI5 relocatable object", "executed": false},
+  "native_core_boundary_tests": {"tests": 8, "passed": true},
+  "makefile_am_upstream_blob": "17d2fbde26b5e8cb614b61908b84d5937af48325",
+  "prior_clock_delay_caller_audit": {"method": "0xe33e0", "reproduced_exact_receipt_and_assembly": true, "new_t21_caller_established": false, "unusedness_proved": false},
+  "scope": {
+    "original_executed": false,
+    "instruction_interpreter_used": false,
+    "hardware_or_pool_accessed": false,
+    "production_driver_registered": false,
+    "full_miner_build_verified_by_this_slice": false,
+    "t21_runtime_acceptance": false
+  }
+}

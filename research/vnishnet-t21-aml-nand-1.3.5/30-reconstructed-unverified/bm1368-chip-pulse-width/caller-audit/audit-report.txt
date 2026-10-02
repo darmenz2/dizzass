@@ -1,0 +1,66 @@
+BM1368 per-chip CLOCK_DELAY_CTRL caller audit, 2026-10-02
+
+Result: no new genuine T21 caller is established. The existing e33e0 method
+and constructor identity remain valid; method-table presence is not proof of
+reachability. This audit does not prove that the method is unused.
+
+Source identity: cgminer, 6,228,004 bytes, SHA256
+b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9.
+Original code was read as data only. No original instructions were executed or
+interpreted; Ghidra readOnly/noanalysis discarded temporary disassembly changes.
+No repository files were edited.
+
+Reproduction: audit.py ELF_PATH OUTPUT_DIRECTORY, using Python with pyelftools
+0.32 and capstone 5.0.6. Source SHA256 is required before any scan. The final
+audit-receipt.json is approximately 2 KB; rejected-184.asm contains 37 bounded
+A32 instructions (148 original bytes), not a full image or reference process.
+The larger early raw-scan.json and Ghidra logs are scratch, not publication.
+
+Covered patterns, with four-byte alignment:
+1. Ordinary-condition A32 immediate B/BL in .text to e33e0: no candidates.
+2. Raw 32-bit e33e0 values at four-byte-aligned positions in each file-backed
+   ELF section: one, .got at 5dffe4.
+3. An exact literal LDR followed immediately by LDR Rt,[PC,Rt], resolving GOT
+   cell 5dffe4: one, e1578/e157c, literal e1720 = 004fea60. This repeats the
+   constructor identity: GOT word e33e0, subsequently stored at output +74.
+4. Positive preindexed, immediate, word LDR +74/+184 without writeback, with
+   base other than PC/SP/FP: 91 and 21 candidates respectively. Same-register
+   BLX within the next 24 aligned words: only 1e5c88 -> 1e5c9c and
+   1e5cdc -> 1e5cf0, both +184. This is candidate generation, with no automatic
+   def-use proof, so coincidental intervening register reuse is not accepted.
+
+Rejected library-context +184 candidates:
+The full containing static function starts at 1e5654. It retains its original
+r0 as r4 at 1e567c; at 1e5b04 r10 is FP-38 (a local descriptor), and at
+1e5b08 r9 is SP+24 (local output storage). Each BLX has arguments
+r0=r4, r1=r10, r2=r9, r3=[r4+188]. The +188 load is an argument, not an
+adjacent hardware method invocation. The surrounding path constructs and
+formats local data. No ownership path binds this r4 to the cold-start backend
+B, and r2 originates as a local-storage pointer rather than a recovered pulse
+scalar. Consequently these sites cannot substantiate typed BM1368 per-chip
+CLOCK_DELAY_CTRL dispatch; the reused +184 numeric offset is insufficient.
+The duplicate 1e5cf0 is also guarded by an opaque parity predicate, so two
+static BLX sites do not imply two ordinary calls.
+
+Bounded receipt hashes (ends exclusive):
+1e5c60..1e5ca0, 64 bytes:
+560ae398dc61143f6dd278b33b77d2642d7094bcfaa4976218d51d8f7b61f39c
+1e5cbc..1e5cf8, 60 bytes:
+d9964d48fbbebc0146c2ca1b9d69fc79968f947048b178ba89f5c2439791ec23
+Additional 12-byte provenance windows are hashed in audit-receipt.json.
+
+Existing dispatch implication, explicitly a dependency rather than new proof:
+transport-init STATIC_PROOF and bm1368-ticket-mask STATIC_CONTRACT establish
+73de8 -> d21dc with output B+110; selector 4 takes d23c8 -> e1450. Combining
+that output base with the accepted constructor +74 identity places e33e0 at
+B+184 on that successful ordinary initialization path. This proves installation
+under the selector and storage preconditions. It does not identify a physical
+ASIC, establish a call, recover callers' chip/pulse/clock arguments, or prove a
+complete T21 startup/lifetime path.
+
+Excluded: Thumb/T32 direct instructions, BLX-immediate condition-15 encodings,
+nonaligned raw values, relocated/mutated method tables, alias propagation,
+register-indexed loads, negative-offset/rebased accesses, LDM/POP dispatch,
+computed address construction, arbitrary indirect dispatch, unknown dynamic
+ownership, callback lifetime and whole-program reachability. No hwscan caller
+claim was added; only its previously accepted method/constructor parity remains.

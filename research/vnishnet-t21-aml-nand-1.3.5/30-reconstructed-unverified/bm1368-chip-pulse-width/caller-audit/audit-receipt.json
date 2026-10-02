@@ -1,0 +1,64 @@
+{
+  "source_sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+  "instruction_interpreter_used": false,
+  "patterns": "all four-byte-aligned .text A32 B/BL immediate; aligned section words; exact LDR literal followed by LDR [PC,Rt] GOT pair; immediate positive LDR +74/+184 followed by same-register BLX within 24 words (candidate only; no def-use proof)",
+  "direct_branches_to_e33e0": [],
+  "aligned_words_e33e0": [
+    {
+      "section": ".got",
+      "address": "0x5dffe4"
+    }
+  ],
+  "pc_relative_got_loads": [
+    {
+      "literal_ldr": "0xe1578",
+      "got_ldr": "0xe157c",
+      "literal_address": "0xe1720",
+      "literal_word": "0x4fea60",
+      "got": "0x5dffe4",
+      "identity": "0xe33e0"
+    }
+  ],
+  "immediate_load_counts": {
+    "0x184": 21,
+    "0x74": 91
+  },
+  "candidate_same_register_calls": [
+    {
+      "load": "0x1e5c88",
+      "offset": "0x184",
+      "blx": "0x1e5c9c"
+    },
+    {
+      "load": "0x1e5cdc",
+      "offset": "0x184",
+      "blx": "0x1e5cf0"
+    }
+  ],
+  "rejected_184_windows": [
+    {
+      "start": "0x1e5c60",
+      "end_exclusive": "0x1e5ca0",
+      "bytes": 64,
+      "sha256": "560ae398dc61143f6dd278b33b77d2642d7094bcfaa4976218d51d8f7b61f39c"
+    },
+    {
+      "start": "0x1e5cbc",
+      "end_exclusive": "0x1e5cf8",
+      "bytes": 60,
+      "sha256": "d9964d48fbbebc0146c2ca1b9d69fc79968f947048b178ba89f5c2439791ec23"
+    },
+    {
+      "start": "0x1e5674",
+      "end_exclusive": "0x1e5680",
+      "bytes": 12,
+      "sha256": "f69f8da0cb8ba06670521f6175a237d34383cecc9e459a0b2151e2d807020920"
+    },
+    {
+      "start": "0x1e5b04",
+      "end_exclusive": "0x1e5b10",
+      "bytes": 12,
+      "sha256": "aa1af51599ffb8c333123f951fd15459f27d7db4bb816aa799d01f614dae331d"
+    }
+  ]
+}

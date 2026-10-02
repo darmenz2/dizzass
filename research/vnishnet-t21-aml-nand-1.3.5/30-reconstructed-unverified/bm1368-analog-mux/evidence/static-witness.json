@@ -1,0 +1,437 @@
+{
+  "schema": 1,
+  "kind": "bm1368-analog-mux-static",
+  "original_executed": false,
+  "instruction_interpreter_used": false,
+  "sources": {
+    "cgminer": {
+      "size": 6228004,
+      "sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+      "regions": [
+        {
+          "name": "code",
+          "start": 931264,
+          "end": 931580,
+          "bytes_hex": "f04d2de918b08de210d04de20040a0e1070001e200008de50400a0e10110a0e30020a0e35430a0e30050a0e3200500eb000050e33100000afc809fe508809fe7000098e5f4709fe5011040e2900100e007709fe7e8609fe506608fe0010010e30200000a000097e5090050e3150000cad0009fe50150a0e3cc109fe5cc209fe500008fe0183094e501108fe002208fe060008de8013083e208308de5a93100e3975a00eb000098e50050e0e3011040e2900100e0010010e31000000a000097e5090050e30d0000da8c009fe50150a0e388109fe588209fe500008fe0183094e501108fe002208fe060008de8013083e208308de5a93100e3815a00ebdbffffea4c009fe500009fe748109fe501109fe7002090e5013042e2920302e0010012e30200000a002091e5090052e3f7ffffca0500a0e118d04be2f08dbde8",
+          "sha256": "66b80d0c510d52d24e75c203cddd4039dd2404827a9143b3ec416e197d0814c7",
+          "assembly_file": "cgminer-code.asm",
+          "assembly_sha256": "3e5fdbe1de3c02790ef337ef824ecb3b630b57e6ff3e8855bed54c426ad91241"
+        },
+        {
+          "name": "literals",
+          "start": 931580,
+          "end": 931624,
+          "bytes_hex": "a0b74f000cbb4f00227e5000987d5000977d5000bd7d5000d8b64f0050ba4f00407d50003f7d5000657d5000",
+          "sha256": "7b589d52da228d2b6afd416a5ec79264f078e8ad4c7e587f1f165fb485474362"
+        },
+        {
+          "name": "constructor_code",
+          "start": 922952,
+          "end": 922980,
+          "bytes_hex": "c4119fe501109fe7c0219fe502209fe77c2080e5802080e2720082e8",
+          "sha256": "0050ab8d69c2a2470e987b59c87637f3d875d22cbd04edb1dbdafa2b8871bf13",
+          "assembly_file": "cgminer-constructor_code.asm",
+          "assembly_sha256": "833342e8fea1d88f9c09585eb6fd0453f1383ce8ea7007d7fed3c67d1d57bbc1"
+        },
+        {
+          "name": "constructor_literal",
+          "start": 923412,
+          "end": 923416,
+          "bytes_hex": "b0e84f00",
+          "sha256": "e7e4d8bb33021212a2b744f4cacaff0a126ee8f75b3b5ef1216be3bf9385c9db"
+        },
+        {
+          "name": "constructor_got",
+          "start": 6159876,
+          "end": 6159880,
+          "bytes_hex": "c0350e00",
+          "sha256": "472eb90f526cc1ad771e08de0cb0f27df31de0fd96fe98bf3d7ee27911a67f81"
+        },
+        {
+          "name": "driver_xor_code",
+          "start": 938864,
+          "end": 939000,
+          "bytes_hex": "00482de90000a0e3000050e32100001ad0ec9fe50ee09fe7cccc9fe50cc09fe7c83c9fe503308fe0020000ea070052e30200a0e11700000a00209ee5011042e2920101e0010011e30200000a00109ce5090051e30b0000ca0010d3e71e1021e20010c3e700109ee5012041e2910201e0012080e2010011e3ebffff0a00109ce5090051e3e8ffffda",
+          "sha256": "06bf703e2bfe3d9e8f8f96a9b6c88f8b9e5faf82b7e955ae542d0d4f01e7ef7a",
+          "assembly_file": "cgminer-driver_xor_code.asm",
+          "assembly_sha256": "2b4b8b51913bcd1f4de014add5019d1bf1055eb4ab9f1fda02ec979a34e052a3"
+        },
+        {
+          "name": "driver_xor_literal",
+          "start": 942176,
+          "end": 942180,
+          "bytes_hex": "44605000",
+          "sha256": "69d1950d65221d7381c3a9d12d73ba49ecff982ce5d51853be44902cf04b4b6f"
+        },
+        {
+          "name": "path_xor_code",
+          "start": 939080,
+          "end": 939196,
+          "bytes_hex": "0020a0e3000052e31d00001a103c9fe503308fe0020000ea2a0051e30120a0e11700000a00109ee5010041e2910000e0010010e30200000a00009ce5090050e30b0000ca0200d3e7d80020e20200c3e700009ee5011040e2900100e0011082e2010010e3ebffff0a00009ce5090050e3e8ffffda",
+          "sha256": "e79738811bd3a56adef820d4d5bd4d8f5084fd295dfd12085dc59912b5f17583",
+          "assembly_file": "cgminer-path_xor_code.asm",
+          "assembly_sha256": "408d4a8740469ec01deab9e0c5cc4eae52c1f9acc0a9b0fe2f0c6f50c5d46772"
+        },
+        {
+          "name": "path_xor_literal",
+          "start": 942188,
+          "end": 942192,
+          "bytes_hex": "875f5000",
+          "sha256": "cb2a8eb06e68c5b606f3871347666003a94a3d1da34f2b7d0f01bba6b5033ff8"
+        },
+        {
+          "name": "function_xor_code",
+          "start": 939260,
+          "end": 939376,
+          "bytes_hex": "0020a0e3000052e31d00001a603b9fe503308fe0020000ea0b0051e30120a0e11700000a00009ee5011040e2900100e0010010e30200000a00009ce5090050e30b0000ca0200d3e7d10020e20200c3e700009ee5011040e2900100e0011082e2010010e3ebffff0a00009ce5090050e3e8ffffda",
+          "sha256": "0be71eb97350975dd1dde6d09659c1dcf2097e64f0febd2fb441999f7054bc00",
+          "assembly_file": "cgminer-function_xor_code.asm",
+          "assembly_sha256": "1459aefc6894c12838b25addba6570c14eb48d11a27925acb5a1f8b49cdb331f"
+        },
+        {
+          "name": "function_xor_literal",
+          "start": 942192,
+          "end": 942196,
+          "bytes_hex": "fd5e5000",
+          "sha256": "ef7807d205e2d19863b2a4d86bf980a66fb3904756716af483cba6bff581dbd6"
+        },
+        {
+          "name": "format_xor_code",
+          "start": 939436,
+          "end": 939552,
+          "bytes_hex": "0020a0e3000052e31d00001ab83a9fe503308fe0020000ea290051e30120a0e11700000a00009ee5011040e2900100e0010010e30200000a00009ce5090050e30b0000ca0200d3e71e0020e20200c3e700009ee5011040e2900100e0011082e2010010e3ebffff0a00009ce5090050e3e8ffffda",
+          "sha256": "b474943aac8b136b672137f9042bd5f1fb769a6d52de98005a81263b5d173296",
+          "assembly_file": "cgminer-format_xor_code.asm",
+          "assembly_sha256": "3aa837391ba56c8d63976d9a44d11d5d2487b67f68bcf578787659672776c91f"
+        },
+        {
+          "name": "format_xor_literal",
+          "start": 942200,
+          "end": 942204,
+          "bytes_hex": "7e5e5000",
+          "sha256": "ddc6e5e8e3414175189ce3432294b512cde3fcff79e1008a6a879f991c0290ac"
+        },
+        {
+          "name": "opaque_x_got",
+          "start": 6155684,
+          "end": 6155688,
+          "bytes_hex": "e8b76800",
+          "sha256": "08d14cec0b3dd800f47494bc0e054a887046d479c4bf166083afde52beb7db75"
+        },
+        {
+          "name": "opaque_y_got",
+          "start": 6156580,
+          "end": 6156584,
+          "bytes_hex": "1cb86800",
+          "sha256": "9c75b4108e37bb108662043dadc13dfb94bcc8950e35929d2aa0443e66b7163c"
+        },
+        {
+          "name": "initializer_registration",
+          "start": 6139876,
+          "end": 6139880,
+          "bytes_hex": "70530e00",
+          "sha256": "bde77998d34438e46530ea4f32972bb50ccfc36504c8fad84a328d8b2e2da63a"
+        }
+      ],
+      "strings": [
+        {
+          "name": "subsystem",
+          "address": 6206432,
+          "length": 7,
+          "xor_key": 30,
+          "bytes_hex": "7a6c77687b6c1e",
+          "sha256": "64a55a211d01dc292292fa14f929c00b510dd0da70734ea797b1636e001b3e93",
+          "decoded": "driver"
+        },
+        {
+          "name": "source_path",
+          "address": 6206439,
+          "length": 42,
+          "xor_key": 216,
+          "bytes_hex": "f7acb5a8f7baadb1b4bcf7b4b1babab1acb5b9b1b6f7abaabbf7bbb0b1a8f7bbb0b1a8e9ebeee0f6bbd8",
+          "sha256": "21e3cb1265c67df3e206ffcdcc8af58222b08f0252d352b2b1dd982f9300a406",
+          "decoded": "/tmp/build/libbitmain/src/chip/chip1368.c"
+        },
+        {
+          "name": "function",
+          "address": 6206481,
+          "length": 11,
+          "xor_key": 209,
+          "bytes_hex": "8aa3b4b5b0b2a5b4b58cd1",
+          "sha256": "b4f867e0249b5f517303e494ce0950cb19c433503f70c9dec350e9e770e0126a",
+          "decoded": "[redacted]"
+        },
+        {
+          "name": "format",
+          "address": 6206530,
+          "length": 41,
+          "xor_key": 30,
+          "bytes_hex": "7d767f77703d3b7a3e333e787f77727b7a3e6a713e6d7b6a3e5f505f52515941534b46415d4a4c521e",
+          "sha256": "ed5fbd8bc0bdde923f8a9eae4ff667be590efd738e9ae03025f3401eeb29f4e6",
+          "decoded": "chain#%d - failed to set ANALOG_MUX_CTRL"
+        }
+      ]
+    },
+    "hwscan": {
+      "size": 4883216,
+      "sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+      "regions": [
+        {
+          "name": "code",
+          "start": 996180,
+          "end": 996316,
+          "bytes_hex": "704c2de910b08de210d04de20040a0e1070001e200008de50400a0e10110a0e30020a0e35430a0e30160a0e30050a0e37c0200eb000050e30f00000a44009fe544109fe544209fe500008fe0183094e501108fe038509fe502208fe0013083e208308de5a93100e305508fe000608de504508de5b82e00eb0050e0e30500a0e110d04be2708cbde8",
+          "sha256": "73089e7c276c3807b8b0c1852113c621dd32a6a46b43772f0726a32ca21442a6",
+          "assembly_file": "hwscan-code.asm",
+          "assembly_sha256": "a3b3c7c5a651cabe8f996ad7e8e608de237f9410c0cd51479db26f7e19834ef9"
+        },
+        {
+          "name": "literals",
+          "start": 996316,
+          "end": 996332,
+          "bytes_hex": "70a5380043b43800a59f380073ae3800",
+          "sha256": "6ca72d86e1b3e0e58906bd877defa83a95d9c0ac9fe0c992e398eeda426a0eec"
+        },
+        {
+          "name": "constructor_code",
+          "start": 990752,
+          "end": 990780,
+          "bytes_hex": "c4119fe501109fe7c0219fe502209fe77c2080e5802080e2720082e8",
+          "sha256": "0050ab8d69c2a2470e987b59c87637f3d875d22cbd04edb1dbdafa2b8871bf13",
+          "assembly_file": "hwscan-constructor_code.asm",
+          "assembly_sha256": "c6cba8565a4c8cfa999b49ca5ac693af4a068dcca6028bd61529fd118e8f284f"
+        },
+        {
+          "name": "constructor_literal",
+          "start": 991212,
+          "end": 991216,
+          "bytes_hex": "acdd3b00",
+          "sha256": "30dd2961fadb9f24eedb62faa728ba0138f7d4514948894d949e8b80459c309a"
+        },
+        {
+          "name": "constructor_got",
+          "start": 4914136,
+          "end": 4914140,
+          "bytes_hex": "54330f00",
+          "sha256": "621502832a10641c6063341026c888fda0456433a7b3e01f6dfa7a1490f38777"
+        }
+      ],
+      "strings": [
+        {
+          "name": "subsystem",
+          "address": 4708628,
+          "length": 7,
+          "xor_key": 0,
+          "bytes_hex": "64726976657200",
+          "sha256": "6b2223c6c75d72fe4bd43ffc5a5aa427f68822c5b228e99d1e29e8fd088bb8b8",
+          "decoded": "driver"
+        },
+        {
+          "name": "source_path",
+          "address": 4712431,
+          "length": 42,
+          "xor_key": 0,
+          "bytes_hex": "2f746d702f6275696c642f6c69626269746d61696e2f7372632f636869702f63686970313336382e6300",
+          "sha256": "a22fe6f4f8a0d5f29b251276a4647b1a807f19bb2985aa4301f986468589f931",
+          "decoded": "/tmp/build/libbitmain/src/chip/chip1368.c"
+        },
+        {
+          "name": "function",
+          "address": 4707161,
+          "length": 11,
+          "xor_key": 0,
+          "bytes_hex": "5b72656461637465645d00",
+          "sha256": "4b5ff616946aa201289595f21b4e085135f43222d5e6f2b8ba2f9bc82241d3a7",
+          "decoded": "[redacted]"
+        },
+        {
+          "name": "format",
+          "address": 4710967,
+          "length": 41,
+          "xor_key": 0,
+          "bytes_hex": "636861696e232564202d206661696c656420746f2073657420414e414c4f475f4d55585f4354524c00",
+          "sha256": "c28e9e170beecc17f3d1afd6963efbab8265fb5d068674b71f35bf63149baef2",
+          "decoded": "chain#%d - failed to set ANALOG_MUX_CTRL"
+        }
+      ]
+    }
+  },
+  "constructor_binding": {
+    "slot": 128,
+    "cgminer": {
+      "entry": 922704,
+      "load": 922952,
+      "literal": 923412,
+      "pc_load": 922956,
+      "pc_value": 922964,
+      "got": 6159876,
+      "add": 922972,
+      "store": 922976,
+      "method": 931264
+    },
+    "hwscan": {
+      "entry": 990504,
+      "load": 990752,
+      "literal": 991212,
+      "pc_load": 990756,
+      "pc_value": 990764,
+      "got": 4914136,
+      "add": 990772,
+      "store": 990776,
+      "method": 996180
+    }
+  },
+  "initializer": {
+    "entry": 938864,
+    "registration_address": 6139876,
+    "witnesses": [
+      {
+        "name": "subsystem",
+        "target": 6206432,
+        "literal": 942176,
+        "pc_add": 938900,
+        "index_zero_instruction": 938868,
+        "xor_instruction": 938956,
+        "xor_key": 30,
+        "count_instruction": 938908,
+        "count": 7
+      },
+      {
+        "name": "source_path",
+        "target": 6206439,
+        "literal": 942188,
+        "pc_add": 939096,
+        "index_zero_instruction": 939080,
+        "xor_instruction": 939152,
+        "xor_key": 216,
+        "count_instruction": 939104,
+        "count": 42
+      },
+      {
+        "name": "function",
+        "target": 6206481,
+        "literal": 942192,
+        "pc_add": 939276,
+        "index_zero_instruction": 939260,
+        "xor_instruction": 939332,
+        "xor_key": 209,
+        "count_instruction": 939284,
+        "count": 11
+      },
+      {
+        "name": "format",
+        "target": 6206530,
+        "literal": 942200,
+        "pc_add": 939452,
+        "index_zero_instruction": 939436,
+        "xor_instruction": 939508,
+        "xor_key": 30,
+        "count_instruction": 939460,
+        "count": 41
+      }
+    ]
+  },
+  "opaque_predicates": {
+    "arithmetic": "ARM SUB and MUL low 32 bits; each product uses one loaded x and x-1 from that same register value.",
+    "proof": "Modulo 2, x*(x-1) is b*(b xor 1), equal to zero for both b=0 and b=1. Truncation modulo 2^32 preserves the least significant bit. No assumption on x or y value, BSS initialization or between-load stability is needed.",
+    "predicates": [
+      {
+        "load": 931328,
+        "subtract": 931336,
+        "multiply": 931340,
+        "test": 931356,
+        "branch": 931360,
+        "always_target": 931376
+      },
+      {
+        "load": 931428,
+        "subtract": 931436,
+        "multiply": 931440,
+        "test": 931444,
+        "branch": 931448,
+        "always_target": 931520
+      },
+      {
+        "load": 931536,
+        "subtract": 931540,
+        "multiply": 931544,
+        "test": 931548,
+        "branch": 931552,
+        "always_target": 931568
+      }
+    ],
+    "globals": [
+      {
+        "name": "x",
+        "got": 6155684,
+        "address": 6862824,
+        "section": ".bss"
+      },
+      {
+        "name": "y",
+        "got": 6156580,
+        "address": 6862876,
+        "section": ".bss"
+      }
+    ],
+    "bss": {
+      "address": 6358112,
+      "size": 526456,
+      "type": 8
+    },
+    "unreachable_logger": 931512,
+    "dead_branch_reads_y": [
+      931364,
+      931452,
+      931556
+    ],
+    "valid_memory_required": true,
+    "hardware_faults_or_altered_control_flow_modelled": false
+  },
+  "contract": {
+    "arguments": [
+      "device",
+      "input"
+    ],
+    "writer": {
+      "cgminer": 936564,
+      "hwscan": 998780,
+      "mode": 1,
+      "chip": null,
+      "register": 84,
+      "value": "input & 7",
+      "calls": 1,
+      "cgminer_callsite": 931308,
+      "hwscan_callsite": 996228
+    },
+    "success_return": 0,
+    "failure_return": -1,
+    "ordinary_failure_log": {
+      "cgminer_callsite": 931424,
+      "hwscan_callsite": 996296,
+      "cgminer_logger": 1024196,
+      "hwscan_logger": 1044144,
+      "line": 425,
+      "severity": 1,
+      "count": 1,
+      "device_index_field_offset": 24,
+      "index": "fresh device index + 1 modulo 2^32",
+      "cgminer_index_load": 931396,
+      "hwscan_index_load": 996256
+    },
+    "ordinary_method_side_effects": [
+      "one supplied writer invocation",
+      "one supplied diagnostic on nonzero writer result"
+    ],
+    "not_established": [
+      "direct T21 runtime caller",
+      "hardware acceptance",
+      "original nonredacted function name"
+    ],
+    "excluded": [
+      "CPU execution or instruction interpretation",
+      "memory faults",
+      "asynchronous machine state modification"
+    ]
+  }
+}

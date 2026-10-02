@@ -1,0 +1,7 @@
+000e1548 c4119fe5 ldr r1, [pc, #0x1c4]
+000e154c 01109fe7 ldr r1, [pc, r1]
+000e1550 c0219fe5 ldr r2, [pc, #0x1c0]
+000e1554 02209fe7 ldr r2, [pc, r2]
+000e1558 7c2080e5 str r2, [r0, #0x7c]
+000e155c 802080e2 add r2, r0, #0x80
+000e1560 720082e8 stm r2, {r1, r4, r5, r6}

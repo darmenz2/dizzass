@@ -1,0 +1,2 @@
+evidence/*.json text eol=lf
+evidence/*.asm text eol=lf
