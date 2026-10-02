@@ -1,0 +1,566 @@
+{
+  "schema": 1,
+  "kind": "bm1368-chip-drive-strength-static",
+  "original_executed": false,
+  "instruction_interpreter_used": false,
+  "sources": {
+    "cgminer": {
+      "size": 6228004,
+      "sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9",
+      "regions": [
+        {
+          "name": "code",
+          "start": 931624,
+          "end": 932316,
+          "bytes_hex": "f04b2de918b08de208d04de2a0829fe50040a0e10150a0e10260a0e108809fe7000098e58c929fe5011040e2900100e009909fe7010010e30200000a000099e5090050e3110000ca0d00a0e1087040e207d0a0e10010a0e35820a0e3081000e50730a0e1001095e5180094e5959000eb001098e5012041e2910201e0010011e30c00000a001099e5090051e3090000da0d00a0e1083040e203d0a0e10010a0e35820a0e3081000e5001095e5180094e5849000ebe3ffffea000050e30a00000a000098e5f0419fe5011040e204408fe0900100e0010010e31e00000a000099e5090050e3300000ca1a0000ea000097e50f1006e20f0ac0e3010680e1000087e508d04de200008de50400a0e10010a0e30520a0e15830a0e30060a0e38a0400eb08d08de2000050e35600000a000098e5a0519fe5011040e205508fe0900100e0010010e32500000a000099e5090050e33b0000ca210000ea60019fe560119fe560219fe500008fe001108fe002208fe008d04de20130a0e318008de8613200e3055a00eb08d08de2000098e50060e0e3011040e2900100e0010010e33900000a000099e50a0050e3360000ba18019fe518119fe518219fe500008fe001108fe002208fe008d04de20130a0e318008de8613200e3f05900eb08d08de2ddffffeaf4009fe5f4109fe5f4209fe500008fe001108fe0183094e502208fe010d04de2013083e20170a0e308308de56b3200e300708de504508de5df5900eb10d08de2000098e50060e0e3011040e2900100e0010010e31300000a000099e5090050e3100000da9c009fe59c109fe59c209fe500008fe001108fe0183094e502208fe010d04de2013083e20170a0e308308de56b3200e300708de504508de5c65900eb10d08de2d5ffffea000098e5011040e2900100e0010010e30200000a000099e5090050e3f7ffffca0600a0e118d04be2f08bbde8",
+          "sha256": "ab79cf5615e41cef3bc606d43ce2c968eac107d2cd9fcd6d3f7a91d36641e7c0",
+          "assembly_file": "cgminer-code.asm",
+          "assembly_sha256": "080e173b3803c1887e8f106f711ffb7eb87058db1589d633bdaa8d93d4ece2a0"
+        },
+        {
+          "name": "literals",
+          "start": 932316,
+          "end": 932380,
+          "bytes_hex": "dcc24f00bcc64f00197d50004c7b50004f7b5000757b5000f87a5000fb7a5000217b5000db7c5000c47a5000c77a5000e97a5000607a5000637a5000857a5000",
+          "sha256": "39fc48af7ddeb65eb8d2865894d3582c1c207bbe4814c6a914e8a29eef081e9b"
+        },
+        {
+          "name": "constructor_code",
+          "start": 922944,
+          "end": 922980,
+          "bytes_hex": "c8419fe504409fe7c4119fe501109fe7c0219fe502209fe77c2080e5802080e2720082e8",
+          "sha256": "178feae33d727b32a1ca8dd2a52d1b73e8eeeff7d1d0abf299ee984a79523c2e",
+          "assembly_file": "cgminer-constructor_code.asm",
+          "assembly_sha256": "3b44bad01bdd98cb58d5a9b3054b71e6f83fc400f7f2a3861e794dc89ef890c2"
+        },
+        {
+          "name": "constructor_literal",
+          "start": 923408,
+          "end": 923412,
+          "bytes_hex": "d0de4f00",
+          "sha256": "d029a48aac2dcd4f5733c19eb54fe6ee15c5e02d746d9183fbb9e19c848fcadd"
+        },
+        {
+          "name": "driver_xor_code",
+          "start": 938864,
+          "end": 939000,
+          "bytes_hex": "00482de90000a0e3000050e32100001ad0ec9fe50ee09fe7cccc9fe50cc09fe7c83c9fe503308fe0020000ea070052e30200a0e11700000a00209ee5011042e2920101e0010011e30200000a00109ce5090051e30b0000ca0010d3e71e1021e20010c3e700109ee5012041e2910201e0012080e2010011e3ebffff0a00109ce5090051e3e8ffffda",
+          "sha256": "06bf703e2bfe3d9e8f8f96a9b6c88f8b9e5faf82b7e955ae542d0d4f01e7ef7a",
+          "assembly_file": "cgminer-driver_xor_code.asm",
+          "assembly_sha256": "2b4b8b51913bcd1f4de014add5019d1bf1055eb4ab9f1fda02ec979a34e052a3"
+        },
+        {
+          "name": "driver_xor_literal",
+          "start": 942176,
+          "end": 942180,
+          "bytes_hex": "44605000",
+          "sha256": "69d1950d65221d7381c3a9d12d73ba49ecff982ce5d51853be44902cf04b4b6f"
+        },
+        {
+          "name": "path_xor_code",
+          "start": 939080,
+          "end": 939196,
+          "bytes_hex": "0020a0e3000052e31d00001a103c9fe503308fe0020000ea2a0051e30120a0e11700000a00109ee5010041e2910000e0010010e30200000a00009ce5090050e30b0000ca0200d3e7d80020e20200c3e700009ee5011040e2900100e0011082e2010010e3ebffff0a00009ce5090050e3e8ffffda",
+          "sha256": "e79738811bd3a56adef820d4d5bd4d8f5084fd295dfd12085dc59912b5f17583",
+          "assembly_file": "cgminer-path_xor_code.asm",
+          "assembly_sha256": "408d4a8740469ec01deab9e0c5cc4eae52c1f9acc0a9b0fe2f0c6f50c5d46772"
+        },
+        {
+          "name": "path_xor_literal",
+          "start": 942188,
+          "end": 942192,
+          "bytes_hex": "875f5000",
+          "sha256": "cb2a8eb06e68c5b606f3871347666003a94a3d1da34f2b7d0f01bba6b5033ff8"
+        },
+        {
+          "name": "function_xor_code",
+          "start": 939260,
+          "end": 939376,
+          "bytes_hex": "0020a0e3000052e31d00001a603b9fe503308fe0020000ea0b0051e30120a0e11700000a00009ee5011040e2900100e0010010e30200000a00009ce5090050e30b0000ca0200d3e7d10020e20200c3e700009ee5011040e2900100e0011082e2010010e3ebffff0a00009ce5090050e3e8ffffda",
+          "sha256": "0be71eb97350975dd1dde6d09659c1dcf2097e64f0febd2fb441999f7054bc00",
+          "assembly_file": "cgminer-function_xor_code.asm",
+          "assembly_sha256": "1459aefc6894c12838b25addba6570c14eb48d11a27925acb5a1f8b49cdb331f"
+        },
+        {
+          "name": "function_xor_literal",
+          "start": 942192,
+          "end": 942196,
+          "bytes_hex": "fd5e5000",
+          "sha256": "ef7807d205e2d19863b2a4d86bf980a66fb3904756716af483cba6bff581dbd6"
+        },
+        {
+          "name": "read_format_xor_code",
+          "start": 939976,
+          "end": 940108,
+          "bytes_hex": "0020a0e3000052e31d00001ab0389fe503308fe0020000ea2e0051e30120a0e11700000a00009ee5011040e2900100e0010010e30200000a00009ce5090050e30b0000ca0200d3e7f70020e20200c3e700009ee5011040e2900100e0011082e2010010e3ebffff0a00009ce5090050e3e8ffffda0200d3e7f70020e20200c3e7efffffea",
+          "sha256": "71301ce3987f1ddab8583e0d768f4b3d3f19fdd4a0dd8d7bf11d975bea6d089d",
+          "assembly_file": "cgminer-read_format_xor_code.asm",
+          "assembly_sha256": "624af20ec5f5d4c14860eefdc136e37c91d36495923061363115679e18f4899d"
+        },
+        {
+          "name": "read_format_xor_literal",
+          "start": 942220,
+          "end": 942224,
+          "bytes_hex": "355d5000",
+          "sha256": "bdfec57318a29dc729d5f3f0f9887120132d1add6f4f264a98528692efc45b99"
+        },
+        {
+          "name": "write_format_xor_code",
+          "start": 940108,
+          "end": 940240,
+          "bytes_hex": "0020a0e3000052e31d00001a30389fe503308fe0020000ea2b0051e30120a0e11700000a00009ee5011040e2900100e0010010e30200000a00009ce5090050e30b0000ca0200d3e7cc0020e20200c3e700009ee5011040e2900100e0011082e2010010e3ebffff0a00009ce5090050e3e8ffffda0200d3e7cc0020e20200c3e7efffffea",
+          "sha256": "93e878dafc566edd695fce4e950d82af17272b97c95e51d6b915d04d70c6cc14",
+          "assembly_file": "cgminer-write_format_xor_code.asm",
+          "assembly_sha256": "b63a06c2da2c50317a918d703b6265995fd8b8a4696901eb3b1b43f3dacd8002"
+        },
+        {
+          "name": "write_format_xor_literal",
+          "start": 942224,
+          "end": 942228,
+          "bytes_hex": "df5c5000",
+          "sha256": "cfa7a7397116e079846495e2e586dd9024c1943872bf72450fdbdf8933ba32c2"
+        },
+        {
+          "name": "opaque_x_got",
+          "start": 6158888,
+          "end": 6158892,
+          "bytes_hex": "acb86800",
+          "sha256": "5f6bdc55e7f916e7c1e3f44379f04758b2a9403912431ce9efc793a0eb89addc"
+        },
+        {
+          "name": "opaque_y_got",
+          "start": 6159900,
+          "end": 6159904,
+          "bytes_hex": "dcb86800",
+          "sha256": "acc699391539de02e78d25e0f35288ce6583a05007137810cc90bdbfce9511b7"
+        },
+        {
+          "name": "constructor_got",
+          "start": 6157340,
+          "end": 6157344,
+          "bytes_hex": "28370e00",
+          "sha256": "3af261e8362649ff598538ce74ecd0d7e61674438dfaacedbcdf9070c4cd95ec"
+        },
+        {
+          "name": "initializer_registration",
+          "start": 6139876,
+          "end": 6139880,
+          "bytes_hex": "70530e00",
+          "sha256": "bde77998d34438e46530ea4f32972bb50ccfc36504c8fad84a328d8b2e2da63a"
+        }
+      ],
+      "strings": [
+        {
+          "name": "subsystem",
+          "address": 6206432,
+          "length": 7,
+          "xor_key": 30,
+          "bytes_hex": "7a6c77687b6c1e",
+          "sha256": "64a55a211d01dc292292fa14f929c00b510dd0da70734ea797b1636e001b3e93",
+          "decoded": "driver"
+        },
+        {
+          "name": "source_path",
+          "address": 6206439,
+          "length": 42,
+          "xor_key": 216,
+          "bytes_hex": "f7acb5a8f7baadb1b4bcf7b4b1babab1acb5b9b1b6f7abaabbf7bbb0b1a8f7bbb0b1a8e9ebeee0f6bbd8",
+          "sha256": "21e3cb1265c67df3e206ffcdcc8af58222b08f0252d352b2b1dd982f9300a406",
+          "decoded": "/tmp/build/libbitmain/src/chip/chip1368.c"
+        },
+        {
+          "name": "function",
+          "address": 6206481,
+          "length": 11,
+          "xor_key": 209,
+          "bytes_hex": "8aa3b4b5b0b2a5b4b58cd1",
+          "sha256": "b4f867e0249b5f517303e494ce0950cb19c433503f70c9dec350e9e770e0126a",
+          "decoded": "[redacted]"
+        },
+        {
+          "name": "read_format",
+          "address": 6206741,
+          "length": 46,
+          "xor_key": 247,
+          "bytes_hex": "b1969e9b9293d78398d785929693d79496949f9293d793859e8192d7848385929990839fd78592909e84839285f7",
+          "sha256": "8692f39ad720cd593fc004e80d7825644301fc174250579a2b5b7193a54d6926",
+          "decoded": "Failed to read cached drive strength register"
+        },
+        {
+          "name": "write_format",
+          "address": 6206787,
+          "length": 43,
+          "xor_key": 204,
+          "bytes_hex": "afa4ada5a2efe9a8ece1ecaaada5a0a9a8ecb8a3ecafa3a2aaa5abeca8bea5baa9ecbfb8bea9a2abb8a4cc",
+          "sha256": "d925fd3ed723be2df11eadbe1dfe375d804a4104e932a9797f7644a20addb2a2",
+          "decoded": "chain#%d - failed to config drive strength"
+        }
+      ]
+    },
+    "hwscan": {
+      "size": 4883216,
+      "sha256": "951208595a4947220160f8a5161303862ff1c72100ba3971d006fd8a73d5b077",
+      "regions": [
+        {
+          "name": "code",
+          "start": 996332,
+          "end": 996572,
+          "bytes_hex": "f0482de910b08de210d04de20040a0e30160a0e10c408de50050a0e1001091e50c308de2180090e50270a0e15820a0e37f4900eb000050e30c00000aac009fe50170a0e3a8109fe5a8209fe500008fe0a4309fe501108fe002208fe000708de503308fe004308de5613200e31a0000ea0c009de50f1007e20620a0e15830a0e30f0ac0e3010680e10c008de500008de50500a0e10010a0e33c0200eb000050e30f00000a54009fe50160a0e350109fe550209fe500008fe0183095e501108fe044709fe502208fe0013083e207708fe0c0008de808308de56b3200e3782e00eb0040e0e30400a0e110d04be2f088bde8",
+          "sha256": "87406b9d1f21eb417d04ea324ec294966bc2d5d3a8d4f7678167024538fbb9b7",
+          "assembly_file": "hwscan-code.asm",
+          "assembly_sha256": "fdc50e2ff5a944a00157fb6a536f437825e2addb5ffcf3b08b0e9a441d13251d"
+        },
+        {
+          "name": "literals",
+          "start": 996572,
+          "end": 996604,
+          "bytes_hex": "d4a43800a7b338000d9f3800d3b138006ca438003fb33800a19e380095b13800",
+          "sha256": "ab08ee3c545629e6b4b6fed39c6261baf9e300cb0c7a8bfbdb9dc4844ad7a242"
+        },
+        {
+          "name": "constructor_code",
+          "start": 990744,
+          "end": 990780,
+          "bytes_hex": "c8419fe504409fe7c4119fe501109fe7c0219fe502209fe77c2080e5802080e2720082e8",
+          "sha256": "178feae33d727b32a1ca8dd2a52d1b73e8eeeff7d1d0abf299ee984a79523c2e",
+          "assembly_file": "hwscan-constructor_code.asm",
+          "assembly_sha256": "c30795b8d0da21017969bcf75839835df5513a3da8d36a7cd5bc302fc9035ee2"
+        },
+        {
+          "name": "constructor_literal",
+          "start": 991208,
+          "end": 991212,
+          "bytes_hex": "60db3b00",
+          "sha256": "beb9508eddc73d7b12c4fdd941008e6a3a7914e7169d7deb31c3a01c410b8324"
+        },
+        {
+          "name": "constructor_got",
+          "start": 4913540,
+          "end": 4913544,
+          "bytes_hex": "ec330f00",
+          "sha256": "9b3c6459bd7ad25acd1234022a3a8b763903aad7974c87206e8f1f73e869bc1b"
+        }
+      ],
+      "strings": [
+        {
+          "name": "subsystem",
+          "address": 4708628,
+          "length": 7,
+          "xor_key": 0,
+          "bytes_hex": "64726976657200",
+          "sha256": "6b2223c6c75d72fe4bd43ffc5a5aa427f68822c5b228e99d1e29e8fd088bb8b8",
+          "decoded": "driver"
+        },
+        {
+          "name": "source_path",
+          "address": 4712431,
+          "length": 42,
+          "xor_key": 0,
+          "bytes_hex": "2f746d702f6275696c642f6c69626269746d61696e2f7372632f636869702f63686970313336382e6300",
+          "sha256": "a22fe6f4f8a0d5f29b251276a4647b1a807f19bb2985aa4301f986468589f931",
+          "decoded": "/tmp/build/libbitmain/src/chip/chip1368.c"
+        },
+        {
+          "name": "function",
+          "address": 4707161,
+          "length": 11,
+          "xor_key": 0,
+          "bytes_hex": "5b72656461637465645d00",
+          "sha256": "4b5ff616946aa201289595f21b4e085135f43222d5e6f2b8ba2f9bc82241d3a7",
+          "decoded": "[redacted]"
+        },
+        {
+          "name": "read_format",
+          "address": 4711975,
+          "length": 46,
+          "xor_key": 0,
+          "bytes_hex": "4661696c656420746f20726561642063616368656420647269766520737472656e67746820726567697374657200",
+          "sha256": "590384ed7f12227a9c8f2c4839efc3f263d45c95b7e406b489537f0c5a7a8a60",
+          "decoded": "Failed to read cached drive strength register"
+        },
+        {
+          "name": "write_format",
+          "address": 4712021,
+          "length": 43,
+          "xor_key": 0,
+          "bytes_hex": "636861696e232564202d206661696c656420746f20636f6e66696720647269766520737472656e67746800",
+          "sha256": "86aa6955a35e828d3fb420f785caa4bdaf8da18e0a05c59741dca20a4245d871",
+          "decoded": "chain#%d - failed to config drive strength"
+        }
+      ]
+    }
+  },
+  "constructor_binding": {
+    "slot": 132,
+    "cgminer": {
+      "entry": 922704,
+      "load": 922944,
+      "literal": 923408,
+      "pc_load": 922948,
+      "pc_value": 922956,
+      "got": 6157340,
+      "add": 922972,
+      "store": 922976,
+      "method": 931624,
+      "retained_register": "r4",
+      "store_base_slot": 128,
+      "store_registers": [
+        "r1",
+        "r4",
+        "r5",
+        "r6"
+      ]
+    },
+    "hwscan": {
+      "entry": 990504,
+      "load": 990744,
+      "literal": 991208,
+      "pc_load": 990748,
+      "pc_value": 990756,
+      "got": 4913540,
+      "add": 990772,
+      "store": 990776,
+      "method": 996332,
+      "retained_register": "r4",
+      "store_base_slot": 128,
+      "store_registers": [
+        "r1",
+        "r4",
+        "r5",
+        "r6"
+      ]
+    }
+  },
+  "initializer": {
+    "entry": 938864,
+    "registration_address": 6139876,
+    "witnesses": [
+      {
+        "name": "subsystem",
+        "target": 6206432,
+        "literal": 942176,
+        "pc_add": 938900,
+        "index_zero_instruction": 938868,
+        "xor_instruction": 938956,
+        "xor_key": 30,
+        "count_instruction": 938908,
+        "count": 7
+      },
+      {
+        "name": "source_path",
+        "target": 6206439,
+        "literal": 942188,
+        "pc_add": 939096,
+        "index_zero_instruction": 939080,
+        "xor_instruction": 939152,
+        "xor_key": 216,
+        "count_instruction": 939104,
+        "count": 42
+      },
+      {
+        "name": "function",
+        "target": 6206481,
+        "literal": 942192,
+        "pc_add": 939276,
+        "index_zero_instruction": 939260,
+        "xor_instruction": 939332,
+        "xor_key": 209,
+        "count_instruction": 939284,
+        "count": 11
+      },
+      {
+        "name": "read_format",
+        "target": 6206741,
+        "literal": 942220,
+        "pc_add": 939992,
+        "index_zero_instruction": 939976,
+        "xor_instruction": 940048,
+        "xor_key": 247,
+        "count_instruction": 940000,
+        "count": 46
+      },
+      {
+        "name": "write_format",
+        "target": 6206787,
+        "literal": 942224,
+        "pc_add": 940124,
+        "index_zero_instruction": 940108,
+        "xor_instruction": 940180,
+        "xor_key": 204,
+        "count_instruction": 940132,
+        "count": 43
+      }
+    ]
+  },
+  "opaque_predicates": {
+    "arithmetic": "ARM SUB and MUL low 32 bits; each product uses one loaded x and x-1 from that same register value.",
+    "proof": "Modulo 2, x*(x-1) is b*(b xor 1), equal to zero for both b=0 and b=1. Truncation modulo 2^32 preserves the least significant bit. No assumption on x or y value, BSS initialization or between-load stability is needed.",
+    "predicates": [
+      {
+        "load": 931656,
+        "subtract": 931664,
+        "multiply": 931668,
+        "test": 931676,
+        "branch": 931680,
+        "always_target": 931696
+      },
+      {
+        "load": 931736,
+        "subtract": 931740,
+        "multiply": 931744,
+        "test": 931748,
+        "branch": 931752,
+        "always_target": 931808
+      },
+      {
+        "load": 931816,
+        "subtract": 931824,
+        "multiply": 931832,
+        "test": 931836,
+        "branch": 931840,
+        "always_target": 931968
+      },
+      {
+        "load": 931924,
+        "subtract": 931932,
+        "multiply": 931940,
+        "test": 931944,
+        "branch": 931948,
+        "always_target": 932104
+      },
+      {
+        "load": 932016,
+        "subtract": 932024,
+        "multiply": 932028,
+        "test": 932032,
+        "branch": 932036,
+        "always_target": 932272
+      },
+      {
+        "load": 932168,
+        "subtract": 932176,
+        "multiply": 932180,
+        "test": 932184,
+        "branch": 932188,
+        "always_target": 932272
+      },
+      {
+        "load": 932272,
+        "subtract": 932276,
+        "multiply": 932280,
+        "test": 932284,
+        "branch": 932288,
+        "always_target": 932304
+      }
+    ],
+    "globals": [
+      {
+        "name": "x",
+        "got": 6158888,
+        "address": 6863020,
+        "section": ".bss"
+      },
+      {
+        "name": "y",
+        "got": 6159900,
+        "address": 6863068,
+        "section": ".bss"
+      }
+    ],
+    "bss": {
+      "address": 6358112,
+      "size": 526456,
+      "type": 8
+    },
+    "unreachable_cache_read": 931800,
+    "unreachable_loggers": [
+      932092,
+      932260
+    ],
+    "dead_branch_reads_y": [
+      931684,
+      931756,
+      931844,
+      931952,
+      932040,
+      932192,
+      932292
+    ],
+    "valid_memory_required": true,
+    "hardware_faults_or_altered_control_flow_modelled": false
+  },
+  "contract": {
+    "arguments": [
+      "device",
+      "chip",
+      "input"
+    ],
+    "read_cached": {
+      "cgminer": 1079792,
+      "hwscan": 1071648,
+      "cgminer_callsite": 931732,
+      "hwscan_callsite": 996380,
+      "cgminer_index_load": 931728,
+      "hwscan_index_load": 996368,
+      "cgminer_chip_load": 931724,
+      "hwscan_chip_load": 996360,
+      "chain": "current device+0x18 word bits interpreted signed",
+      "chip": "current chip+0 word bits interpreted signed",
+      "register": 88,
+      "output_initial": 0,
+      "calls": 1
+    },
+    "writer": {
+      "cgminer": 936564,
+      "hwscan": 998780,
+      "mode": 0,
+      "chip": "original pointer identity",
+      "register": 88,
+      "value": "(cached_word & ~0xf000) | ((input & 15) << 12)",
+      "calls": 1,
+      "cgminer_callsite": 931908,
+      "hwscan_callsite": 996484,
+      "only_after_exactly_zero_cache_status": true
+    },
+    "success_return": 0,
+    "failure_return": -1,
+    "ordinary_read_failure_log": {
+      "cgminer_callsite": 932008,
+      "hwscan_callsite": 996552,
+      "cgminer_logger": 1024196,
+      "hwscan_logger": 1044144,
+      "line": 609,
+      "severity": 1,
+      "count": 1,
+      "index_argument": false
+    },
+    "ordinary_write_failure_log": {
+      "cgminer_callsite": 932160,
+      "hwscan_callsite": 996552,
+      "cgminer_logger": 1024196,
+      "hwscan_logger": 1044144,
+      "line": 619,
+      "severity": 1,
+      "count": 1,
+      "device_index_field_offset": 24,
+      "index": "fresh device index + 1 modulo 2^32",
+      "cgminer_index_load": 932124,
+      "hwscan_index_load": 996516
+    },
+    "ordinary_method_side_effects": [
+      "one supplied cache-read invocation",
+      "at most one supplied writer invocation",
+      "one supplied diagnostic on nonzero reached status"
+    ],
+    "not_established": [
+      "direct T21 runtime caller",
+      "hardware acceptance",
+      "original nonredacted function name"
+    ],
+    "excluded": [
+      "CPU execution or instruction interpretation",
+      "memory faults",
+      "asynchronous machine state modification"
+    ]
+  }
+}

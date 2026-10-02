@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "date": "2026-10-02",
+  "parent_commit": "2eddeee38d62fb2138acde90061b9268523dddd7",
+  "method": {"cgminer": "0xe3728", "hwscan": "0xf33ec", "constructor_slot": "0x84"},
+  "actual_host_runs": [
+    {"compiler": "GCC 11.4", "mode": "ordinary", "scenarios": 15436, "checks": 380358, "passed": true},
+    {"compiler": "GCC 11.4", "mode": "ASan/UBSan", "scenarios": 15436, "checks": 380358, "detect_leaks": true, "passed": true},
+    {"compiler": "Clang 14", "mode": "ordinary", "scenarios": 15436, "checks": 380358, "passed": true},
+    {"compiler": "Clang 14", "mode": "ASan/UBSan", "scenarios": 15436, "checks": 380358, "detect_leaks": true, "passed": true}
+  ],
+  "compiled_semantic_controls": {
+    "gcc": {"baseline_passed": true, "controls_compiled": 15, "explicit_oracle_failures": 15},
+    "clang": {"baseline_passed": true, "controls_compiled": 15, "explicit_oracle_failures": 15},
+    "signals_build_failures_and_timeouts_counted_as_detection": false
+  },
+  "static_original_verification": {
+    "normal_python": true,
+    "optimized_python": true,
+    "cgminer_bounded_regions": 18,
+    "hwscan_bounded_regions": 5,
+    "checker_tests_normal": 37,
+    "checker_tests_optimized": 37,
+    "independent_packet_canonical_sha256": "2290f935c6eb7fbc70b3c8a7cb0ff83f809ae77f596e05211e5e833d3dcbdcdb"
+  },
+  "arm_compile": {"compiler": "Clang 14", "target": "armv7-none-eabihf", "freestanding": true, "result": "ELF32 ARM EABI5 relocatable object", "executed": false},
+  "native_core_boundary_tests": {"tests": 8, "passed": true},
+  "makefile_am_upstream_blob": "17d2fbde26b5e8cb614b61908b84d5937af48325",
+  "scope": {
+    "original_executed": false,
+    "instruction_interpreter_used": false,
+    "hardware_or_pool_accessed": false,
+    "production_driver_registered": false,
+    "full_miner_build_verified_by_this_slice": false,
+    "t21_runtime_acceptance": false,
+    "original_cache_internal_diagnostic_parity_claimed": false
+  }
+}
