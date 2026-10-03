@@ -46,7 +46,8 @@ class EvidenceControls(unittest.TestCase):
         if SOURCE_ROOT is not None:
             raw=(SOURCE_ROOT/verifier.BM1368_PATH).read_bytes()
             self.sweep_append=raw[8350:9245]
-            self.address_append=raw[9245:]
+            self.address_append=raw[9245:11280]
+            self.drive_append=raw[11280:]
 
     def write_proof(self):
         (self.folder/'static-witnesses.json').write_text(json.dumps(self.proof))
@@ -303,23 +304,33 @@ class EvidenceControls(unittest.TestCase):
         return patch.multiple(verifier,BM1368_SWEEP_SIZE=len(data),
                               BM1368_SWEEP_SHA256=verifier.sha256(data),BM1368_SWEEP_BLOB=blob)
 
-    def matching_address_identity(self,data):
+    def matching_frozen_address_identity(self,data):
         blob=verifier.hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
         return patch.multiple(verifier,BM1368_ADDRESS_SIZE=len(data),
                               BM1368_ADDRESS_SHA256=verifier.sha256(data),BM1368_ADDRESS_BLOB=blob)
 
+    def matching_drive_identity(self,data):
+        blob=verifier.hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
+        return patch.multiple(verifier,BM1368_DRIVE_SIZE=len(data),
+                              BM1368_DRIVE_SHA256=verifier.sha256(data),BM1368_DRIVE_BLOB=blob)
+
+    @contextmanager
+    def matching_address_identity(self,data):
+        address=data[:-len(self.drive_append)]
+        with self.matching_drive_identity(data), self.matching_frozen_address_identity(address):
+            yield
+
     @contextmanager
     def matching_sweep_identity(self,data):
-        # Match both outer identities so existing sweep/inner controls stay live.
-        sweep=data[:-len(self.address_append)]
+        # Match all outer identities so existing sweep/inner controls stay live.
+        sweep=data[:-len(self.address_append)-len(self.drive_append)]
         with self.matching_address_identity(data), self.matching_frozen_sweep_identity(sweep):
             yield
 
     @contextmanager
     def matching_current_and_ticket_identity(self,data):
-        # Old inner controls keep the exact sweep suffix, then bypass both
-        # current and ticket identities to expose the original predicates.
-        ticket=data[:-len(self.sweep_append)-len(self.address_append)]
+        # Keep all outer appends and match their identities to expose inner checks.
+        ticket=data[:-len(self.sweep_append)-len(self.address_append)-len(self.drive_append)]
         with self.matching_sweep_identity(data), self.matching_ticket_identity(ticket):
             yield
 
@@ -396,7 +407,7 @@ class EvidenceControls(unittest.TestCase):
             suffixes.append(added.replace(b'\n#endif\n',replacement))
         for index,suffix in enumerate(suffixes):
             reset=constructor+suffix
-            mutant=reset+ticket+sweep+self.address_append
+            mutant=reset+ticket+sweep+self.address_append+self.drive_append
             with self.subTest(mutation=index):
                 with self.matching_current_and_ticket_identity(mutant), self.matching_reset_identity(reset):
                     with self.assertRaisesRegex(verifier.EvidenceError,'reset append is not separately gated'):
@@ -439,7 +450,7 @@ class EvidenceControls(unittest.TestCase):
                             b'\n#include "extra.h"\n#endif\n'):
             suffixes.append(added.replace(b'\n#endif\n',replacement))
         for index,suffix in enumerate(suffixes):
-            mutant=reset+suffix+sweep+self.address_append
+            mutant=reset+suffix+sweep+self.address_append+self.drive_append
             with self.subTest(mutation=index), self.matching_current_and_ticket_identity(mutant):
                 with self.assertRaisesRegex(verifier.EvidenceError,'ticket-mask append is not separately gated'):
                     verifier.reset_source_bytes(mutant)
@@ -490,7 +501,7 @@ class EvidenceControls(unittest.TestCase):
                             b'\n#include "extra.h"\n#endif\n'):
             suffixes.append(added.replace(b'\n#endif\n',replacement))
         for index,suffix in enumerate(suffixes):
-            mutant=ticket+suffix+self.address_append
+            mutant=ticket+suffix+self.address_append+self.drive_append
             with self.subTest(mutation=index), self.matching_sweep_identity(mutant):
                 with self.assertRaisesRegex(verifier.EvidenceError,'sweep-clock append is not separately gated'):
                     verifier.ticket_source_bytes(mutant)
@@ -501,15 +512,15 @@ class EvidenceControls(unittest.TestCase):
         for suffix in (added.replace(b'field1_2 & 3u',b'field1_2 & 7u'),
                        added.replace(b'<< 1',b'<< 2'),
                        added.replace(b'463, 1,',b'464, 1,'),added+b'\n',added[:-1]):
-            path.write_bytes(ticket+suffix+self.address_append)
-            with self.assertRaisesRegex(verifier.EvidenceError,'reviewed address-commands source'):
+            path.write_bytes(ticket+suffix+self.address_append+self.drive_append)
+            with self.assertRaisesRegex(verifier.EvidenceError,'reviewed drive-strength source'):
                 verifier.verify(self.folder,root)
 
     def test_exact_address_transition_retains_sweep_witness(self):
         data=self.current_bm1368_bytes()
         sweep=verifier.sweep_source_bytes(data)
         self.assertEqual(sweep,data[:9245])
-        self.assertEqual(len(data),11280)
+        self.assertEqual(len(verifier.address_source_bytes(data)),11280)
         self.assertEqual(verifier.sha256(sweep),
                          'e4c05fb8bc541e6e6b2a216cbaecf7ef57cc3d85101d59b81e8ebd3d4e2af7e4')
         self.assertEqual(verifier.hashlib.sha1(b'blob 9245\0'+sweep).hexdigest(),
@@ -520,7 +531,7 @@ class EvidenceControls(unittest.TestCase):
         for constant,value in (('BM1368_ADDRESS_SIZE',11279),
                                ('BM1368_ADDRESS_SHA256','0'*64),('BM1368_ADDRESS_BLOB','0'*40)):
             with self.subTest(constant=constant), patch.object(verifier,constant,value):
-                with self.assertRaisesRegex(verifier.EvidenceError,'reviewed address-commands source'):
+                with self.assertRaisesRegex(verifier.EvidenceError,'preserved address source prefix differs'):
                     verifier.sweep_source_bytes(data)
 
     def test_sweep_prefix_checked_without_address_full_hash(self):
@@ -532,7 +543,7 @@ class EvidenceControls(unittest.TestCase):
                     verifier.sweep_source_bytes(mutant)
 
     def test_address_gate_shape_checked_without_full_hash(self):
-        data=self.current_bm1368_bytes();sweep,added=data[:9245],data[9245:]
+        data=self.current_bm1368_bytes();sweep,added=data[:9245],data[9245:11280]
         suffixes=[b'',added.replace(b'VN135_BM1368_ADDRESS_COMMANDS_135',b'OTHER_GATE'),
                   added.replace(b'"integration/bm1368_address_commands_135.h"',b'"wrong.h"'),
                   added.replace(b'#include "integration/bm1368_control.h"\n',b''),
@@ -544,20 +555,75 @@ class EvidenceControls(unittest.TestCase):
                             b'\n#include "extra.h"\n#endif\n'):
             suffixes.append(added.replace(b'\n#endif\n',replacement))
         for index,suffix in enumerate(suffixes):
-            mutant=sweep+suffix
+            mutant=sweep+suffix+self.drive_append
             with self.subTest(mutation=index), self.matching_address_identity(mutant):
                 with self.assertRaisesRegex(verifier.EvidenceError,'address-commands append is not separately gated'):
                     verifier.sweep_source_bytes(mutant)
 
     def test_address_semantics_are_bound_by_current_source_identity(self):
         root=self.dependency_copy();path=root/verifier.BM1368_PATH;data=path.read_bytes()
-        sweep,added=data[:9245],data[9245:]
+        sweep,added=data[:9245],data[9245:11280]
         for suffix in (added.replace(b'669, 1,',b'670, 1,'),
                        added.replace(b'699, 1,',b'700, 1,'),
                        added.replace(b'frame + 2, 5',b'frame + 2, 4'),added+b'\n',added[:-1]):
-            path.write_bytes(sweep+suffix)
-            with self.assertRaisesRegex(verifier.EvidenceError,'reviewed address-commands source'):
+            path.write_bytes(sweep+suffix+self.drive_append)
+            with self.assertRaisesRegex(verifier.EvidenceError,'reviewed drive-strength source'):
                 verifier.verify(self.folder,root)
+
+    def test_exact_drive_transition_retains_address_witness(self):
+        data=self.current_bm1368_bytes()
+        address=verifier.address_source_bytes(data)
+        self.assertEqual(address,data[:11280])
+        self.assertEqual(len(data),14347)
+        self.assertEqual(verifier.sha256(data),
+                         'd31a47e24504be3cf48cad8cbca96a9a38f08fd5aa0b0a27e672fac84bff5ce6')
+        self.assertEqual(verifier.hashlib.sha1(b'blob 14347\0'+data).hexdigest(),
+                         '355824db8f2127da4c678737ab86daf2a99f4a85')
+        self.assertEqual(len(address),11280)
+        self.assertEqual(verifier.sha256(address),
+                         '91cfb6f3bb640bcf3519027243970bcb37aeeb0275f96b931dd17cab940540d2')
+        self.assertEqual(verifier.hashlib.sha1(b'blob 11280\0'+address).hexdigest(),
+                         '890e2bfc9ead81a9cafe5b34c917b37133ea0d5e')
+        self.assertEqual(data,address+self.drive_append)
+        self.assertEqual(len(self.drive_append),3067)
+
+    def test_drive_full_identity_predicates_are_independent(self):
+        data=self.current_bm1368_bytes()
+        for constant,value in (('BM1368_DRIVE_SIZE',14346),
+                               ('BM1368_DRIVE_SHA256','0'*64),('BM1368_DRIVE_BLOB','0'*40)):
+            with self.subTest(constant=constant), patch.object(verifier,constant,value):
+                with self.assertRaisesRegex(verifier.EvidenceError,'reviewed drive-strength source'):
+                    verifier.address_source_bytes(data)
+
+    def test_address_only_source_rejected_as_current(self):
+        root=self.dependency_copy();path=root/verifier.BM1368_PATH
+        path.write_bytes(path.read_bytes()[:11280])
+        with self.assertRaisesRegex(verifier.EvidenceError,'reviewed drive-strength source'):
+            verifier.verify(self.folder,root)
+
+    def test_address_prefix_checked_without_drive_full_hash(self):
+        data=self.current_bm1368_bytes()
+        for offset in (0,920,3802,3803,7518,7519,8349,8350,9244,9245,11279):
+            mutant=bytearray(data);mutant[offset]^=1;mutant=bytes(mutant)
+            with self.subTest(offset=offset), self.matching_drive_identity(mutant):
+                with self.assertRaisesRegex(verifier.EvidenceError,'preserved address source prefix differs'):
+                    verifier.address_source_bytes(mutant)
+
+    def test_drive_gate_shape_checked_without_full_hash(self):
+        data=self.current_bm1368_bytes();address,added=data[:11280],self.drive_append
+        suffixes=[b'',added.replace(b'VN135_BM1368_DRIVE_STRENGTH_135',b'OTHER_GATE'),
+                  added.replace(b'"integration/bm1368_drive_strength_135.h"',b'"wrong.h"'),
+                  b'int outside;\n'+added,added+added,added[:-8],added[:-1],added+b'\n']
+        for replacement in (b'\n#endif\nint outside;\n\n',
+                            b'\n#if OTHER\n#endif\n#endif\n',
+                            b'\n#else\n#endif\n',b'\n#elif OTHER\n#endif\n',
+                            b'\n#include "extra.h"\n#endif\n'):
+            suffixes.append(added.replace(b'\n#endif\n',replacement))
+        for index,suffix in enumerate(suffixes):
+            mutant=address+suffix
+            with self.subTest(mutation=index), self.matching_drive_identity(mutant):
+                with self.assertRaisesRegex(verifier.EvidenceError,'drive-strength append is not separately gated'):
+                    verifier.address_source_bytes(mutant)
 
     def test_every_other_active_dependency_remains_a_full_file_pin(self):
         root=self.dependency_copy()

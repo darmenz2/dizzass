@@ -1,0 +1,248 @@
+{
+  "schema": 1,
+  "base_commit": "01299b84255542c16ee6d3f0c65a3e33e7aa876a",
+  "reference": {
+    "path": "reference/cgminer.vendor.elf",
+    "size": 6228004,
+    "sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9"
+  },
+  "regions": [
+    {
+      "name": "index-to-address",
+      "kind": "code",
+      "va": 343448,
+      "size": 8,
+      "sha256": "f3242611f2edc75bed097e419f3977e0a9323c3f5751698547c6e4b1ec10ddf5",
+      "hex": "910000e01eff2fe1"
+    },
+    {
+      "name": "startup-call",
+      "kind": "code",
+      "va": 354368,
+      "size": 8,
+      "sha256": "87c5238dcf187e7a235816a2eb36ba4d04ee036e9592acfea20988913d903573",
+      "hex": "0900a0e1477b01eb"
+    },
+    {
+      "name": "board-accessor",
+      "kind": "code",
+      "va": 684556,
+      "size": 12,
+      "sha256": "75cf4ac24b47097c94faca34d348431b77cdb0c00154c46e861f1b6fba5d93f4",
+      "hex": "000050e3380080121eff2fe1"
+    },
+    {
+      "name": "caller",
+      "kind": "code",
+      "va": 742760,
+      "size": 884,
+      "sha256": "f2d6fe37e5612c9e08cef027190d67cea862b494306b5547ef9b765b58b768fc",
+      "hex": "f04f2de91cb08de20cd04de260939fe50070a0e109909fe7000099e554a39fe5011040e2900100e00aa09fe7010010e30200000a00009ae5090050e3110000ca08404de204d0a0e108504de205d0a0e11c0097e5180090e511c7ffeb0060a0e1000099e53020d6e5011040e21c8097e5900101e0010011e30800000a00109ae5090051e3050000da08d04de208d04de21c0097e5180090e501c7ffebe7ffffea0000a0e3000052e3a300000a642201eb040050e39f00000a180096e50a0050e39c0000ba001099e5012041e2910201e0010011e3001099e5012041e2910202e0341096e5010012e30200000a00209ae5090052e3f6ffffca010050e024000be50000a0e38c00004aae0f87e228000be5050000ea24101be5001041e024100be5010071e30100a0e1820000da3800d6e5000050e31200000a000099e5011040e2900100e0010010e3181096e524301be5140096e5031041e0002099e5910000e0011042e2920101e00e7080e2010011e30400000a00009ae5090050e3f1ffffca000000ea0070a0e33900d6e5000050e32a00000a000099e5011040e2900100e0010010e30200000a00009ae5090050e3130000ca140096e524101be5900100e0000084e5001096e59879feeb040084e50410a0e1c03198e50720a0e128001be533ff2fe1001099e5012041e2910201e0010011e30f00000a00109ae5090051e30c0000da140096e524101be5900100e0000084e5001096e58479feeb040084e50410a0e1c03198e50720a0e128001be533ff2fe1deffffea000050e34800001a3a00d6e5000050e32c00000a000099e5011040e2900100e0010010e30200000a00009ae5090050e3140000ca140096e524101be5900120e0010040e2000085e5001096e56979feeb040085e50510a0e1c03198e50720a0e128001be533ff2fe1001099e5012041e2910201e0010011e31000000a00109ae5090051e30d0000da140096e524101be5900120e0010040e2000085e5001096e55479feeb040085e50510a0e1c03198e50720a0e128001be533ff2fe1dcffffea000050e31a00001a000099e5011040e2900100e0010010e3000099e5011040e2900101e0340096e5010011e37affff0a00109ae5090051e3f6ffffca76ffffea0000a0e3002099e5011042e2920101e0010011e30200000a00109ae5090051e3f7ffffca1cd04be2f08fbde80000e0e3f3ffffea0000e0e3f1ffffea"
+    },
+    {
+      "name": "caller-literals",
+      "kind": "data",
+      "va": 743644,
+      "size": 8,
+      "sha256": "8a8e89a4654f589b095d1099038270d53dd955641c0cd3fa196acb4c758e75ff",
+      "hex": "6ca3520020a75200"
+    },
+    {
+      "name": "method",
+      "kind": "code",
+      "va": 935568,
+      "size": 272,
+      "sha256": "ef4dcdffc6509e5da745d62143705f91bc14a1e3e88fd0244837b90b44ee832f",
+      "hex": "f04b2de918b08de210d04de2fc809fe50050a0e10140a0e10260a0e108809fe7000098e5e8909fe5011040e2900100e009909fe7010010e30200000a000099e5090050e3100000ca0300a0e30010a0e3060880e100008de50500a0e10420a0e12c30a0e30070a0e3dd0000eb001098e5012041e2910201e0010011e30b00000a001099e5090051e3080000da0300a0e30010a0e3060880e100008de50500a0e10420a0e12c30a0e3cd0000ebe5ffffea000050e31200000a58009fe558109fe558209fe500008fe0183095e501108fe0007094e502208fe044609fe5013083e20150a0e3017087e206608fe060008de808308de5d13200e30c708de54c5600eb0070e0e30700a0e118d04be2f08bbde8"
+    },
+    {
+      "name": "method-literals",
+      "kind": "data",
+      "va": 935840,
+      "size": 24,
+      "sha256": "5e91fb6e4d6128b46870871c2b45aa17f897934eb61408313cd53859445c90ce",
+      "hex": "aca44f00e4b34f00846c5000836c5000a56c50007a6e5000"
+    },
+    {
+      "name": "format-init",
+      "kind": "code",
+      "va": 940652,
+      "size": 44,
+      "sha256": "153800247a06a2c08391523bc8d76039872024773352f17d150e21629f8b7e40",
+      "hex": "0020a0e3000052e30700001a20369fe503308fe00200d3e7910020e20200c3e7012082e22f0052e3f9ffff1a"
+    },
+    {
+      "name": "format-init-literal",
+      "kind": "data",
+      "va": 942240,
+      "size": 4,
+      "sha256": "32b05e05db71f1daa63335f95f34c63842e43c5d7a3fa83bec214f83e25bddb8",
+      "hex": "765b5000"
+    },
+    {
+      "name": "selector",
+      "kind": "code",
+      "va": 1040300,
+      "size": 12,
+      "sha256": "62affaa1acd987d302305d3b96a162c962b9c4546922d6acc0862ea3e3bef37c",
+      "hex": "04009fe500009fe71eff2fe1"
+    },
+    {
+      "name": "selector-literal",
+      "kind": "data",
+      "va": 1040312,
+      "size": 4,
+      "sha256": "16648c7fe3892dd0286880ce92ede706c94d1c7d7b83493767f060aa10306a9d",
+      "hex": "506b5500"
+    },
+    {
+      "name": "module-string",
+      "kind": "data",
+      "va": 6206432,
+      "size": 7,
+      "sha256": "64a55a211d01dc292292fa14f929c00b510dd0da70734ea797b1636e001b3e93",
+      "hex": "7a6c77687b6c1e"
+    },
+    {
+      "name": "source-string",
+      "kind": "data",
+      "va": 6206439,
+      "size": 42,
+      "sha256": "21e3cb1265c67df3e206ffcdcc8af58222b08f0252d352b2b1dd982f9300a406",
+      "hex": "f7acb5a8f7baadb1b4bcf7b4b1babab1acb5b9b1b6f7abaabbf7bbb0b1a8f7bbb0b1a8e9ebeee0f6bbd8"
+    },
+    {
+      "name": "function-string",
+      "kind": "data",
+      "va": 6206481,
+      "size": 11,
+      "sha256": "b4f867e0249b5f517303e494ce0950cb19c433503f70c9dec350e9e770e0126a",
+      "hex": "8aa3b4b5b0b2a5b4b58cd1"
+    },
+    {
+      "name": "format-string",
+      "kind": "data",
+      "va": 6206970,
+      "size": 47,
+      "sha256": "4cfa395138a10884a0866bde5e57f64e8fd319ac3a620792fb5a130a1d8940b4",
+      "hex": "f2f9f0f8ffb2b4f5b1f2f9f8e1b2b4f5b1bcb1f7f0f8fdf4f5b1e5feb1f2fefff7f8f6b1c4d0c3c5b1e3f4fdf0e891"
+    }
+  ],
+  "word_facts": {
+    "0xe46d8": "0xe3a00003",
+    "0xe46dc": "0xe3a01000",
+    "0xe46e0": "0xe1800806",
+    "0xe46f0": "0xe3a0302c",
+    "0xe4740": "0xe3500000",
+    "0xe4758": "0xe5953018",
+    "0xe4760": "0xe5947000",
+    "0xe476c": "0xe2833001",
+    "0xe4774": "0xe2877001",
+    "0xe4784": "0xe30032d1",
+    "0xb55cc": "0xe5d62030",
+    "0xb55d4": "0xe597801c",
+    "0xb5618": "0xe3500004",
+    "0xb5624": "0xe350000a",
+    "0xb5660": "0xe0500001",
+    "0xb566c": "0x4a00008c",
+    "0xb5688": "0xe3710001",
+    "0xb5690": "0xda000082",
+    "0xb5694": "0xe5d60038",
+    "0xb56b0": "0xe5961018",
+    "0xb56b8": "0xe5960014",
+    "0xb56d0": "0xe280700e",
+    "0xb56f0": "0xe5d60039",
+    "0xb5728": "0xe5840000",
+    "0xb5734": "0xe5840004",
+    "0xb573c": "0xe59831c0",
+    "0xb5748": "0xe12fff33",
+    "0xb57a0": "0xe3500000",
+    "0xb57a8": "0xe5d6003a",
+    "0xb57dc": "0xe0200190",
+    "0xb57e0": "0xe2400001",
+    "0xb57e4": "0xe5850000",
+    "0xb57f0": "0xe5850004",
+    "0xb57f8": "0xe59831c0",
+    "0xb5804": "0xe12fff33",
+    "0xb5860": "0xe3500000",
+    "0xb5884": "0xe5960034",
+    "0xe5a84": "0xe2200091",
+    "0xe5a90": "0xe352002f"
+  },
+  "branches": [
+    {
+      "at": 354372,
+      "target": 742760
+    },
+    {
+      "at": 935672,
+      "target": 936564
+    },
+    {
+      "at": 935820,
+      "target": 1024196
+    },
+    {
+      "at": 742932,
+      "target": 1040300
+    },
+    {
+      "at": 742848,
+      "target": 684556
+    },
+    {
+      "at": 743216,
+      "target": 343448
+    },
+    {
+      "at": 743404,
+      "target": 343448
+    }
+  ],
+  "strings": [
+    {
+      "region": "module-string",
+      "xor": 30,
+      "text": "driver"
+    },
+    {
+      "region": "source-string",
+      "xor": 216,
+      "text": "/tmp/build/libbitmain/src/chip/chip1368.c"
+    },
+    {
+      "region": "function-string",
+      "xor": 209,
+      "text": "[redacted]"
+    },
+    {
+      "region": "format-string",
+      "xor": 145,
+      "text": "chain#%d chip#%d - failed to config UART relay"
+    }
+  ],
+  "source_sha256": {
+    "Makefile.am": "8601830e23e231cdadd770a9bea4c1216d281ace5aa930010f0e61983daa8995",
+    "cgminer.c": "214148c972c380af38cd667c02ccffad5c3a0b2790d5b54eeb0316af455411e4",
+    "include/xminer/recovery/chip1398.h": "57c25fb7b8e234f1b3fc0eef972338398f4e6027dcee0e38f6c1eb6c5eadef14",
+    "include/xminer/recovery/pll.h": "96cb204b3a846ad82c09c8be5e480e0069751d1a79b191e53fa3dc2618a5602d",
+    "include/xminer/recovery/reg_cache.h": "37aae34cab018e6c6f2282a8083aa01d6fd04da10e37f46d39b6162766a37ba6",
+    "integration/bm1368-group-boundary-135.mk": "9b5a72705eb746f5011a203630db0ae9553444fd2289e2ca7b01118c7823ce61",
+    "integration/bm1368_control.c": "6311c43f27b482114b7e18826727e2cd024b2bea4a74b911b5d73887757808f3",
+    "integration/bm1368_control.h": "11ddb580caab82219f4df5d480ac17d74386a55ba798aaa47e54390c02aa351a",
+    "integration/bm1368_frequency_135.h": "2a5457d7600f67a793c5cfe380b82537eddee9af9bd163395aec0b14d496c7da",
+    "integration/bm1368_group_boundary_135.c": "403d0b3aeecbaebf01639be2f69679b9b311bd6e08fc1178860a2edc4e0c875e",
+    "integration/bm1368_group_boundary_135.h": "b2c658b8c3780ccb581a6b096de307f48692be7115ff3c3d0dfee8ebca6ba3c2",
+    "integration/bm1368_register_write_135.h": "c1fbb74d18db5263c7585aea293f8eda51220ade4dba8f07da8adb8060e52a6a",
+    "integration/tests/check_bm1368_group_boundary_135.py": "052fc761d1293efc4d3815b16c794dfc9b8a42442996965243411c439e210c6b",
+    "integration/tests/test_bm1368_group_boundary_135.c": "61aa6b5ca5222acf1021041426d379bc06b61fc146ff5ac4fdb57aae7a15b615",
+    "libbitmain/src/chip/chip1368-group-boundary.c": "e13d220cae5586d8dd0cd6435667cfbf8d5298d19fe1f488d08b38692e7bfe0f",
+    "libbitmain/src/chip/chip1368-register-write.c": "8e9d40fc87c102fc0342d64c93027f00b50c3b2c7abe590606300d9e8913629b",
+    "libbitmain/src/chip/chip1368.c": "91cfb6f3bb640bcf3519027243970bcb37aeeb0275f96b931dd17cab940540d2",
+    "libbitmain/src/reg_cache.c": "e504e6e2bd0f568761567551586aa57db174cd3849ca11c22c9c0753ca28d339",
+    "miner.h": "46975a24967eb0d0d5b0171b210b875b0adc60feba93131e491fc0deeb72745c",
+    "reconstruction/data/reg_cache_defaults.inc": "9ef43ac8ee0900bfd06319f8973cb11389103e1fdbe031aa21ba91889980ef84",
+    "reconstruction/support/crc5.c": "d03fe3a245dffeddb2d644d91671b44430ca81a007ad15b49db294c1a700e1a2",
+    "tools/elf32.py": "a67edcb47712252e3f11cf503416b149910587ab181313e01400bde30258e9a3"
+  }
+}

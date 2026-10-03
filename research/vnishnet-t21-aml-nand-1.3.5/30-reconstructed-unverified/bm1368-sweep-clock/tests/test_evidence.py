@@ -5,6 +5,7 @@ Only the authored host verifier runs. Corrupted JSON/ELF/source-byte fixtures
 are data, never executable firmware, an original-instruction oracle or C code.
 """
 import copy
+from contextlib import contextmanager
 import hashlib
 import importlib.util
 import json
@@ -131,8 +132,8 @@ class EvidenceTests(unittest.TestCase):
                 path.write_bytes((ROOT.parents[3]/item['path']).read_bytes())
             target=root/'libbitmain/src/chip/chip1368.c'
             original=target.read_bytes()
-            # Separate L12 prefix drift from new current-address suffix drift.
-            for offset in (9243,len(original)-2):
+            # Distinguish L12, address and current drive-strength source drift.
+            for offset in (9243,11279,len(original)-2):
                 raw=bytearray(original);raw[offset]^=1;target.write_bytes(raw)
                 self.check(['--repo-root',str(root)],reason='reviewed runtime source identity mismatch')
             target.write_bytes(original)
@@ -146,16 +147,29 @@ class EvidenceTests(unittest.TestCase):
     def sweep_item(self):
         return copy.deepcopy(BASE['proof']['runtime_sources'][0])
 
-    def matching_address_identity(self,raw):
+    def matching_frozen_address_identity(self,raw):
         blob=hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()
         return patch.multiple(verifier,BM1368_ADDRESS_SIZE=len(raw),
                               BM1368_ADDRESS_SHA256=verifier.sha(raw),BM1368_ADDRESS_BLOB=blob)
+
+    def matching_drive_identity(self,raw):
+        blob=hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()
+        return patch.multiple(verifier,BM1368_DRIVE_SIZE=len(raw),
+                              BM1368_DRIVE_SHA256=verifier.sha(raw),BM1368_DRIVE_BLOB=blob)
+
+    @contextmanager
+    def matching_address_identity(self,raw):
+        # Match both outer hashes to leave the frozen L12 and address gate live.
+        drive=self.address_source()[11280:]
+        address=raw[:-len(drive)]
+        with self.matching_drive_identity(raw), self.matching_frozen_address_identity(address):
+            yield
 
     def test_current_address_transition_retains_frozen_l12_identity(self):
         raw=self.address_source();item=self.sweep_item()
         sweep=verifier.sweep_runtime_bytes(raw,item)
         self.assertEqual(sweep,raw[:9245])
-        self.assertEqual(len(raw),11280)
+        self.assertEqual(len(verifier.address_runtime_bytes(raw)),11280)
         self.assertEqual(item,{'path':'libbitmain/src/chip/chip1368.c','bytes':9245,
                               'git_blob':'f23565c15c9d174e644fc51a401e81dbe072dfd7',
                               'sha256':'e4c05fb8bc541e6e6b2a216cbaecf7ef57cc3d85101d59b81e8ebd3d4e2af7e4'})
@@ -165,7 +179,7 @@ class EvidenceTests(unittest.TestCase):
         for constant,value in (('BM1368_ADDRESS_SIZE',11279),
                                ('BM1368_ADDRESS_SHA256','0'*64),('BM1368_ADDRESS_BLOB','0'*40)):
             with self.subTest(constant=constant), patch.object(verifier,constant,value):
-                with self.assertRaisesRegex(verifier.EvidenceError,'reviewed runtime source identity mismatch'):
+                with self.assertRaisesRegex(verifier.EvidenceError,'preserved address runtime source identity mismatch'):
                     verifier.sweep_runtime_bytes(raw,item)
         for end in (920,3803,7519,8350,9245):
             with self.subTest(end=end):
@@ -202,7 +216,7 @@ class EvidenceTests(unittest.TestCase):
                     verifier.sweep_runtime_bytes(mutant,item)
 
     def test_address_gate_shape_checked_without_full_hash(self):
-        raw=self.address_source();sweep,added=raw[:9245],raw[9245:];item=self.sweep_item()
+        raw=self.address_source();sweep,added=raw[:9245],raw[9245:11280];item=self.sweep_item()
         suffixes=[b'',added.replace(b'VN135_BM1368_ADDRESS_COMMANDS_135',b'OTHER_GATE'),
                   added.replace(b'"integration/bm1368_address_commands_135.h"',b'"wrong.h"'),
                   added.replace(b'#include "integration/bm1368_control.h"\n',b''),
@@ -214,18 +228,72 @@ class EvidenceTests(unittest.TestCase):
                             b'\n#include "extra.h"\n#endif\n'):
             suffixes.append(added.replace(b'\n#endif\n',replacement))
         for index,suffix in enumerate(suffixes):
-            mutant=sweep+suffix
+            mutant=sweep+suffix+raw[11280:]
             with self.subTest(mutation=index), self.matching_address_identity(mutant):
                 with self.assertRaisesRegex(verifier.EvidenceError,'address-commands append is not separately gated'):
                     verifier.sweep_runtime_bytes(mutant,item)
 
     def test_address_semantics_truncation_and_extra_bytes_rejected(self):
-        raw=self.address_source();sweep,added=raw[:9245],raw[9245:];item=self.sweep_item()
+        raw=self.address_source();sweep,added=raw[:9245],raw[9245:11280];item=self.sweep_item()
         for suffix in (added.replace(b'669, 1,',b'670, 1,'),
                        added.replace(b'699, 1,',b'700, 1,'),
                        added.replace(b'frame + 2, 5',b'frame + 2, 4'),added+b'\n',added[:-1]):
             with self.assertRaisesRegex(verifier.EvidenceError,'reviewed runtime source identity mismatch'):
-                verifier.sweep_runtime_bytes(sweep+suffix,item)
+                verifier.sweep_runtime_bytes(sweep+suffix+raw[11280:],item)
+
+    def test_exact_drive_transition_retains_address_identity(self):
+        raw=self.address_source();address=verifier.address_runtime_bytes(raw)
+        self.assertEqual(address,raw[:11280])
+        self.assertEqual(len(raw),14347)
+        self.assertEqual(verifier.sha(raw),
+                         'd31a47e24504be3cf48cad8cbca96a9a38f08fd5aa0b0a27e672fac84bff5ce6')
+        self.assertEqual(hashlib.sha1(b'blob 14347\0'+raw).hexdigest(),
+                         '355824db8f2127da4c678737ab86daf2a99f4a85')
+        self.assertEqual(len(address),11280)
+        self.assertEqual(verifier.sha(address),
+                         '91cfb6f3bb640bcf3519027243970bcb37aeeb0275f96b931dd17cab940540d2')
+        self.assertEqual(hashlib.sha1(b'blob 11280\0'+address).hexdigest(),
+                         '890e2bfc9ead81a9cafe5b34c917b37133ea0d5e')
+        self.assertEqual(len(raw[11280:]),3067)
+
+    def test_drive_identity_components_are_independent(self):
+        raw=self.address_source();item=self.sweep_item()
+        for constant,value in (('BM1368_DRIVE_SIZE',14346),
+                               ('BM1368_DRIVE_SHA256','0'*64),('BM1368_DRIVE_BLOB','0'*40)):
+            with self.subTest(constant=constant), patch.object(verifier,constant,value):
+                with self.assertRaisesRegex(verifier.EvidenceError,
+                                            r'reviewed runtime source identity mismatch: .* \(drive strength\)'):
+                    verifier.sweep_runtime_bytes(raw,item)
+
+    def test_address_only_source_rejected_as_current(self):
+        raw=self.address_source();item=self.sweep_item()
+        with self.assertRaisesRegex(verifier.EvidenceError,
+                                    r'reviewed runtime source identity mismatch: .* \(drive strength\)'):
+            verifier.sweep_runtime_bytes(raw[:11280],item)
+
+    def test_preserved_address_bytes_checked_without_drive_full_hash(self):
+        raw=self.address_source()
+        for offset in (0,920,3802,3803,7518,7519,8349,8350,9244,9245,11279):
+            mutant=bytearray(raw);mutant[offset]^=1;mutant=bytes(mutant)
+            with self.subTest(offset=offset), self.matching_drive_identity(mutant):
+                with self.assertRaisesRegex(verifier.EvidenceError,'preserved address runtime source identity mismatch'):
+                    verifier.address_runtime_bytes(mutant)
+
+    def test_drive_gate_shape_checked_without_full_hash(self):
+        raw=self.address_source();address,added=raw[:11280],raw[11280:]
+        suffixes=[b'',added.replace(b'VN135_BM1368_DRIVE_STRENGTH_135',b'OTHER_GATE'),
+                  added.replace(b'"integration/bm1368_drive_strength_135.h"',b'"wrong.h"'),
+                  b'int outside;\n'+added,added+added,added[:-8],added[:-1],added+b'\n']
+        for replacement in (b'\n#endif\nint outside;\n\n',
+                            b'\n#if OTHER\n#endif\n#endif\n',
+                            b'\n#else\n#endif\n',b'\n#elif OTHER\n#endif\n',
+                            b'\n#include "extra.h"\n#endif\n'):
+            suffixes.append(added.replace(b'\n#endif\n',replacement))
+        for index,suffix in enumerate(suffixes):
+            mutant=address+suffix
+            with self.subTest(mutation=index), self.matching_drive_identity(mutant):
+                with self.assertRaisesRegex(verifier.EvidenceError,'drive-strength append is not separately gated'):
+                    verifier.address_runtime_bytes(mutant)
 
     def test_reviewed_annotations_qualifiers_and_json_schema(self):
         self.reject(lambda w:w['proof']['domain'].clear())

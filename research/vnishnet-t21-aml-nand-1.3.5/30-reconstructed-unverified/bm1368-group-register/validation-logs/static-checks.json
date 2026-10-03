@@ -1,0 +1,93 @@
+{
+  "runs": [
+    {
+      "name": "default",
+      "optimized": false,
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "<repo>/research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-group-register/verify_evidence.py"
+      ],
+      "exit_status": 0,
+      "log": "default-normal.log",
+      "log_sha256": "eb8ea4c63c9ce748e91821b0648d88b99388508c82f11c14c27fe611ccd350d4",
+      "output": "{\"firmware_executed\": false, \"instruction_interpreter_used\": false, \"original_files_compared\": [], \"selected_regions\": 74, \"semantic_basis\": \"manual bounded CFG/parity/ABI proof; host regressions are separate\", \"static_witness_verified\": true}\n"
+    },
+    {
+      "name": "original-data",
+      "optimized": false,
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "<repo>/research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-group-register/verify_evidence.py",
+        "--cgminer",
+        "<cgminer-elf>",
+        "--hwscan",
+        "<hwscan-elf>"
+      ],
+      "exit_status": 0,
+      "log": "original-data-normal.log",
+      "log_sha256": "124ad98a672c0e975cc8ba6969cc35fd67d8f9c101e9be66ce9c8696aaa7ec30",
+      "output": "{\"firmware_executed\": false, \"instruction_interpreter_used\": false, \"original_files_compared\": [\"cgminer\", \"hwscan\"], \"selected_regions\": 74, \"semantic_basis\": \"manual bounded CFG/parity/ABI proof; host regressions are separate\", \"static_witness_verified\": true}\n"
+    },
+    {
+      "name": "controls",
+      "optimized": false,
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "<repo>/research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-group-register/tests/test_evidence.py"
+      ],
+      "exit_status": 0,
+      "log": "controls-normal.log",
+      "log_sha256": "f9cb5259513da33787ce7c187f9e91de9e83e684b12a6dfc335e1828cfbd4ad1",
+      "output": "{\"static_control_categories\": 23, \"passed\": [\"default-packet\", \"raw-range-byte\", \"false-source-attribution\", \"false-hwscan-caller\", \"missing-method-call\", \"normalized-original-spelling\", \"boolean-schema\", \"duplicate-json-key\", \"non-finite-json\", \"rewritten-pins\", \"coherent-wrong-call-target\", \"coherent-wrong-literal\", \"coherent-wrong-descriptor-slot\", \"coherent-wrong-common-method-slot\", \"historical-prefix-permits-later-suffix\", \"runtime-span-0\", \"runtime-span-1\", \"runtime-span-2\", \"runtime-span-3\", \"stale-short-source\", \"changed-dependencies\", \"changed-contracts\", \"truncated-original-data\"], \"original_executed\": false}\n"
+    },
+    {
+      "name": "default",
+      "optimized": true,
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-O",
+        "-B",
+        "<repo>/research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-group-register/verify_evidence.py"
+      ],
+      "exit_status": 0,
+      "log": "default-optimized.log",
+      "log_sha256": "eb8ea4c63c9ce748e91821b0648d88b99388508c82f11c14c27fe611ccd350d4",
+      "output": "{\"firmware_executed\": false, \"instruction_interpreter_used\": false, \"original_files_compared\": [], \"selected_regions\": 74, \"semantic_basis\": \"manual bounded CFG/parity/ABI proof; host regressions are separate\", \"static_witness_verified\": true}\n"
+    },
+    {
+      "name": "original-data",
+      "optimized": true,
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-O",
+        "-B",
+        "<repo>/research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-group-register/verify_evidence.py",
+        "--cgminer",
+        "<cgminer-elf>",
+        "--hwscan",
+        "<hwscan-elf>"
+      ],
+      "exit_status": 0,
+      "log": "original-data-optimized.log",
+      "log_sha256": "124ad98a672c0e975cc8ba6969cc35fd67d8f9c101e9be66ce9c8696aaa7ec30",
+      "output": "{\"firmware_executed\": false, \"instruction_interpreter_used\": false, \"original_files_compared\": [\"cgminer\", \"hwscan\"], \"selected_regions\": 74, \"semantic_basis\": \"manual bounded CFG/parity/ABI proof; host regressions are separate\", \"static_witness_verified\": true}\n"
+    },
+    {
+      "name": "controls",
+      "optimized": true,
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-O",
+        "-B",
+        "<repo>/research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-group-register/tests/test_evidence.py"
+      ],
+      "exit_status": 0,
+      "log": "controls-optimized.log",
+      "log_sha256": "f9cb5259513da33787ce7c187f9e91de9e83e684b12a6dfc335e1828cfbd4ad1",
+      "output": "{\"static_control_categories\": 23, \"passed\": [\"default-packet\", \"raw-range-byte\", \"false-source-attribution\", \"false-hwscan-caller\", \"missing-method-call\", \"normalized-original-spelling\", \"boolean-schema\", \"duplicate-json-key\", \"non-finite-json\", \"rewritten-pins\", \"coherent-wrong-call-target\", \"coherent-wrong-literal\", \"coherent-wrong-descriptor-slot\", \"coherent-wrong-common-method-slot\", \"historical-prefix-permits-later-suffix\", \"runtime-span-0\", \"runtime-span-1\", \"runtime-span-2\", \"runtime-span-3\", \"stale-short-source\", \"changed-dependencies\", \"changed-contracts\", \"truncated-original-data\"], \"original_executed\": false}\n"
+    }
+  ]
+}
