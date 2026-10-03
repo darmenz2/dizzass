@@ -1,0 +1,55 @@
+name: Check BM1368 startup register methods
+on:
+  pull_request:
+    branches: [work/reconstruction]
+    paths:
+      - '.github/workflows/bm1368-startup-registers-research.yml'
+      - 'integration/bm1368-startup-registers-135.mk'
+      - 'integration/bm1368_startup_registers_135.h'
+      - 'integration/tests/*bm1368_startup_registers*'
+      - 'libbitmain/src/chip/chip1368-startup-registers.c'
+      - 'libbitmain/src/chip/chip1368-register-write.c'
+      - 'libbitmain/src/reg_cache.c'
+      - 'integration/bm1368_register_write_135.h'
+      - 'integration/bm1368_frequency_135.h'
+      - 'integration/bm1368_control.*'
+      - 'include/xminer/recovery/reg_cache.h'
+      - 'include/xminer/recovery/chip1398.h'
+      - 'include/xminer/recovery/pll.h'
+      - 'reconstruction/support/crc5.c'
+      - 'reconstruction/data/reg_cache_defaults.inc'
+      - 'research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-startup-registers/**'
+      - 'tools/elf32.py'
+      - 'reference/cgminer.vendor.elf'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  host:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install host-only build tools
+        run: sudo apt-get update -qq && sudo apt-get install -y gcc clang make python3
+      - name: Static source and original byte witnesses, never original execution
+        run: |
+          python3 -B research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-startup-registers/verify.py --with-reference
+          python3 -B research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-startup-registers/test_evidence.py
+          python3 -O -B research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-startup-registers/test_evidence.py
+      - name: Host methods, real writer/cache composition and compiled controls
+        run: python3 -B integration/tests/check_bm1368_startup_registers_135.py --cc '${{ matrix.cc }}' --out build/startup-normal --mutants
+      - name: Same host scenarios with ASan, UBSan and leak detection
+        run: python3 -B integration/tests/check_bm1368_startup_registers_135.py --cc '${{ matrix.cc }}' --out build/startup-sanitized --sanitize
+      - name: Retain host-only receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bm1368-startup-registers-${{ matrix.cc }}
+          path: |
+            build/startup-normal/report.json
+            build/startup-sanitized/report.json
+          if-no-files-found: error
