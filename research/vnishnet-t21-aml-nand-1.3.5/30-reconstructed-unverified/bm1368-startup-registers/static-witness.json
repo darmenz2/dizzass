@@ -1,0 +1,704 @@
+{
+  "schema": 1,
+  "kind": "bm1368-startup-registers-static-witness",
+  "base_commit": "01299b84255542c16ee6d3f0c65a3e33e7aa876a",
+  "reference": {
+    "path": "reference/cgminer.vendor.elf",
+    "size": 6228004,
+    "sha256": "b2663b3aa753cc14ae9d3b11a14d3d93c74b605a3e433b02101c3c17c69d95e9"
+  },
+  "original_execution": false,
+  "hardware": false,
+  "automatic_equivalence_proof": false,
+  "regions": [
+    {
+      "name": "analog-body",
+      "va": 931264,
+      "size": 316,
+      "kind": "code",
+      "hex": "f04d2de918b08de210d04de20040a0e1070001e200008de50400a0e10110a0e30020a0e35430a0e30050a0e3200500eb000050e33100000afc809fe508809fe7000098e5f4709fe5011040e2900100e007709fe7e8609fe506608fe0010010e30200000a000097e5090050e3150000cad0009fe50150a0e3cc109fe5cc209fe500008fe0183094e501108fe002208fe060008de8013083e208308de5a93100e3975a00eb000098e50050e0e3011040e2900100e0010010e31000000a000097e5090050e30d0000da8c009fe50150a0e388109fe588209fe500008fe0183094e501108fe002208fe060008de8013083e208308de5a93100e3815a00ebdbffffea4c009fe500009fe748109fe501109fe7002090e5013042e2920302e0010012e30200000a002091e5090052e3f7ffffca0500a0e118d04be2f08dbde8",
+      "sha256": "66b80d0c510d52d24e75c203cddd4039dd2404827a9143b3ec416e197d0814c7"
+    },
+    {
+      "name": "analog-literals",
+      "va": 931580,
+      "size": 44,
+      "kind": "data",
+      "hex": "a0b74f000cbb4f00227e5000987d5000977d5000bd7d5000d8b64f0050ba4f00407d50003f7d5000657d5000",
+      "sha256": "7b589d52da228d2b6afd416a5ec79264f078e8ad4c7e587f1f165fb485474362"
+    },
+    {
+      "name": "nonce-body",
+      "va": 929944,
+      "size": 448,
+      "kind": "code",
+      "hex": "f04f2de91cb08de20cd04de20040a0e1010021e2ee1d08e30020a0e3001048e3010080e100008de50400a0e10110a0e33c30a0e30050a0e3670600eb000050e34f00000a74019fe500009fe7000090e56ca19fe5011040e268919fe50aa08fe0900100e009908fe0010010e30400000a54019fe500009fe7000090e5090050e3250000ca44519fe50180a0e340619fe5833100e33c719fe505508fe0180094e506608fe007708fe000058de8010080e208008de50500a0e10610a0e10720a0e1d95b00eb180094e50610a0e100038de80720a0e1010080e208008de50500a0e1513200e3d05b00ebec009fe50050e0e300009fe7000090e5011040e2900100e0010010e31e00000ad0009fe500009fe7000090e5090050e3190000dac8809fe50150a0e3c4609fe5833100e3c0709fe508808fe0180094e506608fe007708fe020048de8010080e208008de50800a0e10610a0e10720a0e1b35b00eb180094e50610a0e120028de80720a0e1010080e208008de50800a0e1513200e3aa5b00ebbfffffea58009fe500009fe754109fe501109fe7002090e5013042e2920302e0010012e30200000a002091e5090052e3f7ffffca0500a0e11cd04be2f08fbde8",
+      "sha256": "b8ac718b7c6ede97abacb38df68a91f8e206d69d906bb9dea21a722cba4ce7a5"
+    },
+    {
+      "name": "nonce-literals",
+      "va": 930392,
+      "size": 56,
+      "kind": "data",
+      "hex": "44c14f00b4875000e083500024bb4f00a8825000a7825000cd8250009cc04f008cba4f0004c04f0008ba4f00108250000f82500035825000",
+      "sha256": "1f1103f51c756d8275f1f52b4acbedcfab21290ea33951777f3d11b54d2df6dd"
+    },
+    {
+      "name": "pattern-body",
+      "va": 930448,
+      "size": 48,
+      "kind": "code",
+      "hex": "00482de90db0a0e108d04de2a51a05e30020a0e3a51a45e36830a0e300108de50110a0e3ee0500eb0bd0a0e10088bde8",
+      "sha256": "ef7bb03845f3e67862d8a00720b153bbc3ee1f744a004e8216139b163391f2c8"
+    },
+    {
+      "name": "rmw-body",
+      "va": 932868,
+      "size": 460,
+      "kind": "code",
+      "hex": "f04b2de918b08de210d04de20040a0e1180090e50c208de20180a0e1a810a0e3578d00eb0050e0e3000050e36300001a180094e508208de21810a0e3508d00eb000050e35d00001a7c919fe509909fe7000099e5011040e2900100e0010010e3000099e564619fe5011040e2900101e006609fe70c009de5010011e30200000a001096e5090051e3f4ffffca000058e30800000a001099e5012041e2910201e0010011e30900000a001096e5090051e3130000ca050000ea08209de5f010c0e30c108de50f0882e3ff2480e3100000ea001099e5003096e5012041e2910207e008209de50f1100e3011080e10f26c2e30c108de5010017e30500000a0a0053e3030000ba0f1100e3011080e10c108de5eeffffea08208de50400a0e100108de50110a0e30020a0e3a830a0e34f0300eb000050e32100001a000099e5011040e2900100e0010010e30200000a000096e5090050e3110000ca08009de50110a0e300008de50400a0e10020a0e31830a0e33e0300eb0050a0e1000099e5000055e3011040e20050e013900100e0010010e30a00000a000096e5090050e3070000da08009de50110a0e300008de50400a0e10020a0e31830a0e32c0300ebe5ffffea0500a0e118d04be2f08bbde8",
+      "sha256": "763ee4325290cac5d9913b3e8907b979b09894b2f9bbbd3c21ce5764b80412f1"
+    },
+    {
+      "name": "rmw-literals",
+      "va": 933328,
+      "size": 8,
+      "kind": "data",
+      "hex": "d4bf4f005cb34f00",
+      "sha256": "dcf52df5a5f460b20a63a0040fb7d26454ba9f2b53b5b6a0e6eaa67f3fbf991c"
+    },
+    {
+      "name": "constructor-body",
+      "va": 922704,
+      "size": 616,
+      "kind": "code",
+      "hex": "704c2de910b08de258129fe501109fe7dc1080e550c29fe50cc09fe74ce29fe50ee09fe748329fe503309fe744129fe501109fe740229fe502209fe73c429fe504409fe738529fe505509fe734629fe506609fe7bc6080e5c05080e5c44080e5c82080e5cc2080e20a4082e8d8c080e514c29fe50cc09fe710e29fe50ee09fe70c329fe503309fe708629fe506609fe704529fe505509fe700429fe504409fe7fc119fe501109fe7f8219fe502209fe79c2080e5a02080e2720082e8b03080e5b4e080e5b8c080e5dcc19fe50cc09fe7d8e19fe50ee09fe7d4319fe503309fe7d0619fe506609fe7cc519fe505509fe7c8419fe504409fe7c4119fe501109fe7c0219fe502209fe77c2080e5802080e2720082e8903080e594e080e598c080e5a4c19fe50cc09fe7a0e19fe50ee09fe79c319fe503309fe798619fe506609fe794519fe505509fe790419fe504409fe78c119fe501109fe788219fe502209fe75c2080e5602080e2720082e8703080e574e080e578c080e56cc19fe50cc09fe768e19fe50ee09fe764319fe503309fe760619fe506609fe75c519fe505509fe758419fe504409fe754119fe501109fe750219fe502209fe73c2080e5402080e2720082e8503080e554e080e558c080e534c19fe50cc09fe730e19fe50ee09fe72c319fe503309fe728619fe506609fe724519fe505509fe720419fe504409fe71c119fe501109fe718219fe502209fe71c2080e5202080e2720082e8303080e534e080e538c080e5fc109fe501109fe7f8209fe502209fe7f4309fe503309fe7f0609fe506609fe7ec509fe505509fe7600080e90c3080e5102080e5141080e50000a0e3708cbde8",
+      "sha256": "d1e526e4c773e51a22151a4082d3800142244982a9f7bfbc15ede6081b21559f"
+    },
+    {
+      "name": "constructor-literals",
+      "va": 923320,
+      "size": 216,
+      "kind": "data",
+      "hex": "b0dd4f0050d74f00c0e14f0094e64f0064d44f00d4ea4f0054da4f0060e64f0018e44f0074d74f00fcd44f0050d84f0074d74f0070d54f0030d74f00c0e54f00acdb4f00ccdf4f0004d14f00d8d94f0070d84f00e0dd4f00d0de4f00b0e84f001ce94f0030d54f0060ea4f00e4d74f0048ea4f00ace94f0070d74f0078e44f00e8d54f0030d74f00fce14f0028d64f009cdd4f0044d14f0034d24f00dcd14f002cdb4f003ce64f0060e84f0038df4f00b8d84f009ce24f001cdf4f008cd44f0004d94f0084db4f0044e04f0018dc4f009ce44f008cd34f00",
+      "sha256": "6e3a9c4dcbaa131c081f211a991efdb31921ac30218319e4bb2086e8466d2154"
+    },
+    {
+      "name": "source-init",
+      "va": 939080,
+      "size": 132,
+      "kind": "code",
+      "hex": "0020a0e3000052e31d00001a103c9fe503308fe0020000ea2a0051e30120a0e11700000a00109ee5010041e2910000e0010010e30200000a00009ce5090050e30b0000ca0200d3e7d80020e20200c3e700009ee5011040e2900100e0011082e2010010e3ebffff0a00009ce5090050e3e8ffffda0200d3e7d80020e20200c3e7efffffea",
+      "sha256": "51e0d903ed66b81bbb6ec8468c57c27c3ce004511684ccdf7905386dc98ab356"
+    },
+    {
+      "name": "function-init",
+      "va": 939260,
+      "size": 132,
+      "kind": "code",
+      "hex": "0020a0e3000052e31d00001a603b9fe503308fe0020000ea0b0051e30120a0e11700000a00009ee5011040e2900100e0010010e30200000a00009ce5090050e30b0000ca0200d3e7d10020e20200c3e700009ee5011040e2900100e0011082e2010010e3ebffff0a00009ce5090050e3e8ffffda0200d3e7d10020e20200c3e7efffffea",
+      "sha256": "88989aff4972e26960b143a0634f8a5f611d2d98bbed637ab66acaa5f82e6c1e"
+    },
+    {
+      "name": "analog-init",
+      "va": 939436,
+      "size": 132,
+      "kind": "code",
+      "hex": "0020a0e3000052e31d00001ab83a9fe503308fe0020000ea290051e30120a0e11700000a00009ee5011040e2900100e0010010e30200000a00009ce5090050e30b0000ca0200d3e71e0020e20200c3e700009ee5011040e2900100e0011082e2010010e3ebffff0a00009ce5090050e3e8ffffda0200d3e71e0020e20200c3e7efffffea",
+      "sha256": "b1a78aecb10653e0f949f6e47710fab455c0299606f9a08d4ee3f85f1687eb03"
+    },
+    {
+      "name": "nonce-init",
+      "va": 939932,
+      "size": 44,
+      "kind": "code",
+      "hex": "0020a0e3000052e30700001ad8389fe503308fe00200d3e7120020e20200c3e7012082e2310052e3f9ffff1a",
+      "sha256": "9df4f751556bf3e3f3cec3d489dc983c440446c7b68f316243dfa536ea8d0bd8"
+    },
+    {
+      "name": "core-init",
+      "va": 941896,
+      "size": 44,
+      "kind": "code",
+      "hex": "0020a0e3000052e30700001a80319fe503308fe00200d3e7670020e20200c3e7012082e2270052e3f9ffff1a",
+      "sha256": "085a8b16e7783b39681f0848a2e61a2585756827f484d4ba00dd27668aa74262"
+    },
+    {
+      "name": "init-literals-1",
+      "va": 942188,
+      "size": 16,
+      "kind": "data",
+      "hex": "875f5000fd5e5000845e50007e5e5000",
+      "sha256": "7a58d0cf19a90cde2802197ab781ab8787fbc89b60314c9f3227aad8e321fba9"
+    },
+    {
+      "name": "init-literal-2",
+      "va": 942216,
+      "size": 4,
+      "kind": "data",
+      "hex": "305d5000",
+      "sha256": "583cdd13d5a00524517b5cd191166843f792cac2e7fa2a7fba370e92b9567785"
+    },
+    {
+      "name": "init-literal-3",
+      "va": 942300,
+      "size": 4,
+      "kind": "data",
+      "hex": "50595000",
+      "sha256": "77a751f1f9947a7c279aba7511bc920bc9193bcd884c7c1bbe683da2d5ce06f8"
+    },
+    {
+      "name": "startup-entry-flags",
+      "va": 350140,
+      "size": 96,
+      "kind": "code",
+      "hex": "0500a0e1914601eb0070a0e10500a0e1884601eb20000be54500d7e524000be54600d7e528000be54700d7e528008de54800d7e524008de54900d7e52c008de54a00d7e520008de54b00d7e51c008de54c00d7e54460d7e518008de54d40d7e5",
+      "sha256": "68f76911345a062f24d4642a52f0b56178e6eeab3ac5558ac589086bc6cb9e23"
+    },
+    {
+      "name": "startup-rmw",
+      "va": 350304,
+      "size": 152,
+      "kind": "code",
+      "hex": "050050e33000001a0500a0e15d4601eb2410d9e5000051e32b00000a201099e5031041e2030051e32700003a180090e5381099e5000051e10f0000dad00f9fe50160a0e3cc1f9fe5cc2f9fe500008fe0183099e501108fe0fc7f9fe502208fe0013083e207708fe0c0008de808308de5673700e3fa9102eb060000ea1c0099e50010a0e3a42190e5ae0f89e232ff2fe1000050e30c00000a",
+      "sha256": "7ddbae83d3c7590e2a7fdf72ec262e7fca2d4d997a7c13bc82816f9e29ccda7e"
+    },
+    {
+      "name": "startup-analog",
+      "va": 353036,
+      "size": 108,
+      "kind": "code",
+      "hex": "0a00a0e309e302eb20009de5010010e31500000a14009de50c1095e5902190e50a00a0e132ff2fe1000050e30e00000a14089fe50160a0e310189fe510289fe500008fe0183099e501108fe004789fe502208fe0013083e207708fe0c0008de808308de5af3200e3190000ea",
+      "sha256": "de2a541578f71d55794735b253d918e40e364d4dc664b2f4e419ab1fc9914152"
+    },
+    {
+      "name": "startup-nonce",
+      "va": 353620,
+      "size": 128,
+      "kind": "code",
+      "hex": "18009de5010000e2001098e5012041e2910201e0010011e30200000a001094e5090051e3f7ffffca000050e31300000a14009de50010a0e3782190e50a00a0e132ff2fe1000050e30c00000a000098e508569fe5011040e205508fe0900100e0010010e34100000af4059fe500009fe7000090e5090050e3590000ca3b0000ea",
+      "sha256": "b2e06b681bfb4cfc79e36300b265b3b70a87247439d7fd8c9aa8a4bd7fddf175"
+    },
+    {
+      "name": "startup-pattern-gate",
+      "va": 353748,
+      "size": 48,
+      "kind": "code",
+      "hex": "0c009de5010010e38f00000a000098e5011040e2900100e0010010e36500000a000094e5090050e36e0000ca610000ea",
+      "sha256": "0bf9f708d4d852a1f4f7d76089adaab5bd71a6f371303efe9a96a01cb890c46f"
+    },
+    {
+      "name": "startup-pattern",
+      "va": 354188,
+      "size": 148,
+      "kind": "code",
+      "hex": "14009de57c1190e50a00a0e131ff2fe1001098e5012041e2910201e0010011e30700000a001094e5090051e3040000da14009de57c1190e50a00a0e131ff2fe1eeffffea000050e31100000a00049fe50160a0e3fc139fe5fc239fe500008fe0183099e501108fe0f0739fe502208fe0013083e207708fe0c0008de808308de5db3200e32b8e02ebd4139fe501108fe0b4fdffea",
+      "sha256": "992a065a167468613286322fdc24a975796ae4c3d698f6b4a22aeae64b939117"
+    },
+    {
+      "name": "driver",
+      "va": 6206432,
+      "size": 7,
+      "kind": "data",
+      "hex": "7a6c77687b6c1e",
+      "sha256": "64a55a211d01dc292292fa14f929c00b510dd0da70734ea797b1636e001b3e93"
+    },
+    {
+      "name": "source",
+      "va": 6206439,
+      "size": 42,
+      "kind": "data",
+      "hex": "f7acb5a8f7baadb1b4bcf7b4b1babab1acb5b9b1b6f7abaabbf7bbb0b1a8f7bbb0b1a8e9ebeee0f6bbd8",
+      "sha256": "21e3cb1265c67df3e206ffcdcc8af58222b08f0252d352b2b1dd982f9300a406"
+    },
+    {
+      "name": "function",
+      "va": 6206481,
+      "size": 11,
+      "kind": "data",
+      "hex": "8aa3b4b5b0b2a5b4b58cd1",
+      "sha256": "b4f867e0249b5f517303e494ce0950cb19c433503f70c9dec350e9e770e0126a"
+    },
+    {
+      "name": "analog-format",
+      "va": 6206530,
+      "size": 41,
+      "kind": "data",
+      "hex": "7d767f77703d3b7a3e333e787f77727b7a3e6a713e6d7b6a3e5f505f52515941534b46415d4a4c521e",
+      "sha256": "ed5fbd8bc0bdde923f8a9eae4ff667be590efd738e9ae03025f3401eeb29f4e6"
+    },
+    {
+      "name": "nonce-format",
+      "va": 6206692,
+      "size": 49,
+      "kind": "data",
+      "hex": "717a737b7c313776323f3274737b7e777632667d32617766325c5d5c51574d505b5c4d5d445740545e5d454d5146405e12",
+      "sha256": "051b4aa02d7740224b9fee669f056969eaa552b1baefa29170486cadf72eb144"
+    },
+    {
+      "name": "core-format",
+      "va": 6207664,
+      "size": 39,
+      "kind": "data",
+      "hex": "040f060e09444203474a4701060e0b0203471308471402090347040815024704080a0a06090367",
+      "sha256": "c7c429e788d068fb804514b20d20bb4baabcfda2fd7c0096992eda32556ac50d"
+    },
+    {
+      "name": "got-slot-0x94",
+      "va": 6153776,
+      "size": 4,
+      "kind": "data",
+      "hex": "043c0e00",
+      "sha256": "7da7d813a7b15ad509ed945dd0e5bf3494102dd4ae84848ecffeac1af08a3b44"
+    },
+    {
+      "name": "got-slot-0x80",
+      "va": 6159876,
+      "size": 4,
+      "kind": "data",
+      "hex": "c0350e00",
+      "sha256": "472eb90f526cc1ad771e08de0cb0f27df31de0fd96fe98bf3d7ee27911a67f81"
+    },
+    {
+      "name": "got-slot-0x6c",
+      "va": 6160348,
+      "size": 4,
+      "kind": "data",
+      "hex": "90320e00",
+      "sha256": "c3c8489dd67987a837f07f55c2c2402d32a87b4dc596265e6a8d66b0f89a4376"
+    },
+    {
+      "name": "got-slot-0x68",
+      "va": 6160200,
+      "size": 4,
+      "kind": "data",
+      "hex": "98300e00",
+      "sha256": "e12b0db6a572a0f82a67c9c306fcec5a3210651a566e322f3e30fba71fd9f277"
+    }
+  ],
+  "word_facts": {
+    "0x557fc": "0xe5d7004a",
+    "0x55800": "0xe58d0020",
+    "0x5580c": "0xe5d7004c",
+    "0x55814": "0xe58d0018",
+    "0x55818": "0xe5d7404d",
+    "0x558dc": "0xe599001c",
+    "0x558e0": "0xe3a01000",
+    "0x558e4": "0xe59021a4",
+    "0x558e8": "0xe2890fae",
+    "0x558ec": "0xe12fff32",
+    "0x558f0": "0xe3500000",
+    "0x56314": "0xe59d0020",
+    "0x56318": "0xe3100001",
+    "0x56324": "0xe595100c",
+    "0x56328": "0xe5902190",
+    "0x56330": "0xe12fff32",
+    "0x56334": "0xe3500000",
+    "0x56554": "0xe59d0018",
+    "0x56558": "0xe2000001",
+    "0x56588": "0xe3a01000",
+    "0x5658c": "0xe5902178",
+    "0x56594": "0xe12fff32",
+    "0x56598": "0xe3500000",
+    "0x565d4": "0xe59d000c",
+    "0x565d8": "0xe3100001",
+    "0x565dc": "0xa00008f",
+    "0x56790": "0xe590117c",
+    "0x56798": "0xe12fff31",
+    "0x567d0": "0xe3500000",
+    "0xe1520": "0xe59fe1d8",
+    "0xe1524": "0xe79fe00e",
+    "0xe1548": "0xe59f11c4",
+    "0xe154c": "0xe79f1001",
+    "0xe1560": "0xe8820072",
+    "0xe1568": "0xe580e094",
+    "0xe1588": "0xe59f6198",
+    "0xe158c": "0xe79f6006",
+    "0xe1590": "0xe59f5194",
+    "0xe1594": "0xe79f5005",
+    "0xe15b8": "0xe8820072",
+    "0xe30a8": "0xe2210001",
+    "0xe30ac": "0xe3081dee",
+    "0xe30b4": "0xe3481000",
+    "0xe30b8": "0xe1800001",
+    "0xe30c4": "0xe3a01001",
+    "0xe30c8": "0xe3a0303c",
+    "0xe30d0": "0xeb000667",
+    "0xe30f8": "0xe0000190",
+    "0xe3100": "0xe3100001",
+    "0xe3128": "0xe3003183",
+    "0xe3134": "0xe5940018",
+    "0xe3158": "0xeb005bd9",
+    "0xe315c": "0xe5940018",
+    "0xe3178": "0xe3003251",
+    "0xe317c": "0xeb005bd0",
+    "0xe3194": "0xe0000190",
+    "0xe3198": "0xe3100001",
+    "0xe3234": "0xe0020392",
+    "0xe3238": "0xe3120001",
+    "0xe329c": "0xe3051aa5",
+    "0xe32a0": "0xe3a02000",
+    "0xe32a4": "0xe3451aa5",
+    "0xe32a8": "0xe3a03068",
+    "0xe32b0": "0xe3a01001",
+    "0xe32b4": "0xeb0005ee",
+    "0xe32b8": "0xe1a0d00b",
+    "0xe32bc": "0xe8bd8800",
+    "0xe35d0": "0xe2010007",
+    "0xe35dc": "0xe3a01001",
+    "0xe35e0": "0xe3a02000",
+    "0xe35e4": "0xe3a03054",
+    "0xe35ec": "0xeb000520",
+    "0xe35f0": "0xe3500000",
+    "0xe35f4": "0xa000031",
+    "0xe360c": "0xe0000190",
+    "0xe361c": "0xe3100001",
+    "0xe3644": "0xe5943018",
+    "0xe3654": "0xe2833001",
+    "0xe365c": "0xe30031a9",
+    "0xe3660": "0xeb005a97",
+    "0xe3670": "0xe0000190",
+    "0xe3674": "0xe3100001",
+    "0xe36d8": "0xe0020392",
+    "0xe36dc": "0xe3120001",
+    "0xe3c14": "0xe5900018",
+    "0xe3c1c": "0xe1a08001",
+    "0xe3c20": "0xe3a010a8",
+    "0xe3c24": "0xeb008d57",
+    "0xe3c28": "0xe3e05000",
+    "0xe3c30": "0x1a000063",
+    "0xe3c34": "0xe5940018",
+    "0xe3c3c": "0xe3a01018",
+    "0xe3c40": "0xeb008d50",
+    "0xe3c48": "0x1a00005d",
+    "0xe3c70": "0xe0010190",
+    "0xe3c7c": "0xe3110001",
+    "0xe3c90": "0xe3580000",
+    "0xe3ca0": "0xe0010291",
+    "0xe3ca4": "0xe3110001",
+    "0xe3cbc": "0xe59d2008",
+    "0xe3cc0": "0xe3c010f0",
+    "0xe3cc8": "0xe382080f",
+    "0xe3ccc": "0xe38024ff",
+    "0xe3ce0": "0xe0070291",
+    "0xe3ce4": "0xe59d2008",
+    "0xe3ce8": "0xe300110f",
+    "0xe3cec": "0xe1801001",
+    "0xe3cf0": "0xe3c2260f",
+    "0xe3cf8": "0xe3170001",
+    "0xe3d18": "0xe58d2008",
+    "0xe3d20": "0xe58d1000",
+    "0xe3d24": "0xe3a01001",
+    "0xe3d28": "0xe3a02000",
+    "0xe3d2c": "0xe3a030a8",
+    "0xe3d30": "0xeb00034f",
+    "0xe3d38": "0x1a000021",
+    "0xe3d44": "0xe0000190",
+    "0xe3d48": "0xe3100001",
+    "0xe3d5c": "0xe59d0008",
+    "0xe3d60": "0xe3a01001",
+    "0xe3d64": "0xe58d0000",
+    "0xe3d6c": "0xe3a02000",
+    "0xe3d70": "0xe3a03018",
+    "0xe3d74": "0xeb00033e",
+    "0xe3d78": "0xe1a05000",
+    "0xe3d80": "0xe3550000",
+    "0xe3d88": "0x13e05000",
+    "0xe3d8c": "0xe0000190",
+    "0xe3d90": "0xe3100001",
+    "0xe3dc4": "0xe1a00005",
+    "0xe5490": "0xe22000d8",
+    "0xe5544": "0xe22000d1",
+    "0xe55f4": "0xe220001e",
+    "0xe57b4": "0xe2200012",
+    "0xe5f60": "0xe2200067"
+  },
+  "branches": [
+    {
+      "at": 931308,
+      "target": 936564
+    },
+    {
+      "at": 931424,
+      "target": 1024196
+    },
+    {
+      "at": 931512,
+      "target": 1024196
+    },
+    {
+      "at": 930000,
+      "target": 936564
+    },
+    {
+      "at": 930136,
+      "target": 1024196
+    },
+    {
+      "at": 930172,
+      "target": 1024196
+    },
+    {
+      "at": 930288,
+      "target": 1024196
+    },
+    {
+      "at": 930324,
+      "target": 1024196
+    },
+    {
+      "at": 930484,
+      "target": 936564
+    },
+    {
+      "at": 932900,
+      "target": 1077640
+    },
+    {
+      "at": 932928,
+      "target": 1077640
+    },
+    {
+      "at": 933168,
+      "target": 936564
+    },
+    {
+      "at": 933236,
+      "target": 936564
+    },
+    {
+      "at": 933308,
+      "target": 936564
+    }
+  ],
+  "pc_targets": [
+    {
+      "load": 931348,
+      "add": 931352,
+      "literal": 931588,
+      "target": 6206530
+    },
+    {
+      "load": 930024,
+      "add": 930036,
+      "literal": 930396,
+      "target": 6207664
+    },
+    {
+      "load": 930032,
+      "add": 930044,
+      "literal": 930400,
+      "target": 6206692
+    },
+    {
+      "load": 931376,
+      "add": 931392,
+      "literal": 931592,
+      "target": 6206432
+    },
+    {
+      "load": 931384,
+      "add": 931400,
+      "literal": 931596,
+      "target": 6206439
+    },
+    {
+      "load": 931388,
+      "add": 931404,
+      "literal": 931600,
+      "target": 6206481
+    },
+    {
+      "load": 939092,
+      "add": 939096,
+      "literal": 942188,
+      "target": 6206439
+    },
+    {
+      "load": 939272,
+      "add": 939276,
+      "literal": 942192,
+      "target": 6206481
+    },
+    {
+      "load": 939448,
+      "add": 939452,
+      "literal": 942200,
+      "target": 6206530
+    },
+    {
+      "load": 939944,
+      "add": 939948,
+      "literal": 942216,
+      "target": 6206692
+    },
+    {
+      "load": 941908,
+      "add": 941912,
+      "literal": 942300,
+      "target": 6207664
+    }
+  ],
+  "strings": [
+    {
+      "region": "driver",
+      "key": 30,
+      "text": "driver"
+    },
+    {
+      "region": "source",
+      "key": 216,
+      "text": "/tmp/build/libbitmain/src/chip/chip1368.c"
+    },
+    {
+      "region": "function",
+      "key": 209,
+      "text": "[redacted]"
+    },
+    {
+      "region": "analog-format",
+      "key": 30,
+      "text": "chain#%d - failed to set ANALOG_MUX_CTRL"
+    },
+    {
+      "region": "nonce-format",
+      "key": 18,
+      "text": "chain#%d - failed to set NONCE_BIN_OVERFLOW_CTRL"
+    },
+    {
+      "region": "core-format",
+      "key": 103,
+      "text": "chain#%d - failed to send core command"
+    }
+  ],
+  "constructor_slots": [
+    {
+      "literal_index": 18,
+      "output_offset": 148,
+      "load_instruction": "0xe1520",
+      "got_load_instruction": "0xe1524",
+      "register": 14,
+      "literal_address": "0xe1700",
+      "literal_word": "0x4fd104",
+      "got_address": "0x5de630",
+      "got_bytes": "043c0e00",
+      "method_identity": "0xe3c04",
+      "store_instruction": "0xe1568",
+      "store_order": 24,
+      "store_description": "str lr, [r0, #0x94]"
+    },
+    {
+      "literal_index": 23,
+      "output_offset": 128,
+      "load_instruction": "0xe1548",
+      "got_load_instruction": "0xe154c",
+      "register": 1,
+      "literal_address": "0xe1714",
+      "literal_word": "0x4fe8b0",
+      "got_address": "0x5dfe04",
+      "got_bytes": "c0350e00",
+      "method_identity": "0xe35c0",
+      "store_instruction": "0xe1560",
+      "store_order": 19,
+      "store_description": "stm r2, {r1, r4, r5, r6}"
+    },
+    {
+      "literal_index": 28,
+      "output_offset": 108,
+      "load_instruction": "0xe1588",
+      "got_load_instruction": "0xe158c",
+      "register": 6,
+      "literal_address": "0xe1728",
+      "literal_word": "0x4fea48",
+      "got_address": "0x5dffdc",
+      "got_bytes": "90320e00",
+      "method_identity": "0xe3290",
+      "store_instruction": "0xe15b8",
+      "store_order": 30,
+      "store_description": "stm r2, {r1, r4, r5, r6}"
+    },
+    {
+      "literal_index": 29,
+      "output_offset": 104,
+      "load_instruction": "0xe1590",
+      "got_load_instruction": "0xe1594",
+      "register": 5,
+      "literal_address": "0xe172c",
+      "literal_word": "0x4fe9ac",
+      "got_address": "0x5dff48",
+      "got_bytes": "98300e00",
+      "method_identity": "0xe3098",
+      "store_instruction": "0xe15b8",
+      "store_order": 29,
+      "store_description": "stm r2, {r1, r4, r5, r6}"
+    }
+  ],
+  "parity_sites": [
+    {
+      "multiply": 930040,
+      "test": 930048
+    },
+    {
+      "multiply": 930196,
+      "test": 930200
+    },
+    {
+      "multiply": 930356,
+      "test": 930360
+    },
+    {
+      "multiply": 931340,
+      "test": 931356
+    },
+    {
+      "multiply": 931440,
+      "test": 931444
+    },
+    {
+      "multiply": 931544,
+      "test": 931548
+    },
+    {
+      "multiply": 932976,
+      "test": 932988
+    },
+    {
+      "multiply": 933024,
+      "test": 933028
+    },
+    {
+      "multiply": 933088,
+      "test": 933112
+    },
+    {
+      "multiply": 933188,
+      "test": 933192
+    },
+    {
+      "multiply": 933260,
+      "test": 933264
+    }
+  ],
+  "source_sha256": {
+    "libbitmain/src/chip/chip1368-startup-registers.c": "8b2b4b62593b2537141b48ebbcc716f558acaf1e7efbf70d00dd3ed8a9227723",
+    "libbitmain/src/chip/chip1368-register-write.c": "8e9d40fc87c102fc0342d64c93027f00b50c3b2c7abe590606300d9e8913629b",
+    "libbitmain/src/reg_cache.c": "e504e6e2bd0f568761567551586aa57db174cd3849ca11c22c9c0753ca28d339",
+    "integration/bm1368_control.c": "6311c43f27b482114b7e18826727e2cd024b2bea4a74b911b5d73887757808f3",
+    "reconstruction/support/crc5.c": "d03fe3a245dffeddb2d644d91671b44430ca81a007ad15b49db294c1a700e1a2",
+    "integration/tests/test_bm1368_startup_registers_135.c": "4ec4b18e887002ad06816238ab7b852aa86297834ba80e2db2f17cd3f213a7f7",
+    "integration/bm1368_startup_registers_135.h": "65125851efb22d72c754ff497157094787e741ddc34f91e9927f287512a25afc",
+    "integration/bm1368_register_write_135.h": "c1fbb74d18db5263c7585aea293f8eda51220ade4dba8f07da8adb8060e52a6a",
+    "integration/bm1368_frequency_135.h": "2a5457d7600f67a793c5cfe380b82537eddee9af9bd163395aec0b14d496c7da",
+    "integration/bm1368_control.h": "11ddb580caab82219f4df5d480ac17d74386a55ba798aaa47e54390c02aa351a",
+    "include/xminer/recovery/reg_cache.h": "37aae34cab018e6c6f2282a8083aa01d6fd04da10e37f46d39b6162766a37ba6",
+    "include/xminer/recovery/chip1398.h": "57c25fb7b8e234f1b3fc0eef972338398f4e6027dcee0e38f6c1eb6c5eadef14",
+    "include/xminer/recovery/pll.h": "96cb204b3a846ad82c09c8be5e480e0069751d1a79b191e53fa3dc2618a5602d",
+    "reconstruction/data/reg_cache_defaults.inc": "9ef43ac8ee0900bfd06319f8973cb11389103e1fdbe031aa21ba91889980ef84",
+    "integration/tests/check_bm1368_startup_registers_135.py": "6726ec8de6aaebf981e5fe5fee85151e1a24d9e2c2e972278242c9bfefa97a19",
+    "integration/tests/bm1368_startup_registers_controls_135.json": "de18459f33c53a518d3888daf4a94af2196185f6152bc47ec5a734284e6288d2",
+    "integration/bm1368-startup-registers-135.mk": "0e97d2754cc98a29580953ddf2399e0a29ab6e42c1b222ddaa9f2d20a31d4d98",
+    "tools/elf32.py": "a67edcb47712252e3f11cf503416b149910587ab181313e01400bde30258e9a3",
+    ".github/workflows/bm1368-startup-registers-research.yml": "8a7c43ede78140f824e5b93654153241581ecc92968a7c5cd08de192443ec4f8"
+  },
+  "disassembly_sha256": "bf0e286486b774ea627bfc103bff7e947a352c00a8793bc98829254236cce642"
+}

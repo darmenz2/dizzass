@@ -7,6 +7,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(ROOT/'tools'))
 from elf32 import ELF32
+from current_dependency_pins_135 import NATIVE_CHECKER_PATH, check_current_dependency
 
 def main():
  e=json.loads((ROOT/'integration/evidence/chain_temperature_setup_135.json').read_text())
@@ -16,6 +17,9 @@ def main():
   lo,hi=int(r['start'],16),int(r['end'],16)
   assert hashlib.sha256(elf.read(lo,hi-lo)).hexdigest()==r['sha256'],r['name']
  for path,want in e['immutable'].items():
+  if path == NATIVE_CHECKER_PATH:
+   check_current_dependency(ROOT,path,want)
+   continue
   data=(ROOT/path).read_bytes()
   assert hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()==want,path
  for s in e['strings']:

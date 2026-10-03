@@ -18,6 +18,12 @@ class CurrentDependencyPins(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
+        self.native_doc = (ROOT / pins.NATIVE_DOC_PATH).read_bytes()
+        self.old_native_doc = pins.historical_native_document_bytes(self.native_doc)
+        self.put(pins.NATIVE_DOC_PATH, self.native_doc)
+        self.native_checker = (ROOT / pins.NATIVE_CHECKER_PATH).read_bytes()
+        self.old_native_checker = pins.historical_native_checker_bytes(self.native_checker)
+        self.put(pins.NATIVE_CHECKER_PATH, self.native_checker)
         self.thermal = (ROOT / pins.THERMAL_PATH).read_bytes()
         self.dispatch = (ROOT / pins.DISPATCH_PATH).read_bytes()
         self.bm1368 = (ROOT / pins.BM1368_PATH).read_bytes()
@@ -29,7 +35,9 @@ class CurrentDependencyPins(unittest.TestCase):
         self.ticket_append = self.ticket_bm1368[pins.BM1368_RESET_SIZE:]
         self.sweep_bm1368 = pins.sweep_bm1368_bytes(self.bm1368)
         self.sweep_append = self.sweep_bm1368[pins.BM1368_TICKET_SIZE:]
-        self.address_append = self.bm1368[pins.BM1368_SWEEP_SIZE:]
+        self.address_bm1368 = pins.address_bm1368_bytes(self.bm1368)
+        self.address_append = self.address_bm1368[pins.BM1368_SWEEP_SIZE:]
+        self.drive_append = self.bm1368[pins.BM1368_ADDRESS_SIZE:]
         self.constructor_bm1368 = pins.constructor_bm1368_bytes(self.bm1368)
         self.put(pins.THERMAL_PATH, self.thermal)
         self.put(pins.DISPATCH_PATH, self.dispatch)
@@ -48,7 +56,7 @@ class CurrentDependencyPins(unittest.TestCase):
         pins.check_current_dependency(self.root, path, expected)
 
     @contextmanager
-    def accept_address_bm1368_identity(self, raw):
+    def accept_drive_bm1368_identity(self, raw):
         # Bypass every full-source identity predicate so a failed prefix/gate
         # check is independently demonstrated rather than masked by hashing.
         with patch.multiple(pins, BM1368_CURRENT_SIZE=len(raw),
@@ -57,10 +65,20 @@ class CurrentDependencyPins(unittest.TestCase):
             yield
 
     @contextmanager
+    def accept_address_bm1368_identity(self, raw):
+        # Match the new outer identity and the preserved address source only.
+        address = raw[:-len(self.drive_append)]
+        with self.accept_drive_bm1368_identity(raw), patch.multiple(
+                pins, BM1368_ADDRESS_SIZE=len(address),
+                BM1368_ADDRESS_BLOB=pins.git_blob(address),
+                BM1368_ADDRESS_SHA256=hashlib.sha256(address).hexdigest()):
+            yield
+
+    @contextmanager
     def accept_current_bm1368_identity(self, raw):
-        # Existing inner controls match both new-current and sweep identities.
-        # The separately tested address-only helper leaves the sweep pin live.
-        sweep = raw[:-len(self.address_append)]
+        # Match the drive, address and sweep layers to expose older predicates.
+        # The address-only helper leaves the preserved sweep pin live.
+        sweep = raw[:-len(self.address_append)-len(self.drive_append)]
         with self.accept_address_bm1368_identity(raw), patch.multiple(
                 pins, BM1368_SWEEP_SIZE=len(sweep),
                 BM1368_SWEEP_BLOB=pins.git_blob(sweep),
@@ -76,9 +94,8 @@ class CurrentDependencyPins(unittest.TestCase):
 
     @contextmanager
     def accept_current_and_ticket_identity(self, raw):
-        # Older inner-predicate tests carry the unchanged outer sweep append.
-        # Both identities are matched so neither can mask an inner failure.
-        ticket = raw[:-len(self.sweep_append)-len(self.address_append)]
+        # Older controls retain all outer appends while matching their hashes.
+        ticket = raw[:-len(self.sweep_append)-len(self.address_append)-len(self.drive_append)]
         with self.accept_current_bm1368_identity(raw), \
                 self.accept_ticket_bm1368_identity(ticket):
             yield
@@ -99,12 +116,224 @@ class CurrentDependencyPins(unittest.TestCase):
             yield
 
     def pairs(self):
-        return ((pins.THERMAL_PATH, pins.THERMAL_OLD_BLOB, self.thermal,
+        return ((pins.NATIVE_DOC_PATH, pins.NATIVE_DOC_OLD_BLOB, self.native_doc,
+                 self.old_native_doc),
+                (pins.NATIVE_CHECKER_PATH, pins.NATIVE_CHECKER_OLD_BLOB,
+                 self.native_checker, self.old_native_checker),
+                (pins.THERMAL_PATH, pins.THERMAL_OLD_BLOB, self.thermal,
                  self.old_thermal),
                 (pins.DISPATCH_PATH, pins.DISPATCH_OLD_BLOB, self.dispatch,
                  self.old_dispatch),
                 (pins.BM1368_PATH, pins.BM1368_OLD_BLOB, self.bm1368,
                  self.old_bm1368))
+
+    def test_native_document_transition_preserves_exact_historical_witness(self):
+        self.assertEqual(len(self.native_doc), 8016)
+        self.assertEqual(pins.git_blob(self.native_doc),
+                         'e9ac152c1ac0405c4785ff4f0582ab16179b38ac')
+        self.assertEqual(hashlib.sha256(self.native_doc).hexdigest(),
+                         'c9733cfef78b3d00c1942e4fea68ad8179dac9978fd30ea1f284057cd4f5907f')
+        self.assertEqual(len(self.old_native_doc), 6720)
+        self.assertEqual(pins.git_blob(self.old_native_doc),
+                         '567e8cd6cbb26bf761a27ab7ecc15b2fdb7265f7')
+        self.assertEqual(hashlib.sha256(self.old_native_doc).hexdigest(),
+                         '0ecc4fb72fe15cbcb91feeb3bccc1cd5bda157d9262218257099899952358a08')
+        self.check(pins.NATIVE_DOC_PATH, pins.NATIVE_DOC_OLD_BLOB)
+
+    def test_native_document_current_identity_components_are_independent(self):
+        for constant, wrong in (('NATIVE_DOC_CURRENT_BLOB', '0' * 40),
+                                ('NATIVE_DOC_CURRENT_SHA256', '0' * 64),
+                                ('NATIVE_DOC_CURRENT_SIZE', 8015)):
+            with self.subTest(constant=constant), patch.object(pins, constant, wrong):
+                with self.assertRaisesRegex(ValueError, 'not the reviewed PR110 blob'):
+                    pins.historical_native_document_bytes(self.native_doc)
+
+    def test_native_document_historical_identity_components_are_independent(self):
+        for constant, wrong in (('NATIVE_DOC_OLD_BLOB', '0' * 40),
+                                ('NATIVE_DOC_OLD_SHA256', '0' * 64),
+                                ('NATIVE_DOC_OLD_SIZE', 6719)):
+            with self.subTest(constant=constant), patch.object(pins, constant, wrong):
+                with self.assertRaisesRegex(ValueError, 'does not reconstruct'):
+                    pins.historical_native_document_bytes(self.native_doc)
+
+    @contextmanager
+    def accept_native_document_identity(self, raw):
+        with patch.multiple(pins, NATIVE_DOC_CURRENT_SIZE=len(raw),
+                            NATIVE_DOC_CURRENT_BLOB=pins.git_blob(raw),
+                            NATIVE_DOC_CURRENT_SHA256=hashlib.sha256(raw).hexdigest()):
+            yield
+
+    def test_native_document_block_remains_required_without_full_current_hash(self):
+        block = pins.NATIVE_DOC_CURRENT_BLOCK
+        reversed_block = b'\n\n'.join(reversed(block.split(b'\n\n')))
+        for mutant in (self.native_doc.replace(block, b'', 1),
+                       self.native_doc + block,
+                       self.native_doc.replace(block, reversed_block, 1)):
+            with self.subTest(size=len(mutant)), self.accept_native_document_identity(mutant):
+                with self.assertRaisesRegex(ValueError, 'transition is not unique'):
+                    pins.historical_native_document_bytes(mutant)
+
+    def test_native_document_outside_block_changes_fail_historical_identity(self):
+        for mutant in (self.native_doc + b'\n', b'X' + self.native_doc[1:]):
+            with self.subTest(size=len(mutant)), self.accept_native_document_identity(mutant):
+                with self.assertRaisesRegex(ValueError, 'does not reconstruct'):
+                    pins.historical_native_document_bytes(mutant)
+        with patch.object(pins, 'NATIVE_DOC_OLD_BLOCK', pins.NATIVE_DOC_OLD_BLOCK + b'X'):
+            with self.assertRaisesRegex(ValueError, 'does not reconstruct'):
+                pins.historical_native_document_bytes(self.native_doc)
+
+    def test_native_document_parent_symlink_fails(self):
+        parent = self.root / 'integration'
+        parent.rename(self.root / 'actual-integration')
+        parent.symlink_to(self.root / 'actual-integration', target_is_directory=True)
+        with self.assertRaises(ValueError):
+            self.check(pins.NATIVE_DOC_PATH, pins.NATIVE_DOC_OLD_BLOB)
+
+    @contextmanager
+    def accept_native_checker_identity(self, raw):
+        # Bypass only the full current identity to expose every reverse hunk
+        # and the independent, complete historical witness identity.
+        with patch.multiple(pins, NATIVE_CHECKER_CURRENT_SIZE=len(raw),
+                            NATIVE_CHECKER_CURRENT_BLOB=pins.git_blob(raw),
+                            NATIVE_CHECKER_CURRENT_SHA256=hashlib.sha256(raw).hexdigest()):
+            yield
+
+    def test_native_checker_transition_preserves_exact_historical_witness(self):
+        self.assertEqual(len(self.native_checker), 4788)
+        self.assertEqual(pins.git_blob(self.native_checker),
+                         '4dc9a905b58e9c3f9a934d36db5fae1228c45fda')
+        self.assertEqual(hashlib.sha256(self.native_checker).hexdigest(),
+                         'eb70a5f62fa34cae7f909a99f05991a0dc61dbdb6611ea8e687c5e6c802eaf6b')
+        self.assertEqual(len(self.old_native_checker), 2457)
+        self.assertEqual(pins.git_blob(self.old_native_checker),
+                         'f8ded2a8a47d9e50fa731b5e89f09ce246eabe2c')
+        self.assertEqual(hashlib.sha256(self.old_native_checker).hexdigest(),
+                         '92df543db473146f6b74a40bbd0b00738c77c8f4bb060ce324cce323408b51b2')
+        self.assertEqual(len(pins.NATIVE_CHECKER_CURRENT_HUNKS), 3)
+        self.assertEqual(len(pins.NATIVE_CHECKER_OLD_HUNKS), 3)
+        for current_hunk, old_hunk in zip(pins.NATIVE_CHECKER_CURRENT_HUNKS,
+                                          pins.NATIVE_CHECKER_OLD_HUNKS):
+            self.assertEqual(self.native_checker.count(current_hunk), 1)
+            self.assertEqual(self.old_native_checker.count(old_hunk), 1)
+        self.check(pins.NATIVE_CHECKER_PATH, pins.NATIVE_CHECKER_OLD_BLOB)
+
+    def test_native_checker_historical_source_is_not_current(self):
+        with self.assertRaisesRegex(ValueError, 'not the reviewed PR110 blob'):
+            pins.historical_native_checker_bytes(self.old_native_checker)
+        self.put(pins.NATIVE_CHECKER_PATH, self.old_native_checker)
+        with self.assertRaisesRegex(ValueError, 'not the reviewed PR110 blob'):
+            self.check(pins.NATIVE_CHECKER_PATH, pins.NATIVE_CHECKER_OLD_BLOB)
+
+    def test_native_checker_current_pin_cannot_replace_original_pin(self):
+        with self.assertRaisesRegex(ValueError, 'historical native checker pin changed'):
+            self.check(pins.NATIVE_CHECKER_PATH, pins.NATIVE_CHECKER_CURRENT_BLOB)
+
+    def test_native_checker_current_identity_components_are_independent(self):
+        for constant, wrong in (('NATIVE_CHECKER_CURRENT_BLOB', '0' * 40),
+                                ('NATIVE_CHECKER_CURRENT_SHA256', '0' * 64),
+                                ('NATIVE_CHECKER_CURRENT_SIZE', 4787)):
+            with self.subTest(constant=constant), patch.object(pins, constant, wrong):
+                with self.assertRaisesRegex(ValueError, 'not the reviewed PR110 blob'):
+                    pins.historical_native_checker_bytes(self.native_checker)
+
+    def test_native_checker_historical_identity_components_are_independent(self):
+        for constant, wrong in (('NATIVE_CHECKER_OLD_BLOB', '0' * 40),
+                                ('NATIVE_CHECKER_OLD_SHA256', '0' * 64),
+                                ('NATIVE_CHECKER_OLD_SIZE', 2456)):
+            with self.subTest(constant=constant), patch.object(pins, constant, wrong):
+                with self.assertRaisesRegex(ValueError, 'does not reconstruct'):
+                    pins.historical_native_checker_bytes(self.native_checker)
+
+    def test_native_checker_reverse_requires_exactly_three_hunks(self):
+        for constant in ('NATIVE_CHECKER_CURRENT_HUNKS', 'NATIVE_CHECKER_OLD_HUNKS'):
+            original = getattr(pins, constant)
+            for mutant in (original[:-1], original + (original[0],)):
+                with self.subTest(constant=constant, count=len(mutant)):
+                    with patch.object(pins, constant, mutant):
+                        with self.assertRaisesRegex(ValueError, 'must contain three hunks'):
+                            pins.historical_native_checker_bytes(self.native_checker)
+
+    def test_native_checker_each_hunk_required_without_full_current_identity(self):
+        for index, (current_hunk, old_hunk) in enumerate(zip(
+                pins.NATIVE_CHECKER_CURRENT_HUNKS, pins.NATIVE_CHECKER_OLD_HUNKS)):
+            replacements = (b'', current_hunk + current_hunk,
+                            b'X' + current_hunk[1:], old_hunk)
+            for mutation, replacement in enumerate(replacements):
+                mutant = self.native_checker.replace(current_hunk, replacement, 1)
+                with self.subTest(hunk=index, mutation=mutation):
+                    with self.accept_native_checker_identity(mutant):
+                        with self.assertRaisesRegex(ValueError, 'hunk is not unique'):
+                            pins.historical_native_checker_bytes(mutant)
+
+    def test_native_checker_reordered_hunks_fail_historical_identity(self):
+        hunks = pins.NATIVE_CHECKER_CURRENT_HUNKS
+        for first, second in ((0, 1), (0, 2), (1, 2)):
+            marker = b'\0native-checker-hunk-swap\0'
+            self.assertNotIn(marker, self.native_checker)
+            mutant = self.native_checker.replace(hunks[first], marker, 1)
+            mutant = mutant.replace(hunks[second], hunks[first], 1)
+            mutant = mutant.replace(marker, hunks[second], 1)
+            with self.subTest(first=first, second=second):
+                with self.accept_native_checker_identity(mutant):
+                    with self.assertRaisesRegex(ValueError, 'does not reconstruct'):
+                        pins.historical_native_checker_bytes(mutant)
+
+    def test_native_checker_surrounding_bytes_fail_historical_identity(self):
+        # Touch every unchanged region: before, between and after the hunks.
+        hunks = pins.NATIVE_CHECKER_CURRENT_HUNKS
+        offsets = (0,) + tuple(self.native_checker.index(hunk) + len(hunk)
+                               for hunk in hunks) + (len(self.native_checker) - 1,)
+        mutants = [self.native_checker + b'\n', self.native_checker[:-1]]
+        for offset in offsets:
+            mutant = bytearray(self.native_checker)
+            mutant[offset] ^= 1
+            mutants.append(bytes(mutant))
+        for index, mutant in enumerate(mutants):
+            with self.subTest(mutation=index), self.accept_native_checker_identity(mutant):
+                with self.assertRaisesRegex(ValueError, 'does not reconstruct'):
+                    pins.historical_native_checker_bytes(mutant)
+
+    def test_native_checker_each_old_hunk_corruption_fails_historical_identity(self):
+        original = pins.NATIVE_CHECKER_OLD_HUNKS
+        for index, old_hunk in enumerate(original):
+            for replacement in (b'', old_hunk + b'X', b'X' + old_hunk[1:]):
+                mutant = original[:index] + (replacement,) + original[index + 1:]
+                with self.subTest(hunk=index, size=len(replacement)):
+                    with patch.object(pins, 'NATIVE_CHECKER_OLD_HUNKS', mutant):
+                        with self.assertRaisesRegex(ValueError, 'does not reconstruct'):
+                            pins.historical_native_checker_bytes(self.native_checker)
+
+    def test_native_checker_missing_path_fails(self):
+        (self.root / pins.NATIVE_CHECKER_PATH).unlink()
+        with self.assertRaises(FileNotFoundError):
+            self.check(pins.NATIVE_CHECKER_PATH, pins.NATIVE_CHECKER_OLD_BLOB)
+
+    def test_native_checker_parent_symlink_fails(self):
+        parent = self.root / 'integration'
+        parent.rename(self.root / 'actual-integration')
+        parent.symlink_to(self.root / 'actual-integration', target_is_directory=True)
+        with self.assertRaisesRegex(ValueError, 'parent is not a directory'):
+            self.check(pins.NATIVE_CHECKER_PATH, pins.NATIVE_CHECKER_OLD_BLOB)
+
+    def test_native_checker_each_executable_bit_fails(self):
+        for mode in (0o744, 0o654, 0o645):
+            with self.subTest(mode=oct(mode)):
+                (self.root / pins.NATIVE_CHECKER_PATH).chmod(mode)
+                with self.assertRaisesRegex(ValueError, 'non-executable regular file'):
+                    self.check(pins.NATIVE_CHECKER_PATH, pins.NATIVE_CHECKER_OLD_BLOB)
+
+    def test_native_checker_noncanonical_path_or_type_fails(self):
+        for path in ('', '/' + pins.NATIVE_CHECKER_PATH,
+                     './' + pins.NATIVE_CHECKER_PATH, '../' + pins.NATIVE_CHECKER_PATH,
+                     'integration/../' + pins.NATIVE_CHECKER_PATH,
+                     'integration//check_native_core.py',
+                     'integration/./check_native_core.py',
+                     pins.NATIVE_CHECKER_PATH + '/',
+                     None, Path(pins.NATIVE_CHECKER_PATH),
+                     pins.NATIVE_CHECKER_PATH.encode(), 1, []):
+            with self.subTest(path=path):
+                with self.assertRaisesRegex(ValueError, 'canonical and repository-relative'):
+                    self.check(path, pins.NATIVE_CHECKER_OLD_BLOB)
 
     def test_exact_current_blobs_and_original_witnesses(self):
         self.assertEqual(pins.git_blob(self.thermal), pins.THERMAL_CURRENT_BLOB)
@@ -133,7 +362,7 @@ class CurrentDependencyPins(unittest.TestCase):
 
     def test_constructor_only_blob_rejected_as_current_checkout(self):
         self.put(pins.BM1368_PATH, self.constructor_bm1368)
-        with self.assertRaisesRegex(ValueError, 'not the reviewed address-commands blob'):
+        with self.assertRaisesRegex(ValueError, 'not the reviewed drive-strength blob'):
             self.check(pins.BM1368_PATH, pins.BM1368_OLD_BLOB)
 
     def test_changed_original_pin_rejected(self):
@@ -254,7 +483,7 @@ class CurrentDependencyPins(unittest.TestCase):
                 added.replace(b'\n#endif\n', b'\n#include "extra.h"\n#endif\n'),
                 added + added, added[:-8]):
             reset = self.constructor_bm1368 + suffix
-            mutant = reset + self.ticket_append + self.sweep_append + self.address_append
+            mutant = reset + self.ticket_append + self.sweep_append + self.address_append + self.drive_append
             with self.subTest(suffix=suffix[:60]):
                 with self.accept_current_and_ticket_identity(mutant), \
                         self.accept_reset_bm1368_identity(reset):
@@ -272,7 +501,7 @@ class CurrentDependencyPins(unittest.TestCase):
             pins.check_current_dependency(self.root, alternate, pins.BM1368_CONSTRUCTOR_BLOB)
 
     def test_missing_reset_append_rejected_even_with_changed_full_identity(self):
-        mutant = self.constructor_bm1368 + self.ticket_append + self.sweep_append + self.address_append
+        mutant = self.constructor_bm1368 + self.ticket_append + self.sweep_append + self.address_append + self.drive_append
         with self.accept_current_and_ticket_identity(mutant), \
                 self.accept_reset_bm1368_identity(self.constructor_bm1368):
             with self.assertRaisesRegex(ValueError, 'reset append is not separately gated'):
@@ -295,7 +524,7 @@ class CurrentDependencyPins(unittest.TestCase):
                 added[:-7]):
             constructor = old + suffix
             reset_source = constructor + reset
-            mutant = reset_source + self.ticket_append + self.sweep_append + self.address_append
+            mutant = reset_source + self.ticket_append + self.sweep_append + self.address_append + self.drive_append
             with self.subTest(suffix=suffix[:60]):
                 with self.accept_current_and_ticket_identity(mutant), \
                         self.accept_reset_bm1368_identity(reset_source):
@@ -313,7 +542,7 @@ class CurrentDependencyPins(unittest.TestCase):
 
     def test_reset_only_blob_rejected_as_current_checkout(self):
         self.put(pins.BM1368_PATH, self.reset_bm1368)
-        with self.assertRaisesRegex(ValueError, 'not the reviewed address-commands blob'):
+        with self.assertRaisesRegex(ValueError, 'not the reviewed drive-strength blob'):
             self.check(pins.BM1368_PATH, pins.BM1368_OLD_BLOB)
 
     def test_preserved_reset_identity_components_are_independent(self):
@@ -346,7 +575,7 @@ class CurrentDependencyPins(unittest.TestCase):
                 added.replace(b'\n#endif\n', b'\n#include "extra.h"\n#endif\n'),
                 added + added, added[:-8])
         for suffix in suffixes:
-            mutant = self.reset_bm1368 + suffix + self.sweep_append + self.address_append
+            mutant = self.reset_bm1368 + suffix + self.sweep_append + self.address_append + self.drive_append
             with self.subTest(suffix=suffix[:60]), self.accept_current_and_ticket_identity(mutant):
                 with self.assertRaisesRegex(ValueError, 'ticket-mask append is not separately gated'):
                     pins.reset_bm1368_bytes(mutant)
@@ -361,7 +590,7 @@ class CurrentDependencyPins(unittest.TestCase):
 
     def test_reset_and_ticket_pins_cannot_replace_nonce_expected_pin(self):
         for expected in (pins.BM1368_RESET_BLOB, pins.BM1368_TICKET_BLOB,
-                         pins.BM1368_SWEEP_BLOB, pins.BM1368_CURRENT_BLOB):
+                         pins.BM1368_SWEEP_BLOB, pins.BM1368_ADDRESS_BLOB, pins.BM1368_CURRENT_BLOB):
             with self.assertRaisesRegex(ValueError, 'historical BM1368 chip pin changed'):
                 self.check(pins.BM1368_PATH, expected)
 
@@ -383,7 +612,7 @@ class CurrentDependencyPins(unittest.TestCase):
 
     def test_ticket_only_source_rejected_as_current(self):
         self.put(pins.BM1368_PATH, self.ticket_bm1368)
-        with self.assertRaisesRegex(ValueError, 'not the reviewed address-commands blob'):
+        with self.assertRaisesRegex(ValueError, 'not the reviewed drive-strength blob'):
             self.check(pins.BM1368_PATH, pins.BM1368_OLD_BLOB)
 
     def test_ticket_prefix_checked_without_sweep_full_hash(self):
@@ -408,7 +637,7 @@ class CurrentDependencyPins(unittest.TestCase):
                 added.replace(b'\n#endif\n', b'\n#include "extra.h"\n#endif\n'),
                 added + added, added[:-8])
         for suffix in suffixes:
-            mutant = self.ticket_bm1368 + suffix + self.address_append
+            mutant = self.ticket_bm1368 + suffix + self.address_append + self.drive_append
             with self.subTest(suffix=suffix[:60]), self.accept_current_bm1368_identity(mutant):
                 with self.assertRaisesRegex(ValueError, 'sweep-clock append is not separately gated'):
                     pins.ticket_bm1368_bytes(mutant)
@@ -418,8 +647,8 @@ class CurrentDependencyPins(unittest.TestCase):
                        self.sweep_append.replace(b'<< 1', b'<< 2'),
                        self.sweep_append.replace(b'463, 1,', b'464, 1,'),
                        self.sweep_append + b'\n', self.sweep_append[:-1]):
-            self.put(pins.BM1368_PATH, self.ticket_bm1368 + suffix + self.address_append)
-            with self.assertRaisesRegex(ValueError, 'not the reviewed address-commands blob'):
+            self.put(pins.BM1368_PATH, self.ticket_bm1368 + suffix + self.address_append + self.drive_append)
+            with self.assertRaisesRegex(ValueError, 'not the reviewed drive-strength blob'):
                 self.check(pins.BM1368_PATH, pins.BM1368_OLD_BLOB)
 
     def test_exact_address_transition_retains_sweep_witness(self):
@@ -428,20 +657,20 @@ class CurrentDependencyPins(unittest.TestCase):
                          'f23565c15c9d174e644fc51a401e81dbe072dfd7')
         self.assertEqual(hashlib.sha256(self.sweep_bm1368).hexdigest(),
                          'e4c05fb8bc541e6e6b2a216cbaecf7ef57cc3d85101d59b81e8ebd3d4e2af7e4')
-        self.assertEqual(self.bm1368, self.sweep_bm1368 + self.address_append)
+        self.assertEqual(self.address_bm1368, self.sweep_bm1368 + self.address_append)
         self.assertEqual(len(self.address_append), 2035)
 
     def test_current_address_identity_components_are_independent(self):
-        for constant, wrong in (('BM1368_CURRENT_BLOB', '0' * 40),
-                                ('BM1368_CURRENT_SHA256', '0' * 64),
-                                ('BM1368_CURRENT_SIZE', 11279)):
+        for constant, wrong in (('BM1368_ADDRESS_BLOB', '0' * 40),
+                                ('BM1368_ADDRESS_SHA256', '0' * 64),
+                                ('BM1368_ADDRESS_SIZE', 11279)):
             with self.subTest(constant=constant), patch.object(pins, constant, wrong):
-                with self.assertRaisesRegex(ValueError, 'not the reviewed address-commands blob'):
+                with self.assertRaisesRegex(ValueError, 'preserved address source prefix changed'):
                     pins.historical_bm1368_bytes(self.bm1368)
 
     def test_sweep_only_source_rejected_as_current(self):
         self.put(pins.BM1368_PATH, self.sweep_bm1368)
-        with self.assertRaisesRegex(ValueError, 'not the reviewed address-commands blob'):
+        with self.assertRaisesRegex(ValueError, 'not the reviewed drive-strength blob'):
             self.check(pins.BM1368_PATH, pins.BM1368_OLD_BLOB)
 
     def test_sweep_prefix_checked_without_address_full_hash(self):
@@ -467,7 +696,7 @@ class CurrentDependencyPins(unittest.TestCase):
                             b'\n#include "extra.h"\n#endif\n'):
             suffixes.append(added.replace(b'\n#endif\n', replacement))
         for index, suffix in enumerate(suffixes):
-            mutant = self.sweep_bm1368 + suffix
+            mutant = self.sweep_bm1368 + suffix + self.drive_append
             with self.subTest(mutation=index), self.accept_address_bm1368_identity(mutant):
                 with self.assertRaisesRegex(ValueError, 'address-commands append is not separately gated'):
                     pins.sweep_bm1368_bytes(mutant)
@@ -477,9 +706,63 @@ class CurrentDependencyPins(unittest.TestCase):
                        self.address_append.replace(b'699, 1,', b'700, 1,'),
                        self.address_append.replace(b'frame + 2, 5', b'frame + 2, 4'),
                        self.address_append + b'\n', self.address_append[:-1]):
-            self.put(pins.BM1368_PATH, self.sweep_bm1368 + suffix)
-            with self.assertRaisesRegex(ValueError, 'not the reviewed address-commands blob'):
+            self.put(pins.BM1368_PATH, self.sweep_bm1368 + suffix + self.drive_append)
+            with self.assertRaisesRegex(ValueError, 'not the reviewed drive-strength blob'):
                 self.check(pins.BM1368_PATH, pins.BM1368_OLD_BLOB)
+
+    def test_exact_drive_transition_retains_address_witness(self):
+        self.assertEqual(len(self.bm1368), 14347)
+        self.assertEqual(pins.git_blob(self.bm1368),
+                         '355824db8f2127da4c678737ab86daf2a99f4a85')
+        self.assertEqual(hashlib.sha256(self.bm1368).hexdigest(),
+                         'd31a47e24504be3cf48cad8cbca96a9a38f08fd5aa0b0a27e672fac84bff5ce6')
+        self.assertEqual(len(self.address_bm1368), 11280)
+        self.assertEqual(pins.git_blob(self.address_bm1368),
+                         '890e2bfc9ead81a9cafe5b34c917b37133ea0d5e')
+        self.assertEqual(hashlib.sha256(self.address_bm1368).hexdigest(),
+                         '91cfb6f3bb640bcf3519027243970bcb37aeeb0275f96b931dd17cab940540d2')
+        self.assertEqual(self.bm1368, self.address_bm1368 + self.drive_append)
+        self.assertEqual(len(self.drive_append), 3067)
+
+    def test_current_drive_identity_components_are_independent(self):
+        for constant, wrong in (('BM1368_CURRENT_BLOB', '0' * 40),
+                                ('BM1368_CURRENT_SHA256', '0' * 64),
+                                ('BM1368_CURRENT_SIZE', 14346)):
+            with self.subTest(constant=constant), patch.object(pins, constant, wrong):
+                with self.assertRaisesRegex(ValueError, 'not the reviewed drive-strength blob'):
+                    pins.historical_bm1368_bytes(self.bm1368)
+
+    def test_address_only_source_rejected_as_current(self):
+        self.put(pins.BM1368_PATH, self.address_bm1368)
+        with self.assertRaisesRegex(ValueError, 'not the reviewed drive-strength blob'):
+            self.check(pins.BM1368_PATH, pins.BM1368_OLD_BLOB)
+
+    def test_address_prefix_checked_without_drive_full_hash(self):
+        for offset in (0, 920, 3802, 3803, 7518, 7519, 8349, 8350, 9244, 9245, 11279):
+            raw = bytearray(self.bm1368)
+            raw[offset] ^= 1
+            mutant = bytes(raw)
+            with self.subTest(offset=offset), self.accept_drive_bm1368_identity(mutant):
+                with self.assertRaisesRegex(ValueError, 'preserved address source prefix changed'):
+                    pins.address_bm1368_bytes(mutant)
+
+    def test_drive_gate_shape_checked_without_full_hash(self):
+        added = self.drive_append
+        suffixes = [b'',
+            added.replace(b'VN135_BM1368_DRIVE_STRENGTH_135', b'OTHER_GATE'),
+            added.replace(b'"integration/bm1368_drive_strength_135.h"', b'"wrong.h"'),
+            b'int outside;\n' + added, added + added, added[:-8],
+            added[:-1], added + b'\n']
+        for replacement in (b'\n#endif\nint outside;\n\n',
+                            b'\n#if OTHER\n#endif\n#endif\n',
+                            b'\n#else\n#endif\n', b'\n#elif OTHER\n#endif\n',
+                            b'\n#include "extra.h"\n#endif\n'):
+            suffixes.append(added.replace(b'\n#endif\n', replacement))
+        for index, suffix in enumerate(suffixes):
+            mutant = self.address_bm1368 + suffix
+            with self.subTest(mutation=index), self.accept_drive_bm1368_identity(mutant):
+                with self.assertRaisesRegex(ValueError, 'drive-strength append is not separately gated'):
+                    pins.address_bm1368_bytes(mutant)
 
     def test_transition_shape_checked_independently_of_current_hash(self):
         mutant = self.thermal.replace(b'ROUTES135_FLAGS =', b'OTHER_FLAGS =')
@@ -505,7 +788,8 @@ class CurrentDependencyPins(unittest.TestCase):
             self.check(self.other, self.other_sha)
 
     def test_missing_paths_fail(self):
-        for path, expected in ((pins.THERMAL_PATH, pins.THERMAL_OLD_BLOB),
+        for path, expected in ((pins.NATIVE_DOC_PATH, pins.NATIVE_DOC_OLD_BLOB),
+                               (pins.THERMAL_PATH, pins.THERMAL_OLD_BLOB),
                                (pins.DISPATCH_PATH, pins.DISPATCH_OLD_BLOB),
                                (pins.BM1368_PATH, pins.BM1368_OLD_BLOB),
                                (self.other, self.other_sha)):

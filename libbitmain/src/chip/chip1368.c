@@ -268,3 +268,81 @@ int32_t vn135_bm1368_assign_address_135(
     return -1;
 }
 #endif
+
+#ifdef VN135_BM1368_DRIVE_STRENGTH_135
+#include "integration/bm1368_drive_strength_135.h"
+
+static int32_t drive_strength_signed_index_135(uint32_t word)
+{
+    return word <= INT32_MAX ? (int32_t)word :
+        (int32_t)((int64_t)word - INT64_C(4294967296));
+}
+
+int32_t vn135_bm1368_drive_strength_cache_chain_135(
+    void *cache, int32_t chain, uint32_t reg, uint32_t *value)
+{
+    return vn135_reg_cache_get_chain(cache, chain, reg, value);
+}
+
+int32_t vn135_bm1368_drive_strength_cache_chip_135(
+    void *cache, int32_t chain, int32_t chip, uint32_t reg, uint32_t *value)
+{
+    return vn135_reg_cache_get_chip(cache, chain, chip, reg, value);
+}
+
+static void drive_strength_diagnostic_135(
+    const struct vn135_bm1368_drive_strength_log_135 *log,
+    const struct vn135_bm1368_frequency_device *device,
+    uint32_t line, const char *format, uint32_t has_index)
+{
+    const struct vn135_bm1368_drive_strength_diagnostic_135 diagnostic = {
+        "driver", "/tmp/build/libbitmain/src/chip/chip1368.c", "[redacted]",
+        format, line, 1, has_index, has_index ? device->index + UINT32_C(1) : 0
+    };
+    log->emit(log->context, &diagnostic);
+}
+
+int32_t vn135_bm1368_set_chain_drive_strength_135(
+    struct vn135_bm1368_frequency_device *device, uint32_t setting,
+    const struct vn135_bm1368_drive_strength_read_135 *read,
+    const struct vn135_bm1368_register_ops *writer, void *write_context,
+    const struct vn135_bm1368_drive_strength_log_135 *log)
+{
+    uint32_t value = 0;
+    if (read->chain(read->context, drive_strength_signed_index_135(device->index),
+            0x58, &value) != 0) {
+        drive_strength_diagnostic_135(log, device, 635,
+            "Failed to read cached driver strenght register", 0);
+        return -1;
+    }
+    value = (value & UINT32_C(0xffff0fff)) | ((setting & 15u) << 12);
+    if (vn135_bm1368_write_register_135(device, 1, NULL, 0x58, value,
+            writer, write_context) == 0)
+        return 0;
+    drive_strength_diagnostic_135(log, device, 645,
+        "chain#%d - failed to config drive strength", 1);
+    return -1;
+}
+
+int32_t vn135_bm1368_set_chip_drive_strength_135(
+    struct vn135_bm1368_frequency_device *device, const vn135_chip_reference *chip,
+    uint32_t setting, const struct vn135_bm1368_drive_strength_read_135 *read,
+    const struct vn135_bm1368_register_ops *writer, void *write_context,
+    const struct vn135_bm1368_drive_strength_log_135 *log)
+{
+    uint32_t value = 0;
+    if (read->chip(read->context, drive_strength_signed_index_135(device->index),
+            chip->cache_index, 0x58, &value) != 0) {
+        drive_strength_diagnostic_135(log, device, 609,
+            "Failed to read cached drive strength register", 0);
+        return -1;
+    }
+    value = (value & UINT32_C(0xffff0fff)) | ((setting & 15u) << 12);
+    if (vn135_bm1368_write_register_135(device, 0, chip, 0x58, value,
+            writer, write_context) == 0)
+        return 0;
+    drive_strength_diagnostic_135(log, device, 619,
+        "chain#%d - failed to config drive strength", 1);
+    return -1;
+}
+#endif

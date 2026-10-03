@@ -1,0 +1,74 @@
+name: Check BM1368 group boundaries (host only)
+on:
+  pull_request:
+    branches: [work/reconstruction]
+    paths:
+      - 'integration/bm1368_group_boundary_135.*'
+      - 'integration/bm1368-group-boundary-135.mk'
+      - 'integration/tests/*bm1368_group_boundary*'
+      - 'libbitmain/src/chip/chip1368-group-boundary.c'
+      - 'research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-group-boundary/**'
+      - '.github/workflows/bm1368-group-boundary-135.yml'
+      - 'AGENTS.md'
+      - 'Makefile.am'
+      - 'cgminer.c'
+      - 'include/xminer/recovery/chip1398.h'
+      - 'include/xminer/recovery/pll.h'
+      - 'include/xminer/recovery/reg_cache.h'
+      - 'integration/bm1368_control.c'
+      - 'integration/bm1368_control.h'
+      - 'integration/bm1368_frequency_135.h'
+      - 'integration/bm1368_group_boundary_135.c'
+      - 'integration/bm1368_group_boundary_135.h'
+      - 'integration/bm1368_register_write_135.h'
+      - 'integration/tests/check_bm1368_group_boundary_135.py'
+      - 'integration/tests/test_bm1368_group_boundary_135.c'
+      - 'libbitmain/src/chip/chip1368-register-write.c'
+      - 'libbitmain/src/chip/chip1368.c'
+      - 'libbitmain/src/reg_cache.c'
+      - 'miner.h'
+      - 'reconstruction/data/reg_cache_defaults.inc'
+      - 'reconstruction/support/crc5.c'
+      - 'tools/elf32.py'
+      - 'include/xminer/recovery/*.h'
+      - 'reference/cgminer.vendor.elf'
+      - 'integration/tests/current_dependency_pins_135.py'
+      - 'integration/tests/test_current_dependency_pins_135.py'
+      - 'integration/CGMINER_FIRST_RU.md'
+      - 'integration/check_native_core.py'
+      - 'integration/thermal-routes-135.mk'
+      - 'libbitmain/src/transport-dispatch.c'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  host:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Current dependency and verifier boundary controls
+        run: |
+          python3 integration/tests/test_current_dependency_pins_135.py
+          python3 -O integration/tests/test_current_dependency_pins_135.py
+          python3 integration/tests/test_bm1368_group_boundary_verifier_135.py
+          python3 -O integration/tests/test_bm1368_group_boundary_verifier_135.py
+      - name: Static data and source checks
+        run: |
+          python3 research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-group-boundary/verify.py --with-reference
+          python3 -O research/vnishnet-t21-aml-nand-1.3.5/30-reconstructed-unverified/bm1368-group-boundary/verify.py --with-reference
+      - name: Host scenarios and compiled semantic controls
+        run: python3 integration/tests/check_bm1368_group_boundary_135.py --cc ${{ matrix.cc }} --out build/l15-normal --mutants
+      - name: All-seven-TU ASan and UBSan
+        run: python3 integration/tests/check_bm1368_group_boundary_135.py --cc ${{ matrix.cc }} --out build/l15-sanitized --sanitize
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: l15-${{ matrix.cc }}-reports
+          path: build/l15-*/report.json

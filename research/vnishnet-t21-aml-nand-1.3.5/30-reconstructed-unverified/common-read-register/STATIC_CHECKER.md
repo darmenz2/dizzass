@@ -142,7 +142,7 @@ inner predicate; the new outer hash cannot conceal a lost inner check.
 The checker imports no shared helper, all 17 active dependencies and original
 receipt meanings remain intact, and new outcomes belong to the L12 packet.
 
-L13 adds the exact address-to-sweep outer transition. The current source must
+L13 added the exact address-to-sweep outer transition. Its recovered source must
 be exactly 11280 bytes with Git blob
 `890e2bfc9ead81a9cafe5b34c917b37133ea0d5e` and SHA-256
 `91cfb6f3bb640bcf3519027243970bcb37aeeb0275f96b931dd17cab940540d2`.
@@ -157,6 +157,23 @@ both outer identities when exercising an older predicate. New controls exercise
 the address identity, preserved sweep bytes and address gate separately. No
 shared helper import, evidence receipt update or historical test-result relabelling
 is introduced. L13 compatibility results belong to the address packet.
+
+L14 adds one exact drive-strength-to-address outer transition. The current
+source must be exactly 14347 bytes, Git blob
+`355824db8f2127da4c678737ab86daf2a99f4a85`, SHA-256
+`d31a47e24504be3cf48cad8cbca96a9a38f08fd5aa0b0a27e672fac84bff5ce6`.
+The first 11280 bytes remain the independently pinned L13 source above. The
+3067-byte suffix must have one `VN135_BM1368_DRIVE_STRENGTH_135` gate and exactly
+one include for `integration/bm1368_drive_strength_135.h`, inside that gate,
+with no nested conditional, alternate branch or extra include, and the exact
+reviewed terminal boundary. The earlier address/sweep/ticket/reset/constructor
+predicates are unchanged. Old 11280-byte address-only sources are now rejected
+as current checkouts. All old inner controls preserve this suffix and explicitly
+match the new outer identity before testing an earlier predicate; new controls
+bind the complete source, preserved address prefix and new gate independently.
+All 17 active dependencies and original receipt/pin/evidence bytes remain intact.
+The checker imports no new helper, and new compatibility results belong to the
+L14 grouping packet. L13's separate historical-prefix verifier remains unchanged.
 
 ## Assumptions and limits
 

@@ -1,0 +1,167 @@
+[
+  {
+    "name": "analog-low-two-only",
+    "before": "setting & UINT32_C(7)",
+    "after": "setting & UINT32_C(3)"
+  },
+  {
+    "name": "analog-wrong-register",
+    "before": "1, NULL, 0x54, word",
+    "after": "1, NULL, 0x50, word"
+  },
+  {
+    "name": "analog-unicast",
+    "before": "device, 1, NULL, 0x54",
+    "after": "device, 0, NULL, 0x54"
+  },
+  {
+    "name": "analog-positive-status-success",
+    "before": "NULL, 0x54, word) == 0",
+    "after": "NULL, 0x54, word) >= 0"
+  },
+  {
+    "name": "analog-wrong-diagnostic",
+    "before": "ops, device, 425,",
+    "after": "ops, device, 424,"
+  },
+  {
+    "name": "nonce-or-not-xor",
+    "before": "setting ^ UINT32_C(1)",
+    "after": "setting | UINT32_C(1)"
+  },
+  {
+    "name": "nonce-boolean-input",
+    "before": "(setting ^ UINT32_C(1))",
+    "after": "((uint32_t)(setting != 0) ^ UINT32_C(1))"
+  },
+  {
+    "name": "nonce-wrong-fixed-bits",
+    "before": "UINT32_C(0x80008dee)",
+    "after": "UINT32_C(0x80008fee)"
+  },
+  {
+    "name": "nonce-wrong-register",
+    "before": "1, NULL, 0x3c, word",
+    "after": "1, NULL, 0x38, word"
+  },
+  {
+    "name": "nonce-positive-status-success",
+    "before": "NULL, 0x3c, word) == 0",
+    "after": "NULL, 0x3c, word) >= 0"
+  },
+  {
+    "name": "nonce-first-log-omitted",
+    "before": "    startup_diagnostic_135(ops, device, 387,\n        \"chain#%d - failed to send core command\");",
+    "after": "    (void)0;"
+  },
+  {
+    "name": "nonce-second-log-omitted",
+    "before": "    startup_diagnostic_135(ops, device, 593,\n        \"chain#%d - failed to set NONCE_BIN_OVERFLOW_CTRL\");",
+    "after": "    (void)0;"
+  },
+  {
+    "name": "nonce-wrong-second-line",
+    "before": "ops, device, 593,",
+    "after": "ops, device, 592,"
+  },
+  {
+    "name": "log-index-not-one-based",
+    "before": "device->index + UINT32_C(1)",
+    "after": "device->index"
+  },
+  {
+    "name": "log-index-overflow-clamped",
+    "before": "device->index + UINT32_C(1)",
+    "after": "(device->index == UINT32_MAX ? UINT32_MAX : device->index + UINT32_C(1))"
+  },
+  {
+    "name": "pattern-wrong-word",
+    "before": "UINT32_C(0x5aa55aa5)",
+    "after": "UINT32_C(0x5aa55aa4)"
+  },
+  {
+    "name": "pattern-wrong-register",
+    "before": "0x68, UINT32_C(0x5aa55aa5)",
+    "after": "0x6c, UINT32_C(0x5aa55aa5)"
+  },
+  {
+    "name": "pattern-status-normalized",
+    "before": "0x68, UINT32_C(0x5aa55aa5));",
+    "after": "0x68, UINT32_C(0x5aa55aa5)) == 0 ? 0 : -1;"
+  },
+  {
+    "name": "rmw-first-read-wrong-register",
+    "before": "0xa8, &soft",
+    "after": "0x18, &soft"
+  },
+  {
+    "name": "rmw-second-read-wrong-register",
+    "before": "0x18, &misc",
+    "after": "0xa8, &misc"
+  },
+  {
+    "name": "rmw-first-read-positive-ignored",
+    "before": "0xa8, &soft) != 0",
+    "after": "0xa8, &soft) < 0"
+  },
+  {
+    "name": "rmw-second-read-positive-ignored",
+    "before": "0x18, &misc) != 0",
+    "after": "0x18, &misc) < 0"
+  },
+  {
+    "name": "rmw-boolean-bit-only",
+    "before": "if (mode != 0)",
+    "after": "if ((mode & 1u) != 0)"
+  },
+  {
+    "name": "rmw-on-soft-reset-wrong-mask",
+    "before": "soft |= UINT32_C(0x10f)",
+    "after": "soft |= UINT32_C(0x1f0)"
+  },
+  {
+    "name": "rmw-on-misc-wrong-mask",
+    "before": "misc &= ~UINT32_C(0x00f00000)",
+    "after": "misc &= ~UINT32_C(0x000f0000)"
+  },
+  {
+    "name": "rmw-off-soft-clears-bit8",
+    "before": "soft &= ~UINT32_C(0xf0)",
+    "after": "soft &= ~UINT32_C(0x1f0)"
+  },
+  {
+    "name": "rmw-off-misc-missing-top-bits",
+    "before": "misc |= UINT32_C(0xff0f0000)",
+    "after": "misc |= UINT32_C(0xf00f0000)"
+  },
+  {
+    "name": "rmw-first-write-positive-ignored",
+    "before": "NULL, 0xa8, soft) != 0",
+    "after": "NULL, 0xa8, soft) < 0"
+  },
+  {
+    "name": "rmw-second-write-positive-ignored",
+    "before": "NULL, 0x18, misc) != 0",
+    "after": "NULL, 0x18, misc) < 0"
+  },
+  {
+    "name": "rmw-first-write-wrong-register",
+    "before": "1, NULL, 0xa8, soft",
+    "after": "1, NULL, 0xac, soft"
+  },
+  {
+    "name": "rmw-second-write-wrong-register",
+    "before": "1, NULL, 0x18, misc",
+    "after": "1, NULL, 0x1c, misc"
+  },
+  {
+    "name": "rmw-second-value-lost",
+    "before": "1, NULL, 0x18, misc",
+    "after": "1, NULL, 0x18, soft"
+  },
+  {
+    "name": "rmw-negative-index-clamped",
+    "before": "(int32_t)((int64_t)bits - INT64_C(4294967296))",
+    "after": "INT32_MAX"
+  }
+]
